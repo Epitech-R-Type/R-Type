@@ -1,0 +1,65 @@
+{
+    "commitizen": {
+        "name": "cz_customize",
+        "customize": {
+            "message_template": "[{{change_type}}]{% if show_message %} {{message}}{% endif %}",
+            "example": "feature: this feature enable customize through config file",
+            "schema": "[<type>] <body>",
+            "info": "This is customized info",
+            "commit_parser": "^\\[(?P<change_type>feature|fix|merge|revert|doc|test|assets|build)\\]\\s(?P<message>.*)?",
+            "change_type_map": {"feature": "Feat", "fix": "Fix"},
+            "questions": [
+                {
+                    "type": "list",
+                    "name": "change_type",
+                    "choices": [
+                        {
+                            "value": "Feature",
+                            "name": "[Feature] A new feature."
+                        },
+                        {
+                            "value": "Fix",
+                            "name": "[Fix] A bug fix."
+                        },
+			{
+				"value": "Merge",
+				"name": "[Merge] A branch merge."
+			},
+			{
+				"value": "Revert",
+				"name": "[Revert] Reverting change(s)."
+			},
+			{
+				"value": "Doc",
+				"name": "[Doc] A doc modification."
+			},
+			{
+				"value": "Test",
+				"name": "[Test] A test modification."
+			},
+			{
+				"value": "Assets",
+				"name": "[Assets] A modification in the assets."
+			},
+			{
+				"value": "Build",
+				"name": "[Build]: A modification in the build logic."
+			}
+			
+                    ],
+                    "message": "Select the type of change you are committing"
+                },
+                {
+                    "type": "input",
+                    "name": "message",
+                    "message": "Body."
+                },
+                {
+                    "type": "confirm",
+                    "name": "show_message",
+                    "message": "Do you want to add body message in commit?"
+                }
+            ]
+        }
+    }
+}
