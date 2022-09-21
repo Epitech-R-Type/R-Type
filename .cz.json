@@ -5,6 +5,7 @@
             "message_template": "[{{change_type}}]{% if show_message %} {{message}}{% endif %}",
             "example": "feature: this feature enable customize through config file",
             "schema": "[<type>] <body>",
+	    "schema_pattern": "\\[(Feature|Fix|Merge|Revert|Doc|Test|Assets|Build)\\](\\s.*)",
             "info": "This is customized info",
             "commit_parser": "^\\[(?P<change_type>feature|fix|merge|revert|doc|test|assets|build)\\]\\s(?P<message>.*)?",
             "change_type_map": {"feature": "Feat", "fix": "Fix"},
