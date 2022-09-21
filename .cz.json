@@ -52,7 +52,7 @@
                 {
                     "type": "input",
                     "name": "message",
-                    "message": "Body."
+                    "message": "This commit will:"
                 },
                 {
                     "type": "confirm",
