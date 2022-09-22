@@ -27,8 +27,14 @@ jobs:
 
       - name: Install CMake
         run: |
-          sudo apt-get install snap
-          sudo snap install --classic cmake
+          curl https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2.tar.gz -L --output CMAKE.tar.gz
+
+          tar -xf CMAKE.tar.gz
+          cd cmake-3.24.2/
+
+          ./bootstrap
+          make
+          make install
 
 
       # Builds using cmake
