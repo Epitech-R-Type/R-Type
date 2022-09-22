@@ -24,4 +24,4 @@ or without the Commitizen UI:
 
 ```git commit```
 
-[Contributing Guide]("./CONTRIBUTING.md")
+[Contributing Guide](CONTRIBUTING.md)
