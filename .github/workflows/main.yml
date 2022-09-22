@@ -28,7 +28,7 @@ jobs:
       - name: Install CMake
         run: |
           sudo apt-get install snap
-          sudo snap install cmake
+          sudo snap install --classic cmake
 
 
       # Builds using cmake
