@@ -27,14 +27,7 @@ jobs:
 
       - name: Install CMake
         run: |
-          curl https://github.com/Kitware/CMake/releases/download/v3.24.2/cmake-3.24.2.tar.gz -L --output CMAKE.tar.gz
-
-          tar -xf CMAKE.tar.gz
-          cd cmake-3.24.2/
-
-          ./bootstrap
-          make
-          make install
+          sudo apt-get -y install cmake
 
 
       # Builds using cmake
