@@ -1,6 +1,6 @@
 ## [Commitizen](https://commitizen-tools.github.io/commitizen/)
 
-### Installation:
+### Installatio:
 
 Recommended:
 
@@ -23,3 +23,5 @@ Untested:
 or without the Commitizen UI: 
 
 ```git commit```
+
+[Contributing Guide]("./CONTRIBUTING.md")
