@@ -25,11 +25,11 @@ jobs:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
 
-      - name: Build CMake
-        uses: ashutoshvarma/action-cmake-build@v1
+      - name: Install CMake
+        run: apt-get install cmake
 
 
-      # Runs a single command using the runners shell
-      # - name: Build
-      #   run: |
-      #     cmake CMakeLists.txt
+      # Builds using cmake
+      - name: Build
+        run: |
+          cmake CMakeLists.txt
