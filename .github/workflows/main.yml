@@ -24,9 +24,12 @@ jobs:
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
       - uses: actions/checkout@v3
-      - uses: lukka/get-cmake@latest
+
+      - name: Build CMake
+        - uses: ashutoshvarma/action-cmake-build@v1
+
 
       # Runs a single command using the runners shell
-      - name: Build
-        run: |
-          cmake CMakeLists.txt
+      # - name: Build
+      #   run: |
+      #     cmake CMakeLists.txt
