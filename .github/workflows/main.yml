@@ -33,6 +33,5 @@ jobs:
 
       # Builds using cmake
       - name: Build
-        using: 
         run: |
           cmake CMakeLists.txt
