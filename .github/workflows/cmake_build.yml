@@ -15,4 +15,5 @@ jobs:
 
       # Build project
       - name: run-cmake
-        uses: lukka/run-cmake@v10.0
+        shell: bash
+        run: cmake CMakeLists.txt
