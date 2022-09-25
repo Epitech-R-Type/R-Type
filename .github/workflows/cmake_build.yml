@@ -1,2 +1,9 @@
-- name: run-cmake
-  uses: lukka/run-cmake@v10.0
+name: CMake Build Test
+
+on: push
+jobs:
+  cmake-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: run-cmake
+        uses: lukka/run-cmake@v10.0
