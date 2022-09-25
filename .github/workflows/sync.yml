@@ -24,7 +24,7 @@ jobs:
 
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
-     - name: GitHub Repo Sync
+    - name: GitHub Repo Sync
       # You may pin to the exact commit or the version.
       # uses: repo-sync/github-sync@3832fe8e2be32372e1b3970bbae8e7079edeec88
       uses: repo-sync/github-sync@v2.3.0
