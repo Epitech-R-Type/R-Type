@@ -6,3 +6,5 @@ This project aims to implement the classic game [R-Type](https://wikiless.sethfo
 
 It will include network based multiplayer.
 
+Coffee FTW, Say no to hot leaf juice drinking.
+
