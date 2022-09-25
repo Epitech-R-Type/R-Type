@@ -12,7 +12,7 @@ jobs:
         uses: wei/git-sync@v3
         with:
           source_repo: "git@github.com:mindoodoo/R-Type.git"
-          source_branch: "main"
+          source_branch: "refs/remotes/source/*"
           destination_repo: "git@github.com:EpitechPromo2025/B-CPP-500-BER-5-1-rtype-nicolas.lattemann.git"
-          destination_branch: "main"
+          destination_branch: "refs/heads/*"
           ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
