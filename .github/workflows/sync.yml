@@ -32,9 +32,9 @@ jobs:
         # GitHub public repo slug or full https clone url (with access_token if needed)
         source_repo: "R-Type"
         # Branch name to sync from
-        source_branch: *
+        source_branch: "*"
         # Branch name to sync to in this repo
-        destination_branch: *
+        destination_branch: "*"
         # GitHub token secret
         github_token: ${{ secrets.PAT }}
         sync_tags: true
