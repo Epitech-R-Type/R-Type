@@ -14,4 +14,4 @@ jobs:
           source_branch: "*"
           destination_repo: "git@github.com:EpitechPromo2025/B-CPP-500-BER-5-1-rtype-nicolas.lattemann.git"
           destination_branch: "*"
-          # ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }} # optional
+          ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
