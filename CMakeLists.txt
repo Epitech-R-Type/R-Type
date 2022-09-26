@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.23)
+cmake_minimum_required(VERSION 3.17)
 project(R-Type)
 
 set(CMAKE_CXX_STANDARD 17)
