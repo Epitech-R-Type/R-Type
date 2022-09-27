@@ -20,4 +20,8 @@ jobs:
       # Build project
       - name: run-cmake
         shell: bash
-        run: cmake -B build/ -S .  && cmake --build build/
+        run: cmake -B build/ -S .
+
+      - name: build-cmake
+        shell: bash
+        run: cmake --build build/
