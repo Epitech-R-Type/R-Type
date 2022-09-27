@@ -13,6 +13,10 @@ jobs:
       # Setup cmake
       - uses: lukka/get-cmake@latest
 
+      - name: install-conan
+        shell: bash
+        run: pip install conan
+
       # Build project
       - name: run-cmake
         shell: bash
