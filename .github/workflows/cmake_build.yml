@@ -17,6 +17,10 @@ jobs:
         shell: bash
         run: pip install conan
 
+      - name: update-conan-profile
+        shell: bash
+        run: conan profile update settings.compiler='other' default
+
       # Build project
       - name: run-cmake
         shell: bash
