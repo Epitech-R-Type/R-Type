@@ -16,4 +16,4 @@ jobs:
       # Build project
       - name: run-cmake
         shell: bash
-        run: cmake CMakeLists.txt
+        run: cmake -B build/ -S .  && cmake --build build/

@@ -5,7 +5,7 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-execute_process(COMMAND conan install ..
+execute_process(COMMAND conan install .. --build=raylib/3.5.0 --build glfw/3.3.6
     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build")
 
 
@@ -22,11 +22,3 @@ target_link_libraries(Server ${CONAN_LIBS})
 message("=== Conan Libraries: ===")
 message(${CONAN_LIBS})
 message("========================")
-
-
-# execute_process(COMMAND mv build/Server build/bin/Server && mv build/Client .)
-
-# execute_process(
-#     COMMAND cmake --build .
-#     WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/build"
-# )
