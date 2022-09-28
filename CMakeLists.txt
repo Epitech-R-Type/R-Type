@@ -12,7 +12,10 @@ conan_basic_setup()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(Server "${CMAKE_CURRENT_SOURCE_DIR}/server/src/main.cpp")
+add_executable(Server "${CMAKE_CURRENT_SOURCE_DIR}/server/src/main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/shared/MessageQueue.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/server/src/Communication.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/server/src/Server.cpp")
 
 add_executable(Client "${CMAKE_CURRENT_SOURCE_DIR}/client/src/main.cpp")
 
