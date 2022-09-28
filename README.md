@@ -2,23 +2,28 @@
 
 # R-Type
 
-This project aims to implement the classic game [R-Type](https://wikiless.sethforprivacy.com/wiki/R-Type?lang=en).
-
+This project aims to implement the classic game [R-Type](https://wikiless.sethforprivacy.com/wiki/R-Type?lang=en).\
 It will include network based multiplayer.
 
 # Install Conan
 
-pip install conan
-conan profile new default --detect
+```pip install conan```
+
+```conan profile new default --detect```
+
+Add the following to ~/.conan/profiles/default if not present.
+
+```
+[conf]
+tools.system.package_manager:sudo=True
+tools.system.package_manager:mode=install
+```
 
 # How to Build
 
-cmake -B build/ -S .  && cmake --build build/
-
 ### For Linux
-cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
-cmake --build .
+```chmod u+x ./setup.sh```\
+```./setup.sh```
 
 ### For Windows
-cmake .. -G "Visual Studio 16"
-cmake --build . --config Release
+N/A
