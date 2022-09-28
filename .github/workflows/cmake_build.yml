@@ -19,14 +19,10 @@ jobs:
 
       - name: update-conan-profile
         shell: bash
-        run: conan profile new default --detect  # Generates default profile detecting GCC and sets old ABI
-        #  conan profile update settings.compiler.libcxx=libstdc++11 default  # Sets libcxx to C++11 ABI
+        # Generates default profile detecting GCC and sets old ABI
+        run: conan profile new default --detect; export CONAN_SYSREQUIRES_MODE="enabled"; export CONAN_SYSREQUIRES_SUDO="1";
 
       # Build project
-      - name: run-cmake
+      - name: build
         shell: bash
-        run: cmake -B build/ -S .
-
-      - name: build-cmake
-        shell: bash
-        run: cmake --build build/
+        run: chmod u+x setup.sh; ./setup.sh

@@ -6,11 +6,14 @@ This project aims to implement the classic game [R-Type](https://wikiless.sethfo
 
 It will include network based multiplayer.
 
+# Install Conan
+
+pip install conan
+conan profile new default --detect
 
 # How to Build
 
-mkdir build && cd build
-conan install ..
+cmake -B build/ -S .  && cmake --build build/
 
 ### For Linux
 cmake .. -G "Unix Makefiles" -DCMAKE_BUILD_TYPE=Release
