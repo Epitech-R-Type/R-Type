@@ -17,12 +17,18 @@ jobs:
         shell: bash
         run: pip install conan
 
-      - name: update-conan-profile
+      - name: create-conan-profile
         shell: bash
         # Generates default profile detecting GCC and sets old ABI
         run: conan profile new default --detect;
 
+      - name: update-conan-profile
+        shell: bash
+        run: >
+              conan config set tools.system.package_manager:mode=install;
+              conan config set tools.system.package_manager:sudo=True;
+
       # Build project
       - name: build
         shell: bash
-        run: chmod u+x setup.sh; conan config set tools.system.package_manager:mode=install; export CONAN_SYSREQUIRES_MODE="enabled"; export CONAN_SYSREQUIRES_SUDO="1"; ./setup.sh
+        run: chmod u+x setup.sh; ./setup.sh;
