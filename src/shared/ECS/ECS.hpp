@@ -41,13 +41,13 @@ private:
 
 public:
     void draw () {
-        for (auto &c : self.components) {
+        for (auto &c : this.components) {
             c.draw();
         }
     }
 
     void update () {
-        for (auto &c : self.components) {
+        for (auto &c : this.components) {
             c.update();
         }
     }
@@ -58,10 +58,10 @@ public:
     }
 
     void destroy() {
-        self.active = false;
+        this.active = false;
     }
 
-    void bool isActive() const {
-        return self.active;
+    bool isActive() const {
+        return this.active;
     }       
 }
