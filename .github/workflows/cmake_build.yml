@@ -31,4 +31,4 @@ jobs:
       # Build project
       - name: build
         shell: bash
-        run: chmod u+x setup.sh; ./setup.sh;
+        run: chmod u+x setup.sh; sudo ./setup.sh;
