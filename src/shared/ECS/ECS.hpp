@@ -8,13 +8,16 @@ constexpr int maxBitsetSize = 16;
 using ComponentID = std::size_t;
 using Bitset = std::bitset<maxBitsetSize>;
 
-ComponentID getComponentID()
+class Entity;
+class Component;
+
+inline ComponentID getComponentID()
 {
     static ComponentID lastID = 0;
     return lastID++;
 }
 
-template <typename T> ComponentID getComponentID() noexcept
+template <typename T> inline ComponentID getComponentID() noexcept
 {
     static ComponentID ID = getComponentID();
     return ID;
@@ -39,6 +42,9 @@ private:
     
     std::vector<Component> components;
 
+
+    Bitset componentBitset;
+
 public:
     void draw () {
         for (auto &c : this->components) {
@@ -53,8 +59,8 @@ public:
     }
 
     template<typename T>
-    bool hasComponent<T>() {
-        
+    bool hasComponent() {
+        return componentBitset[getComponentID<T>()];
     }
 
     void destroy() {
