@@ -3,10 +3,10 @@
 #include <bitset>
 #include <vector>
 
-constexpr maxBitsetSize = 16;
+constexpr int maxBitsetSize = 16;
 
 using ComponentID = std::size_t;
-using Bitset = bitset::
+using Bitset = std::bitset<maxBitsetSize>;
 
 ComponentID getComponentID()
 {
@@ -23,7 +23,7 @@ template <typename T> ComponentID getComponentID() noexcept
 class Component
 {
     public:
-        Entity* entity
+        Entity* entity;
 
         virtual void init() {}
         virtual void update() {}
@@ -41,13 +41,13 @@ private:
 
 public:
     void draw () {
-        for (auto &c : this.components) {
+        for (auto &c : this->components) {
             c.draw();
         }
     }
 
     void update () {
-        for (auto &c : this.components) {
+        for (auto &c : this->components) {
             c.update();
         }
     }
@@ -58,10 +58,10 @@ public:
     }
 
     void destroy() {
-        this.active = false;
+        this->active = false;
     }
 
     bool isActive() const {
-        return this.active;
+        return this->active;
     }       
-}
+};
