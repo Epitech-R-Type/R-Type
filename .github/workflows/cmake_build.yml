@@ -25,4 +25,4 @@ jobs:
       # Build project
       - name: build
         shell: bash
-        run: chmod u+x setup.sh; export CONAN_SYSREQUIRES_MODE="enabled"; export CONAN_SYSREQUIRES_SUDO="1"; ./setup.sh
+        run: chmod u+x setup.sh; conan profile update tools.system.package_manager:mode=install default; export CONAN_SYSREQUIRES_MODE="enabled"; export CONAN_SYSREQUIRES_SUDO="1"; ./setup.sh
