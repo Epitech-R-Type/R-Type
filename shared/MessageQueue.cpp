@@ -25,7 +25,7 @@ void MessageQueue<T>::push(T el)
 }
 
 template<class T>
-std::optional<T> MessageQueue<T>::pop() const
+std::optional<T> MessageQueue<T>::pop() 
 {
     std::lock_guard<std::mutex> lock(this->_mtx);
     if (!this->_queue.size())
@@ -36,3 +36,5 @@ std::optional<T> MessageQueue<T>::pop() const
         return std::optional(output);
     }
 }
+
+template class MessageQueue<std::string>;

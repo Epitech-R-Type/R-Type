@@ -35,15 +35,10 @@ void Communication::setup_incoming_handler()
 {
     this->_sock.async_receive_from(asio::buffer(this->_buffer), this->_endpoint, [this](const asio::error_code &err, std::size_t bytesTransfered) {
         if (!err) {
-            std::cout << "Successfully received " << bytesTransfered << " bytes." << std::endl;
             std::cout << "Received : " << this->_buffer << std::endl;
-
-            // std::cout << "Printing out elements" << std::endl;
-            // for (auto &el: this->_buffer) {
-            //     std::cout << el << std::endl;
-            // }
-            // std::cout << "Done printing out elements" << std::endl;
+            this->push_message(std::string(this->_buffer));
             
+            // Call incoming handler again
             this->setup_incoming_handler();
         } else {
             std::cerr << "Error performing async_receive_from()" << std::endl;
@@ -57,9 +52,9 @@ void Communication::setup_outgoing_handler()
     
 }
 
-void Communication::handle_receive(const asio::error_code &err, std::size_t bytesTransfered)
+void Communication::push_message(std::string msg)
 {
-    
+    this->_incomingMessages->push(msg);
 }
 
 void Communication::run()

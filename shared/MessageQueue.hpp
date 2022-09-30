@@ -20,7 +20,7 @@ class MessageQueue {
 
         // Note : Does not implement size() as no code can safely depend on size
         void push(T el);
-        std::optional<T> pop(void) const;
+        std::optional<T> pop(void);
 
     private:
         std::mutex _mtx;

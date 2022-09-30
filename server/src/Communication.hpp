@@ -28,7 +28,7 @@ class Communication {
         void setup_incoming_handler();
         void setup_outgoing_handler();
 
-        void handle_receive(const asio::error_code &err, std::size_t bytesTransfered);
+        void push_message(std::string msg);        
 
         void run();
 
@@ -37,8 +37,7 @@ class Communication {
         asio::ip::udp::socket _sock;
         asio::ip::udp::endpoint _endpoint;
         
-        // boost::array<int, 1> _buffer;
-        char _buffer[500];
+        char _buffer[1024];
         
         std::shared_ptr<MessageQueue<std::string>> _incomingMessages;
         std::shared_ptr<MessageQueue<std::string>> _outgoingMessages;
