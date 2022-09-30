@@ -44,7 +44,7 @@ class Entity
 private: 
     bool active = true;
     
-    std::vector<Component> components;
+    std::vector<std::unique_ptr<Component>> components;
 
 
     Bitset componentBitset;
@@ -53,13 +53,13 @@ private:
 public:
     void draw () {
         for (auto &c : this->components) {
-            c.draw();
+            c->draw();
         }
     }
 
     void update () {
         for (auto &c : this->components) {
-            c.update();
+            c->update();
         }
     }
 
@@ -68,18 +68,19 @@ public:
         return componentBitset[getComponentID<T>()];
     }
 
-    // template <typename T>
-    // T& addComponent()
-    // {
-    //     T* c(new T());
-    //     c->entity = this;
-    //     std::unique_ptr<Component> uPtr { c };
-    //     components.emplace_back(std::move(uPtr));
-    //     componentArray[getComponentID<T>()] = c;
-    //     componentBitset[getComponentID<T>()] = true;
-    //     c->init();
-    //     return *c;
-    // }
+    template <typename T>
+    T& addComponent()
+    {
+        T c0 = T();
+        T* c = &c0;
+        c->entity = this;
+        std::unique_ptr<Component> uPtr { c };
+        components.emplace_back(std::move(uPtr));
+        componentArray[getComponentID<T>()] = c;
+        componentBitset[getComponentID<T>()] = true;
+        c->init();
+        return *c;
+    }
 
     template<typename T>
     T& getComponent() const {
@@ -94,4 +95,32 @@ public:
     bool isActive() const {
         return this->active;
     }       
+};
+
+class Manager
+{
+    private:
+        std::vector<std::unique_ptr<Entity>> entities;
+    public:
+        void draw() {
+            for (auto& e : entities)
+                e->draw();
+        }
+        void update() {
+            for (auto& e : entities)
+                e->update();
+        }
+        void refresh() {
+            for (size_t i = 0; i < entities.size(); i++)
+                if (!(*entities[i]).isActive()) {
+                    entities.erase(entities.begin() + i);
+                    i--;
+                }
+        }
+        Entity& addEntity() {
+            Entity* e = new Entity();
+            std::unique_ptr<Entity> uPtr {e};
+            entities.emplace_back(std::move(uPtr));
+            return *e;
+        }
 };

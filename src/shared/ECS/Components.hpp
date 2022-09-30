@@ -9,12 +9,12 @@ class PositionComponent : public Component
         int ypos;
 
     public:
-        PositionComponent();
+        // PositionComponent();
         int x() {return xpos;}
         int y() {return ypos;}
         void init() override {
-            xpos = 0;
-            ypos = 0;
+            xpos = 3;
+            ypos = 3;
         }
         void setPos(int x, int y) {
             xpos = x;

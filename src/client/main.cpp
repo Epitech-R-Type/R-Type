@@ -8,13 +8,14 @@ int main() {
     std::cout << getComponentID() << std::endl;
     std::cout << getComponentID() << std::endl;
 
-    Entity *x = new Entity();
-    // x->addComponent<PositionComponent>();
+    Manager manager;
+    auto& newPlayer(manager.addEntity());
+    newPlayer.addComponent<PositionComponent>();
 
-    std::cout << x->isActive() << std::endl;
-    x->destroy();
-    std::cout << x->isActive() << std::endl;
-    // std::cout << x.getComponent<PositionComponent>().x() << std::endl;
-    // std::cout << x.getComponent<PositionComponent>().y() << std::endl;
+    std::cout << newPlayer.getComponent<PositionComponent>().x() << std::endl;
+    std::cout << newPlayer.getComponent<PositionComponent>().y() << std::endl;
+    std::cout << newPlayer.isActive() << std::endl;
+    newPlayer.destroy();
+    std::cout << newPlayer.isActive() << std::endl;
     return 0;
 }
