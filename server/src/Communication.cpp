@@ -36,6 +36,7 @@ void Communication::setup_incoming_handler()
     this->_sock.async_receive_from(asio::buffer(this->_buffer), this->_endpoint, [this](const asio::error_code &err, std::size_t bytesTransfered) {
         if (!err) {
             std::cout << "Received : " << this->_buffer << std::endl;
+            std::cout << "Endpoint info : " << this->_endpoint.port() << std::endl;
             this->push_message(std::string(this->_buffer));
             
             // Call incoming handler again
