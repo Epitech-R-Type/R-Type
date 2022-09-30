@@ -37,4 +37,4 @@ std::optional<T> MessageQueue<T>::pop()
     }
 }
 
-template class MessageQueue<std::string>;
+template class MessageQueue<Message>;

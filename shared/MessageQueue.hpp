@@ -11,6 +11,12 @@
 #include <queue>
 #include <optional>
 
+// This will have to be moved
+struct Message {
+    int client_id;
+    std::string msg;
+};
+
 // Simple thread safe message queue 
 template <class T>
 class MessageQueue {

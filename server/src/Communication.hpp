@@ -16,19 +16,22 @@
 #include <asio.hpp>
 
 #include "../../shared/MessageQueue.hpp"
+#include "ConnectionManager.hpp"
 
 // Function passed to communication thread on creation
-void communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing);
+void communication_main(std::shared_ptr<MessageQueue<Message>> incoming, std::shared_ptr<MessageQueue<Message>> outgoing);
 
 class Communication {
     public:
-        Communication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing);
+        Communication(std::shared_ptr<MessageQueue<Message>> incoming, std::shared_ptr<MessageQueue<Message>> outgoing);
         ~Communication();
 
         void setup_incoming_handler();
         void setup_outgoing_handler();
 
-        void push_message(std::string msg);        
+        void push_message(Message msg);
+
+        ConnectionManager &getConnectionManager();
 
         void run();
 
@@ -39,6 +42,8 @@ class Communication {
         
         char _buffer[1024];
         
-        std::shared_ptr<MessageQueue<std::string>> _incomingMessages;
-        std::shared_ptr<MessageQueue<std::string>> _outgoingMessages;
+        std::shared_ptr<MessageQueue<Message>> _incomingMessages;
+        std::shared_ptr<MessageQueue<Message>> _outgoingMessages;
+
+        ConnectionManager _connections;
 };

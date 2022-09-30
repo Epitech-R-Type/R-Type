@@ -27,8 +27,8 @@ class Server {
         void main_loop();
 
     private:
-        std::shared_ptr<MessageQueue<std::string>> _outgoingMsg;
-        std::shared_ptr<MessageQueue<std::string>> _incomingMsg;
+        std::shared_ptr<MessageQueue<Message>> _outgoingMsg;
+        std::shared_ptr<MessageQueue<Message>> _incomingMsg;
 
         std::thread _comThread;
 };
