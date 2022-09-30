@@ -71,8 +71,9 @@ public:
     template <typename T>
     T& addComponent()
     {
-        T c0 = T();
-        T* c = &c0;
+        // T c0 = T();
+        // T* c = &c0;
+        T* c = new T();
         c->entity = this;
         std::unique_ptr<Component> uPtr { c };
         components.emplace_back(std::move(uPtr));
