@@ -22,5 +22,8 @@ void Server::setup()
 
 void Server::main_loop()
 {
-
+    while (true) {
+        std::cout << "Main thread going to sleep for 5s" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+    }
 }

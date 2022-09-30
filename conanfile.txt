@@ -2,5 +2,6 @@
 asio/1.24.0
 raylib/3.5.0
 boost/1.80.0
+
 [generators]
 cmake
