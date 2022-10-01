@@ -9,11 +9,16 @@
 
 #include <vector>
 #include <asio.hpp>
+#include <optional>
+
+struct ClientAddr {
+    asio::ip::address ip;
+    asio::ip::port_type port;
+};
 
 struct Client {
     int id;
-    asio::ip::address addr;
-    asio::ip::port_type port;
+    ClientAddr addr;
 };
 
 class ConnectionManager {
@@ -22,22 +27,24 @@ class ConnectionManager {
         ~ConnectionManager() = default;
 
         int getClientId(asio::ip::address addr, asio::ip::port_type port) {
-            std::cout << "Incoming connection: " << addr << ":" << port << std::endl;
-            for (auto &client: this->_clients) {
-                std::cout << "Compared connection: " << client.addr << ":" << client.port << std::endl;
-                
-                if (client.addr == addr && client.port == port)
+            for (auto &client: this->_clients)
+                if (client.addr.ip == addr && client.addr.port == port)
                     return client.id;
-            }
-            
+
             Client new_client = {
                 this->_clients.size(),
-                addr,
-                port
+                {addr, port}
             };
             this->_clients.push_back(new_client);
 
             return new_client.id;
+        }
+
+        std::optional<ClientAddr> getClientAddr(int client_id) {
+            for (auto &client: this->_clients)
+                if (client.id == client_id)
+                    return std::optional(client.addr);
+            return {};
         }
 
     private:

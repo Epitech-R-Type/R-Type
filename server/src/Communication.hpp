@@ -12,6 +12,8 @@
 #include <vector>
 #include <functional>
 #include <iostream>
+#include <optional>
+#include <cstring>
 
 #include <asio.hpp>
 
@@ -30,6 +32,7 @@ class Communication {
         void setup_outgoing_handler();
 
         void push_message(Message msg);
+        std::optional<Message> pop_message(void);
 
         ConnectionManager &getConnectionManager();
 
@@ -44,6 +47,8 @@ class Communication {
         
         std::shared_ptr<MessageQueue<Message>> _incomingMessages;
         std::shared_ptr<MessageQueue<Message>> _outgoingMessages;
+
+        asio::steady_timer _t;
 
         ConnectionManager _connections;
 };

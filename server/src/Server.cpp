@@ -28,8 +28,12 @@ void Server::main_loop()
     
     while (true) {
         while ((msg = this->_incomingMsg->pop())) {
-            std::cout << "[Main Thread] Received msg : " << msg->msg << std::endl;
-            std::cout << "[Main Thread] From : " << msg->client_id << std::endl;
+            std::cout << msg->client_id << ": " << msg->msg;
+
+            if (msg->msg == "ping\n") {
+                std::cout << "[Server] -> [" << msg->client_id << "]: pong" << std::endl;
+                this->_outgoingMsg->push({msg->client_id, "pong"});
+            }
         }
         
         std::this_thread::sleep_for(std::chrono::seconds(5));

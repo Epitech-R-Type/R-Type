@@ -20,7 +20,7 @@ void communication_main(std::shared_ptr<MessageQueue<Message>> incoming, std::sh
 }
 
 Communication::Communication(std::shared_ptr<MessageQueue<Message>> incoming, std::shared_ptr<MessageQueue<Message>> outgoing):
-    _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), 3500))
+    _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), 3500)), _t(_ctxt, asio::chrono::milliseconds(10))
 {
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
@@ -38,8 +38,6 @@ void Communication::setup_incoming_handler()
             auto addr = this->_endpoint.address();
             auto port = this->_endpoint.port();
 
-            std::cout << "Message From: " << addr << ":" << port << std::endl;
-
             int conn_id = this->getConnectionManager().getClientId(addr, port);
 
             this->push_message({conn_id, this->_buffer});
@@ -55,12 +53,42 @@ void Communication::setup_incoming_handler()
 
 void Communication::setup_outgoing_handler()
 {
-    
+    this->_t = asio::steady_timer(this->_ctxt, asio::chrono::milliseconds(10));
+
+    this->_t.async_wait([this](const asio::error_code &err) {
+        if (err) {
+            std::cout << "Error is : " << err.message() << std::endl;
+            this->setup_outgoing_handler();
+            return;
+        }
+        std::optional<Message> msg;
+        char buffer[1024];
+
+        if ((msg = this->pop_message())) {
+            auto addr = this->getConnectionManager().getClientAddr(msg->client_id);
+
+            if (!addr) {
+                std::cerr << "Cannot send message, client not in ConnectionsManager" << std::endl;
+                this->setup_outgoing_handler();
+                return;
+            }
+
+            strcpy(buffer, msg->msg.c_str());
+            asio::ip::udp::endpoint target(addr->ip, addr->port);
+            this->_sock.send_to(asio::buffer(buffer), target);
+        }
+        this->setup_outgoing_handler();
+    });
 }
 
 void Communication::push_message(Message msg)
 {
     this->_incomingMessages->push(msg);
+}
+
+std::optional<Message> Communication::pop_message(void)
+{
+    return this->_outgoingMessages->pop();
 }
 
 ConnectionManager &Communication::getConnectionManager()
