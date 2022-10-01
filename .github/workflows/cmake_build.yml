@@ -31,7 +31,7 @@ jobs:
       - name: build
         shell: bash
         run: >
-          chmod u+x setup.sh;
+          chmod u+x build.sh;
           export CONAN_SYSREQUIRES_MODE="enabled";
           export CONAN_SYSREQUIRES_SUDO="1";
           ./build.sh
