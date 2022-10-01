@@ -73,7 +73,11 @@ void Communication::setup_outgoing_handler()
                 return;
             }
 
+            // Prepare buffer
+            int len = msg->msg.length();
             strcpy(buffer, msg->msg.c_str());
+            memset(&buffer[len], 0, 1024 - len);
+
             asio::ip::udp::endpoint target(addr->ip, addr->port);
             this->_sock.send_to(asio::buffer(buffer), target);
         }
