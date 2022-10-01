@@ -34,5 +34,6 @@ jobs:
         env:
           VALIDATE_ALL_CODEBASE: false
           VALIDATE_CPP: true
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SSH_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
           DEFAULT_BRANCH: develop
