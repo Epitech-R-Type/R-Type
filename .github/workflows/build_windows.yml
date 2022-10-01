@@ -29,10 +29,14 @@ jobs:
 
       - name: install-dependencies
         shell: powershell
-        run: conan install .. --build=missing;
+        run: >
+          md build;
+          cd build;
+          conan install .. --build=missing;
 
       - name: build
         shell: powershell
         run: >
-          cmake .. -G "Visual Studio 16";
+          cd build;
+          cmake ..;
           cmake --build . --config Release;
