@@ -25,13 +25,13 @@ jobs:
       - name: update-conan-profile
         shell: bash
         run: >
-                conan config set tools.system.package_manager:mode=install;
+          conan config set tools.system.package_manager:mode=install;
 
       # Build project
       - name: build
         shell: bash
         run: >
-              chmod u+x setup.sh;
-              export CONAN_SYSREQUIRES_MODE="enabled";
-              export CONAN_SYSREQUIRES_SUDO="1";
-              ./setup.sh
+          chmod u+x setup.sh;
+          export CONAN_SYSREQUIRES_MODE="enabled";
+          export CONAN_SYSREQUIRES_SUDO="1";
+          ./build.sh
