@@ -41,10 +41,16 @@ void Communication::setup_incoming_handler()
             int conn_id = this->getConnectionManager().getClientId(addr, port);
 
             this->push_message({conn_id, this->_buffer});
-            
+
+            //Reset buffer
+            memset(this->_buffer, 0, 1024);
+
             // Call incoming handler again
             this->setup_incoming_handler();
         } else {
+            //Reset buffer
+            memset(this->_buffer, 0, 1024);
+            
             std::cerr << "Error performing async_receive_from()" << std::endl;
             this->setup_incoming_handler();
         }
