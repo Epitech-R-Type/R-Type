@@ -13,7 +13,7 @@
 #include <chrono>
 #include <iostream>
 
-#include "../../shared/MessageQueue.hpp"
+#include "../shared/MessageQueue/MessageQueue.hpp"
 #include "Communication.hpp"
 
 // Root class for R-Type Server

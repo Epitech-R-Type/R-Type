@@ -17,7 +17,7 @@
 
 #include <asio.hpp>
 
-#include "../../shared/MessageQueue.hpp"
+#include "../shared/MessageQueue/MessageQueue.hpp"
 #include "ConnectionManager.hpp"
 
 // Function passed to communication thread on creation
