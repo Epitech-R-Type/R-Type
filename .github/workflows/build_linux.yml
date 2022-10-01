@@ -1,4 +1,4 @@
-name: CMake Build Test
+name: Linux Build Test
 
 on: push
 jobs:
