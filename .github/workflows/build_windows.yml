@@ -16,3 +16,23 @@ jobs:
       - name: install-conan
         shell: powershell
         run: pip install conan
+
+      - name: create-conan-profile
+        shell: powershell
+        # Generates default profile detecting GCC and sets old ABI
+        run: conan profile new default --detect;
+
+      - name: update-conan-profile
+        shell: powershell
+        run: >
+          conan config set tools.system.package_manager:mode=install;
+
+      - name: install-dependencies
+        shell: powershell
+        run: conan install .. --build=missing;
+
+      - name: build
+        shell: powershell
+        run: >
+          cmake .. -G "Visual Studio 16";
+          cmake --build . --config Release;
