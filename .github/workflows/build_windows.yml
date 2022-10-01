@@ -1,9 +1,9 @@
-name: CMake Build Test
+name: Windows Build Test
 
 on: push
 jobs:
   cmake-build:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
     steps:
       # Checkout repo
       - uses: actions/checkout@v2
@@ -14,24 +14,29 @@ jobs:
       - uses: lukka/get-cmake@latest
 
       - name: install-conan
-        shell: bash
+        shell: powershell
         run: pip install conan
 
       - name: create-conan-profile
-        shell: bash
+        shell: powershell
         # Generates default profile detecting GCC and sets old ABI
         run: conan profile new default --detect;
 
       - name: update-conan-profile
-        shell: bash
+        shell: powershell
         run: >
           conan config set tools.system.package_manager:mode=install;
 
-      # Build project
-      - name: build
-        shell: bash
+      - name: install-dependencies
+        shell: powershell
         run: >
-          chmod u+x build.sh;
-          export CONAN_SYSREQUIRES_MODE="enabled";
-          export CONAN_SYSREQUIRES_SUDO="1";
-          ./build.sh
+          md build;
+          cd build;
+          conan install .. --build=missing;
+
+      - name: build
+        shell: powershell
+        run: >
+          cd build;
+          cmake ..;
+          cmake --build . --config Release;

@@ -1,0 +1,37 @@
+name: Linux Build Test
+
+on: push
+jobs:
+  cmake-build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repo
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # Setup cmake
+      - uses: lukka/get-cmake@latest
+
+      - name: install-conan
+        shell: bash
+        run: pip install conan
+
+      - name: create-conan-profile
+        shell: bash
+        # Generates default profile detecting GCC and sets old ABI
+        run: conan profile new default --detect;
+
+      - name: update-conan-profile
+        shell: bash
+        run: >
+          conan config set tools.system.package_manager:mode=install;
+
+      # Build project
+      - name: build
+        shell: bash
+        run: >
+          chmod u+x build.sh;
+          export CONAN_SYSREQUIRES_MODE="enabled";
+          export CONAN_SYSREQUIRES_SUDO="1";
+          ./build.sh
