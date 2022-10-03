@@ -3,12 +3,15 @@
         "name": "cz_customize",
         "customize": {
             "message_template": "[{{change_type}}]{% if show_message %} {{message}}{% endif %}",
-            "example": "feature: this feature enable customize through config file",
+            "example": "[Feature]: this feature enable customize through config file",
             "schema": "[<type>] <body>",
-	    "schema_pattern": "\\[(Feature|Fix|Merge|Revert|Doc|Test|Assets|Build)\\](\\s.*)",
+            "schema_pattern": "\\[(Feature|Fix|Merge|Revert|Doc|Test|Assets|Build|Refactor|Style)\\](\\s.*)",
             "info": "This is customized info",
-            "commit_parser": "^\\[(?P<change_type>feature|fix|merge|revert|doc|test|assets|build)\\]\\s(?P<message>.*)?",
-            "change_type_map": {"feature": "Feat", "fix": "Fix"},
+            "commit_parser": "^\\[(?P<change_type>feature|fix|merge|revert|doc|test|assets|build|refactor|style)\\]\\s(?P<message>.*)?",
+            "change_type_map": {
+                "feature": "Feat",
+                "fix": "Fix"
+            },
             "questions": [
                 {
                     "type": "list",
@@ -22,31 +25,38 @@
                             "value": "Fix",
                             "name": "[Fix] A bug fix."
                         },
-			{
-				"value": "Merge",
-				"name": "[Merge] A branch merge."
-			},
-			{
-				"value": "Revert",
-				"name": "[Revert] Reverting change(s)."
-			},
-			{
-				"value": "Doc",
-				"name": "[Doc] A doc modification."
-			},
-			{
-				"value": "Test",
-				"name": "[Test] A test modification."
-			},
-			{
-				"value": "Assets",
-				"name": "[Assets] A modification in the assets."
-			},
-			{
-				"value": "Build",
-				"name": "[Build] A modification in the build logic."
-			}
-			
+                        {
+                            "value": "Merge",
+                            "name": "[Merge] A branch merge."
+                        },
+                        {
+                            "value": "Revert",
+                            "name": "[Revert] Reverting change(s)."
+                        },
+                        {
+                            "value": "Doc",
+                            "name": "[Doc] A doc modification."
+                        },
+                        {
+                            "value": "Test",
+                            "name": "[Test] A test modification."
+                        },
+                        {
+                            "value": "Assets",
+                            "name": "[Assets] A modification in the assets."
+                        },
+                        {
+                            "value": "Build",
+                            "name": "[Build] A modification in the build logic."
+                        },
+                        {
+                            "value": "Refactor",
+                            "name": "[Refactor] A modification in present feature logic."
+                        },
+                        {
+                            "value": "Style",
+                            "name": "[Style] A modification in code style without logic changes."
+                        }
                     ],
                     "message": "Select the type of change you are committing"
                 },

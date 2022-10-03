@@ -1,2 +1,5 @@
 cmake-build-debug
 .idea
+build
+*.code-workspace
+vgcore.*
