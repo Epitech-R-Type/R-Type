@@ -7,81 +7,65 @@
 
 #pragma once
 
-#include <bitset>
+#include "Component.hpp"
 #include <array>
+#include <bitset>
+#include <iostream>
+#include <map>
 #include <memory>
+#include <regex>
+#include <string>
 #include <vector>
-
-class Entity;
-
-class Component {
-public:
-    virtual void init() {}
-    virtual void update() {}
-    virtual void draw() {}
-
-    virtual ~Component() {}
-
-    Entity *_entity;
-};
 
 constexpr int maxBitsetSize = 16;
 
-using ComponentID = std::size_t;
 using Bitset = std::bitset<maxBitsetSize>;
-using ComponentArray = std::array<Component *, maxBitsetSize>;
+using ComponentArray = std::array<Component*, maxBitsetSize>;
 
-inline ComponentID getComponentID()
-{
-    static ComponentID lastID = 0;
-    return lastID++;
-}
+namespace ECSError {
+class InvalidComponent : std::exception {
+    std::string _component;
 
-template <typename T>
-inline ComponentID getComponentID() noexcept
-{
-    static ComponentID ID = getComponentID();
-    return ID;
+  public:
+    InvalidComponent(std::string component) {
+        this->_component = component;
+    }
+
+    const char* what() const noexcept {
+        std::string message = "\"" + this->_component + "\" is not a valid component.";
+
+        return message.c_str();
+    }
 };
 
+} // namespace ECSError
+
 class Entity {
-private:
+  private:
     bool _active = true;
-
     std::vector<std::unique_ptr<Component>> _components;
-
     Bitset _componentBitset;
     ComponentArray _componentArray;
 
-public:
-    void draw()
-    {
-        for (auto &c : this->_components)
-        {
+  public:
+    void draw() {
+        for (auto& c : this->_components) {
             c->draw();
         }
     }
 
-    void update()
-    {
-        for (auto &c : this->_components)
-        {
+    void update() {
+        for (auto& c : this->_components) {
             c->update();
         }
     }
 
-    template <typename T>
-    bool hasComponent()
-    {
+    template <typename T> bool hasComponent() {
         return this->_componentBitset[getComponentID<T>()];
     }
 
-    template <typename T>
-    T &addComponent()
-    {
-        // T c0 = T();
-        // T* c = &c0;
-        T *c = new T();
+    template <typename T> T& addComponent() {
+        T* c = new T();
         c->_entity = this;
         std::unique_ptr<Component> uPtr{c};
         this->_components.emplace_back(std::move(uPtr));
@@ -91,20 +75,31 @@ public:
         return *c;
     }
 
-    template <typename T>
-    T &getComponent() const
-    {
+    template <typename T> T& getComponent() const {
         auto ptr(this->_componentArray[getComponentID<T>()]);
-        return *static_cast<T *>(ptr);
+        return *static_cast<T*>(ptr);
     }
 
-    void destroy()
-    {
+    void destroy() {
         this->_active = false;
     }
 
-    bool isActive() const
-    {
+    bool isActive() const {
         return this->_active;
+    }
+
+    template <typename T, typename... Args> void updateComponent(Args... args) {
+        if (!this->hasComponent<T>())
+            this->addComponent<T>();
+
+        this->getComponent<T>().update(args...);
+    }
+
+    std::string serialize() const;
+
+    void deserialize(std::string entity_string);
+
+    friend std::ostream& operator<<(std::ostream& out, Entity const& entity) {
+        return out << entity.serialize();
     }
 };

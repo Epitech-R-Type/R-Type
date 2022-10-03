@@ -17,7 +17,7 @@ struct ClientAddr {
 };
 
 struct Client {
-    int id;
+    std::size_t id;
     ClientAddr addr;
 };
 

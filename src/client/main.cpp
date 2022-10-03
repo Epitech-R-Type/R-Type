@@ -1,12 +1,11 @@
-#include <iostream>
 #include "../shared/ECS/ECS.hpp"
+#include <iostream>
 
-int main()
-{
+int main() {
     std::cout << "Client: Hello, World!" << std::endl;
 
     Manager manager;
-    auto &newPlayer(manager.addEntity());
+    auto& newPlayer(manager.addEntity());
 
     newPlayer.addComponent<Position>();
 
@@ -16,7 +15,7 @@ int main()
     newPlayer.destroy();
     std::cout << newPlayer.isActive() << std::endl;
 
-    auto &zorg(manager.addEntity());
+    auto& zorg(manager.addEntity());
 
     newPlayer.addComponent<Health>();
 
@@ -40,5 +39,8 @@ int main()
 
     std::cout << newPlayer.getComponent<Health>().getHealth() << zorg.getComponent<Health>().getHealth() << std::endl;
 
+    newPlayer.deserialize("Entity(Health(2),Armor(2),Position(1,2))");
+
+    std::cout << newPlayer << std::endl;
     return 0;
 }

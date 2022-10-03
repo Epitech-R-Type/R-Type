@@ -20,5 +20,6 @@
 #include "Components/Position.hpp"
 
 // ECS Classes
+#include "Component.hpp"
 #include "Entity.hpp"
 #include "Manager.hpp"
