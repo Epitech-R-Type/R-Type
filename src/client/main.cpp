@@ -1,6 +1,5 @@
 #include <iostream>
-// #include "../shared/ECS/ECS.hpp"
-#include "../shared/ECS/Components.hpp"
+#include "../shared/ECS/ECS.hpp"
 
 int main()
 {
