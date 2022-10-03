@@ -7,46 +7,57 @@
 
 #pragma once
 
-#include "Component.hpp"
-#include <array>
 #include <bitset>
+#include <array>
 #include <memory>
-#include <string>
 #include <vector>
+
+class Entity;
+
+class Component {
+public:
+    virtual void init() {}
+    virtual void update() {}
+    virtual void draw() {}
+
+    virtual ~Component() {}
+
+    Entity *_entity;
+};
 
 constexpr int maxBitsetSize = 16;
 
+using ComponentID = std::size_t;
 using Bitset = std::bitset<maxBitsetSize>;
-using ComponentArray = std::array<Component*, maxBitsetSize>;
+using ComponentArray = std::array<Component *, maxBitsetSize>;
 
-namespace ECSError {
-class InvalidComponent : std::exception {
-    std::string _component;
+inline ComponentID getComponentID()
+{
+    static ComponentID lastID = 0;
+    return lastID++;
+}
 
-  public:
-    InvalidComponent(std::string component) {
-        this->_component = component;
-    }
-
-    const char* what() const noexcept {
-        std::string message = "\"" + this->_component + "\" is not a valid component.";
-
-        return message.c_str();
-    }
+template <typename T>
+inline ComponentID getComponentID() noexcept
+{
+    static ComponentID ID = getComponentID();
+    return ID;
 };
 
-} // namespace ECSError
-
 class Entity {
-  private:
+private:
     bool _active = true;
+
     std::vector<std::unique_ptr<Component>> _components;
+
     Bitset _componentBitset;
     ComponentArray _componentArray;
 
-  public:
-    void draw() {
-        for (auto& c : this->_components) {
+public:
+    void draw()
+    {
+        for (auto &c : this->_components)
+        {
             c->draw();
         }
     }

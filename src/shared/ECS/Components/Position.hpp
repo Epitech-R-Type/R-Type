@@ -7,7 +7,6 @@
 
 #pragma once
 
-#include "../Component.hpp"
 #include "../Entity.hpp"
 
 // Postion component
