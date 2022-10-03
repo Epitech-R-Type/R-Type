@@ -40,4 +40,9 @@ class CollisionEffect : public Component {
     std::string serialize() const {
         return "CollisionEffect(" + std::to_string(this->_damage) + "," + std::to_string(this->_healing) + ")";
     }
+
+    void update(int damage, int healing) {
+        this->_damage = damage;
+        this->_healing = healing;
+    }
 };

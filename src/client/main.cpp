@@ -39,8 +39,13 @@ int main() {
 
     std::cout << newPlayer.getComponent<Health>().getHealth() << zorg.getComponent<Health>().getHealth() << std::endl;
 
-    newPlayer.deserialize("Entity(Health(2),Armor(2),Position(1,2))");
+    newPlayer.deserialize("(Health(2),Armor(2),Position(1,2))");
 
     std::cout << newPlayer << std::endl;
+
+    newPlayer.deserialize("(Health(40),Armor(4),Position(5,-2))");
+
+    std::cout << newPlayer << std::endl;
+
     return 0;
 }
