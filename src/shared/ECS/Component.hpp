@@ -7,10 +7,17 @@
 
 #pragma once
 
+#include "Component.hpp"
+
 #include <array>
+#include <bitset>
+#include <iostream>
 #include <map>
+#include <memory>
+#include <regex>
 #include <string>
 #include <vector>
+#include <cstddef>
 
 class Entity;
 
@@ -32,7 +39,7 @@ class Component {
     virtual void update() {}
     virtual void draw() {}
 
-    virtual std::string serialize() const = 0;
+    virtual std::string serialize() const {}
 
     virtual ~Component() = default;
 
