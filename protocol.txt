@@ -128,10 +128,10 @@ Table of Contents
 
             NEW_ENT ->
                 (entity id, id, component id (component args), ...)
-            DEL_ENT -> (id)
-            ADD_COMP -> (id, comp id, comp args (args))
+            DEL_ENT -> (entity id)
+            ADD_COMP -> (entity id, comp id, comp args (args))
             DEL_COMP -> (entity id, comp id)
-            UPDATE_COMP -> (entity if, comp id, comp args (args))
+            UPDATE_COMP -> (entity id, comp id, comp args (args))
 
     3.3. Client Commands
 
@@ -182,4 +182,4 @@ Table of Contents
                 GET_ENT     ->      (entity id)
                 GET_COMP    ->      (entity id, component id)
                 ACT_SHOOT   ->      No arguments
-                ACT_MOVE    ->      No arguments
+                ACT_MOVE    ->      (direction)
