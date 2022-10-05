@@ -5,6 +5,7 @@
 #include "Components/Health.hpp"
 #include "Components/Position.hpp"
 #include <regex>
+#include <sstream>
 
 std::string Entity::serialize() const {
     std::string str("");
