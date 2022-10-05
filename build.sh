@@ -9,7 +9,15 @@ fi
 cd build;
 
 conan install .. --build=missing;
-cmake .. -G "Unix Makefiles";
+
+if [[ "$OSTYPE" == "linux-gnu"* ]]; then
+    cmake .. -G "Unix Makefiles";
+elif [[ "$OSTYPE" == "msys"* ]]; then
+    cmake .. -G "Visual Studio 17";
+else
+    echo "Unable to detect OS";
+    exit 84
+fi
 cmake --build .;
 
 cd ..;
