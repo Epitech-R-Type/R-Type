@@ -7,14 +7,8 @@
 
 #pragma once
 
-#include "Component.hpp"
-
 #include <array>
-#include <bitset>
-#include <iostream>
 #include <map>
-#include <memory>
-#include <regex>
 #include <string>
 #include <vector>
 

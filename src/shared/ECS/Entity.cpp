@@ -4,6 +4,7 @@
 #include "Components/CollisionEffect.hpp"
 #include "Components/Health.hpp"
 #include "Components/Position.hpp"
+#include <regex>
 
 std::string Entity::serialize() const {
     std::string str("");
