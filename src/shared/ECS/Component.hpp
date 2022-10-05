@@ -38,7 +38,7 @@ class Component {
     virtual void update() {}
     virtual void draw() {}
 
-    virtual std::string serialize() const {}
+    virtual std::string serialize() const = 0;
 
     virtual ~Component() = default;
 
