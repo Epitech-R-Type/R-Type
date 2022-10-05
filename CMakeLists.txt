@@ -12,12 +12,19 @@ conan_basic_setup()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
-add_executable(Server "${CMAKE_CURRENT_SOURCE_DIR}/src/server/main.cpp"
+add_executable(Server
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Communication.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp" 
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Component.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Entity.cpp")
 
-add_executable(Client "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp" "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECS.hpp")
+add_executable(Client
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECS.hpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Entity.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Component.hpp")
 
 target_link_libraries(Server ${CONAN_LIBS})
 
