@@ -22,15 +22,18 @@ tools.system.package_manager:mode=install
 
 # How to Build
 
-## For Linux and Windows (If you have Git Bash installed.)
+## Automatic build for Linux and Windows
 
-Make file executable if needed.
+For this to work on Windows you need to have access to a Unix shell, such as Git Bash or WSL.
+
+Make `build.sh` executable if needed, then execute it.
 
 ```
-$ ./setup.sh
+$ ./build.sh
 ```
 
-## For Linux
+## Manual Build
+### For Linux
 
 Delete the build folder if present:
 
@@ -48,7 +51,7 @@ $ cmake .. -G "Unix Makefiles"
 $ cmake --build . --config Release
 ```
 
-## For Windows
+### For Windows
 
 Delete the build folder if present:
 
