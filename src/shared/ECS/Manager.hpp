@@ -29,6 +29,23 @@ class Manager {
         // Delete entity
         void deleteEntity(Id id);
 
+        // Get component for given entity
+        template<class T>
+        T *getComponent(Id id) {
+            Index i = getIndex(id);
+            Index compId = getID<T>();
+
+            // Make sure entity is valid
+            if (0 > getIndex(this->_entities[i].id))
+                return nullptr;
+            
+            // If entity doesn't have component return null
+            if (!this->_entities[i].components[compId])
+                return nullptr;
+
+            return this->_compPools[compId]->getComp(i);
+        }
+
         // Add comp
         template<class T>
         T *addComp(Id id, T comp) {

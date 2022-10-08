@@ -21,10 +21,7 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp")
 
 add_executable(Client
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECS.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Entity.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Component.hpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp")
 
 target_link_libraries(Server ${CONAN_LIBS})
 
