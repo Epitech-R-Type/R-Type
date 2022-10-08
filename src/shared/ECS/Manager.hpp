@@ -113,37 +113,39 @@ class Manager {
                     return this->_man->_entities[_currIndex].id;
                 };
 
-                bool operator==(const &Iterator other) const {
+                bool operator==(const Iterator<Comps...> &other) const {
                     return this->_currIndex == other._currIndex;
                 };
 
-                bool operator!=(const &Iterator other) const {
+                bool operator!=(const Iterator<Comps...> &other) const {
                     return this->_currIndex != other._currIndex;
                 };
 
-                Iterator<Comps>& operator++() {
-                    std::bitset wantedComps = ~this->_man._excludedInView & this->_wanted;
+                Iterator<Comps...>& operator++() {
+                    std::bitset wantedComps = ~this->_man->_excludedInView & this->_wanted;
 
                     do {
                         this->_currIndex++;
                     } while (this->_currIndex < this->_man->_entities.size()
                         && (this->_all ||
-                            (wantedComps & this->_man.entities[this->_currIndex].components == wantedComps)))
+                            ((wantedComps & this->_man->_entities[this->_currIndex].components) == wantedComps)));
                 };
                         
                 private:
                     Index _currIndex;
                     Manager *_man;
-                    std::bitset _wanted;
+                    std::bitset<MAX_COMPONENTS> _wanted;
                     bool _all;
         };
 
-        const Iterator begin() const
+        template <class ...Comp>
+        const Iterator<Comp...> begin() const
         {
             return Iterator(0, this);
         }
 
-        const Iterator end() const
+        template <class ...Comp>
+        const Iterator<Comp...> end() const
         {
             return Iterator(this->_entities.size(), this);
         }
