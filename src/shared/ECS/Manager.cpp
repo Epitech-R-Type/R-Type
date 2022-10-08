@@ -42,7 +42,7 @@ void Manager::deleteEntity(Id id)
     Index i = getIndex(id);
 
     // Check entity is valid
-    if (0 > i)
+    if (0 > getIndex(this->_entities[i].id))
         return;
 
     // Create Id with invalid index

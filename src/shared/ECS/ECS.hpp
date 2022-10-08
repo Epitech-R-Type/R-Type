@@ -16,15 +16,15 @@
 // TYPE DEFINITIONS
 
 // Type used to represent entity ID
-// Using "unsigned long long" as it sits in 8B of memory
+// Using "long long" as it sits in 8B of memory
 // Allowing us to use 4B for the entity index
 // and 4B for the entity version
-typedef unsigned long long Id;
+typedef long long Id;
 
 // Readability typedefs
 // Each of these sit in 4B of memory
-typedef unsigned long Index;
-typedef unsigned long Version;
+typedef long Index;
+typedef long Version;
 
 // GLOBALS
 extern Index g_idCounter; // Used by getID function

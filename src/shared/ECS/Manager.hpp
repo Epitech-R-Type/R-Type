@@ -10,6 +10,7 @@
 #include <vector>
 #include <bitset>
 #include <memory>
+#include <iostream>
 
 #include "ECS.hpp"
 #include "CompPool.hpp"
@@ -33,7 +34,7 @@ class Manager {
       Index i = getIndex(id);
 
       // Make sure entity is valid
-      if (0 > i)
+      if (0 > getIndex(this->_entities[i].id))
         return nullptr;
 
       // Get unique id for component type
@@ -46,20 +47,20 @@ class Manager {
       if (this->_compPools.size() <= compId) {
         // Create new pool
         this->_compPools.resize(compId + 1);
-        this->_compPools[compId] = std::make_unique<CompPool>();
+        this->_compPools[compId] = std::make_unique<CompPool>(sizeof(T));
       }
 
       // If unique_ptr is not initialized
       if (!this->_compPools[compId])
-        this->_compPools[compId] = std::make_unique<T>();
+        this->_compPools[compId] = std::make_unique<CompPool>(sizeof(T));
 
       // Get our entities component memory
-      void *component = this->_compPools[compId]->getComp(i);
+      T *component = (T*)this->_compPools[compId]->getComp(i);
 
       // Assign comp memory
       *component = comp;
 
-      return component;
+      return (T*)component;
     }
 
     // Remove comp
@@ -69,7 +70,7 @@ class Manager {
       Index i = getIndex(id);
 
       // Check against invalid entity
-      if (0 > i)
+      if (0 > getIndex(this->_entities[i].id))
         return;
 
       // Reset corresponding bit in component bitset
