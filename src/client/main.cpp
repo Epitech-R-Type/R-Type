@@ -10,7 +10,7 @@ class GameManager {
     GameManager() = default;
     ~GameManager() = default;
 
-    Texture2D loadSprite(const std::string path, const unsigned int xpos, const unsigned int ypos, const unsigned int xlen, const unsigned int ylen) {
+    Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
 
         const cmrc::file image = this->_fs.open(path);
 
@@ -18,7 +18,9 @@ class GameManager {
 
         Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());
 
-        ImageCrop(&sprite, (Rectangle){xpos, ypos, xlen, ylen});
+        const Rectangle crop{xpos, ypos, xlen, ylen};
+
+        ImageCrop(&sprite, crop);
 
         Texture2D texture = LoadTextureFromImage(sprite);
 
