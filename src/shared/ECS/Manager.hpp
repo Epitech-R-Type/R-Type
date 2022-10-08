@@ -110,7 +110,7 @@ class Manager {
     template <class... Comps> class Iterator {
       public:
         Iterator(Index start, Manager* man) : _currIndex(start), _man(man) {
-            int includedIds[] = {getID<Comps...>()};
+            Index includedIds[] = {getID<Comps...>()};
 
             // Check if no args passed, get entities with all comps
             if (!sizeof(includedIds)) {
@@ -135,13 +135,16 @@ class Manager {
             return this->_currIndex != other._currIndex;
         };
 
-        Iterator<Comps...>& operator++() {
+        bool isValid(Index i) {            
             std::bitset wantedComps = ~this->_man->_excludedInView & this->_wanted;
+            std::bitset concombre = (wantedComps & this->_man->_entities[this->_currIndex].components);
 
-            do {
-                this->_currIndex++;
-            } while (this->_currIndex < this->_man->_entities.size() &&
-                     (this->_all || ((wantedComps & this->_man->_entities[this->_currIndex].components) == wantedComps)));
+            return this->_all || concombre == wantedComps;
+        }
+
+        Iterator<Comps...>& operator++() {
+            do {} while (this->_currIndex < this->_man->_entities.size() && !this->isValid(++this->_currIndex));
+            return *this;
         };
 
       private:

@@ -29,16 +29,31 @@ int main() {
     testComp* comp = em.addComp<testComp>(ent1, {5});
     testComp2* comp2 = em.addComp<testComp2>(ent2, {6});
 
-    // if (!comp)
-    //     std::cout << "comp is null" << std::endl;
+    if (!comp2)
+        std::cout << "comp is null" << std::endl;
 
     // std::cout << "comp2: " << comp2->test << std::endl;
 
+    std::cout << "Get TestComp1" << std::endl;
+
+    for (auto beg = em.begin<testComp>(); beg != em.end<testComp>(); ++beg) {
+        
+        if (em.getComponent<testComp>(*beg) == nullptr) {
+            continue;
+        }
+        
+
+        std::cout<< "zguegue" << em.getComponent<testComp>(*beg)->test << getIndex(*beg) << std::endl;
+    }
+
+    std::cout << "Get TestComp2" << std::endl;
+
     for (auto beg = em.begin<testComp2>(); beg != em.end<testComp2>(); ++beg) {
+        
         if (em.getComponent<testComp2>(*beg) == nullptr) {
             continue;
         }
-
-        std::cout << em.getComponent<testComp2>(*beg)->test << std::endl;
+        
+        std::cout<< "zguegue" << em.getComponent<testComp2>(*beg)->test << getIndex(*beg) << std::endl;
     }
 }
