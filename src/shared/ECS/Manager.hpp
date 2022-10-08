@@ -34,7 +34,7 @@ class Manager {
 
       // Make sure entity is valid
       if (0 > i)
-        return nullptr
+        return nullptr;
 
       // Get unique id for component type
       Index compId = getID<T>();

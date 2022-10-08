@@ -13,9 +13,6 @@
 
 #define INVALID_INDEX -1
 
-// GLOBALS
-extern Index g_idCounter; // Used by getID function
-
 // TYPE DEFINITIONS
 
 // Type used to represent entity ID
@@ -28,6 +25,11 @@ typedef unsigned long long Id;
 // Each of these sit in 4B of memory
 typedef unsigned long Index;
 typedef unsigned long Version;
+
+// GLOBALS
+extern Index g_idCounter; // Used by getID function
+
+// FUNCTIONS
 
 // This function returns a unique ID for each type specified in template
 // parameter
