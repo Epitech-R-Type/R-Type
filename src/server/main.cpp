@@ -1,9 +1,9 @@
-#include <iostream>
 #include <asio.hpp>
+#include <iostream>
 
-#include "Server.hpp"
 #include "../shared/ECS/ECS.hpp"
 #include "../shared/ECS/Manager.hpp"
+#include "Server.hpp"
 
 Index g_idCounter = 0;
 
@@ -17,7 +17,7 @@ struct testComp2 {
 
 int main() {
     std::cout << "Server: Hello, World!" << std::endl;
-    
+
     std::cout << "Here" << std::endl;
     Manager em;
 
@@ -26,18 +26,19 @@ int main() {
 
     // em.deleteEntity(ent1);
 
-    testComp *comp = em.addComp<testComp>(ent1, {5});
-    testComp2 *comp2 = em.addComp<testComp2>(ent2, {6});
-
+    testComp* comp = em.addComp<testComp>(ent1, {5});
+    testComp2* comp2 = em.addComp<testComp2>(ent2, {6});
 
     // if (!comp)
     //     std::cout << "comp is null" << std::endl;
 
     // std::cout << "comp2: " << comp2->test << std::endl;
 
-    for (Id en : em.begin<testComp2>()) {
-        std::cout << em.getComponent<testComp2>(en).test << std::endl;
-    }
+    for (auto beg = em.begin<testComp2>(); beg != em.end<testComp2>(); ++beg) {
+        if (em.getComponent<testComp2>(*beg) == nullptr) {
+            continue;
+        }
 
-    return 0;
+        std::cout << em.getComponent<testComp2>(*beg)->test << std::endl;
+    }
 }
