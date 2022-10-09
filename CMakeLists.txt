@@ -23,9 +23,7 @@ add_executable(Server
 
 add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECS.hpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Entity.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Component.hpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECS.hpp")
 
 file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMakeRC.cmake"
 "${CMAKE_BINARY_DIR}/CMakeRC.cmake")
