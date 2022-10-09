@@ -7,25 +7,20 @@
 
 #include "Server.hpp"
 
-Server::Server()
-{
+Server::Server() {
     this->_incomingMsg = std::make_shared<MessageQueue<Message>>();
     this->_outgoingMsg = std::make_shared<MessageQueue<Message>>();
 }
 
-Server::~Server()
-{
-}
+Server::~Server() {}
 
-void Server::setup()
-{
+void Server::setup() {
     this->_comThread = std::thread(communication_main, this->_incomingMsg, this->_outgoingMsg);
 }
 
-void Server::main_loop()
-{
+void Server::main_loop() {
     std::optional<Message> msg;
-    
+
     while (true) {
         while ((msg = this->_incomingMsg->pop())) {
             std::cout << msg->client_id << ": " << msg->msg;
@@ -35,7 +30,7 @@ void Server::main_loop()
                 this->_outgoingMsg->push({msg->client_id, "pong"});
             }
         }
-        
+
         std::this_thread::sleep_for(std::chrono::seconds(5));
     }
 }

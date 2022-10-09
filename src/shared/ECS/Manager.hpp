@@ -22,7 +22,7 @@ struct Entity {
 };
 
 class Manager {
-  public:
+public:
     // Create entity
     Id newEntity();
 
@@ -108,7 +108,7 @@ class Manager {
 
     // ITERATOR IMPLEMENTATION
     template <class... Comps> class Iterator {
-      public:
+    public:
         Iterator(Index start, Manager* man) : _currIndex(start), _man(man) {
             Index includedIds[] = {getID<Comps...>()};
 
@@ -135,19 +135,20 @@ class Manager {
             return this->_currIndex != other._currIndex;
         };
 
-        bool isValid(Index i) {            
-            std::bitset wantedComps = ~this->_man->_excludedInView & this->_wanted;
-            std::bitset concombre = (wantedComps & this->_man->_entities[this->_currIndex].components);
+        bool isValid(Index i) {
+            std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
+            std::bitset<MAX_COMPONENTS> concombre = (wantedComps & this->_man->_entities[this->_currIndex].components);
 
             return this->_all || concombre == wantedComps;
         }
 
         Iterator<Comps...>& operator++() {
-            do {} while (this->_currIndex < this->_man->_entities.size() && !this->isValid(++this->_currIndex));
+            do {
+            } while (this->_currIndex < this->_man->_entities.size() && !this->isValid(++this->_currIndex));
             return *this;
         };
 
-      private:
+    private:
         Index _currIndex;
         Manager* _man;
         std::bitset<MAX_COMPONENTS> _wanted;
@@ -162,7 +163,7 @@ class Manager {
         return Iterator<Comp...>(this->_entities.size(), this);
     }
 
-  private:
+private:
     std::vector<Entity> _entities;
     std::vector<Index> _unusedEntities;
     std::vector<std::unique_ptr<CompPool>> _compPools;
