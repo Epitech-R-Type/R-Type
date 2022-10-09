@@ -1,27 +1,32 @@
-## <p id="commitizen-header"> [Commitizen](https://commitizen-tools.github.io/commitizen/)
-
+# <p id="commitizen-header"> [Commitizen](https://commitizen-tools.github.io/commitizen/)
 
 ### Installation:
 
-Recommended:
+Install commitizen globally and pre-commit into your current repositories `.git` folder:
 
-```pip install -U commitizen```
+```
+$ pip install -U commitizen
 
-```pip install pre-commit```
+$ pip install pre-commit
+```
 
-```pre-commit install --hook-type commit-msg --hook-type pre-push```
+Now install the hook for commit message checking:
 
-```pre-commit autoupdate```
+```
+$ pre-commit install --hook-type commit-msg
+
+$ pre-commit autoupdate
+```
 
 ### Usage:
 
-```cz commit```
+`$ cz commit`
 
-or without the Commitizen UI: 
+or without the Commitizen UI:
 
-```git commit```
+`$ git commit`
 
-## Branching
+# Branching & Merge Requests
 
 Consistent branches are **main** and **develop**. Feature branches will be created from **develop**. \
 Once a feature is implemented and doesn't break the program a merge request is to be opened to **develop**.\
@@ -30,7 +35,11 @@ Once a feature is implemented and doesn't break the program a merge request is t
 If you want to update your **feature branch** to the newest version of **develop**, create a copy of **develop** and merge your \
 **feature branch** into it. The **develop** copy turns into the new **feature branch**. This is to keep the git log cleaner.
 
-## Commit Syntax
+# Coding Style
+
+We use clang-format to lint our code, please follow the configuration set by `.clang-format`. Please fix the issues pointed out by the automatic comments added to changed files during a MR/PR.
+
+# Commit Syntax
 
 The commit syntax has to respect the norm set by the [Commitizen config file](.cz.json).\
 Following the [Commitizen installation](#commitizen-header) is enough to enforce this rule.
