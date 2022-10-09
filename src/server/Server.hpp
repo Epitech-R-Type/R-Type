@@ -7,28 +7,28 @@
 
 #pragma once
 
-#include <string>
-#include <thread>
-#include <memory>
 #include <chrono>
 #include <iostream>
+#include <memory>
+#include <string>
+#include <thread>
 
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "Communication.hpp"
 
 // Root class for R-Type Server
 class Server {
-    public:
-        Server();
-        ~Server();
+public:
+    Server();
+    ~Server();
 
-        void setup();
-        void run();
-        void main_loop();
+    void setup();
+    void run();
+    void main_loop();
 
-    private:
-        std::shared_ptr<MessageQueue<Message>> _outgoingMsg;
-        std::shared_ptr<MessageQueue<Message>> _incomingMsg;
+private:
+    std::shared_ptr<MessageQueue<Message>> _outgoingMsg;
+    std::shared_ptr<MessageQueue<Message>> _incomingMsg;
 
-        std::thread _comThread;
+    std::thread _comThread;
 };

@@ -34,9 +34,8 @@ extern Index g_idCounter; // Used by getID function
 // This function returns a unique ID for each type specified in template
 // parameter
 // NOTE: Do not forget to initialize global in main
-template <typename T>
-Index getID() {
-    static Index outputID = g_idCounter++; 
+template <typename T> Index getID() {
+    static Index outputID = g_idCounter++;
     return outputID;
 }
 
@@ -52,9 +51,9 @@ inline Version getVersion(Id id) {
 
 // Create Id from Index and Version
 inline Id createId(Index i, Version v) {
-    Id new_id = i;          // Put index in new_id
-    new_id = new_id << 32;  // Shift index to top bytes
-    new_id = new_id | v;    // Add version to bottom bytes
+    Id new_id = i;         // Put index in new_id
+    new_id = new_id << 32; // Shift index to top bytes
+    new_id = new_id | v;   // Add version to bottom bytes
 
     return new_id;
 }

@@ -9,64 +9,63 @@ CMRC_DECLARE(client);
 
 #include <iostream>
 
-
 class GameManager {
-    public:
-        Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
+public:
+    Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
 
-            const cmrc::file image = this->_fs.open(path);
+        const cmrc::file image = this->_fs.open(path);
 
-            const unsigned char* imageBuffer = (unsigned char*)(image.begin());
-            
-            Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());
+        const unsigned char* imageBuffer = (unsigned char*)(image.begin());
 
-            const Rectangle crop{xpos, ypos, xlen, ylen};
+        Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());
 
-            ImageCrop(&sprite, crop);
+        const Rectangle crop{xpos, ypos, xlen, ylen};
 
-            Texture2D texture = LoadTextureFromImage(sprite);
+        ImageCrop(&sprite, crop);
 
-            UnloadImage(sprite);
+        Texture2D texture = LoadTextureFromImage(sprite);
 
-            return texture;
+        UnloadImage(sprite);
+
+        return texture;
+    }
+
+    void gameLoop() {}
+
+    void menu() {
+        // const uuids::uuid id = uuids::uuid_random_generator{}();
+        auto id = uuids::uuid::from_string("d");
+    }
+
+    uuids::uuid regexToUUID(const std::string value, std::string regex, std::regex_constants::syntax_option_type constants) {
+
+        const std::regex reg(regex, constants);
+        std::smatch match;
+
+        std::regex_search(value.begin(), value.end(), match, reg);
+
+        std::optional<uuids::uuid> maybeClientUUID = uuids::uuid::from_string(match.str());
+
+        return maybeClientUUID.value();
+    }
+
+    void conect() {
+
+        const std::string response =
+            "CONNECTED serverUUID:251629ad-9075-4a46-8832-83cd415f1147 clientUUID:9f4792ff-6e8f-407c-b1fd-57ab2fd68053 owner:1";
+
+        if (response[response.length() - 1] == '1') {
+            this->_isOwner = true;
         }
+        this->clientUUID = regexToUUID(response, "/(?<=clientUUID:)(.+)(?=\\s)/", std::regex_constants::egrep);
+        this->serverUUID = regexToUUID(response, "/(?<=serverUUID:)(.+)(?=\\s)/", std::regex_constants::egrep);
+    }
 
-        void gameLoop() {}
-
-        void menu() {
-            // const uuids::uuid id = uuids::uuid_random_generator{}();
-            auto id = uuids::uuid::from_string("d");
-        }
-
-        uuids::uuid regexToUUID(const std::string value, std::string regex, std::regex_constants::syntax_option_type constants) {
-
-            const std::regex reg(regex, constants);
-            std::smatch match;
-
-            std::regex_search(value.begin(), value.end(), match, reg);
-
-            std::optional<uuids::uuid> maybeClientUUID = uuids::uuid::from_string(match.str());
-
-            return maybeClientUUID.value();
-        }
-
-        void conect() {
-
-            const std::string response =
-                "CONNECTED serverUUID:251629ad-9075-4a46-8832-83cd415f1147 clientUUID:9f4792ff-6e8f-407c-b1fd-57ab2fd68053 owner:1";
-
-            if (response[response.length() - 1] == '1') {
-                this->_isOwner = true;
-            }
-            this->clientUUID = regexToUUID(response, "/(?<=clientUUID:)(.+)(?=\\s)/", std::regex_constants::egrep);
-            this->serverUUID = regexToUUID(response, "/(?<=serverUUID:)(.+)(?=\\s)/", std::regex_constants::egrep);
-        }
-
-    private:
-        bool _isOwner = false;
-        uuids::uuid clientUUID;
-        uuids::uuid serverUUID;
-        cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
+private:
+    bool _isOwner = false;
+    uuids::uuid clientUUID;
+    uuids::uuid serverUUID;
+    cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
 };
 
 int main() {

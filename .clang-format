@@ -5,4 +5,4 @@ DerivePointerAlignment: false
 PointerAlignment: Left
 ColumnLimit: 150
 AllowShortFunctionsOnASingleLine: Empty
-AccessModifierOffset=0
+AccessModifierOffset: -4

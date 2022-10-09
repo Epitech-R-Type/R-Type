@@ -7,26 +7,16 @@
 
 #include "MessageQueue.hpp"
 
-template<class T>
-MessageQueue<T>::MessageQueue()
-{
-}
+template <class T> MessageQueue<T>::MessageQueue() {}
 
-template<class T>
-MessageQueue<T>::~MessageQueue()
-{
-}
+template <class T> MessageQueue<T>::~MessageQueue() {}
 
-template<class T>
-void MessageQueue<T>::push(T el)
-{
+template <class T> void MessageQueue<T>::push(T el) {
     std::lock_guard<std::mutex> lock(this->_mtx);
     this->_queue.push(el);
 }
 
-template<class T>
-std::optional<T> MessageQueue<T>::pop() 
-{
+template <class T> std::optional<T> MessageQueue<T>::pop() {
     std::lock_guard<std::mutex> lock(this->_mtx);
     if (!this->_queue.size())
         return {};

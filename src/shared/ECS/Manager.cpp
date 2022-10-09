@@ -28,7 +28,7 @@ Id Manager::newEntity() {
         Version v = 0;
         Id id = createId(i, v);
 
-        Entity ent = Entity {id, 0};
+        Entity ent = Entity{id, 0};
 
         // Push to entities
         this->_entities.push_back(ent);
@@ -37,8 +37,7 @@ Id Manager::newEntity() {
     }
 }
 
-void Manager::deleteEntity(Id id)
-{
+void Manager::deleteEntity(Id id) {
     Index i = getIndex(id);
 
     // Check entity is valid
@@ -47,7 +46,7 @@ void Manager::deleteEntity(Id id)
 
     // Create Id with invalid index
     Id deletedEntity = createId(-1, getVersion(id));
-    
+
     // Reset Entity
     this->_entities[i].components.reset();
     this->_entities[i].id = deletedEntity;
@@ -55,4 +54,3 @@ void Manager::deleteEntity(Id id)
     // Append to unused entities for reuse in the futur
     this->_unusedEntities.push_back(i);
 }
-
