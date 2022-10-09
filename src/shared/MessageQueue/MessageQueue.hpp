@@ -18,7 +18,8 @@ struct Message {
 };
 
 // Simple thread safe message queue
-template <class T> class MessageQueue {
+template <class T>
+class MessageQueue {
 public:
     MessageQueue();
     ~MessageQueue();

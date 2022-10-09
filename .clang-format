@@ -6,3 +6,4 @@ PointerAlignment: Left
 ColumnLimit: 150
 AllowShortFunctionsOnASingleLine: Empty
 AccessModifierOffset: -4
+AlwaysBreakTemplateDeclarations: Yes
