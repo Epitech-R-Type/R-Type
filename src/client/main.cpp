@@ -7,17 +7,20 @@
 
 CMRC_DECLARE(client);
 
-class GameManager {
-  public:
-    GameManager() = default;
-    ~GameManager() = default;
+#include <iostream>
+
+int main() {
+    std::cout << "Client: Hello, World!" << std::endl;
+
+    Manager manager;
+    auto& newPlayer(manager.addEntity());
 
     Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
 
         const cmrc::file image = this->_fs.open(path);
 
         const unsigned char* imageBuffer = (unsigned char*)(image.begin());
-
+        
         Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());
 
         const Rectangle crop{xpos, ypos, xlen, ylen};
@@ -103,6 +106,14 @@ int main() {
 
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
+
+    newPlayer.deserialize("(Health(2),Armor(2),Position(1,2))");
+
+    std::cout << newPlayer << std::endl;
+
+    newPlayer.deserialize("(Health(40),Armor(4),Position(5,-2))");
+
+    std::cout << newPlayer << std::endl;
 
     return 0;
 }
