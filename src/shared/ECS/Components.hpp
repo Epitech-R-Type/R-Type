@@ -7,7 +7,7 @@
 
 #pragma once
 
-enum ComponentType { Armor_, Health_, Position_ };
+enum ComponentType { ARMOR, HEALTH, POSITION };
 
 struct Armor {
     int armor = 0;
