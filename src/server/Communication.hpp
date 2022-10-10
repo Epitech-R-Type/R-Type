@@ -18,37 +18,34 @@
 #include <asio.hpp>
 
 #include "../shared/MessageQueue/MessageQueue.hpp"
-#include "ConnectionManager.hpp"
+
+#define MAX_BUFFER_SIZE 1024
 
 // Function passed to communication thread on creation
-void communication_main(std::shared_ptr<MessageQueue<Message>> incoming, std::shared_ptr<MessageQueue<Message>> outgoing);
+void communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing);
 
 class Communication {
     public:
-        Communication(std::shared_ptr<MessageQueue<Message>> incoming, std::shared_ptr<MessageQueue<Message>> outgoing);
-        ~Communication();
+    Communication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing);
+    ~Communication();
 
-        void setup_incoming_handler();
-        void setup_outgoing_handler();
+    void setup_incoming_handler();
+    void setup_outgoing_handler();
 
-        void push_message(Message msg);
-        std::optional<Message> pop_message(void);
+    void push_message(Message<std::string> msg);
+    std::optional<Message<std::string>> pop_message(void);
 
-        ConnectionManager &getConnectionManager();
-
-        void run();
+    void run();
 
     private:
-        asio::io_context _ctxt;
-        asio::ip::udp::socket _sock;
-        asio::ip::udp::endpoint _endpoint;
-        
-        char _buffer[1024];
-        
-        std::shared_ptr<MessageQueue<Message>> _incomingMessages;
-        std::shared_ptr<MessageQueue<Message>> _outgoingMessages;
+    asio::io_context _ctxt;
+    asio::ip::udp::socket _sock;
+    asio::ip::udp::endpoint _endpoint;
 
-        asio::steady_timer _t;
+    char _buffer[MAX_BUFFER_SIZE];
 
-        ConnectionManager _connections;
+    std::shared_ptr<MessageQueue<std::string>> _incomingMessages;
+    std::shared_ptr<MessageQueue<std::string>> _outgoingMessages;
+
+    asio::steady_timer _t;
 };

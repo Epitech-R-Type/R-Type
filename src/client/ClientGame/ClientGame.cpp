@@ -1,8 +1,8 @@
 /*
 ** EPITECH PROJECT, 2022
-** client.cpp
+** ClientGame.cpp
 ** File description:
-** Client
+** .*
 */
 
-#include "Client.hpp"
+#include "ClientGame.hpp"

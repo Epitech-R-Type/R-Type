@@ -17,18 +17,9 @@
 #include "Communication.hpp"
 
 // Root class for R-Type Server
+// This class will handle the tcp communication required for game lobby
+// forming along with launching games.
 class Server {
     public:
-        Server();
-        ~Server();
-
-        void setup();
-        void run();
-        void main_loop();
-
     private:
-        std::shared_ptr<MessageQueue<Message>> _outgoingMsg;
-        std::shared_ptr<MessageQueue<Message>> _incomingMsg;
-
-        std::thread _comThread;
 };

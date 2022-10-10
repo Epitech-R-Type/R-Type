@@ -101,11 +101,6 @@ std::optional<Message> Communication::pop_message(void)
     return this->_outgoingMessages->pop();
 }
 
-ConnectionManager &Communication::getConnectionManager()
-{
-    return this->_connections;
-}
-
 void Communication::run()
 {
     this->_ctxt.run();
