@@ -6,6 +6,7 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
 SET(CMAKE_CXX_FLAGS "-g3")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
