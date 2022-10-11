@@ -83,27 +83,25 @@ void stringToEntity(const std::string entity, Manager* manager) {
             case ComponentType::ARMOR:
                 Armor::applyUpdate(args, entityID, manager);
                 break;
-            case ComponentType::HEALTH:
-                {
-                    if (manager->hasComponent<Health>(entityID)) {
-                        Health* component = manager->getComponent<Health>(entityID);
-                        component->health = stoi(args[1]);
-                    } else {
-                        manager->addComp<Health>(entityID, {stoi(args[1])});
-                    }
-                    break;
+            case ComponentType::HEALTH: {
+                if (manager->hasComponent<Health>(entityID)) {
+                    Health* component = manager->getComponent<Health>(entityID);
+                    component->health = stoi(args[1]);
+                } else {
+                    manager->addComp<Health>(entityID, {stoi(args[1])});
                 }
-            case ComponentType::POSITION:
-                {
-                    if (manager->hasComponent<Position>(entityID)) {
-                        Position* component = manager->getComponent<Position>(entityID);
-                        component->xPos = strtof(args[1].c_str(), nullptr);
-                        component->yPos = strtof(args[2].c_str(), nullptr);
-                    } else {
-                        manager->addComp<Position>(entityID, {strtof(args[1].c_str(), nullptr), strtof(args[2].c_str(), nullptr)});
-                    }
-                    break;
+                break;
+            }
+            case ComponentType::POSITION: {
+                if (manager->hasComponent<Position>(entityID)) {
+                    Position* component = manager->getComponent<Position>(entityID);
+                    component->xPos = strtof(args[1].c_str(), nullptr);
+                    component->yPos = strtof(args[2].c_str(), nullptr);
+                } else {
+                    manager->addComp<Position>(entityID, {strtof(args[1].c_str(), nullptr), strtof(args[2].c_str(), nullptr)});
                 }
+                break;
+            }
         }
     }
 }
