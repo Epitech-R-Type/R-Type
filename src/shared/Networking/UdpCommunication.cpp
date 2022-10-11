@@ -7,8 +7,10 @@
 
 #include "UdpCommunication.hpp"
 
-std::thread spawnUDPThread(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing) {
-    return std::thread(communication_main, incoming, outgoing);
+void spawnUDPThread(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing) {
+    std::thread t = std::thread(communication_main, incoming, outgoing);
+
+    t.detach();
 }
 
 // Function passed to communication thread on creation
@@ -24,7 +26,7 @@ void communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std
 }
 
 UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing)
-    : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), 3500)), _t(_ctxt, asio::chrono::milliseconds(10)) {
+    : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), 3501)), _t(_ctxt, asio::chrono::milliseconds(10)) {
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }

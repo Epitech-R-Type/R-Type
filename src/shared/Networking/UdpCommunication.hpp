@@ -45,7 +45,7 @@ class UdpCommunication {
 
     // Creates thread and returns it
     // IMPORTANT: Thread returned is unjoined
-    friend std::thread spawnUDPThread(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing);
+    friend void spawnUDPThread(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing);
 
     private:
     asio::io_context _ctxt;
@@ -59,3 +59,5 @@ class UdpCommunication {
 
     asio::steady_timer _t;
 };
+
+void spawnUDPThread(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing);
