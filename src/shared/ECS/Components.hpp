@@ -12,11 +12,11 @@
 enum ComponentType { ARMOR, HEALTH, POSITION };
 
 namespace Armor {
-    struct data {
+    struct Component {
         int armor = 0;
     };
 
-    std::string toString(Armor::data component) {
+    std::string toString(Armor::Component component) {
         std::stringstream ss;
 
         ss << component.armor << ";";
@@ -24,34 +24,57 @@ namespace Armor {
     }
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager) {
-        if (manager->hasComponent<Armor::data>(entityID)) {
-            Armor::data* component = manager->getComponent<Armor::data>(entityID);
+        if (manager->hasComponent<Armor::Component>(entityID)) {
+            Armor::Component* component = manager->getComponent<Armor::Component>(entityID);
             component->armor = stoi(args[1]);
         } else {
-            manager->addComp<Armor::data>(entityID, {stoi(args[1])});
+            manager->addComp<Armor::Component>(entityID, {stoi(args[1])});
         }
     }
 } // namespace Armor
 
-struct Health {
-    int health = 0;
-};
+namespace Health {
+    struct Component {
+        int health = 0;
+    };
 
-std::string toString(Health component) {
-    std::stringstream ss;
+    std::string toString(Health::Component component) {
+        std::stringstream ss;
 
-    ss << component.health << ";";
-    return ss.str();
-}
+        ss << component.health << ";";
+        return ss.str();
+    }
 
-struct Position {
-    float xPos = 0;
-    float yPos = 0;
-};
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager) {
+        if (manager->hasComponent<Health::Component>(entityID)) {
+            Health::Component* component = manager->getComponent<Health::Component>(entityID);
+            component->health = stoi(args[1]);
+        } else {
+            manager->addComp<Health::Component>(entityID, {stoi(args[1])});
+        }
+    }
+} // namespace Health
 
-std::string toString(Position component) {
-    std::stringstream ss;
+namespace Position {
+    struct Component {
+        float xPos = 0;
+        float yPos = 0;
+    };
 
-    ss << component.xPos << "," << component.yPos << ";";
-    return ss.str();
-}
+    std::string toString(Position::Component component) {
+        std::stringstream ss;
+
+        ss << component.xPos << "," << component.yPos << ";";
+        return ss.str();
+    }
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager) {
+        if (manager->hasComponent<Position::Component>(entityID)) {
+            Position::Component* component = manager->getComponent<Position::Component>(entityID);
+            component->xPos = strtof(args[1].c_str(), nullptr);
+            component->yPos = strtof(args[2].c_str(), nullptr);
+        } else {
+            manager->addComp<Position::Component>(entityID, {strtof(args[1].c_str(), nullptr), strtof(args[2].c_str(), nullptr)});
+        }
+    }
+} // namespace Position
