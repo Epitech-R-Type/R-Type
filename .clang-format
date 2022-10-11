@@ -7,3 +7,6 @@ ColumnLimit: 150
 AllowShortFunctionsOnASingleLine: Empty
 AccessModifierOffset: -4
 AlwaysBreakTemplateDeclarations: Yes
+IndentCaseBlocks: true
+NamespaceIndentation: All
+IndentCaseLabels: true
