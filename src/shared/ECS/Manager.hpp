@@ -46,6 +46,22 @@ public:
         return static_cast<T*>(this->_compPools[compId]->getComp(i));
     }
 
+    template <class T>
+    bool hasComponent(EntityID id) const {
+        Index i = getIndex(id);
+        Index compId = getID<T>();
+
+        // Make sure entity is valid
+        if (0 > getIndex(this->_entities[i].id))
+            return false;
+
+        // If entity doesn't have component return null
+        if (!this->_entities[i].components[compId])
+            return false;
+
+        return true;
+    }
+
     // Add comp
     template <class T>
     T* addComp(EntityID id, T comp) {
