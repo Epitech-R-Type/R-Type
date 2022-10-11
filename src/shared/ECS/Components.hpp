@@ -7,9 +7,10 @@
 
 #pragma once
 
-#include "ECS.hpp"
 #include "Manager.hpp"
-enum ComponentType { ARMOR, HEALTH, POSITION };
+#include <sstream>
+
+enum ComponentType { ARMOR, HEALTH, POSITION, ANIMATION };
 
 namespace Armor {
     struct Component {
@@ -78,3 +79,30 @@ namespace Position {
         }
     }
 } // namespace Position
+
+namespace AnimationSet {
+    enum AnimationID {
+        Orb,
+    };
+    struct Component {
+        AnimationID animationID;
+        unsigned long layer;
+    };
+
+    std::string toString(AnimationSet::Component component) {
+        std::stringstream ss;
+
+        ss << component.animationID << "," << component.layer << ";";
+        return ss.str();
+    }
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager) {
+        if (manager->hasComponent<AnimationSet::Component>(entityID)) {
+            AnimationSet::Component* component = manager->getComponent<AnimationSet::Component>(entityID);
+            component->animationID = AnimationID(atoi(args[1].c_str()));
+            component->layer = std::stoul(args[2].c_str(), nullptr);
+        } else {
+            manager->addComp<AnimationSet::Component>(entityID, {AnimationID(atoi(args[2].c_str())), std::stoul(args[1].c_str())});
+        }
+    }
+} // namespace AnimationSet

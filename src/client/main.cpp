@@ -1,6 +1,7 @@
+#include "../shared/ECS/Components.hpp"
 #include "../shared/ECS/ECS.hpp"
+#include "SpriteManager.hpp"
 #include "raylib.h"
-#include "spriteManager.hpp"
 #include "uuid.h"
 #include <iostream>
 #include <regex>
@@ -53,7 +54,18 @@ int main() {
     GameManager* gameManager = new GameManager();
     SpriteManager* spriteManager = new SpriteManager();
 
-    Texture2D texture = spriteManager->loadSprite("resources/r-typesheet1.png", 300, 60, 50, 50);
+    Manager em;
+
+    EntityID ent1 = em.newEntity();
+    EntityID ent2 = em.newEntity();
+
+    em.addComp<Position::Component>(ent1, {50, 50});
+    em.addComp<AnimationSet::Component>(ent1, {AnimationSet::AnimationID::Orb, 1});
+
+    em.addComp<Position::Component>(ent2, {200, 200});
+    em.addComp<AnimationSet::Component>(ent2, {AnimationSet::AnimationID::Orb, 1});
+
+    spriteManager->addAnimation(ent1, em.getComponent<AnimationSet::Component>(ent1));
     //---------------------------------------------------------------------------------------
 
     // Main game loop
@@ -63,11 +75,7 @@ int main() {
 
         ClearBackground(RAYWHITE);
 
-        DrawTexture(texture, screenWidth / 2 - texture.width / 2, screenHeight / 2 - texture.height / 2 - 40, WHITE);
-        DrawRectangleLines(screenWidth / 2 - texture.width / 2, screenHeight / 2 - texture.height / 2 - 40, texture.width, texture.height, DARKGRAY);
-
-        DrawText("We are drawing only one texture from various images composed!", 240, 350, 10, DARKGRAY);
-        DrawText("Source images have been cropped, scaled, flipped and copied one over the other.", 190, 370, 10, DARKGRAY);
+        spriteManager->draw(&em);
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -75,7 +83,6 @@ int main() {
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    UnloadTexture(texture); // Texture unloading
 
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------

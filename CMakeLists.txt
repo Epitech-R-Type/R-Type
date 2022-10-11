@@ -20,11 +20,14 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/serialization.hpp")
+)
 
 add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECS.hpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/SpriteManager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
+)
 
 file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMakeRC.cmake"
 "${CMAKE_BINARY_DIR}/CMakeRC.cmake")
