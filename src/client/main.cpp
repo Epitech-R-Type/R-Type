@@ -1,35 +1,15 @@
 #include "../shared/ECS/ECS.hpp"
 #include "raylib.h"
 #include "uuid.h"
-#include <cmrc/cmrc.hpp>
 #include <iostream>
 #include <regex>
 
-CMRC_DECLARE(client);
 
 #include <iostream>
 
 
 class GameManager {
     public:
-        Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
-
-            const cmrc::file image = this->_fs.open(path);
-
-            const unsigned char* imageBuffer = (unsigned char*)(image.begin());
-            
-            Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());
-
-            const Rectangle crop{xpos, ypos, xlen, ylen};
-
-            ImageCrop(&sprite, crop);
-
-            Texture2D texture = LoadTextureFromImage(sprite);
-
-            UnloadImage(sprite);
-
-            return texture;
-        }
 
         void gameLoop() {}
 
@@ -66,7 +46,6 @@ class GameManager {
         bool _isOwner = false;
         uuids::uuid clientUUID;
         uuids::uuid serverUUID;
-        cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
 };
 
 int main() {
