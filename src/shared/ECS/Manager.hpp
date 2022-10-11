@@ -17,20 +17,21 @@
 #include "ECS.hpp"
 
 struct Entity {
-    Id id;
+    EntityID id;
     std::bitset<MAX_COMPONENTS> components;
 };
 
 class Manager {
 public:
     // Create entity
-    Id newEntity();
+    EntityID newEntity();
 
     // Delete entity
-    void deleteEntity(Id id);
+    void deleteEntity(EntityID id);
 
     // Get component for given entity
-    template <class T> T* getComponent(Id id) {
+    template <class T>
+    T* getComponent(EntityID id) {
         Index i = getIndex(id);
         Index compId = getID<T>();
 
@@ -45,8 +46,25 @@ public:
         return static_cast<T*>(this->_compPools[compId]->getComp(i));
     }
 
+    template <class T>
+    bool hasComponent(EntityID id) const {
+        Index i = getIndex(id);
+        Index compId = getID<T>();
+
+        // Make sure entity is valid
+        if (0 > getIndex(this->_entities[i].id))
+            return false;
+
+        // If entity doesn't have component return null
+        if (!this->_entities[i].components[compId])
+            return false;
+
+        return true;
+    }
+
     // Add comp
-    template <class T> T* addComp(Id id, T comp) {
+    template <class T>
+    T* addComp(EntityID id, T comp) {
         Index i = getIndex(id);
 
         // Make sure entity is valid
@@ -80,7 +98,8 @@ public:
     }
 
     // Remove comp
-    template <class T> void removeComp(Id id) {
+    template <class T>
+    void removeComp(EntityID id) {
         Index compIndex = getID<T>();
         Index i = getIndex(id);
 
@@ -93,7 +112,8 @@ public:
     }
 
     // Set components to exclude in view
-    template <class... Excluded> void setExcluded() {
+    template <class... Excluded>
+    void setExcluded() {
         int excludedIds[] = {getID<Excluded...>()};
         this->_excludedInView.reset();
 
@@ -107,10 +127,11 @@ public:
     }
 
     // ITERATOR IMPLEMENTATION
-    template <class... Comps> class Iterator {
+    template <class... Comps>
+    class Iterator {
     public:
         Iterator(Index start, Manager* man) : _currIndex(start), _man(man) {
-            Index includedIds[] = {getID<Comps...>()};
+            Index includedIds[] = {getID<Comps>()...};
 
             // Check if no args passed, get entities with all comps
             if (!sizeof(includedIds)) {
@@ -123,7 +144,7 @@ public:
                 this->_wanted[included] = 1;
         };
 
-        Id operator*() const {
+        EntityID operator*() const {
             return this->_man->_entities[_currIndex].id;
         };
 
@@ -155,11 +176,13 @@ public:
         bool _all;
     };
 
-    template <class... Comp> const Iterator<Comp...> begin() {
+    template <class... Comp>
+    const Iterator<Comp...> begin() {
         return Iterator<Comp...>(0, this);
     }
 
-    template <class... Comp> const Iterator<Comp...> end() {
+    template <class... Comp>
+    const Iterator<Comp...> end() {
         return Iterator<Comp...>(this->_entities.size(), this);
     }
 

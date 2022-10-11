@@ -1,58 +1,35 @@
 #include <asio.hpp>
 #include <iostream>
 
+#include "../shared/ECS/Components.hpp"
 #include "../shared/ECS/ECS.hpp"
 #include "../shared/ECS/Manager.hpp"
 #include "Server.hpp"
 
+#include "../shared/systems/serialization.hpp"
+
 Index g_idCounter = 0;
-
-struct testComp {
-    int test;
-};
-
-struct testComp2 {
-    int test;
-};
 
 int main() {
     std::cout << "Server: Hello, World!" << std::endl;
 
-    std::cout << "Here" << std::endl;
     Manager em;
 
-    Id ent1 = em.newEntity();
-    Id ent2 = em.newEntity();
+    EntityID ent1 = em.newEntity();
+    EntityID ent2 = em.newEntity();
 
-    // em.deleteEntity(ent1);
+    em.addComp<Armor::Component>(ent1, {6});
+    em.addComp<Health::Component>(ent1, {5});
+    // em.addComp<Position>(ent1, {6.2, 5.4});
 
-    testComp* comp = em.addComp<testComp>(ent1, {5});
-    testComp2* comp2 = em.addComp<testComp2>(ent2, {6});
+    std::cout << entityToString<Armor::Component, Health::Component, Position::Component>(ent1, &em) << std::endl;
 
-    if (!comp2)
-        std::cout << "comp is null" << std::endl;
+    std::string str = entityToString<Armor::Component, Health::Component, Position::Component>(ent1, &em);
 
-    // std::cout << "comp2: " << comp2->test << std::endl;
+    stringToEntity(str, &em);
+    em.getComponent<Health::Component>(ent1)->health = 9;
+    em.getComponent<Armor::Component>(ent1)->armor = 2;
+    // em.getComponent<Position>(ent1)->xPos = 2.2;
 
-    std::cout << "Get TestComp1" << std::endl;
-
-    for (auto beg = em.begin<testComp>(); beg != em.end<testComp>(); ++beg) {
-
-        if (em.getComponent<testComp>(*beg) == nullptr) {
-            continue;
-        }
-
-        std::cout << "zguegue" << em.getComponent<testComp>(*beg)->test << getIndex(*beg) << std::endl;
-    }
-
-    std::cout << "Get TestComp2" << std::endl;
-
-    for (auto beg = em.begin<testComp2>(); beg != em.end<testComp2>(); ++beg) {
-
-        if (em.getComponent<testComp2>(*beg) == nullptr) {
-            continue;
-        }
-
-        std::cout << "zguegue" << em.getComponent<testComp2>(*beg)->test << getIndex(*beg) << std::endl;
-    }
+    std::cout << entityToString<Armor::Component, Health::Component, Position::Component>(ent1, &em) << std::endl;
 }

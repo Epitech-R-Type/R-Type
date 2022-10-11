@@ -7,7 +7,7 @@
 
 #include "Manager.hpp"
 
-Id Manager::newEntity() {
+EntityID Manager::newEntity() {
     // If previously free'd entities available use those in preference
     if (!this->_unusedEntities.empty()) {
         // Pop last index from unusedEntities vector
@@ -18,7 +18,7 @@ Id Manager::newEntity() {
         Version updatedVersion = getVersion(this->_entities[i].id) + 1;
 
         // Create new id and push to entities
-        Id id = createId(i, updatedVersion);
+        EntityID id = createId(i, updatedVersion);
         this->_entities[i].id = id;
 
         return id;
@@ -26,7 +26,7 @@ Id Manager::newEntity() {
         // Create new id and entity
         Index i = this->_entities.size();
         Version v = 0;
-        Id id = createId(i, v);
+        EntityID id = createId(i, v);
 
         Entity ent = Entity{id, 0};
 
@@ -37,7 +37,7 @@ Id Manager::newEntity() {
     }
 }
 
-void Manager::deleteEntity(Id id) {
+void Manager::deleteEntity(EntityID id) {
     Index i = getIndex(id);
 
     // Check entity is valid
@@ -45,7 +45,7 @@ void Manager::deleteEntity(Id id) {
         return;
 
     // Create Id with invalid index
-    Id deletedEntity = createId(-1, getVersion(id));
+    EntityID deletedEntity = createId(-1, getVersion(id));
 
     // Reset Entity
     this->_entities[i].components.reset();
