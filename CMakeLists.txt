@@ -70,6 +70,7 @@ cmrc_add_resource_library(
     resources/r-typesheet28.png
     resources/r-typesheet29.png
     resources/r-typesheet30.png
+    resources/r-typesheet30a.png
     resources/r-typesheet31.png
     resources/r-typesheet32.png
     resources/r-typesheet33.png

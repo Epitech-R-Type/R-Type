@@ -45,9 +45,7 @@ namespace Position {
 } // namespace Position
 
 namespace Animation {
-    enum AnimationID {
-        Orb,
-    };
+    enum AnimationID { Orb, Vortex };
     struct Component {
         AnimationID animationID;
         unsigned long layer;

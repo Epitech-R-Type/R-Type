@@ -10,6 +10,9 @@
 
 SpriteSystem::SpriteSystem(Manager* ECS) {
     this->_ECS = ECS;
+
+    this->_sheet[Animation::AnimationID::Orb] = {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1};
+    this->_sheet[Animation::AnimationID::Vortex] = {"resources/r-typesheet30a.png", 1, 3, 31, 31, 3, 1, 2};
 }
 
 Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
@@ -31,14 +34,13 @@ Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, con
     return texture;
 }
 
-AnimationStr* SpriteSystem::loadAnimation(const std::string path, const float startX, const float startY, const float frameWidth,
-                                          const float frameHeight, const int animWidth, const int animHeight, const int separation) {
+AnimationStr* SpriteSystem::loadAnimation(AnimationSheet animationSheet) {
     AnimationStr* animation = new AnimationStr();
-    for (int y = 0; y < animHeight; y++) {
-        for (int x = 0; x < animWidth; x++) {
-            const float xPos = startX + (frameWidth * x) + (separation * x);
-            const float yPos = startY + (frameHeight * y) + (separation * y);
-            Texture2D sprite = this->loadSprite(path, xPos, yPos, frameWidth, frameHeight);
+    for (int y = 0; y < animationSheet.animHeight; y++) {
+        for (int x = 0; x < animationSheet.animWidth; x++) {
+            const float xPos = animationSheet.startX + (animationSheet.frameWidth * x) + (animationSheet.separation * x);
+            const float yPos = animationSheet.startY + (animationSheet.frameHeight * y) + (animationSheet.separation * y);
+            Texture2D sprite = this->loadSprite(animationSheet.path, xPos, yPos, animationSheet.frameWidth, animationSheet.frameHeight);
             animation->sequence.push_back(sprite);
         }
     }
@@ -78,7 +80,7 @@ void SpriteSystem::apply() {
 }
 
 void SpriteSystem::addAnimation(EntityID ID, Animation::Component* component) {
-    this->_animationLayers[component->layer][ID] = this->loadAnimation("resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1);
+    this->_animationLayers[component->layer][ID] = this->loadAnimation(this->_sheet[component->animationID]);
 }
 
 std::chrono::time_point<std::chrono::system_clock> getNow() {
