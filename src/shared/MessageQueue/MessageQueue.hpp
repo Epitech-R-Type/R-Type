@@ -56,7 +56,7 @@ std::ostream& operator<<(std::ostream& os, const Message<T>& msg) {
 
 template <class T>
 std::string& operator<<(std::string& str, const Message<T>& msg) {
-    str << msg._msg;
+    str = str + msg._msg;
 
     return str;
 }

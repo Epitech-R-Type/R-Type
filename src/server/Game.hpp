@@ -38,4 +38,5 @@ class Game {
 
     bool _isRunning;
     std::thread* _udpComThread;
+    std::shared_ptr<std::atomic<bool>> _stopFlag;
 };

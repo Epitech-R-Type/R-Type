@@ -13,7 +13,8 @@ Game::Game() : _isRunning(true) {
     this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
 
     // Init com thread
-    this->_udpComThread = new std::thread(communication_main, this->_incomingMQ, this->_outgoingMQ);
+    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_udpComThread = new std::thread(communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 }
 
 Game::~Game() {
@@ -30,15 +31,20 @@ int Game::mainLoop() {
 
         if ((msg = this->_incomingMQ->pop())) {
             std::cout << "Received :" << *msg << std::endl;
+            std::string contents;
+            contents << *msg;
+
+            if (contents == "quit\n") {
+                std::cout << "In if" << std::endl;
+                this->_isRunning = false;
+            }
 
             // Send back same message
             this->_outgoingMQ->push(*msg);
         }
     }
 
-    // TEMPORARY
-    // We should find a way to stop thread here instead of joining it
-    // This will cause issue if we want to do other stuff once the game has
-    // ended.
+    // Signal thread to stop and join thread
+    this->_stopFlag->store(true);
     this->_udpComThread->join();
 }
