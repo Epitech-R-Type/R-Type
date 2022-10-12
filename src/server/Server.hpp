@@ -7,11 +7,11 @@
 
 #pragma once
 
-#include <string>
-#include <thread>
-#include <memory>
 #include <chrono>
 #include <iostream>
+#include <memory>
+#include <string>
+#include <thread>
 
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Networking/UdpCommunication.hpp"

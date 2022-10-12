@@ -7,15 +7,11 @@
 
 #include "MessageQueue.hpp"
 
-template<class T>
-MessageQueue<T>::MessageQueue()
-{
-}
+template <class T>
+MessageQueue<T>::MessageQueue() {}
 
-template<class T>
-MessageQueue<T>::~MessageQueue()
-{
-}
+template <class T>
+MessageQueue<T>::~MessageQueue() {}
 
 template <class T>
 void MessageQueue<T>::push(Message<T> el) {

@@ -64,9 +64,9 @@ std::string& operator<<(std::string& str, const Message<T>& msg) {
 // Simple thread safe message queue
 template <class T>
 class MessageQueue {
-    public:
-        MessageQueue();
-        ~MessageQueue();
+public:
+    MessageQueue();
+    ~MessageQueue();
 
         // Note : Does not implement size() as no code can safely depend on size
         void push(Message<T> el);
