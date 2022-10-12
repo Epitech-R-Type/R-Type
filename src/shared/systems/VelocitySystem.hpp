@@ -2,8 +2,8 @@
 #pragma once
 
 #include "../ECS/ECS.hpp"
-
-class VelocitySystem {
+#include "ISystem.hpp"
+class VelocitySystem : public System {
 public:
     VelocitySystem(Manager* ECS);
 

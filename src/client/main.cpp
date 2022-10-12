@@ -56,7 +56,7 @@ int main() {
 
     Manager em;
 
-    SpriteSystem* spriteManager = new SpriteSystem();
+    SpriteSystem* spriteSystem = new SpriteSystem(&em);
     VelocitySystem* velocitySystem = new VelocitySystem(&em);
 
     EntityID ent1 = em.newEntity();
@@ -70,8 +70,8 @@ int main() {
     em.addComp<Animation::Component>(ent2, {Animation::AnimationID::Orb, 1});
     em.addComp<Velocity::Component>(ent2, {0.00, -0.05});
 
-    spriteManager->addAnimation(ent1, em.getComponent<Animation::Component>(ent1));
-    spriteManager->addAnimation(ent2, em.getComponent<Animation::Component>(ent2));
+    spriteSystem->addAnimation(ent1, em.getComponent<Animation::Component>(ent1));
+    spriteSystem->addAnimation(ent2, em.getComponent<Animation::Component>(ent2));
     //---------------------------------------------------------------------------------------
 
     // Main game loop
@@ -81,8 +81,7 @@ int main() {
 
         ClearBackground(RAYWHITE);
 
-        spriteManager->draw(&em);
-
+        spriteSystem->apply();
         velocitySystem->apply();
 
         EndDrawing();

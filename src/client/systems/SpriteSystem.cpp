@@ -5,8 +5,12 @@
 ** .
 */
 
-#include "./SpriteSystem.hpp"
+#include "SpriteSystem.hpp"
 #include "../../shared/ECS/Manager.hpp"
+
+SpriteSystem::SpriteSystem(Manager* ECS) {
+    this->_ECS = ECS;
+}
 
 Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
     const cmrc::file image = this->_fs.open(path);
@@ -53,11 +57,11 @@ void SpriteSystem::nextFrame(AnimationStr* animation) {
     }
 }
 
-void SpriteSystem::draw(Manager* ECS) {
-    for (auto beg = ECS->begin<Animation::Component>(); beg != ECS->end<Animation::Component>(); ++beg) {
+void SpriteSystem::apply() {
+    for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
         EntityID id = *beg;
-        Animation::Component* component = ECS->getComponent<Animation::Component>(id);
-        Position::Component* position = ECS->getComponent<Position::Component>(id);
+        Animation::Component* component = this->_ECS->getComponent<Animation::Component>(id);
+        Position::Component* position = this->_ECS->getComponent<Position::Component>(id);
 
         AnimationStr* anim = this->_animationLayers[component->layer][id];
 
