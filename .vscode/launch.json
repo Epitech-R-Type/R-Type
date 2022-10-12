@@ -11,7 +11,7 @@
             "program": "${cwd}/build/bin/Server",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${fileDirname}",
+            "cwd": "${cwd}",
             "environment": [],
             "externalConsole": false,
             "MIMode": "gdb",
