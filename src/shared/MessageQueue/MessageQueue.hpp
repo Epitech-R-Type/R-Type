@@ -21,8 +21,13 @@ class Message {
     public:
     Message(T msg, asio::ip::address addr, asio::ip::port_type port) : _msg(msg), _addr(addr), _port(port){};
 
+    // << to stream overload
     template <class T2>
     friend std::ostream& operator<<(std::ostream& os, const Message<T2>& msg);
+
+    // << to str overload
+    template <class T2>
+    friend std::string& operator<<(std::string& str, const Message<T2>& msg);
 
     // Getters
     asio::ip::address getAddr() const {
@@ -47,6 +52,13 @@ std::ostream& operator<<(std::ostream& os, const Message<T>& msg) {
     os << msg._msg;
 
     return os;
+}
+
+template <class T>
+std::string& operator<<(std::string& str, const Message<T>& msg) {
+    str << msg._msg;
+
+    return str;
 }
 
 // Simple thread safe message queue
