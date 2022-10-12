@@ -1,13 +1,14 @@
 /*
 ** EPITECH PROJECT, 2022
-** SpriteManager.cpp
+** SpriteSystem.cpp
 ** File description:
 ** .
 */
 
-#include "./SpriteManager.hpp"
+#include "./SpriteSystem.hpp"
+#include "../../shared/ECS/Manager.hpp"
 
-Texture2D SpriteManager::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
+Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
     const cmrc::file image = this->_fs.open(path);
 
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
@@ -17,6 +18,7 @@ Texture2D SpriteManager::loadSprite(const std::string path, const float xpos, co
     const Rectangle crop{xpos, ypos, xlen, ylen};
 
     ImageCrop(&sprite, crop);
+    ImageResizeNN(&sprite, xlen * 3, ylen * 3);
 
     Texture2D texture = LoadTextureFromImage(sprite);
 
@@ -25,21 +27,21 @@ Texture2D SpriteManager::loadSprite(const std::string path, const float xpos, co
     return texture;
 }
 
-Animation SpriteManager::loadAnimation(const std::string path, const float startX, const float startY, const float frameWidth,
-                                       const float frameHeight, const int animWidth, const int animHeight, const int separation) {
-    Animation animation;
+AnimationStr* SpriteSystem::loadAnimation(const std::string path, const float startX, const float startY, const float frameWidth,
+                                          const float frameHeight, const int animWidth, const int animHeight, const int separation) {
+    AnimationStr* animation = new AnimationStr();
     for (int y = 0; y < animHeight; y++) {
         for (int x = 0; x < animWidth; x++) {
             const float xPos = startX + (frameWidth * x) + (separation * x);
             const float yPos = startY + (frameHeight * y) + (separation * y);
             Texture2D sprite = this->loadSprite(path, xPos, yPos, frameWidth, frameHeight);
-            animation.sequence.push_back(sprite);
+            animation->sequence.push_back(sprite);
         }
     }
     return animation;
 }
 
-void SpriteManager::nextFrame(Animation* animation) {
+void SpriteSystem::nextFrame(AnimationStr* animation) {
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - animation->timer;
 
@@ -51,13 +53,17 @@ void SpriteManager::nextFrame(Animation* animation) {
     }
 }
 
-void SpriteManager::draw(Manager* ECS) {
-    for (auto beg = ECS->begin<AnimationSet::Component>(); ECS->begin<AnimationSet::Component>() != ECS->end<AnimationSet::Component>(); ++beg) {
+void SpriteSystem::draw(Manager* ECS) {
+    for (auto beg = ECS->begin<Animation::Component>(); beg != ECS->end<Animation::Component>(); ++beg) {
         EntityID id = *beg;
-        AnimationSet::Component* component = ECS->getComponent<AnimationSet::Component>(id);
+        Animation::Component* component = ECS->getComponent<Animation::Component>(id);
         Position::Component* position = ECS->getComponent<Position::Component>(id);
 
-        Animation* anim = &this->_animationLayers[component->layer][id];
+        AnimationStr* anim = this->_animationLayers[component->layer][id];
+
+        if (anim == nullptr) {
+            throw "Entity does not have a set animation in the Sprite Manager";
+        }
 
         Texture2D frame = anim->sequence[anim->index];
 
@@ -67,6 +73,10 @@ void SpriteManager::draw(Manager* ECS) {
     }
 }
 
-void SpriteManager::addAnimation(EntityID ID, AnimationSet::Component* component) {
+void SpriteSystem::addAnimation(EntityID ID, Animation::Component* component) {
     this->_animationLayers[component->layer][ID] = this->loadAnimation("resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1);
+}
+
+std::chrono::time_point<std::chrono::system_clock> getNow() {
+    return std::chrono::system_clock::now();
 }
