@@ -26,6 +26,18 @@ struct AnimationStr {
     std::chrono::time_point<std::chrono::system_clock> timer = std::chrono::system_clock::now();
 };
 
+struct AnimationSheet {
+    std::string path;
+    float startX;
+    float startY;
+    float frameWidth;
+    float frameHeight;
+    int animWidth;
+    int animHeight;
+    int separationX;
+    int separationY;
+};
+
 class SpriteSystem : public System {
 public:
     SpriteSystem(Manager* ECS);
@@ -37,8 +49,7 @@ public:
     /**
      * Parses image file to extract all frames of an animation
      * */
-    AnimationStr* loadAnimation(const std::string path, const float startX, const float startY, const float frameWidth, const float frameHeight,
-                                const int animWidth, const int animHeight, const int separation);
+    AnimationStr* loadAnimation(AnimationSheet animationSheet);
 
     /**
      * Increments currently displayed frame of animation if enough time passed since the last update
@@ -61,4 +72,5 @@ private:
     cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
     std::map<int, std::map<EntityID, AnimationStr*>> _animationLayers;
     Manager* _ECS;
+    std::map<Animation::AnimationID, AnimationSheet> _sheet;
 };

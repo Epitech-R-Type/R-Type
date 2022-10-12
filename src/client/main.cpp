@@ -49,8 +49,8 @@ private:
 };
 
 int main() {
-    const int screenWidth = 1600;
-    const int screenHeight = 900;
+    constexpr int screenWidth = 1600;
+    constexpr int screenHeight = 900;
 
     InitWindow(screenWidth, screenHeight, "R-Type");
 
@@ -67,8 +67,7 @@ int main() {
     em.addComp<Velocity::Component>(ent1, {0.05, -0.05});
 
     em.addComp<Position::Component>(ent2, {(float)(GetScreenWidth() * (1.0 / 3.0)), (float)(GetScreenHeight() - 50)});
-    em.addComp<Animation::Component>(ent2, {Animation::AnimationID::Orb, 1});
-    em.addComp<Velocity::Component>(ent2, {0.00, -0.05});
+    em.addComp<Animation::Component>(ent2, {Animation::AnimationID::Cluster, 1});
 
     spriteSystem->addAnimation(ent1, em.getComponent<Animation::Component>(ent1));
     spriteSystem->addAnimation(ent2, em.getComponent<Animation::Component>(ent2));
