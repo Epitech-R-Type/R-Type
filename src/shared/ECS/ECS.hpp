@@ -58,3 +58,5 @@ inline EntityID createId(Index i, Version v) {
 
     return new_id;
 }
+
+class Manager;

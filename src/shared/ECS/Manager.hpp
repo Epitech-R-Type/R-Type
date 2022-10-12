@@ -35,10 +35,6 @@ public:
         Index i = getIndex(id);
         Index compId = getID<T>();
 
-        // Make sure entity is valid
-        if (0 > getIndex(this->_entities[i].id))
-            return nullptr;
-
         // If entity doesn't have component return null
         if (!this->_entities[i].components[compId])
             return nullptr;

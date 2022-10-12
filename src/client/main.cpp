@@ -1,35 +1,16 @@
 #include "../shared/ECS/ECS.hpp"
+#include "../shared/ECS/Manager.hpp"
+#include "./systems/Systems.hpp"
+
 #include "raylib.h"
 #include "uuid.h"
-#include <cmrc/cmrc.hpp>
 #include <iostream>
 #include <regex>
 
-CMRC_DECLARE(client);
-
-#include <iostream>
+Index g_idCounter = 0;
 
 class GameManager {
 public:
-    Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
-
-        const cmrc::file image = this->_fs.open(path);
-
-        const unsigned char* imageBuffer = (unsigned char*)(image.begin());
-
-        Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());
-
-        const Rectangle crop{xpos, ypos, xlen, ylen};
-
-        ImageCrop(&sprite, crop);
-
-        Texture2D texture = LoadTextureFromImage(sprite);
-
-        UnloadImage(sprite);
-
-        return texture;
-    }
-
     void gameLoop() {}
 
     void menu() {
@@ -65,18 +46,32 @@ private:
     bool _isOwner = false;
     uuids::uuid clientUUID;
     uuids::uuid serverUUID;
-    cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
 };
 
 int main() {
-    const int screenWidth = 800;
-    const int screenHeight = 450;
+    const int screenWidth = 1600;
+    const int screenHeight = 900;
 
     InitWindow(screenWidth, screenHeight, "R-Type");
 
-    GameManager* gameManager = new GameManager();
+    Manager em;
 
-    Texture2D texture = gameManager->loadSprite("resources/r-typesheet1.png", 300, 60, 50, 50);
+    SpriteSystem* spriteSystem = new SpriteSystem(&em);
+    VelocitySystem* velocitySystem = new VelocitySystem(&em);
+
+    EntityID ent1 = em.newEntity();
+    EntityID ent2 = em.newEntity();
+
+    em.addComp<Position::Component>(ent1, {(float)(GetScreenWidth() * (2.0 / 3.0)), (float)(GetScreenHeight() - 50)});
+    em.addComp<Animation::Component>(ent1, {Animation::AnimationID::Orb, 1});
+    em.addComp<Velocity::Component>(ent1, {0.05, -0.05});
+
+    em.addComp<Position::Component>(ent2, {(float)(GetScreenWidth() * (1.0 / 3.0)), (float)(GetScreenHeight() - 50)});
+    em.addComp<Animation::Component>(ent2, {Animation::AnimationID::Orb, 1});
+    em.addComp<Velocity::Component>(ent2, {0.00, -0.05});
+
+    spriteSystem->addAnimation(ent1, em.getComponent<Animation::Component>(ent1));
+    spriteSystem->addAnimation(ent2, em.getComponent<Animation::Component>(ent2));
     //---------------------------------------------------------------------------------------
 
     // Main game loop
@@ -86,11 +81,8 @@ int main() {
 
         ClearBackground(RAYWHITE);
 
-        DrawTexture(texture, screenWidth / 2 - texture.width / 2, screenHeight / 2 - texture.height / 2 - 40, WHITE);
-        DrawRectangleLines(screenWidth / 2 - texture.width / 2, screenHeight / 2 - texture.height / 2 - 40, texture.width, texture.height, DARKGRAY);
-
-        DrawText("We are drawing only one texture from various images composed!", 240, 350, 10, DARKGRAY);
-        DrawText("Source images have been cropped, scaled, flipped and copied one over the other.", 190, 370, 10, DARKGRAY);
+        spriteSystem->apply();
+        velocitySystem->apply();
 
         EndDrawing();
         //----------------------------------------------------------------------------------
@@ -98,7 +90,6 @@ int main() {
 
     // De-Initialization
     //--------------------------------------------------------------------------------------
-    UnloadTexture(texture); // Texture unloading
 
     CloseWindow(); // Close window and OpenGL context
     //--------------------------------------------------------------------------------------
