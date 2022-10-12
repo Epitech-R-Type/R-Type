@@ -6,3 +6,21 @@
 */
 
 #include "Client.hpp"
+
+int Client::launchGame() {
+    // Note: For performance reasons we could free the lobby ecs before launching the game
+    this->_game = ClientGame();
+    this->_game.mainLoop();
+}
+
+int Client::mainLoop() {
+    while (this->_lobbyRunning) {
+        // Lobby logic
+        // Use input from user to navigate menu
+        // Manipulate local ecs
+    }
+}
+
+int Client::setup() {
+    return 0;
+}

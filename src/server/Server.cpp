@@ -10,9 +10,6 @@
 Server::Server() : _lobbyRunning(true) {}
 
 int Server::setup() {
-    // For testing purposes
-    this->launchGame();
-
     return 0;
 }
 
@@ -32,7 +29,7 @@ int Server::mainLoop() {
 }
 
 int Server::launchGame() {
-    // this->_game = Game();
+    this->_game = Game();
     this->_game.mainLoop();
 
     return 0;
