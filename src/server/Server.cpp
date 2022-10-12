@@ -32,7 +32,7 @@ int Server::mainLoop() {
 }
 
 int Server::launchGame() {
-    this->_game = Game();
+    // this->_game = Game();
     this->_game.mainLoop();
 
     return 0;

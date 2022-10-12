@@ -13,10 +13,16 @@ Game::Game() : _isRunning(true) {
     this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
 
     // Init com thread
-    spawnUDPThread(this->_incomingMQ, this->_outgoingMQ);
+    this->_udpComThread = new std::thread(communication_main, this->_incomingMQ, this->_outgoingMQ);
+}
+
+Game::~Game() {
+    // Delete com thread
+    delete this->_udpComThread;
 }
 
 int Game::mainLoop() {
+
     std::cout << "Entering main loop()" << std::endl;
 
     while (this->_isRunning) {
@@ -29,4 +35,10 @@ int Game::mainLoop() {
             this->_outgoingMQ->push(*msg);
         }
     }
+
+    // TEMPORARY
+    // We should find a way to stop thread here instead of joining it
+    // This will cause issue if we want to do other stuff once the game has
+    // ended.
+    this->_udpComThread->join();
 }

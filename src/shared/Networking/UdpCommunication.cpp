@@ -7,10 +7,10 @@
 
 #include "UdpCommunication.hpp"
 
-void spawnUDPThread(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing) {
+std::thread spawnUDPThread(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing) {
     std::thread t = std::thread(communication_main, incoming, outgoing);
 
-    t.detach();
+    return t;
 }
 
 // Function passed to communication thread on creation

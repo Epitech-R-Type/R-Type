@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <memory>
 #include <thread>
 
 #include "../shared/ECS/Manager.hpp"
@@ -22,6 +23,7 @@ class Game {
     public:
     // All the game setup is done in here
     Game();
+    ~Game();
 
     // Main Loop
     int mainLoop();
@@ -35,5 +37,5 @@ class Game {
     std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
 
     bool _isRunning;
-    std::thread _udpComThread;
+    std::thread* _udpComThread;
 };
