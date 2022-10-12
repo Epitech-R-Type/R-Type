@@ -34,7 +34,8 @@ struct AnimationSheet {
     float frameHeight;
     int animWidth;
     int animHeight;
-    int separation;
+    int separationX;
+    int separationY;
 };
 
 class SpriteSystem : public System {
