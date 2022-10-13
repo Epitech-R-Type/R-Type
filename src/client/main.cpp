@@ -1,56 +1,21 @@
 #include "../shared/ECS/ECS.hpp"
 #include "../shared/ECS/Manager.hpp"
+#include "../shared/systems/UUID.hpp"
 #include "./systems/Systems.hpp"
-
 #include "raylib.h"
-#include "uuid.h"
 #include <iostream>
-#include <regex>
 
 Index g_idCounter = 0;
-
-class GameManager {
-public:
-    void gameLoop() {}
-
-    void menu() {
-        // const uuids::uuid id = uuids::uuid_random_generator{}();
-        auto id = uuids::uuid::from_string("d");
-    }
-
-    uuids::uuid regexToUUID(const std::string value, std::string regex, std::regex_constants::syntax_option_type constants) {
-
-        const std::regex reg(regex, constants);
-        std::smatch match;
-
-        std::regex_search(value.begin(), value.end(), match, reg);
-
-        std::optional<uuids::uuid> maybeClientUUID = uuids::uuid::from_string(match.str());
-
-        return maybeClientUUID.value();
-    }
-
-    void conect() {
-
-        const std::string response =
-            "CONNECTED serverUUID:251629ad-9075-4a46-8832-83cd415f1147 clientUUID:9f4792ff-6e8f-407c-b1fd-57ab2fd68053 owner:1";
-
-        if (response[response.length() - 1] == '1') {
-            this->_isOwner = true;
-        }
-        this->clientUUID = regexToUUID(response, "/(?<=clientUUID:)(.+)(?=\\s)/", std::regex_constants::egrep);
-        this->serverUUID = regexToUUID(response, "/(?<=serverUUID:)(.+)(?=\\s)/", std::regex_constants::egrep);
-    }
-
-private:
-    bool _isOwner = false;
-    uuids::uuid clientUUID;
-    uuids::uuid serverUUID;
-};
 
 int main() {
     constexpr int screenWidth = 1600;
     constexpr int screenHeight = 900;
+
+    UUID x;
+
+    std::cout << x.toString() << " " << (x == x) << std::endl;
+
+    std::cout << UUID("dsqqssd bd2916a3-fe81-4290-92f9-6a22ff138ac7 1") << std::endl;
 
     InitWindow(screenWidth, screenHeight, "R-Type");
 

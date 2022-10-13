@@ -5,7 +5,6 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
-set(CMAKE_CXX_FLAGS "-g3")
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
@@ -22,12 +21,15 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
+
 )
 
 add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/SpriteSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
