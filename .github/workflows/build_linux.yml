@@ -39,5 +39,5 @@ jobs:
       - name: verify-files
         shell: bash
         run: >
-          rm ./build/bin/Client
-          rm ./build/bin/Server
+          rm ./build/bin/Client;
+          rm ./build/bin/Server;
