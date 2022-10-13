@@ -1,9 +1,3 @@
-#include <asio.hpp>
-#include <iostream>
-
-#include "../shared/ECS/Components.hpp"
-#include "../shared/ECS/ECS.hpp"
-#include "../shared/ECS/Manager.hpp"
 #include "Server.hpp"
 
 // Instantiation of global id counter
