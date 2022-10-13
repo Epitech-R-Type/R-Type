@@ -7,7 +7,9 @@ set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if (NOT MSVC)
+if (MSVC)
+    add_compile_definitions(WIN32_LEAN_AND_MEAN)
+else()
     add_compile_options(-g3)
 endif()
 
