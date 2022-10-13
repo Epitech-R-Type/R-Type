@@ -55,7 +55,6 @@ void ClientGame::init() {
     this->_entManager->addComp<Position::Component>(ent1, {(float)(GetScreenWidth() * (2.0 / 3.0)), (float)(GetScreenHeight() - 50)});
     this->_entManager->addComp<Animation::Component>(ent1, {Animation::AnimationID::Orb, 1});
     this->_entManager->addComp<Velocity::Component>(ent1, {0.05, -0.05});
-    this->_entManager->addComp<Player::Component>(ent1, {true});
 
     this->_entManager->addComp<Position::Component>(ent2, {(float)(GetScreenWidth() * (1.0 / 3.0)), (float)(GetScreenHeight() - 50)});
     this->_entManager->addComp<Animation::Component>(ent2, {Animation::AnimationID::Cluster, 1});
