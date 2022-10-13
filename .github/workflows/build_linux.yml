@@ -24,7 +24,7 @@ jobs:
 
       - name: update-conan-profile
         shell: bash
-        run: echo [conf]\ntools.system.package_manager:sudo=True\ntools.system.package_manager:mode=install >> ~/.conan/profile/default
+        run: echo [conf]\ntools.system.package_manager:sudo=True\ntools.system.package_manager:mode=install >> ~/.conan/profiles/default
 
       # Build project
       - name: build
