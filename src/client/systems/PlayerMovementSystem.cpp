@@ -23,16 +23,16 @@ void PlayerMovementSystem::apply()
             EntityID id = *beg;
             Position::Component* position = this->_ECS->getComponent<Position::Component>(id);
             //Here is missing to check for Collision
-            if (IsKeyDown(KEY_W)) {
+            if (IsKeyDown(KEY_W) && position->xPos < GetScreenWidth() - 0.5) {
                 this->_ECS->getComponent<Position::Component>(id)->xPos += 0.5;
             }
-            if (IsKeyDown(KEY_S)) {
+            if (IsKeyDown(KEY_S) && position->xPos > 0.5) {
                 this->_ECS->getComponent<Position::Component>(id)->xPos -= 0.5;
             }
-            if (IsKeyDown(KEY_A)) {
+            if (IsKeyDown(KEY_A) && position->yPos > 0.5) {
                 this->_ECS->getComponent<Position::Component>(id)->yPos -= 0.5;
             }
-            if (IsKeyDown(KEY_D)) {
+            if (IsKeyDown(KEY_D) && position->yPos < GetScreenHeight() - 0.5) {
                 this->_ECS->getComponent<Position::Component>(id)->yPos += 0.5;
             }
         }
