@@ -7,30 +7,30 @@
 
 #include "Server.hpp"
 
-Server::Server() {
-    this->_incomingMsg = std::make_shared<MessageQueue<Message>>();
-    this->_outgoingMsg = std::make_shared<MessageQueue<Message>>();
+Server::Server() : _lobbyRunning(true) {}
+
+int Server::setup() {
+    return 0;
 }
 
-Server::~Server() {}
+int Server::mainLoop() {
+    while (this->_lobbyRunning) {
+        // LOBBY LOGIC
+        // Note: the following is purely brainstorming, please give feedback
 
-void Server::setup() {
-    this->_comThread = std::thread(communication_main, this->_incomingMsg, this->_outgoingMsg);
-}
-
-void Server::main_loop() {
-    std::optional<Message> msg;
-
-    while (true) {
-        while ((msg = this->_incomingMsg->pop())) {
-            std::cout << msg->client_id << ": " << msg->msg;
-
-            if (msg->msg == "ping\n") {
-                std::cout << "[Server] -> [" << msg->client_id << "]: pong" << std::endl;
-                this->_outgoingMsg->push({msg->client_id, "pong"});
-            }
-        }
-
-        std::this_thread::sleep_for(std::chrono::seconds(5));
+        // Check for new connections
+        //   If new connection, add to lobby
+        //   Lobby class would just be a basic class or struct storing info of connected clients
+        // The check could also be implemented in the protocol implementation with the use of a
+        // shared pointer to the Lobby class instance
     }
+
+    return 0;
+}
+
+int Server::launchGame() {
+    // this->_game = Game();
+    this->_game.mainLoop();
+
+    return 0;
 }
