@@ -1,7 +1,7 @@
 [requires]
 asio/1.24.0
 raylib/3.5.0
-libuuid/1.0.3
+stduuid/1.2.2
 
 [generators]
 cmake

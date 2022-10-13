@@ -1,9 +1,9 @@
 #pragma once
 
 // #include "sole.hpp"
+#include "uuid.h"
 #include <iostream>
 #include <regex>
-#include <uuid/uuid.h>
 
 class UUID {
 public:
@@ -24,5 +24,5 @@ public:
     std::string operator+(char* str);
 
 private:
-    uuid_t _uuid;
+    uuids::uuid _uuid;
 };

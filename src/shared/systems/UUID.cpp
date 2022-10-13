@@ -2,7 +2,14 @@
 #include "UUID.hpp"
 
 UUID::UUID() {
-    uuid_generate_random(this->_uuid);
+    std::random_device rd;
+    auto seed_data = std::array<int, std::mt19937::state_size>{};
+    std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
+    std::seed_seq seq(std::begin(seed_data), std::end(seed_data));
+    std::mt19937 generator(seq);
+    uuids::uuid_random_generator gen{generator};
+
+    this->_uuid = gen();
 }
 
 UUID::UUID(std::string uuidStr) {
@@ -10,15 +17,15 @@ UUID::UUID(std::string uuidStr) {
     std::smatch match;
     std::regex_search(uuidStr, match, pattern);
 
-    uuid_parse(match.str().c_str(), this->_uuid);
+    this->_uuid = uuids::uuid::from_string(match.str()).value();
 };
 
 std::string UUID::toString() {
-    char* uuidStr;
+    std::stringstream ss;
 
-    uuid_unparse(this->_uuid, uuidStr);
+    ss << this->_uuid;
 
-    return std::string(uuidStr);
+    return ss.str();
 };
 
 bool UUID::operator==(const UUID& uuid) {
