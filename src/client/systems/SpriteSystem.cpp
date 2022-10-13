@@ -11,9 +11,9 @@
 SpriteSystem::SpriteSystem(Manager* ECS) {
     this->_ECS = ECS;
 
-    this->_sheet[Animation::AnimationID::Orb] = {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0};
-    this->_sheet[Animation::AnimationID::Vortex] = {"resources/r-typesheet30a.png", 1, 3, 31, 31, 3, 1, 2, 0};
-    this->_sheet[Animation::AnimationID::Cluster] = {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1};
+    this->_sheet[Animation::AnimationID::Orb] = {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0};
+    this->_sheet[Animation::AnimationID::Vortex] = {"resources/r-typesheet30a.png", 1, 3, 31, 31, 3, 1, 2, 0, 0};
+    this->_sheet[Animation::AnimationID::Cluster] = {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1};
 }
 
 Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
@@ -37,6 +37,7 @@ Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, con
 
 AnimationStr* SpriteSystem::loadAnimation(AnimationSheet animationSheet) {
     AnimationStr* animation = new AnimationStr();
+
     for (int y = 0; y < animationSheet.animHeight; y++) {
         for (int x = 0; x < animationSheet.animWidth; x++) {
             const float xPos = animationSheet.startX + (animationSheet.frameWidth * x) + (animationSheet.separationX * x);
@@ -46,8 +47,10 @@ AnimationStr* SpriteSystem::loadAnimation(AnimationSheet animationSheet) {
         }
     }
 
-    for (int i = animation->sequence.size() - 1; 0 <= i; i--) {
-        animation->sequence.push_back(animation->sequence[i]);
+    if (animationSheet.reverse) {
+        for (int i = animation->sequence.size() - 1; 0 <= i; i--) {
+            animation->sequence.push_back(animation->sequence[i]);
+        }
     }
     return animation;
 }
