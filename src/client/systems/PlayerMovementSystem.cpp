@@ -1,0 +1,41 @@
+/*
+** EPITECH PROJECT, 2022
+** R-Type
+** File description:
+** PlayerMovementSystem
+*/
+
+#include "PlayerMovementSystem.hpp"
+#include "../../shared/ECS/Manager.hpp"
+
+PlayerMovementSystem::PlayerMovementSystem(Manager* ECS)
+{
+    this->_ECS = ECS;
+}
+
+void PlayerMovementSystem::apply()
+{
+    const auto now = getNow();
+    std::chrono::duration<double> elapsed_seconds = now - this->_timer;
+
+    if (elapsed_seconds.count() > 0.1) {
+        for (auto beg = this->_ECS->begin<Player::Component>(); beg != this->_ECS->end<Player::Component>(); ++beg) {
+            EntityID id = *beg;
+            Position::Component* position = this->_ECS->getComponent<Position::Component>(id);
+            //Here is missing to check for Collision
+            if (IsKeyDown(KEY_W)) {
+                this->_ECS->getComponent<Position::Component>(id)->xPos += 0.5;
+            }
+            if (IsKeyDown(KEY_S)) {
+                this->_ECS->getComponent<Position::Component>(id)->xPos -= 0.5;
+            }
+            if (IsKeyDown(KEY_A)) {
+                this->_ECS->getComponent<Position::Component>(id)->yPos -= 0.5;
+            }
+            if (IsKeyDown(KEY_D)) {
+                this->_ECS->getComponent<Position::Component>(id)->yPos += 0.5;
+            }
+        }
+        this->_timer = now;
+    }
+}
