@@ -5,6 +5,11 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+if (NOT MSVC)
+    add_compile_options(-g3)
+endif()
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
@@ -15,14 +20,16 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Communication.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Game.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
 
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
 )
 
 add_executable(Client
@@ -33,6 +40,10 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
 )
 
 file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMakeRC.cmake"
