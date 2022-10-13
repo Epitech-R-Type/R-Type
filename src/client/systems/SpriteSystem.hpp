@@ -69,10 +69,10 @@ public:
      * the linked animation
      * */
     void addAnimation(EntityID ID, Animation::Component* component);
+    static std::map<Animation::AnimationID, AnimationSheet> ANIMATION_SHEET;
 
 private:
     cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
     std::map<int, std::map<EntityID, AnimationStr*>> _animationLayers;
     Manager* _ECS;
-    std::map<Animation::AnimationID, AnimationSheet> _sheet;
 };

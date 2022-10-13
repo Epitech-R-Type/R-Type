@@ -14,6 +14,9 @@ void VelocitySystem::apply() {
         Velocity::Component* velocity = this->_ECS->getComponent<Velocity::Component>(id);
         Position::Component* position = this->_ECS->getComponent<Position::Component>(id);
 
+        if (!velocity || !position)
+            continue;
+
         position->xPos += velocity->xVelocity;
         position->yPos += velocity->yVelocity;
     }

@@ -10,10 +10,6 @@
 
 SpriteSystem::SpriteSystem(Manager* ECS) {
     this->_ECS = ECS;
-
-    this->_sheet[Animation::AnimationID::Orb] = {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0};
-    this->_sheet[Animation::AnimationID::Vortex] = {"resources/r-typesheet30a.png", 1, 3, 31, 31, 3, 1, 2, 0, 0};
-    this->_sheet[Animation::AnimationID::Cluster] = {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1};
 }
 
 Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
@@ -68,29 +64,64 @@ void SpriteSystem::nextFrame(AnimationStr* animation) {
 }
 
 void SpriteSystem::apply() {
-    for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
-        EntityID id = *beg;
-        Animation::Component* component = this->_ECS->getComponent<Animation::Component>(id);
-        Position::Component* position = this->_ECS->getComponent<Position::Component>(id);
 
-        AnimationStr* anim = this->_animationLayers[component->layer][id];
+    std::vector<int> layers;
 
-        if (anim == nullptr) {
-            throw "Entity does not have a set animation in the Sprite Manager";
-        }
-
-        Texture2D frame = anim->sequence[anim->index];
-
-        DrawTexture(frame, position->xPos - frame.width / 2, position->yPos - frame.height / 2 - 40, WHITE);
-
-        this->nextFrame(anim);
+    for (auto layer : this->_animationLayers) {
+        layers.push_back(layer.first);
     }
+
+    std::sort(layers.begin(), layers.end());
+
+    for (const int layer : layers) {
+        for (auto entity : this->_animationLayers[layer]) {
+
+            Animation::Component* component = this->_ECS->getComponent<Animation::Component>(entity.first);
+            Position::Component* position = this->_ECS->getComponent<Position::Component>(entity.first);
+
+            AnimationStr* anim = entity.second;
+
+            if (anim == nullptr) {
+                throw "Entity does not have a set animation in the Sprite Manager";
+            }
+
+            Texture2D frame = anim->sequence[anim->index];
+
+            DrawTexture(frame, position->xPos - frame.width / 2, position->yPos - frame.height / 2 - 40, WHITE);
+
+            this->nextFrame(anim);
+        }
+    }
+
+    // for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
+    //     EntityID id = *beg;
+    //     Animation::Component* component = this->_ECS->getComponent<Animation::Component>(id);
+    //     Position::Component* position = this->_ECS->getComponent<Position::Component>(id);
+
+    //     AnimationStr* anim = this->_animationLayers[component->layer][id];
+
+    //     if (anim == nullptr) {
+    //         throw "Entity does not have a set animation in the Sprite Manager";
+    //     }
+
+    //     Texture2D frame = anim->sequence[anim->index];
+
+    //     DrawTexture(frame, position->xPos - frame.width / 2, position->yPos - frame.height / 2 - 40, WHITE);
+
+    //     this->nextFrame(anim);
+    // }
 }
 
 void SpriteSystem::addAnimation(EntityID ID, Animation::Component* component) {
-    this->_animationLayers[component->layer][ID] = this->loadAnimation(this->_sheet[component->animationID]);
+    this->_animationLayers[component->layer][ID] = this->loadAnimation(SpriteSystem::ANIMATION_SHEET[component->animationID]);
 }
 
 std::chrono::time_point<std::chrono::system_clock> getNow() {
     return std::chrono::system_clock::now();
 }
+
+std::map<Animation::AnimationID, AnimationSheet> SpriteSystem::ANIMATION_SHEET = {
+    {Animation::AnimationID::Orb, {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0}},
+    {Animation::AnimationID::Vortex, {"resources/r-typesheet30a.png", 1, 3, 31, 31, 3, 1, 2, 0, 0}},
+    {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
+};

@@ -9,14 +9,14 @@
 
 int Client::launchGame() {
     // Note: For performance reasons we could free the lobby ecs before launching the game
-    // this->_game = ClientGame();
+    this->_game.init();
     this->_game.mainLoop();
 
     return 0;
 }
 
 int Client::mainLoop() {
-    while (this->_lobbyRunning) {
+    while (this->_lobbyRunning && !WindowShouldClose()) {
         // Lobby logic
         // Use input from user to navigate menu
         // Manipulate local ecs

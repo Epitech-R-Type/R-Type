@@ -153,7 +153,7 @@ public:
         };
 
         bool isValid(Index i) {
-            std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
+            std::bitset<MAX_COMPONENTS> wantedComps = this->_wanted;
             std::bitset<MAX_COMPONENTS> concombre = (wantedComps & this->_man->_entities[this->_currIndex].components);
 
             return this->_all || concombre == wantedComps;

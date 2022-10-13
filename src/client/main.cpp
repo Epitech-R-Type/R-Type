@@ -3,7 +3,11 @@
 Index g_idCounter = 0;
 
 int main() {
+
     Client client;
 
-    client.mainLoop();
+    client.setup();
+    client.launchGame();
+
+    return 0;
 }
