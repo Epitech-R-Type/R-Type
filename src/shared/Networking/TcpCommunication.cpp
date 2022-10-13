@@ -31,6 +31,7 @@ TcpCommunication::TcpCommunication(std::shared_ptr<MessageQueue<std::string>> in
     this->_outgoingMessages = outgoing;
 }
 
+// Incoming Handler
 void TcpCommunication::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> peer) {
     peer->async_receive(asio::buffer(this->_buffer), [this, peer](const asio::error_code& err, std::size_t bytesTransfered) {
         if (!err) {
@@ -58,6 +59,7 @@ void TcpCommunication::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::soc
     });
 }
 
+// Outgoing Handler
 void TcpCommunication::setup_outgoing_handler() {
     this->_outgoingTimer = asio::steady_timer(this->_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL));
 
@@ -88,6 +90,7 @@ void TcpCommunication::setup_outgoing_handler() {
     });
 }
 
+// Accept Handler
 // This handler accepts new connections and adds them to the connected peers vector
 void TcpCommunication::setup_acceptor_handler() {
     auto newPeer = std::make_shared<asio::ip::tcp::socket>(this->_ctxt);
@@ -97,9 +100,6 @@ void TcpCommunication::setup_acceptor_handler() {
         if (!err) {
             auto addr = newPeer->remote_endpoint().address();
             auto port = newPeer->remote_endpoint().port();
-
-            // Push special message indicating that new client had been connected
-            this->push_message(Message(std::string("ACCEPT"), addr, port));
 
             this->setup_incoming_handler(newPeer);
         }
