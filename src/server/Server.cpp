@@ -10,6 +10,8 @@
 Server::Server() : _lobbyRunning(true) {}
 
 int Server::setup() {
+    this->launchGame();
+
     return 0;
 }
 

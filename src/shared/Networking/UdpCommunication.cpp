@@ -23,8 +23,9 @@ void communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std
 
 UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
                                    std::shared_ptr<std::atomic<bool>> stopFlag)
-    : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), 3501)), _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
-      _stopFlag(stopFlag), _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
+    : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), UDP_PORT)),
+      _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)), _stopFlag(stopFlag),
+      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
