@@ -11,11 +11,11 @@ int main() {
     constexpr int screenWidth = 1600;
     constexpr int screenHeight = 900;
 
-    SoleUUID x;
+    // SoleUUID x;
 
-    std::cout << x.toString() << " " << (x == x) << std::endl;
+    // std::cout << x.toString() << " " << (x == x) << std::endl;
 
-    std::cout << SoleUUID("sdqsdnqos 0be94fe8-f063-40a7-bebd-2baa4a745486 1").toString() << std::endl;
+    // std::cout << SoleUUID("sdqsdnqos 0be94fe8-f063-40a7-bebd-2baa4a745486 1").toString() << std::endl;
 
     InitWindow(screenWidth, screenHeight, "R-Type");
 
