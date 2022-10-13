@@ -16,7 +16,14 @@ void VelocitySystem::apply() {
         Velocity::Component* velocity = this->_ECS->getComponent<Velocity::Component>(id);
         Position::Component* position = this->_ECS->getComponent<Position::Component>(id);
 
-        position->xPos += velocity->xVelocity;
-        position->yPos += velocity->yVelocity;
+        if (velocity->follow >= 0) {
+            const Position::Component* trackedEntityPosition = this->_ECS->getComponent<Position::Component>(velocity->follow);
+
+            position->xPos = trackedEntityPosition->xPos;
+            position->yPos = trackedEntityPosition->yPos;
+        } else {
+            position->xPos += velocity->xVelocity;
+            position->yPos += velocity->yVelocity;
+        }
     }
 };

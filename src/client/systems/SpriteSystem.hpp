@@ -48,12 +48,12 @@ public:
     /**
      * Load the part of an image file into a Texture2D object
      * */
-    Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen);
+    Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen, const float scale);
 
     /**
      * Parses image file to extract all frames of an animation
      * */
-    AnimationStr* loadAnimation(AnimationSheet animationSheet);
+    AnimationStr* loadAnimation(AnimationSheet animationSheet, const float scale);
 
     /**
      * Increments currently displayed frame of animation if enough time passed since the last update
