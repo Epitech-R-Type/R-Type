@@ -7,6 +7,7 @@
 
 #include "SpriteSystem.hpp"
 #include "../../shared/ECS/Manager.hpp"
+#include <algorithm>
 
 SpriteSystem::SpriteSystem(Manager* ECS) {
     this->_ECS = ECS;
@@ -92,24 +93,6 @@ void SpriteSystem::apply() {
             this->nextFrame(anim);
         }
     }
-
-    // for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
-    //     EntityID id = *beg;
-    //     Animation::Component* component = this->_ECS->getComponent<Animation::Component>(id);
-    //     Position::Component* position = this->_ECS->getComponent<Position::Component>(id);
-
-    //     AnimationStr* anim = this->_animationLayers[component->layer][id];
-
-    //     if (anim == nullptr) {
-    //         throw "Entity does not have a set animation in the Sprite Manager";
-    //     }
-
-    //     Texture2D frame = anim->sequence[anim->index];
-
-    //     DrawTexture(frame, position->xPos - frame.width / 2, position->yPos - frame.height / 2 - 40, WHITE);
-
-    //     this->nextFrame(anim);
-    // }
 }
 
 void SpriteSystem::addAnimation(EntityID ID, Animation::Component* component) {

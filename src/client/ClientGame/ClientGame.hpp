@@ -7,15 +7,15 @@
 
 #pragma once
 
-#include <memory>
-#include <thread>
-
 #include "../../shared/ECS/Manager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
 #include "../../shared/systems/VelocitySystem.hpp"
 #include "../systems/PlayerMovementSystem.hpp"
 #include "../systems/SpriteSystem.hpp"
+#include <memory>
+#include <string>
+#include <thread>
 
 // This class implements the inpur, networking and graphical logic needed
 // for the running of a game.
