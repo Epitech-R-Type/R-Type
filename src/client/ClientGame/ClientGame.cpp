@@ -18,6 +18,10 @@ ClientGame::ClientGame() {
 }
 
 ClientGame::~ClientGame() {
+    // Signal thread to stop and join thread
+    this->_stopFlag->store(true);
+    this->_udpComThread->join();
+
     // Delete com thread
     delete this->_udpComThread;
 }
@@ -28,8 +32,4 @@ void ClientGame::mainLoop() {
     while (this->_isRunning) {
         // Placeholder
     }
-
-    // Signal thread to stop and join thread
-    this->_stopFlag->store(true);
-    this->_udpComThread->join();
 }
