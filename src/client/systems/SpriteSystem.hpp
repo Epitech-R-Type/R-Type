@@ -36,6 +36,8 @@ struct AnimationSheet {
     int animHeight;
     int separationX;
     int separationY;
+    // adds the same frames in reverse to the animation
+    bool reverse;
 };
 
 class SpriteSystem : public System {
