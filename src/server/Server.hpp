@@ -14,21 +14,31 @@
 #include <thread>
 
 #include "../shared/MessageQueue/MessageQueue.hpp"
-#include "Communication.hpp"
+#include "../shared/Networking/UdpCommunication.hpp"
+#include "Game.hpp"
 
 // Root class for R-Type Server
+// This class will handle the tcp communication required for game lobby
+// forming along with launching games.
 class Server {
-public:
+    public:
+    // Constructor: Instantiates TcpCommunication class
     Server();
-    ~Server();
 
-    void setup();
-    void run();
-    void main_loop();
+    // Setup function
+    // All setup goes in here, such as generation of all component ids
+    // We could also send to the client information on the ECS such as MAX_COMPONENTS & MAX_ENTITIES
+    int setup();
 
-private:
-    std::shared_ptr<MessageQueue<Message>> _outgoingMsg;
-    std::shared_ptr<MessageQueue<Message>> _incomingMsg;
+    // Main Loop
+    int mainLoop();
 
-    std::thread _comThread;
+    // Launches game
+    // Note: Execution will hang until game is over,
+    // in the future this can be done in a separate thread
+    int launchGame();
+
+    private:
+    bool _lobbyRunning;
+    Game _game;
 };
