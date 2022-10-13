@@ -63,7 +63,6 @@ private:
     asio::ip::tcp::acceptor _acceptor;
 
     std::vector<std::shared_ptr<asio::ip::tcp::socket>> _peers; // Peers socket vector
-    asio::ip::tcp::socket _newPeer;
 
     // Buffer used for msg reception
     char _buffer[MAX_BUFFER_SIZE];

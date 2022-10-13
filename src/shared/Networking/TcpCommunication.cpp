@@ -25,8 +25,7 @@ TcpCommunication::TcpCommunication(std::shared_ptr<MessageQueue<std::string>> in
                                    std::shared_ptr<std::atomic<bool>> stopFlag)
     : _sock(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT)),
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)), _stopFlag(stopFlag),
-      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)), _acceptor(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT + 1)),
-      _newPeer(_ctxt) {
+      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)), _acceptor(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT + 1)) {
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
@@ -37,8 +36,10 @@ void TcpCommunication::setup_outgoing_handler() {}
 
 // This handler accepts new connections and adds them to the connected peers vector
 void TcpCommunication::setup_acceptor_handler() {
+    auto newPeer = std::make_shared<asio::ip::tcp::socket>(this->_ctxt);
+    this->_peers.push_back(newPeer);
 
-    this->_acceptor.async_accept(this->_newPeer, [this](const asio::error_code& err) {
+    this->_acceptor.async_accept(*newPeer, [this](const asio::error_code& err) {
         std::cout << "Accepted connection" << std::endl;
         this->setup_acceptor_handler();
     });
