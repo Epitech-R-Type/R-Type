@@ -1,7 +1,6 @@
 [requires]
 asio/1.24.0
 raylib/3.5.0
-sole/1.0.2
 
 [generators]
 cmake

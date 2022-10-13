@@ -3,25 +3,26 @@
 // #include "sole.hpp"
 #include <iostream>
 #include <regex>
+#include <uuid/uuid.h>
 
-class SoleUUID {
+class UUID {
 public:
-    // SoleUUID();
+    UUID();
 
-    // SoleUUID(std::string uuidStr);
+    UUID(std::string uuidStr);
 
-    // std::string toString();
+    std::string toString();
 
-    // bool operator==(const SoleUUID& uuid);
+    bool operator==(const UUID& uuid);
 
-    // friend std::ostream& operator<<(std::ostream& os, const SoleUUID& uuid) {
-    //     return os << uuid._uuid;
-    // };
+    friend std::ostream& operator<<(std::ostream& os, const UUID& uuid) {
+        return os << uuid._uuid;
+    };
 
-    // std::string operator+(std::string str);
+    std::string operator+(std::string str);
 
-    // std::string operator+(char* str);
+    std::string operator+(char* str);
 
 private:
-    // sole::uuid _uuid;
+    uuid_t _uuid;
 };

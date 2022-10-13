@@ -1,33 +1,34 @@
 
 #include "UUID.hpp"
 
-// SoleUUID::SoleUUID() {
-//     this->_uuid = sole::uuid4();
-// }
+UUID::UUID() {
+    uuid_generate_random(this->_uuid);
+}
 
-// SoleUUID::SoleUUID(std::string uuidStr) {
-//     std::regex pattern("(\\w+-){4}\\w+");
-//     std::smatch match;
-//     std::regex_search(uuidStr, match, pattern);
+UUID::UUID(std::string uuidStr) {
+    std::regex pattern("(\\w+-){4}\\w+");
+    std::smatch match;
+    std::regex_search(uuidStr, match, pattern);
 
-//     this->_uuid = sole::rebuild(match.str());
-// };
+    uuid_parse(match.str().c_str(), this->_uuid);
+};
 
-// std::string SoleUUID::toString() {
-//     std::stringstream ss;
+std::string UUID::toString() {
+    char* uuidStr;
 
-//     ss << this->_uuid;
-//     return ss.str();
-// };
+    uuid_unparse(this->_uuid, uuidStr);
 
-// bool SoleUUID::operator==(const SoleUUID& uuid) {
-//     return uuid._uuid == this->_uuid;
-// }
+    return std::string(uuidStr);
+};
 
-// std::string SoleUUID::operator+(std::string str) {
-//     return this->toString() + str;
-// };
+bool UUID::operator==(const UUID& uuid) {
+    return uuid._uuid == this->_uuid;
+}
 
-// std::string SoleUUID::operator+(char* str) {
-//     return this->toString() + str;
-// };
+std::string UUID::operator+(std::string str) {
+    return this->toString() + str;
+};
+
+std::string UUID::operator+(char* str) {
+    return this->toString() + str;
+};
