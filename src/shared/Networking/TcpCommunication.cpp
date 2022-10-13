@@ -48,13 +48,40 @@ void TcpCommunication::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::soc
             // Reset buffer
             memset(this->_buffer, 0, 1024);
 
+            std::cerr << "Error performing async_receive()" << std::endl;
             // Reset incoming handler
             this->setup_incoming_handler(peer);
         }
     });
 }
 
-void TcpCommunication::setup_outgoing_handler() {}
+void TcpCommunication::setup_outgoing_handler() {
+    this->_outgoingTimer = asio::steady_timer(this->_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL));
+
+    this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
+        if (err) {
+            std::cout << "Error is : " << err.message() << std::endl;
+            this->setup_outgoing_handler();
+            return;
+        }
+        std::optional<Message<std::string>> msg;
+        char buffer[1024];
+
+        if ((msg = this->pop_message())) {
+
+            std::string msgStr = msg->getMsg();
+
+            // Prepare buffer
+            int len = msgStr.length();
+            strcpy(buffer, msgStr.c_str());
+            memset(&buffer[len], 0, 1024 - len);
+
+            auto peer = this->findPeer(msg->getAddr(), msg->getPort());
+            peer->send(asio::buffer(buffer));
+        }
+        this->setup_outgoing_handler();
+    });
+}
 
 // This handler accepts new connections and adds them to the connected peers vector
 void TcpCommunication::setup_acceptor_handler() {
@@ -92,6 +119,18 @@ void TcpCommunication::stop_signal_handler() {
         // Re schedule stop signal handler
         this->stop_signal_handler();
     });
+}
+
+std::shared_ptr<asio::ip::tcp::socket> TcpCommunication::findPeer(asio::ip::address addr, asio::ip::port_type port) {
+    for (auto peer : this->_peers) {
+        auto peerAddr = peer->remote_endpoint().address();
+        auto peerPort = peer->remote_endpoint().port();
+
+        if (peerAddr == addr && peerPort == port && peer->is_open())
+            return peer;
+    }
+
+    return std::shared_ptr<asio::ip::tcp::socket>();
 }
 
 // Context runtime functions

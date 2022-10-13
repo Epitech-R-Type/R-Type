@@ -43,6 +43,9 @@ public:
     // Note: Needs to be called again in order to loop
     void stop_signal_handler();
 
+    // Searches through peers and returns shared ptr to peer socket
+    std::shared_ptr<asio::ip::tcp::socket> findPeer(asio::ip::address addr, asio::ip::port_type port);
+
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);
     std::optional<Message<std::string>> pop_message(void);
