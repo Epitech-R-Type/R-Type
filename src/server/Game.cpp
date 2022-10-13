@@ -47,4 +47,6 @@ int Game::mainLoop() {
     // Signal thread to stop and join thread
     this->_stopFlag->store(true);
     this->_udpComThread->join();
+
+    return 0;
 }
