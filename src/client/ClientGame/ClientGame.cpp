@@ -33,9 +33,7 @@ ClientGame::ClientGame() {
     this->_spriteSystem = new SpriteSystem(this->_entManager);
     this->_velocitySystem = new VelocitySystem(this->_entManager);
 
-    InitWindow(1600, 900, "R-Type");
-
-    // will take the player EntityID as consturctor param
+    // ClientGame will take the player EntityID as consturctor param, replace y Server message
     this->_player = makePlayer(this->_entManager, this->_spriteSystem);
 
     this->_playerMovementSystem = new PlayerMovementSystem(this->_entManager);
