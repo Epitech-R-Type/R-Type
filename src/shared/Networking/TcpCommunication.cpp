@@ -67,7 +67,7 @@ void TcpCommunication::setup_outgoing_handler() {
         std::optional<Message<std::string>> msg;
         char buffer[1024];
 
-        if ((msg = this->pop_message())) {
+        while ((msg = this->pop_message())) {
 
             std::string msgStr = msg->getMsg();
 
