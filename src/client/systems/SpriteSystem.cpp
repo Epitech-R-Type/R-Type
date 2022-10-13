@@ -27,7 +27,6 @@ Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, con
 
     ImageCrop(&sprite, crop);
     ImageResizeNN(&sprite, xlen * scale, ylen * scale);
-    ImageRotateCCW(&sprite);
 
     Texture2D texture = LoadTextureFromImage(sprite);
 

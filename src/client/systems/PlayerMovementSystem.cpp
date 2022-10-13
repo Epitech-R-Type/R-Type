@@ -9,6 +9,7 @@
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/Manager.hpp"
 #include "PlayerMovementSystem.hpp"
+#include "SpriteSystem.hpp"
 
 PlayerMovementSystem::PlayerMovementSystem(Manager* ECS) {
     this->_ECS = ECS;

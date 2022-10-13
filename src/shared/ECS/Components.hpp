@@ -8,6 +8,7 @@
 #pragma once
 
 #include "ECS.hpp"
+#include <ctime>
 #include <sstream>
 #include <vector>
 
@@ -56,7 +57,7 @@ namespace Animation {
     struct Component {
         AnimationID animationID;
         unsigned long layer = 1;
-        float rotation = 1;
+        float rotation = 0;
         float scale = 3;
     };
 
@@ -100,7 +101,8 @@ namespace Armament {
 
     struct Component {
         Armament::ArmamentType type;
-        float interval = 1;
-        // std::chrono::time_point<std::chrono::system_clock> timer;
+        // in milliseconds
+        int interval;
+        std::time_t timer = std::time(0);
     };
 } // namespace Armament

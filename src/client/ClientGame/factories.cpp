@@ -9,7 +9,7 @@ EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2});
     ECS->addComp<Health::Component>(player, {25, 30});
     ECS->addComp<Player::Component>(player, {true});
-    ECS->addComp<Armament::Component>(player, {Armament::ArmamentType::Bullet, 2});
+    ECS->addComp<Armament::Component>(player, {Armament::ArmamentType::Bullet, 0});
 
     spriteSystem->addAnimation(player, ECS->getComponent<Animation::Component>(player));
 

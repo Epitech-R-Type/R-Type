@@ -72,9 +72,6 @@ void ClientGame::mainLoop() {
         this->_healthSystem->apply();
         this->_armamentSystem->apply();
 
-        int x = this->_entManager->getComponent<Position::Component>(this->_player)->xPos;
-        int y = this->_entManager->getComponent<Position::Component>(this->_player)->yPos;
-
         EndDrawing();
     }
 

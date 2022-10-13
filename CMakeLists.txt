@@ -26,11 +26,10 @@ include("${CMAKE_BINARY_DIR}/CMakeRC.cmake")
 
 add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/main.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Game.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/ArmamentSystem.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Game.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
@@ -42,17 +41,18 @@ add_executable(Server
 add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/SpriteSystem.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/ArmamentSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/HealthSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/PlayerMovementSystem.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/factories.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
+
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
 )
