@@ -48,7 +48,10 @@ void TcpCommunication::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::soc
             // Reset buffer
             memset(this->_buffer, 0, 1024);
 
-            std::cerr << "Error performing async_receive()" << std::endl;
+            // Handle client disconnection
+            if (err.value() == asio::error::eof)
+                this->remove_peer(peer);
+
             // Reset incoming handler
             this->setup_incoming_handler(peer);
         }
@@ -77,6 +80,8 @@ void TcpCommunication::setup_outgoing_handler() {
             memset(&buffer[len], 0, 1024 - len);
 
             auto peer = this->findPeer(msg->getAddr(), msg->getPort());
+            if (!peer)
+                break;
             peer->send(asio::buffer(buffer));
         }
         this->setup_outgoing_handler();
@@ -126,11 +131,26 @@ std::shared_ptr<asio::ip::tcp::socket> TcpCommunication::findPeer(asio::ip::addr
         auto peerAddr = peer->remote_endpoint().address();
         auto peerPort = peer->remote_endpoint().port();
 
-        if (peerAddr == addr && peerPort == port && peer->is_open())
+        if (peerAddr == addr && peerPort == port)
             return peer;
     }
 
     return std::shared_ptr<asio::ip::tcp::socket>();
+}
+
+void TcpCommunication::remove_peer(std::shared_ptr<asio::ip::tcp::socket> peer) {
+    for (int i = 0; i < this->_peers.size(); i++) {
+        auto peerAddr1 = peer->remote_endpoint().address();
+        auto peerPort1 = peer->remote_endpoint().port();
+
+        auto peerAddr2 = this->_peers[i]->remote_endpoint().address();
+        auto peerPort2 = this->_peers[i]->remote_endpoint().port();
+
+        if (peerAddr1 == peerAddr2 && peerPort1 == peerPort2) {
+            this->_peers.erase(this->_peers.begin() + i);
+            break;
+        }
+    }
 }
 
 // Context runtime functions

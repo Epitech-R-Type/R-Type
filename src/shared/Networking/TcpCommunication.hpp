@@ -45,7 +45,8 @@ public:
 
     // Searches through peers and returns shared ptr to peer socket
     std::shared_ptr<asio::ip::tcp::socket> findPeer(asio::ip::address addr, asio::ip::port_type port);
-
+    // Removes peer from vector
+    void remove_peer(std::shared_ptr<asio::ip::tcp::socket> peer);
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);
     std::optional<Message<std::string>> pop_message(void);
