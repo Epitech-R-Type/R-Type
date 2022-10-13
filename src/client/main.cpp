@@ -15,8 +15,6 @@ int main() {
 
     std::cout << x.toString() << " " << (x == x) << std::endl;
 
-    std::cout << UUID("sdqsdnqos 5acc0e06-2212-4c42-9ade-de53e9cdd1f2 1").toString() << std::endl;
-
     InitWindow(screenWidth, screenHeight, "R-Type");
 
     Manager em;
