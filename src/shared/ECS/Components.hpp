@@ -66,3 +66,4 @@ namespace Velocity {
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
 } // namespace Velocity
+
