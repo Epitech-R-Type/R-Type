@@ -66,3 +66,11 @@ namespace Velocity {
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
 } // namespace Velocity
+
+namespace Player {
+    struct Component {
+        bool isPlayer = true;
+    };
+
+    std::string toString(Player::Component component);
+}

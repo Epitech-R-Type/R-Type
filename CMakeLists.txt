@@ -7,7 +7,9 @@ set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
-if (NOT MSVC)
+if (MSVC)
+    add_compile_definitions(WIN32_LEAN_AND_MEAN)
+else()
     add_compile_options(-g3)
 endif()
 
@@ -28,7 +30,6 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
-
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
 )
 
@@ -36,6 +37,7 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/SpriteSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/PlayerMovementSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
