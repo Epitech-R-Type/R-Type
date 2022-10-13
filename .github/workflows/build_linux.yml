@@ -24,14 +24,11 @@ jobs:
 
       - name: update-conan-profile
         shell: bash
-        run: >
-          conan config set tools.system.package_manager:mode=install;
+        run: echo [conf]\ntools.system.package_manager:sudo=True\ntools.system.package_manager:mode=install >> ~/.conan/profile/default
 
       # Build project
       - name: build
         shell: bash
         run: >
           chmod u+x build.sh;
-          export CONAN_SYSREQUIRES_MODE="enabled";
-          export CONAN_SYSREQUIRES_SUDO="1";
           ./build.sh
