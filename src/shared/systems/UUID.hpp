@@ -4,23 +4,23 @@
 #include <iostream>
 #include <regex>
 
-class UUID {
+class SoleUUID {
 public:
-    UUID();
+    SoleUUID();
 
-    UUID(std::string uuidStr);
+    SoleUUID(std::string uuidStr);
 
     std::string toString();
 
-    // bool operator==(const UUID& uuid);
+    bool operator==(const SoleUUID& uuid);
 
-    // friend std::ostream& operator<<(std::ostream& os, const UUID& uuid) {
-    //     return os << uuid._uuid;
-    // };
+    friend std::ostream& operator<<(std::ostream& os, const SoleUUID& uuid) {
+        return os << uuid._uuid;
+    };
 
-    // std::string operator+(std::string str);
+    std::string operator+(std::string str);
 
-    // std::string operator+(char* str);
+    std::string operator+(char* str);
 
 private:
     sole::uuid _uuid;
