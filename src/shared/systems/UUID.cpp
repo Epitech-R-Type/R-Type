@@ -20,14 +20,14 @@ std::string UUID::toString() {
     return ss.str();
 };
 
-bool UUID::operator==(const UUID& uuid) {
-    return uuid._uuid == this->_uuid;
-}
+// bool UUID::operator==(const UUID& uuid) {
+//     return uuid._uuid == this->_uuid;
+// }
 
-std::string UUID::operator+(std::string str) {
-    return this->toString() + str;
-};
+// std::string UUID::operator+(std::string str) {
+//     return this->toString() + str;
+// };
 
-std::string UUID::operator+(char* str) {
-    return this->toString() + str;
-};
+// std::string UUID::operator+(char* str) {
+//     return this->toString() + str;
+// };
