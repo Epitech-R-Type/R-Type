@@ -18,6 +18,10 @@ public:
         return os << uuid._uuid;
     };
 
+    std::string operator+(std::string str);
+
+    std::string operator+(char* str);
+
 private:
     sole::uuid _uuid;
 };
