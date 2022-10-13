@@ -13,9 +13,9 @@ int main() {
 
     UUID x;
 
-    std::cout << x << " " << (x == x) << std::endl;
+    std::cout << x.toString() << " " << (x == x) << std::endl;
 
-    std::cout << UUID("sdqsdnqos 0be94fe8-f063-40a7-bebd-2baa4a745486 1") << std::endl;
+    std::cout << UUID("sdqsdnqos 0be94fe8-f063-40a7-bebd-2baa4a745486 1").toString() << std::endl;
 
     InitWindow(screenWidth, screenHeight, "R-Type");
 

@@ -14,9 +14,9 @@ public:
 
     bool operator==(const UUID& uuid);
 
-    friend std::ostream& operator<<(std::ostream& os, const UUID& uuid) {
-        return os << uuid._uuid;
-    };
+    // friend std::ostream& operator<<(std::ostream& os, const UUID& uuid) {
+    //     return os << uuid._uuid;
+    // };
 
     std::string operator+(std::string str);
 
