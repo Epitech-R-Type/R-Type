@@ -136,35 +136,29 @@ public:
         };
 
         EntityID operator*() const {
-            return this->_man->_entities[_currIndex].id;
+            return this->_man->_entities[this->_currIndex].id;
         };
 
         bool operator==(const Iterator<Comps...>& other) {
-            this->_currIndex++;
             return this->_currIndex == other._currIndex;
         };
 
         bool operator!=(const Iterator<Comps...>& other) {
-            this->_currIndex++;
             return this->_currIndex != other._currIndex;
         };
 
         bool isValid() {
-            std::cout << this->_currIndex << std::endl;
             std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
             std::bitset<MAX_COMPONENTS> concombre = (this->_wanted & this->_man->_entities[this->_currIndex].components);
-
-            std::cout << "isValid: " << std::endl;
-            std::cout << this->_wanted << std::endl;
-            std::cout << this->_man->_entities[this->_currIndex].components << std::endl;
 
             return !this->_wanted.any() || this->_wanted == concombre;
         }
 
         Iterator<Comps...>& operator++() {
-            while (this->_currIndex < this->_man->_entities.size() && !this->isValid()) {
-                this->_currIndex++;
-            };
+            do {
+                ++this->_currIndex;
+            } while (this->_currIndex < this->_man->_entities.size() && !this->isValid());
+
             return *this;
         };
 
@@ -176,12 +170,17 @@ public:
 
     template <class... Comp>
     const Iterator<Comp...> begin() {
-        return Iterator<Comp...>(0, this);
+        auto iter = Iterator<Comp...>(0, this);
+
+        // advance until first matching entity
+        if (!iter.isValid())
+            ++iter;
+        return iter;
     }
 
     template <class... Comp>
     const Iterator<Comp...> end() {
-        return Iterator<Comp...>(this->_entities.size() - 1, this);
+        return Iterator<Comp...>(this->_entities.size(), this);
     }
 
 private:
