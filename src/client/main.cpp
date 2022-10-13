@@ -1,3 +1,5 @@
+#include "../WindowsGuard.hpp"
+
 #include "Client.hpp"
 
 Index g_idCounter = 0;

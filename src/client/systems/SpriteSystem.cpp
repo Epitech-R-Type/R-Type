@@ -5,8 +5,10 @@
 ** .
 */
 
-#include "SpriteSystem.hpp"
+#include "../../WindowsGuard.hpp"
+
 #include "../../shared/ECS/Manager.hpp"
+#include "SpriteSystem.hpp"
 #include <algorithm>
 
 SpriteSystem::SpriteSystem(Manager* ECS) {

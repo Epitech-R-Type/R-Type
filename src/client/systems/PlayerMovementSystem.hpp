@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../../WindowsGuard.hpp"
+
 #include <chrono>
 #include <raylib.h>
 

@@ -5,8 +5,10 @@
 ** .*
 */
 
-#include "ClientGame.hpp"
+#include "../../WindowsGuard.hpp"
+
 #include "../../shared/ECS/Components.hpp"
+#include "ClientGame.hpp"
 #include "raylib.h"
 
 EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
