@@ -83,10 +83,3 @@ void Velocity::applyUpdate(std::vector<std::string> args, EntityID entityID, Man
         manager->addComp<Velocity::Component>(entityID, {strtof(args[1].c_str(), nullptr), strtof(args[2].c_str(), nullptr)});
     }
 }
-
-std::string Player::toString(Player::Component component) {
-    std::stringstream ss;
-
-    ss << component.isPlayer << ";";
-    return ss.str();
-}

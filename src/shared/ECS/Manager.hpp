@@ -71,6 +71,7 @@ public:
         Index compId = getID<T>();
 
         // Set bit of component in component bitset of entity
+        std::cout << "CompId " << compId << std::endl;
         this->_entities[i].components[compId] = 1;
 
         // Check pool if given component exists
@@ -128,40 +129,42 @@ public:
     public:
         Iterator(Index start, Manager* man) : _currIndex(start), _man(man) {
             Index includedIds[] = {getID<Comps>()...};
-
-            // Check if no args passed, get entities with all comps
-            if (!sizeof(includedIds)) {
-                this->_all = true;
-                return;
-            }
-            this->_all = false;
+            this->_wanted.reset();
 
             for (auto included : includedIds)
-                this->_wanted[included] = 1;
+                this->_wanted.set(included);
         };
 
         EntityID operator*() const {
             return this->_man->_entities[_currIndex].id;
         };
 
-        bool operator==(const Iterator<Comps...>& other) const {
+        bool operator==(const Iterator<Comps...>& other) {
+            this->_currIndex++;
             return this->_currIndex == other._currIndex;
         };
 
-        bool operator!=(const Iterator<Comps...>& other) const {
+        bool operator!=(const Iterator<Comps...>& other) {
+            this->_currIndex++;
             return this->_currIndex != other._currIndex;
         };
 
-        bool isValid(Index i) {
+        bool isValid() {
+            std::cout << this->_currIndex << std::endl;
             std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
-            std::bitset<MAX_COMPONENTS> concombre = (wantedComps & this->_man->_entities[this->_currIndex].components);
+            std::bitset<MAX_COMPONENTS> concombre = (this->_wanted & this->_man->_entities[this->_currIndex].components);
 
-            return this->_all || concombre == wantedComps;
+            std::cout << "isValid: " << std::endl;
+            std::cout << this->_wanted << std::endl;
+            std::cout << this->_man->_entities[this->_currIndex].components << std::endl;
+
+            return !this->_wanted.any() || this->_wanted == concombre;
         }
 
         Iterator<Comps...>& operator++() {
-            do {
-            } while (this->_currIndex < this->_man->_entities.size() && !this->isValid(++this->_currIndex));
+            while (this->_currIndex < this->_man->_entities.size() && !this->isValid()) {
+                this->_currIndex++;
+            };
             return *this;
         };
 
@@ -169,7 +172,6 @@ public:
         Index _currIndex;
         Manager* _man;
         std::bitset<MAX_COMPONENTS> _wanted;
-        bool _all;
     };
 
     template <class... Comp>
@@ -179,7 +181,7 @@ public:
 
     template <class... Comp>
     const Iterator<Comp...> end() {
-        return Iterator<Comp...>(this->_entities.size(), this);
+        return Iterator<Comp...>(this->_entities.size() - 1, this);
     }
 
 private:
