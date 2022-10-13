@@ -32,7 +32,7 @@ public:
 
     // Setup action receiving TCP messages
     // Note: Needs to be called again in order to loop
-    void setup_incoming_handler();
+    void setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> peer);
 
     // Setup action polling MQ for new messages to send
     // Note: Needs to be called again in order to loop
@@ -59,7 +59,6 @@ private:
     asio::io_context _ctxt;
 
     // Asio networking
-    asio::ip::tcp::socket _sock;
     asio::ip::tcp::acceptor _acceptor;
 
     std::vector<std::shared_ptr<asio::ip::tcp::socket>> _peers; // Peers socket vector

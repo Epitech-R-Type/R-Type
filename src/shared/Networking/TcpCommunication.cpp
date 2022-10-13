@@ -12,7 +12,7 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming,
     TcpCommunication com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
-    com.setup_incoming_handler();
+    // com.setup_incoming_handler();
     com.setup_outgoing_handler();
     com.stop_signal_handler();
     com.setup_acceptor_handler();
@@ -23,14 +23,36 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming,
 
 TcpCommunication::TcpCommunication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
                                    std::shared_ptr<std::atomic<bool>> stopFlag)
-    : _sock(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT)),
-      _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)), _stopFlag(stopFlag),
-      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)), _acceptor(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT + 1)) {
+    : _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
+      _stopFlag(stopFlag),
+      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)),
+      _acceptor(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT + 1)) {
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
 
-void TcpCommunication::setup_incoming_handler() {}
+void TcpCommunication::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> peer) {
+    peer->async_receive(asio::buffer(this->_buffer), [this, peer](const asio::error_code& err, std::size_t bytesTransfered) {
+        if (!err) {
+            auto addr = peer->remote_endpoint().address();
+            auto port = peer->remote_endpoint().port();
+
+            this->push_message(Message(std::string(this->_buffer), addr, port));
+
+            // Reset buffer
+            memset(this->_buffer, 0, 1024);
+
+            // Reset incoming handler
+            this->setup_incoming_handler(peer);
+        } else {
+            // Reset buffer
+            memset(this->_buffer, 0, 1024);
+
+            // Reset incoming handler
+            this->setup_incoming_handler(peer);
+        }
+    });
+}
 
 void TcpCommunication::setup_outgoing_handler() {}
 
@@ -39,8 +61,16 @@ void TcpCommunication::setup_acceptor_handler() {
     auto newPeer = std::make_shared<asio::ip::tcp::socket>(this->_ctxt);
     this->_peers.push_back(newPeer);
 
-    this->_acceptor.async_accept(*newPeer, [this](const asio::error_code& err) {
-        std::cout << "Accepted connection" << std::endl;
+    this->_acceptor.async_accept(*newPeer, [this, newPeer](const asio::error_code& err) {
+        if (!err) {
+            auto addr = newPeer->remote_endpoint().address();
+            auto port = newPeer->remote_endpoint().port();
+
+            // Push special message indicating that new client had been connected
+            this->push_message(Message(std::string("ACCEPT"), addr, port));
+
+            this->setup_incoming_handler(newPeer);
+        }
         this->setup_acceptor_handler();
     });
 }
