@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../../WindowsGuard.hpp"
+
 #include <atomic>
 #include <cstring>
 #include <functional>
@@ -30,7 +32,7 @@ void communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std
                         std::shared_ptr<std::atomic<bool>> stopFlag);
 
 class UdpCommunication {
-    public:
+public:
     UdpCommunication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
                      std::shared_ptr<std::atomic<bool>> stopFlag);
 
@@ -56,7 +58,7 @@ class UdpCommunication {
     // Stop context
     void stop();
 
-    private:
+private:
     // Async context executed in com thread
     asio::io_context _ctxt;
 

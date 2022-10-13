@@ -6,6 +6,7 @@
 */
 
 #pragma once
+#include "../../WindowsGuard.hpp"
 
 #include <asio.hpp>
 #include <iostream>
@@ -18,7 +19,7 @@
 // Add
 template <class T>
 class Message {
-    public:
+public:
     Message(T msg, asio::ip::address addr, asio::ip::port_type port) : _msg(msg), _addr(addr), _port(port){};
 
     // << to stream overload
@@ -40,7 +41,7 @@ class Message {
         return this->_msg;
     };
 
-    private:
+private:
     T _msg;
     asio::ip::address _addr;
     asio::ip::port_type _port;
@@ -68,11 +69,11 @@ public:
     MessageQueue();
     ~MessageQueue();
 
-        // Note : Does not implement size() as no code can safely depend on size
-        void push(Message<T> el);
-        std::optional<Message<T>> pop(void);
+    // Note : Does not implement size() as no code can safely depend on size
+    void push(Message<T> el);
+    std::optional<Message<T>> pop(void);
 
-        private:
-        std::mutex _mtx;
-        std::queue<Message<T>> _queue;
+private:
+    std::mutex _mtx;
+    std::queue<Message<T>> _queue;
 };
