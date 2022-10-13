@@ -16,7 +16,7 @@ SpriteSystem::SpriteSystem(Manager* ECS) {
 }
 
 Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen,
-                                   const float scale) {
+                                   Animation::Component* component) {
     const cmrc::file image = this->_fs.open(path);
 
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
@@ -26,7 +26,11 @@ Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, con
     const Rectangle crop{xpos, ypos, xlen, ylen};
 
     ImageCrop(&sprite, crop);
-    ImageResizeNN(&sprite, xlen * scale, ylen * scale);
+    ImageResizeNN(&sprite, xlen * component->scale, ylen * component->scale);
+
+    for (int i = 0; i < component->rotation; i++) {
+        ImageRotateCCW(&sprite);
+    }
 
     Texture2D texture = LoadTextureFromImage(sprite);
 
@@ -35,14 +39,14 @@ Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, con
     return texture;
 }
 
-AnimationStr* SpriteSystem::loadAnimation(AnimationSheet animationSheet, float scale) {
+AnimationStr* SpriteSystem::loadAnimation(AnimationSheet animationSheet, Animation::Component* component) {
     AnimationStr* animation = new AnimationStr();
 
     for (int y = 0; y < animationSheet.animHeight; y++) {
         for (int x = 0; x < animationSheet.animWidth; x++) {
             const float xPos = animationSheet.startX + (animationSheet.frameWidth * x) + (animationSheet.separationX * x);
             const float yPos = animationSheet.startY + (animationSheet.frameHeight * y) + (animationSheet.separationY * y);
-            Texture2D sprite = this->loadSprite(animationSheet.path, xPos, yPos, animationSheet.frameWidth, animationSheet.frameHeight, scale);
+            Texture2D sprite = this->loadSprite(animationSheet.path, xPos, yPos, animationSheet.frameWidth, animationSheet.frameHeight, component);
             animation->sequence.push_back(sprite);
         }
     }
@@ -99,7 +103,7 @@ void SpriteSystem::apply() {
 }
 
 void SpriteSystem::addAnimation(EntityID ID, Animation::Component* component) {
-    this->_animationLayers[component->layer][ID] = this->loadAnimation(SpriteSystem::ANIMATION_SHEET[component->animationID], component->scale);
+    this->_animationLayers[component->layer][ID] = this->loadAnimation(SpriteSystem::ANIMATION_SHEET[component->animationID], component);
 }
 
 std::chrono::time_point<std::chrono::system_clock> getNow() {

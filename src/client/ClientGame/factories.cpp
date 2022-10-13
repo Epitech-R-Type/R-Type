@@ -20,7 +20,7 @@ void makeEndboss(Manager* ECS, SpriteSystem* spriteSystem) {
     EntityID endboss = ECS->newEntity();
     int players = 3;
 
-    ECS->addComp<Animation::Component>(endboss, {Animation::AnimationID::Cluster, 1, 0.45});
+    ECS->addComp<Animation::Component>(endboss, {Animation::AnimationID::Cluster, 1, 1});
     ECS->addComp<Health::Component>(endboss, {300 * players, 300 * players, false});
 
     spriteSystem->addAnimation(endboss, ECS->getComponent<Animation::Component>(endboss));
