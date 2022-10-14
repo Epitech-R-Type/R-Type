@@ -39,6 +39,7 @@ void PlayerMovementSystem::apply() {
         }
         if (IsKeyDown(KEY_D) && position->xPos < (GetScreenWidth() - SpriteSystem::ANIMATION_SHEET[animation->animationID].frameWidth * 1.5)) {
             this->_ECS->getComponent<Position::Component>(this->_player)->xPos += velocity->xVelocity;
+         
         }
 
         this->_timer = now;

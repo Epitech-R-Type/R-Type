@@ -112,17 +112,3 @@ std::map<Animation::AnimationID, AnimationSheet> SpriteSystem::ANIMATION_SHEET =
     {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
     {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
 };
-
-// struct AnimationSheet {
-//     std::string path;
-//     float startX;
-//     float startY;
-//     float frameWidth;
-//     float frameHeight;
-//     int animWidth;
-//     int animHeight;
-//     int separationX;
-//     int separationY;
-//     // adds the same frames in reverse to the animation
-//     bool reverse;
-// };

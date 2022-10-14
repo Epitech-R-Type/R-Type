@@ -11,7 +11,6 @@ EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<Player::Component>(player, {true});
     ECS->addComp<Armament::Component>(player, {Armament::ArmamentType::Bullet, 150, 50});
     ECS->addComp<Velocity::Component>(player, {10, 10});
-
     spriteSystem->addAnimation(player, ECS->getComponent<Animation::Component>(player));
 
     return player;
