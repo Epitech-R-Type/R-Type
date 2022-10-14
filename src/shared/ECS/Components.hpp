@@ -102,10 +102,8 @@ namespace Armament {
     struct Component {
         Armament::ArmamentType type;
         // in milliseconds
-        int interval;
-        std::time_t timer = std::time(0);
-        std::chrono::time_point<std::chrono::system_clock> timerc = std::chrono::system_clock::now();
-        double intervalc = 0.1;
+        double interval = 0.1;
         long long ammo = -1;
+        std::chrono::time_point<std::chrono::system_clock> timer;
     };
 } // namespace Armament
