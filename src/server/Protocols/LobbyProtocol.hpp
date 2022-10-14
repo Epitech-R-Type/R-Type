@@ -15,12 +15,12 @@
 #include "Connections.hpp"
 
 // Generic protocol pieces
-#define SP " ";
-#define END "\r\n";
-#define EMPTY_ARGS "X";
+#define SP " "
+#define END "\r\n"
+#define EMPTY_ARGS "X"
 
 // Server Commands
-#define START_GAME "START";
+#define START_GAME "START"
 
 class LobbyProtocol {
 public:
