@@ -106,10 +106,6 @@ void SpriteSystem::addAnimation(EntityID ID, Animation::Component* component) {
     this->_animationLayers[component->layer][ID] = this->loadAnimation(SpriteSystem::ANIMATION_SHEET[component->animationID], component);
 }
 
-std::chrono::time_point<std::chrono::system_clock> getNow() {
-    return std::chrono::system_clock::now();
-}
-
 std::map<Animation::AnimationID, AnimationSheet> SpriteSystem::ANIMATION_SHEET = {
     {Animation::AnimationID::Orb, {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0}},
     {Animation::AnimationID::Vortex, {"resources/r-typesheet30a.png", 1, 3, 31, 31, 3, 1, 2, 0, 0}},

@@ -22,13 +22,17 @@ void ArmamentSystem::apply() {
         Armament::Component* armament = this->_ECS->getComponent<Armament::Component>(*beg);
 
         std::time_t now = std::time(0);
+        const auto nowc = getNow();
+        std::chrono::duration<double> elapsed_seconds = nowc - armament->timerc;
 
-        if ((now - armament->timer) > armament->interval) {
-            if (this->_ECS->hasComponent<Player::Component>(this->_player)) {
+        if (elapsed_seconds.count() > armament->intervalc) {
+            if (this->_ECS->hasComponent<Player::Component>(this->_player) && armament->ammo != 0) {
                 makeBullet(this->_ECS, this->_spriteSystem);
+                if (armament->ammo > 0)
+                    armament->ammo -= 1;
             } else {
             }
-            armament->timer = now;
+            armament->timerc = nowc;
         }
     }
 }
