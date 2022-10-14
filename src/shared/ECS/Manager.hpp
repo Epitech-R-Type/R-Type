@@ -71,7 +71,6 @@ public:
         Index compId = getID<T>();
 
         // Set bit of component in component bitset of entity
-        std::cout << "CompId " << compId << std::endl;
         this->_entities[i].components[compId] = 1;
 
         // Check pool if given component exists

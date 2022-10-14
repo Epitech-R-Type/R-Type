@@ -9,18 +9,8 @@
 
 #include "../../shared/ECS/Components.hpp"
 #include "ClientGame.hpp"
+#include "factories.hpp"
 #include "raylib.h"
-
-EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
-    EntityID player = ECS->newEntity();
-
-    ECS->addComp<Position::Component>(player, {(float)(GetScreenWidth() * (2.0 / 3.0)), (float)(GetScreenHeight() - 50)});
-    ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2});
-
-    spriteSystem->addAnimation(player, ECS->getComponent<Animation::Component>(player));
-
-    return player;
-}
 
 ClientGame::ClientGame() {
     // Construct messaging queues
@@ -41,6 +31,13 @@ ClientGame::ClientGame() {
     this->_playerMovementSystem = new PlayerMovementSystem(this->_entManager);
 
     this->_playerMovementSystem->setPlayer(this->_player);
+
+    this->_healthSystem = new HealthSystem(this->_entManager);
+    this->_healthSystem->setPlayer(this->_player);
+
+    this->_armamentSystem = new ArmamentSystem(this->_entManager);
+    this->_armamentSystem->setPlayer(this->_player);
+    this->_armamentSystem->setSpriteSystem(this->_spriteSystem);
 }
 
 ClientGame::~ClientGame() {
@@ -49,18 +46,14 @@ ClientGame::~ClientGame() {
 }
 
 void ClientGame::init() {
-    EntityID ent1 = this->_entManager->newEntity();
-    EntityID ent2 = this->_entManager->newEntity();
+    srand(time(0));
 
-    this->_entManager->addComp<Position::Component>(ent1, {(float)(GetScreenWidth() * (2.0 / 3.0)), (float)(GetScreenHeight() - 50)});
-    this->_entManager->addComp<Animation::Component>(ent1, {Animation::AnimationID::Orb, 1});
-    this->_entManager->addComp<Velocity::Component>(ent1, {0.05, -0.05});
+    makeEnemy(this->_entManager, this->_spriteSystem);
+    makeEnemy(this->_entManager, this->_spriteSystem);
+    makeEnemy(this->_entManager, this->_spriteSystem);
+    makeEnemy(this->_entManager, this->_spriteSystem);
 
-    this->_entManager->addComp<Position::Component>(ent2, {(float)(GetScreenWidth() * (1.0 / 3.0)), (float)(GetScreenHeight() - 50)});
-    this->_entManager->addComp<Animation::Component>(ent2, {Animation::AnimationID::Cluster, 1});
-
-    this->_spriteSystem->addAnimation(ent1, this->_entManager->getComponent<Animation::Component>(ent1));
-    this->_spriteSystem->addAnimation(ent2, this->_entManager->getComponent<Animation::Component>(ent2));
+    makeEndboss(this->_entManager, this->_spriteSystem);
 }
 
 void ClientGame::mainLoop() {
@@ -71,14 +64,13 @@ void ClientGame::mainLoop() {
     {
         BeginDrawing();
 
-        ClearBackground(RAYWHITE);
+        ClearBackground(BLACK);
 
         this->_spriteSystem->apply();
         this->_velocitySystem->apply();
         this->_playerMovementSystem->apply();
-
-        int x = this->_entManager->getComponent<Position::Component>(this->_player)->xPos;
-        int y = this->_entManager->getComponent<Position::Component>(this->_player)->yPos;
+        this->_healthSystem->apply();
+        this->_armamentSystem->apply();
 
         EndDrawing();
     }
