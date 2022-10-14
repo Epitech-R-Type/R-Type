@@ -33,6 +33,7 @@ public:
     // Returns empty string if connection doesn't exist
     std::optional<UUID> getUUID(asio::ip::address addr, asio::ip::port_type port);
     bool connectionExists(asio::ip::address addr, asio::ip::port_type port);
+    std::optional<Connection> getConnection(UUID uuid) const;
 
     // Remove connection
     void removeConnection(asio::ip::address addr, asio::ip::port_type port);
@@ -41,6 +42,8 @@ public:
     // Getters / Setters
     void setServerUUID(UUID serverUUID);
     UUID getServerUUID() const;
+    int getConnectionCount() const;
+    std::vector<Connection> getConnections();
 
 private:
     std::vector<Connection> _connections;

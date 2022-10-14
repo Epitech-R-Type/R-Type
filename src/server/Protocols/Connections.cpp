@@ -35,6 +35,13 @@ std::optional<UUID> ConnectionManager::getUUID(asio::ip::address addr, asio::ip:
     return {};
 }
 
+std::optional<Connection> ConnectionManager::getConnection(UUID uuid) const {
+    for (auto conn : this->_connections)
+        if (conn.uuid == uuid)
+            return std::optional(conn);
+    return {};
+}
+
 void ConnectionManager::removeConnection(asio::ip::address addr, asio::ip::port_type port) {
     for (int i = 0; i < this->_connections.size(); i++)
         if (this->_connections[i].addr == addr && this->_connections[i].port == port)
@@ -53,4 +60,12 @@ void ConnectionManager::setServerUUID(UUID serverUUID) {
 
 UUID ConnectionManager::getServerUUID() const {
     return this->_serverUUID;
+}
+
+int ConnectionManager::getConnectionCount() const {
+    return this->_connections.size();
+}
+
+std::vector<Connection> ConnectionManager::getConnections() {
+    return this->_connections;
 }
