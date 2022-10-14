@@ -9,8 +9,8 @@ EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2});
     ECS->addComp<Health::Component>(player, {25, 30});
     ECS->addComp<Player::Component>(player, {true});
-    ECS->addComp<Armament::Component>(player, {Armament::ArmamentType::Bullet, 0});
-
+    ECS->addComp<Armament::Component>(player, {Armament::ArmamentType::Bullet, 150, 50});
+    ECS->addComp<Velocity::Component>(player, {10, 10});
     spriteSystem->addAnimation(player, ECS->getComponent<Animation::Component>(player));
 
     return player;
@@ -37,7 +37,7 @@ void makeEnemy(Manager* ECS, SpriteSystem* spriteSystem) {
 
     ECS->addComp<Position::Component>(enemy, {(float)(GetScreenWidth()), (float)(rand() % GetScreenHeight())});
     ECS->addComp<Animation::Component>(enemy, {Animation::AnimationID::Orb, 3});
-    ECS->addComp<Velocity::Component>(enemy, {-0.1, 0});
+    ECS->addComp<Velocity::Component>(enemy, {-3, 0});
     ECS->addComp<Health::Component>(enemy, {10, 20, true});
     ECS->addComp<Damage::Component>(enemy, {20});
 
@@ -57,7 +57,7 @@ void makeBullet(Manager* ECS, SpriteSystem* spriteSystem) {
     const EntityID player = getPlayerID(ECS);
 
     ECS->addComp<Position::Component>(bullet, *ECS->getComponent<Position::Component>(player));
-    ECS->addComp<Velocity::Component>(bullet, {1, 0});
+    ECS->addComp<Velocity::Component>(bullet, {40, 0});
     ECS->addComp<Damage::Component>(bullet, {10});
     ECS->addComp<Animation::Component>(bullet, {Animation::AnimationID::Laser});
     spriteSystem->addAnimation(bullet, ECS->getComponent<Animation::Component>(bullet));

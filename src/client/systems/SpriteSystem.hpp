@@ -20,7 +20,7 @@
 
 CMRC_DECLARE(client);
 
-std::chrono::time_point<std::chrono::system_clock> getNow();
+// std::chrono::time_point<std::chrono::system_clock> getNow();
 
 struct AnimationStr {
     std::vector<Texture2D> sequence{};

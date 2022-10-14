@@ -1,6 +1,8 @@
 
 #pragma once
 
+#define MOVEMENT_TIMER 0.02
+
 #include "../ECS/ECS.hpp"
 
 class System {
