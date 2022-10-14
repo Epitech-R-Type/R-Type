@@ -5,8 +5,8 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
-# set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
-# set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if (MSVC)
     add_compile_definitions(WIN32_LEAN_AND_MEAN)
@@ -20,12 +20,16 @@ conan_basic_setup()
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
+file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMakeRC.cmake"
+"${CMAKE_BINARY_DIR}/CMakeRC.cmake")
+include("${CMAKE_BINARY_DIR}/CMakeRC.cmake")
+
 add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/main.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Game.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
@@ -37,21 +41,22 @@ add_executable(Server
 add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/SpriteSystem.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/ArmamentSystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/HealthSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/PlayerMovementSystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/factories.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
+
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
 )
 
-file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMakeRC.cmake"
-"${CMAKE_BINARY_DIR}/CMakeRC.cmake")
-include("${CMAKE_BINARY_DIR}/CMakeRC.cmake")
 
 cmrc_add_resource_library(
     client-resources

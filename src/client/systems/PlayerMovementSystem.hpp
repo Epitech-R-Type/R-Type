@@ -17,6 +17,7 @@
 
 std::chrono::time_point<std::chrono::system_clock> getNow();
 
+class SpriteSystem;
 class PlayerMovementSystem : public System {
 public:
     PlayerMovementSystem(Manager* ECS);
@@ -24,6 +25,7 @@ public:
     void setPlayer(EntityID player);
 
 private:
+    SpriteSystem* _spriteSystem;
     EntityID _player;
     Manager* _ECS;
     std::chrono::time_point<std::chrono::system_clock> _timer = std::chrono::system_clock::now();

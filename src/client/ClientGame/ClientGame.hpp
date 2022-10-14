@@ -12,9 +12,7 @@
 #include "../../shared/ECS/Manager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
-#include "../../shared/systems/VelocitySystem.hpp"
-#include "../systems/PlayerMovementSystem.hpp"
-#include "../systems/SpriteSystem.hpp"
+#include "../systems/Systems.hpp"
 #include <memory>
 #include <string>
 #include <thread>
@@ -39,6 +37,8 @@ private:
     SpriteSystem* _spriteSystem;
     VelocitySystem* _velocitySystem;
     PlayerMovementSystem* _playerMovementSystem;
+    HealthSystem* _healthSystem;
+    ArmamentSystem* _armamentSystem;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class
