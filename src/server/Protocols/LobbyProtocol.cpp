@@ -20,6 +20,50 @@ bool LobbyProtocol::isAuthenticated(std::string uuid) {
     return conn ? true : false;
 }
 
+bool LobbyProtocol::handleCommands() {
+    std::optional<Message<std::string>> msg;
+    bool gameShouldStart = false;
+
+    while ((msg = this->_incomingMQ->pop())) {
+        // Get peer info
+        auto addr = msg->getAddr();
+        auto port = msg->getPort();
+        auto msgBody = msg->getMsg();
+
+        // Pase msg
+        auto splitBody = Utilities::splitStr(msgBody, " ");
+
+        // If invalid size error 500
+        if (splitBody.size() != 3) {
+            Message<std::string> msg("500 Wrong request\r\n", addr, port);
+            this->_outgoingMQ->push(msg);
+        }
+
+        std::string cmd = splitBody[0];
+
+        // CONNECT Command
+        if (cmd == "CONNECT") {
+            // Add to connection manager and get new uuid
+            auto uuid = this->_connMan.addConnection(addr, port);
+
+            // Form msg body
+            std::string body = "200 ";
+            body << this->_connMan.getServerUUID();
+            body += ";";
+            body << uuid;
+            body += "\r\n";
+
+            Message<std::string> msg(body, addr, port);
+
+            this->_outgoingMQ->push(msg);
+        }
+
+        // START command
+        if (cmd == "START") {
+        }
+    }
+}
+
 // Server Commands
 void LobbyProtocol::startGame() {
     // If less than 2 connections, do nothing

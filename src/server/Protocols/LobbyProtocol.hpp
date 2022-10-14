@@ -12,6 +12,7 @@
 #include <sstream>
 
 #include "../../shared/MessageQueue/MessageQueue.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 #include "Connections.hpp"
 
 // Generic protocol pieces
@@ -32,6 +33,10 @@ public:
 
     // Utility function to check if users UUID is valid
     bool isAuthenticated(std::string uuid);
+
+    // Handle commands
+    // Returns true if game should start
+    bool handleCommands();
 
 private:
     // Connection manager
