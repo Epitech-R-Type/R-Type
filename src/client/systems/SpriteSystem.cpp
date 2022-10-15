@@ -17,8 +17,7 @@ SpriteSystem::SpriteSystem(Manager* ECS) {
     this->_ECS = ECS;
 }
 
-Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen,
-                                   Animation::Component* component) {
+Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
     const cmrc::file image = this->_fs.open(path);
 
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
@@ -28,7 +27,6 @@ Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, con
     const Rectangle crop{xpos, ypos, xlen, ylen};
 
     ImageCrop(&sprite, crop);
-    ImageResizeNN(&sprite, xlen * component->scale, ylen * component->scale);
 
     Texture2D texture = LoadTextureFromImage(sprite);
 
@@ -37,29 +35,29 @@ Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, con
     return texture;
 }
 
-void SpriteSystem::loadAnimation(Animation::Component* component) {
-    if (HAS_KEY(this->_animations, component->animationID))
+void SpriteSystem::loadAnimation(Animation::AnimationID id) {
+    if (HAS_KEY(this->_animations, id))
         return;
 
-    this->_animations[component->animationID] = {};
+    this->_animations[id] = {};
 
-    if (!HAS_KEY(Animation::Sheets, component->animationID))
-        throw "Now Animation Sheet defined for enum " + component->animationID;
+    if (!HAS_KEY(Animation::Sheets, id))
+        throw "Now Animation Sheet defined for enum " + id;
 
-    const Animation::Sheet animationSheet = Animation::Sheets[component->animationID];
+    const Animation::Sheet animationSheet = Animation::Sheets[id];
 
     for (int y = 0; y < animationSheet.animHeight; y++) {
         for (int x = 0; x < animationSheet.animWidth; x++) {
             const float xPos = animationSheet.startX + (animationSheet.frameWidth * x) + (animationSheet.separationX * x);
             const float yPos = animationSheet.startY + (animationSheet.frameHeight * y) + (animationSheet.separationY * y);
-            Texture2D sprite = this->loadSprite(animationSheet.path, xPos, yPos, animationSheet.frameWidth, animationSheet.frameHeight, component);
-            this->_animations[component->animationID].push_back(sprite);
+            Texture2D sprite = this->loadSprite(animationSheet.path, xPos, yPos, animationSheet.frameWidth, animationSheet.frameHeight);
+            this->_animations[id].push_back(sprite);
         }
     }
 
     if (animationSheet.reverse) {
-        for (int i = this->_animations[component->animationID].size() - 1; 0 <= i; i--) {
-            this->_animations[component->animationID].push_back(this->_animations[component->animationID][i]);
+        for (int i = this->_animations[id].size() - 1; 0 <= i; i--) {
+            this->_animations[id].push_back(this->_animations[id][i]);
         }
     }
 }
@@ -94,13 +92,22 @@ void SpriteSystem::apply() {
             Position::Component* position = this->_ECS->getComponent<Position::Component>(entity);
 
             if (!HAS_KEY(this->_animations, animation->animationID))
-                this->loadAnimation(animation);
+                this->loadAnimation(animation->animationID);
 
             Texture2D frame = this->_animations[animation->animationID][animation->index];
-            Vector2 posVec{position->xPos - frame.width / 2, position->yPos - frame.height / 2 - 40};
-
-            DrawTextureEx(frame, posVec, animation->rotation, 1, WHITE);
+            Vector2 posVec{position->xPos, position->yPos};
+            DrawTextureEx(frame, posVec, animation->rotation, animation->scale, WHITE);
             this->nextFrame(animation);
         }
     }
 }
+
+void SpriteSystem::drawImage(Animation::AnimationID id) {
+
+    if (!HAS_KEY(this->_animations, id)) {
+        this->loadAnimation(id);
+    }
+
+    Texture2D frame = this->_animations[id][0];
+    DrawTextureEx(frame, {0, 0}, 0, 1.0 + 639.0 / GetScreenHeight(), WHITE);
+};

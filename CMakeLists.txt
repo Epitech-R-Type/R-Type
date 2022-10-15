@@ -30,6 +30,7 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Game.cpp"
 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/HitboxSystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/JanitorSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
@@ -50,6 +51,7 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/factories.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
 
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/JanitorSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/HitboxSystem.cpp"
@@ -109,6 +111,7 @@ cmrc_add_resource_library(
     resources/r-typesheet42.png
     resources/r-typesheet43.png
     resources/r-typesheet44.png
+    resources/lost.png
 )
 
 target_link_libraries(Client client::rc)

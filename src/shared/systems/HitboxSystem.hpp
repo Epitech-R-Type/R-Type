@@ -2,17 +2,21 @@
 
 #pragma once
 
-#include "../ECS/ECS.hpp";
+#include "../ECS/Components.hpp"
+#include "../ECS/ECS.hpp"
 #include "ISystem.hpp"
 
 class HitboxSystem : public System {
+public:
     HitboxSystem(Manager* ECS);
 
     void apply();
 
-    void hitboxFromAnimation(EntityID entity);
+    static Hitbox::Component buildHitbox(Animation::Component* animation, Position::Component* position);
 
-    EntityID checkCollision(EntityID entity);
+    Hitbox::Component* updateHitbox(EntityID entity);
+
+    void checkCollision(EntityID entity);
 
     bool isColliding(EntityID entity1, EntityID entity2);
 

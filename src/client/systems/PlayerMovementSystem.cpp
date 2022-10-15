@@ -9,7 +9,6 @@
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/Manager.hpp"
 #include "PlayerMovementSystem.hpp"
-#include "SpriteSystem.hpp"
 
 PlayerMovementSystem::PlayerMovementSystem(Manager* ECS) {
     this->_ECS = ECS;
@@ -28,17 +27,17 @@ void PlayerMovementSystem::apply() {
         Animation::Component* animation = this->_ECS->getComponent<Animation::Component>(this->_player);
         Velocity::Component* velocity = this->_ECS->getComponent<Velocity::Component>(this->_player);
 
-        if (IsKeyDown(KEY_W) && position->yPos > Animation::Sheets[animation->animationID].frameHeight * SCALE) {
-            this->_ECS->getComponent<Position::Component>(this->_player)->yPos -= velocity->yVelocity;
-        }
-        if (IsKeyDown(KEY_S) && position->yPos < (GetScreenHeight())) {
-            this->_ECS->getComponent<Position::Component>(this->_player)->yPos += velocity->yVelocity;
-        }
-        if (IsKeyDown(KEY_A) && position->xPos > Animation::Sheets[animation->animationID].frameWidth * (SCALE / 2)) {
+        if (IsKeyDown(KEY_A) && position->xPos > 0) {
             this->_ECS->getComponent<Position::Component>(this->_player)->xPos -= velocity->xVelocity;
         }
-        if (IsKeyDown(KEY_D) && position->xPos < (GetScreenWidth() - Animation::Sheets[animation->animationID].frameWidth * (SCALE / 2))) {
+        if (IsKeyDown(KEY_D) && position->xPos < (GetScreenWidth() - (Animation::Sheets[animation->animationID].frameWidth * animation->scale))) {
             this->_ECS->getComponent<Position::Component>(this->_player)->xPos += velocity->xVelocity;
+        }
+        if (IsKeyDown(KEY_W) && position->yPos > 0) {
+            this->_ECS->getComponent<Position::Component>(this->_player)->yPos -= velocity->yVelocity;
+        }
+        if (IsKeyDown(KEY_S) && position->yPos < (GetScreenHeight() - (Animation::Sheets[animation->animationID].frameHeight * animation->scale))) {
+            this->_ECS->getComponent<Position::Component>(this->_player)->yPos += velocity->yVelocity;
         }
 
         this->_timer = now;

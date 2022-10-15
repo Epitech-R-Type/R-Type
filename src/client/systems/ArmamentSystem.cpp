@@ -26,12 +26,14 @@ void ArmamentSystem::apply() {
 
         // Convert to milliseconds
         if (elapsed_seconds.count() > ((double)armament->interval / 1000.0)) {
-            if (this->_ECS->hasComponent<Player::Component>(this->_player) && armament->ammo != 0 && IsKeyDown(KEY_SPACE)) {
-                makeBullet(this->_ECS, this->_spriteSystem);
-                if (armament->ammo > 0)
-                    armament->ammo -= 1;
-            } else {
-            }
+            if (this->_ECS->hasComponent<Player::Component>(this->_player) && !IsKeyDown(KEY_SPACE))
+                continue;
+
+            if (armament->ammo != 0)
+                makeBullet(this->_ECS, this->_spriteSystem, *beg);
+            if (armament->ammo > 0)
+                armament->ammo -= 1;
+
             armament->timer = now;
         }
     }

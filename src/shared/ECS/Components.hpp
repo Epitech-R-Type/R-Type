@@ -13,11 +13,9 @@
 #include <sstream>
 #include <vector>
 
-#define SCALE 3
-
 struct Point {
-    float x;
-    float y;
+    double x;
+    double y;
 };
 
 enum ComponentType { ARMOR, HEALTH, POSITION, ANIMATION };
@@ -61,12 +59,13 @@ namespace Animation {
         Vortex,
         Cluster,
         Laser,
+        Lost,
     };
     struct Component {
         AnimationID animationID;
         unsigned long layer = 1;
         float rotation = 0;
-        float scale = SCALE;
+        float scale = 3;
         int index = 0;
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
@@ -90,6 +89,7 @@ namespace Animation {
         {Animation::AnimationID::Vortex, {"resources/r-typesheet30a.png", 1, 3, 32, 32, 3, 1, 2, 0, 0}},
         {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
         {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
+        {Animation::AnimationID::Lost, {"resources/lost.png", 0, 0, 639, 513, 8, 1, 1, 0, 0}},
     };
 
     std::string toString(Animation::Component component);
@@ -113,7 +113,7 @@ namespace Velocity {
 // check if this doesnt f up the ECS synchro
 namespace Player {
     struct Component {
-        bool player = true;
+        int score;
     };
 
 } // namespace Player
@@ -151,4 +151,18 @@ namespace Hitbox {
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
 
+    inline float getWidth(const Animation::Component* animation) {
+        return (Animation::Sheets[animation->animationID].frameWidth * animation->scale);
+    }
+
+    inline float getHeight(const Animation::Component* animation) {
+        return (Animation::Sheets[animation->animationID].frameHeight * animation->scale);
+    }
 } // namespace Hitbox
+
+namespace Team {
+    enum Component {
+        Ally,
+        Enemy,
+    };
+} // namespace Team

@@ -10,7 +10,7 @@ int main() {
     Client client;
 
     client.setup();
-    client.launchGame();
+    client.mainLoop();
 
     return 0;
 }
