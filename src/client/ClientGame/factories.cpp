@@ -11,7 +11,6 @@ EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<Player::Component>(player, {true});
     ECS->addComp<Armament::Component>(player, {Armament::ArmamentType::Bullet, 150, 50});
     ECS->addComp<Velocity::Component>(player, {10, 10});
-    spriteSystem->addAnimation(player, ECS->getComponent<Animation::Component>(player));
 
     return player;
 }
@@ -22,8 +21,6 @@ void makeEndboss(Manager* ECS, SpriteSystem* spriteSystem) {
 
     ECS->addComp<Animation::Component>(endboss, {Animation::AnimationID::Cluster, 1, 1});
     ECS->addComp<Health::Component>(endboss, {300 * players, 300 * players, false});
-
-    spriteSystem->addAnimation(endboss, ECS->getComponent<Animation::Component>(endboss));
 
     float xOffset = SpriteSystem::ANIMATION_SHEET[Animation::AnimationID::Cluster].frameHeight * 3 / 2;
 
@@ -40,8 +37,6 @@ void makeEnemy(Manager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<Velocity::Component>(enemy, {-3, 0});
     ECS->addComp<Health::Component>(enemy, {10, 20, true});
     ECS->addComp<Damage::Component>(enemy, {20});
-
-    spriteSystem->addAnimation(enemy, ECS->getComponent<Animation::Component>(enemy));
 }
 
 EntityID getPlayerID(Manager* ECS) {
@@ -60,5 +55,4 @@ void makeBullet(Manager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<Velocity::Component>(bullet, {40, 0});
     ECS->addComp<Damage::Component>(bullet, {10});
     ECS->addComp<Animation::Component>(bullet, {Animation::AnimationID::Laser});
-    spriteSystem->addAnimation(bullet, ECS->getComponent<Animation::Component>(bullet));
 }
