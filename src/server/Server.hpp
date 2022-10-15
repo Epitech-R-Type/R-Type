@@ -14,9 +14,9 @@
 #include <thread>
 
 #include "../shared/MessageQueue/MessageQueue.hpp"
-#include "../shared/Networking/TcpCommunication.hpp"
 #include "Game.hpp"
 #include "Protocols/LobbyProtocol.hpp"
+#include "Protocols/TcpServer.hpp"
 
 // Root class for R-Type Server
 // This class will handle the tcp communication required for game lobby

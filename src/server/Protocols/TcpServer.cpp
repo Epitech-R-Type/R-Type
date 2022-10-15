@@ -5,11 +5,11 @@
 ** .
 */
 
-#include "TcpCommunication.hpp"
+#include "TcpServer.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
                             std::shared_ptr<std::atomic<bool>> stopFlag) {
-    TcpCommunication com(incoming, outgoing, stopFlag);
+    TcpServer com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
     // com.setup_incoming_handler();
@@ -21,8 +21,8 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming,
     com.run();
 }
 
-TcpCommunication::TcpCommunication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                                   std::shared_ptr<std::atomic<bool>> stopFlag)
+TcpServer::TcpServer(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+                     std::shared_ptr<std::atomic<bool>> stopFlag)
     : _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)),
@@ -32,7 +32,7 @@ TcpCommunication::TcpCommunication(std::shared_ptr<MessageQueue<std::string>> in
 }
 
 // Incoming Handler
-void TcpCommunication::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> peer) {
+void TcpServer::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> peer) {
     peer->async_receive(asio::buffer(this->_buffer), [this, peer](const asio::error_code& err, std::size_t bytesTransfered) {
         if (!err) {
             auto addr = peer->remote_endpoint().address();
@@ -60,7 +60,7 @@ void TcpCommunication::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::soc
 }
 
 // Outgoing Handler
-void TcpCommunication::setup_outgoing_handler() {
+void TcpServer::setup_outgoing_handler() {
     this->_outgoingTimer = asio::steady_timer(this->_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL));
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
@@ -92,7 +92,7 @@ void TcpCommunication::setup_outgoing_handler() {
 
 // Accept Handler
 // This handler accepts new connections and adds them to the connected peers vector
-void TcpCommunication::setup_acceptor_handler() {
+void TcpServer::setup_acceptor_handler() {
     auto newPeer = std::make_shared<asio::ip::tcp::socket>(this->_ctxt);
     this->_peers.push_back(newPeer);
 
@@ -108,7 +108,7 @@ void TcpCommunication::setup_acceptor_handler() {
 }
 
 // Handler methods
-void TcpCommunication::stop_signal_handler() {
+void TcpServer::stop_signal_handler() {
     this->_stopTimer = asio::steady_timer(this->_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL));
 
     this->_stopTimer.async_wait([this](const asio::error_code& err) {
@@ -126,7 +126,7 @@ void TcpCommunication::stop_signal_handler() {
     });
 }
 
-std::shared_ptr<asio::ip::tcp::socket> TcpCommunication::findPeer(asio::ip::address addr, asio::ip::port_type port) {
+std::shared_ptr<asio::ip::tcp::socket> TcpServer::findPeer(asio::ip::address addr, asio::ip::port_type port) {
     for (auto peer : this->_peers) {
         auto peerAddr = peer->remote_endpoint().address();
         auto peerPort = peer->remote_endpoint().port();
@@ -138,7 +138,7 @@ std::shared_ptr<asio::ip::tcp::socket> TcpCommunication::findPeer(asio::ip::addr
     return std::shared_ptr<asio::ip::tcp::socket>();
 }
 
-void TcpCommunication::remove_peer(std::shared_ptr<asio::ip::tcp::socket> peer) {
+void TcpServer::remove_peer(std::shared_ptr<asio::ip::tcp::socket> peer) {
     for (int i = 0; i < this->_peers.size(); i++) {
         auto peerAddr1 = peer->remote_endpoint().address();
         auto peerPort1 = peer->remote_endpoint().port();
@@ -154,29 +154,29 @@ void TcpCommunication::remove_peer(std::shared_ptr<asio::ip::tcp::socket> peer) 
 }
 
 // Context runtime functions
-void TcpCommunication::run() {
+void TcpServer::run() {
     // Execute context
     this->_ctxt.run();
 }
 
-void TcpCommunication::stop() {
+void TcpServer::stop() {
     // Stop context
     this->_ctxt.stop();
 }
 
 // Access Methods
-void TcpCommunication::push_message(Message<std::string> msg) {
+void TcpServer::push_message(Message<std::string> msg) {
     this->_incomingMessages->push(msg);
 }
 
-std::optional<Message<std::string>> TcpCommunication::pop_message(void) {
+std::optional<Message<std::string>> TcpServer::pop_message(void) {
     return this->_outgoingMessages->pop();
 }
 
-bool TcpCommunication::getStopFlag() {
+bool TcpServer::getStopFlag() {
     return *this->_stopFlag;
 }
 
-void TcpCommunication::pushNewPeer(std::shared_ptr<asio::ip::tcp::socket> newPeer) {
+void TcpServer::pushNewPeer(std::shared_ptr<asio::ip::tcp::socket> newPeer) {
     this->_peers.push_back(newPeer);
 }

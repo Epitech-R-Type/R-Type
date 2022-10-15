@@ -1,6 +1,6 @@
 /*
 ** EPITECH PROJECT, 2022
-** TcpCommunication.hpp
+** TcpServer.hpp
 ** File description:
 ** .
 */
@@ -15,16 +15,16 @@
 #include <thread>
 #include <vector>
 
-#include "../MessageQueue/MessageQueue.hpp"
-#include "AsioConstants.hpp"
+#include "../../shared/MessageQueue/MessageQueue.hpp"
+#include "../../shared/Networking/AsioConstants.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
                             std::shared_ptr<std::atomic<bool>> stopFlag);
 
-class TcpCommunication {
+class TcpServer {
 public:
-    TcpCommunication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                     std::shared_ptr<std::atomic<bool>> stopFlag);
+    TcpServer(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+              std::shared_ptr<std::atomic<bool>> stopFlag);
 
     // Setup action accepting new connections on socket
     // Note: Needs to be called again in order to loop

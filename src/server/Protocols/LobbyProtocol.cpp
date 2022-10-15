@@ -90,6 +90,7 @@ bool LobbyProtocol::handleCommands() {
             continue;
         }
     }
+
     return gameShouldStart;
 }
 
