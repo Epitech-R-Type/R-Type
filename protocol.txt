@@ -32,11 +32,14 @@ Table of Contents
 
     1. Introduction ...................................................X
     2. TCP Protocol ...................................................X
-        2.1. Command Synthax ..........................................X
-        2.2. Server Commands ..........................................X
-        2.3. Client Commands ..........................................X
+        2.1. Command Syntax ...........................................X
+        2.2. Command Response .........................................X
+            2.2.1. Response Syntax ....................................X
+            2.2.2. Response Codes and Meaning .........................X
+        2.3. Server Commands ..........................................X
+        2.4. Client Commands ..........................................X
     3. UDP Protocol ...................................................X
-        3.1. Command Synthax ..........................................X
+        3.1. Command Syntax ...........................................X
         3.2. Server Commands ..........................................X
             3.2.1. Server Command Listing .............................X
             3.2.2. Server Command Arguments ...........................X
@@ -62,7 +65,43 @@ Table of Contents
 
 2. TCP Protocol
 
-                             <TO BE WRITTEN>
+    The TCP protocol will serve as the main protocol used by the client
+    and server before the start of a game. It will also serve the
+    purpose of handling anything non relevent to the game currently
+    being played. The sole exception to that last bit will be the
+    handling of in game messaging and server message broadcasting.
+
+    2.1. Command Syntax
+
+        TCP commands follow the following syntax :
+
+                <CMD> <SP> <HEADER> <SP> <ARGS> <CRLF>
+
+        Here is a definition of each part :
+
+        <CMD>    -> This is the command name and will always be fully
+                    capitalized.
+
+        <SP>     -> Ascii space character
+
+        <HEADER> -> Comma separated User UUID and Server UUID. Both are
+                    distributed by the server on connection.
+        
+        <ARGS>   -> Arguments for given command. These args are
+                    separated by the ',' ascii character.
+
+        <CRLF>   -> Carriage Return Line Feed character. Every message
+                    will end in this character combination denoted
+                    '\r\n' in ascii.
+
+    2.2. Command Response
+
+        All client sent commands will generate a response from the
+        server allowing the client to know the status of their command.
+
+        Responses will follow the following syntax :
+
+                <SPECIFY SYNTAX>
 
 3. UDP Protocol
 
@@ -83,10 +122,10 @@ Table of Contents
         
         Here is a definition of each part :
 
-        <CMD> -> This is the command name and will always be fully
-                 capitalized.
+        <CMD>  -> This is the command name and will always be fully
+                  capitalized.
 
-        <SP> -> Ascii space character
+        <SP>   -> Ascii space character
 
         <ARGS> -> These are the arguments for the command. The size of
                   these args may vary even within the same command. For
