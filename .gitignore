@@ -4,3 +4,4 @@ build
 *.code-workspace
 vgcore.*
 .vscode/settings.json
+.vscode/launch.json

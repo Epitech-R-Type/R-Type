@@ -5,8 +5,12 @@ set(CMAKE_CXX_STANDARD 17)
 
 set(CMAKE_C_COMPILER "gcc")
 set(CMAKE_CXX_COMPILER "g++")
+# set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+# set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
-if (NOT MSVC)
+if (MSVC)
+    add_compile_definitions(WIN32_LEAN_AND_MEAN)
+else()
     add_compile_options(-g3)
 endif()
 
@@ -19,14 +23,31 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Communication.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Game.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
+)
 
 add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECS.hpp")
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/SpriteSystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/PlayerMovementSystem.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
+)
 
 file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMakeRC.cmake"
 "${CMAKE_BINARY_DIR}/CMakeRC.cmake")
@@ -39,47 +60,47 @@ cmrc_add_resource_library(
     NAMESPACE client
 
     resources/r-typesheet1.png
-    resources/r-typesheet2.gif
-    resources/r-typesheet3.gif
-    resources/r-typesheet5.gif
-    resources/r-typesheet7.gif
-    resources/r-typesheet8.gif
-    resources/r-typesheet9.gif
-    resources/r-typesheet10.gif
-    resources/r-typesheet11.gif
-    resources/r-typesheet12.gif
-    resources/r-typesheet13.gif
-    resources/r-typesheet14.gif
-    resources/r-typesheet15.gif
-    resources/r-typesheet16.gif
-    resources/r-typesheet17.gif
-    resources/r-typesheet18.gif
-    resources/r-typesheet19.gif
-    resources/r-typesheet20.gif
-    resources/r-typesheet21.gif
-    resources/r-typesheet22.gif
-    resources/r-typesheet23.gif
-    resources/r-typesheet24.gif
-    resources/r-typesheet25.gif
-    resources/r-typesheet26.gif
-    resources/r-typesheet27.gif
-    resources/r-typesheet28.gif
-    resources/r-typesheet29.gif
-    resources/r-typesheet30.gif
-    resources/r-typesheet31.gif
-    resources/r-typesheet32.gif
-    resources/r-typesheet33.gif
-    resources/r-typesheet34.gif
-    resources/r-typesheet35.gif
-    resources/r-typesheet36.gif
-    resources/r-typesheet37.gif
-    resources/r-typesheet38.gif
-    resources/r-typesheet39.gif
-    resources/r-typesheet40.gif
-    resources/r-typesheet41.gif
-    resources/r-typesheet42.gif
-    resources/r-typesheet43.gif
-    resources/r-typesheet44.gif
+    resources/r-typesheet2.png
+    resources/r-typesheet3.png
+    resources/r-typesheet5.png
+    resources/r-typesheet7.png
+    resources/r-typesheet8.png
+    resources/r-typesheet9.png
+    resources/r-typesheet10.png
+    resources/r-typesheet11.png
+    resources/r-typesheet12.png
+    resources/r-typesheet13.png
+    resources/r-typesheet14.png
+    resources/r-typesheet16.png
+    resources/r-typesheet17.png
+    resources/r-typesheet18.png
+    resources/r-typesheet19.png
+    resources/r-typesheet20.png
+    resources/r-typesheet21.png
+    resources/r-typesheet22.png
+    resources/r-typesheet23.png
+    resources/r-typesheet24.png
+    resources/r-typesheet25.png
+    resources/r-typesheet26.png
+    resources/r-typesheet27.png
+    resources/r-typesheet28.png
+    resources/r-typesheet29.png
+    resources/r-typesheet30.png
+    resources/r-typesheet30a.png
+    resources/r-typesheet31.png
+    resources/r-typesheet32.png
+    resources/r-typesheet33.png
+    resources/r-typesheet34.png
+    resources/r-typesheet35.png
+    resources/r-typesheet36.png
+    resources/r-typesheet37.png
+    resources/r-typesheet38.png
+    resources/r-typesheet39.png
+    resources/r-typesheet40.png
+    resources/r-typesheet41.png
+    resources/r-typesheet42.png
+    resources/r-typesheet43.png
+    resources/r-typesheet44.png
 )
 
 target_link_libraries(Client client::rc)
