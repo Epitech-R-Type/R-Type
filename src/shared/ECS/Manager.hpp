@@ -7,14 +7,14 @@
 
 #pragma once
 
+#include "CompPool.hpp"
+#include "ECS.hpp"
+
 #include <bitset>
 #include <iostream>
 #include <iterator>
 #include <memory>
 #include <vector>
-
-#include "CompPool.hpp"
-#include "ECS.hpp"
 
 struct Entity {
     EntityID id;
@@ -28,6 +28,8 @@ public:
 
     // Delete entity
     void deleteEntity(EntityID id);
+
+    bool entityIsActive(EntityID id);
 
     // Get component for given entity
     template <class T>

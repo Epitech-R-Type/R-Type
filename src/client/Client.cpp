@@ -6,20 +6,38 @@
 */
 
 #include "Client.hpp"
+#include "../shared/ECS/Manager.hpp"
+#include "raylib.h"
+
+Client::Client() {
+    this->_ECS = new Manager();
+    this->_spriteSystem = new SpriteSystem(this->_ECS);
+    this->_lobbyRunning = true;
+}
 
 int Client::launchGame() {
     // Note: For performance reasons we could free the lobby ecs before launching the game
-    this->_game.init();
-    this->_game.mainLoop();
+    this->_game = new ClientGame(this->_ECS, this->_spriteSystem);
+    this->_game->init();
+    this->_game->mainLoop();
+    this->valid = false;
 
     return 0;
 }
 
 int Client::mainLoop() {
+
     while (this->_lobbyRunning && !WindowShouldClose()) {
-        // Lobby logic
-        // Use input from user to navigate menu
-        // Manipulate local ecs
+
+        if (this->valid)
+            this->launchGame();
+
+        BeginDrawing();
+
+        ClearBackground(BLACK);
+        this->_spriteSystem->drawImage(Animation::AnimationID::Lost);
+
+        EndDrawing();
     }
 
     return 0;

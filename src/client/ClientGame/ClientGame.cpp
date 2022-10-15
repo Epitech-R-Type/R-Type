@@ -12,7 +12,7 @@
 #include "factories.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame() {
+ClientGame::ClientGame(Manager* ECS, SpriteSystem* spriteSystem) {
     // Construct messaging queues
     this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
@@ -21,8 +21,9 @@ ClientGame::ClientGame() {
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_udpComThread = new std::thread(communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 
-    this->_entManager = new Manager();
-    this->_spriteSystem = new SpriteSystem(this->_entManager);
+    this->_entManager = ECS;
+
+    this->_spriteSystem = spriteSystem;
     this->_velocitySystem = new VelocitySystem(this->_entManager);
 
     // ClientGame will take the player EntityID as consturctor param, replace y Server message
@@ -38,6 +39,9 @@ ClientGame::ClientGame() {
     this->_armamentSystem = new ArmamentSystem(this->_entManager);
     this->_armamentSystem->setPlayer(this->_player);
     this->_armamentSystem->setSpriteSystem(this->_spriteSystem);
+
+    this->_hitboxSystem = new HitboxSystem(this->_entManager);
+    this->_janitorSystem = new JanitorSystem(this->_entManager);
 }
 
 ClientGame::~ClientGame() {
@@ -48,19 +52,19 @@ ClientGame::~ClientGame() {
 void ClientGame::init() {
     srand(time(0));
 
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
     makeEnemy(this->_entManager, this->_spriteSystem);
 
     makeEndboss(this->_entManager, this->_spriteSystem);
 }
 
 void ClientGame::mainLoop() {
-    std::cout << "Entering main loop()" << std::endl;
-
-    // Main game loop
-    while (!WindowShouldClose()) // Detect window close button or ESC key
+    while (this->_entManager->entityIsActive(this->_player)) // Detect window close button or ESC key
     {
         BeginDrawing();
 
@@ -71,6 +75,10 @@ void ClientGame::mainLoop() {
         this->_playerMovementSystem->apply();
         this->_healthSystem->apply();
         this->_armamentSystem->apply();
+        this->_hitboxSystem->apply();
+
+        // Always last
+        this->_janitorSystem->apply();
 
         EndDrawing();
     }

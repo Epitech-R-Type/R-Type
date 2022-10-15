@@ -8,4 +8,7 @@
 class System {
 public:
     virtual void apply() = 0;
+
+private:
+    Manager* _ECS;
 };

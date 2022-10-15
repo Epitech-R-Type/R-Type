@@ -10,6 +10,6 @@ void makeEndboss(Manager* ECS, SpriteSystem* spriteSystem);
 
 void makeEnemy(Manager* ECS, SpriteSystem* spriteSystem);
 
-void makeBullet(Manager* ECS, SpriteSystem* spriteSystem);
+void makeBullet(Manager* ECS, SpriteSystem* spriteSystem, EntityID source);
 
 EntityID getPlayerID(Manager* ECS);

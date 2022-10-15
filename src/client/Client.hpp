@@ -7,7 +7,9 @@
 
 #pragma once
 
+#include "../shared/ECS/ECS.hpp"
 #include "ClientGame/ClientGame.hpp"
+#include "systems/SpriteSystem.hpp"
 
 // This class implementls the main loop for lobby handling of the client
 // The lobby main logic will most likely depend on a local ecs
@@ -16,7 +18,7 @@
 class Client {
 public:
     // Note: Construtor/Destructor shall be added as needed
-
+    Client();
     // Intialization of game lobby
     int setup();
 
@@ -30,5 +32,8 @@ public:
 
 private:
     bool _lobbyRunning;
-    ClientGame _game;
+    ClientGame* _game;
+    SpriteSystem* _spriteSystem;
+    Manager* _ECS;
+    bool valid = true;
 };

@@ -22,7 +22,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame();
+    ClientGame(Manager* ECS, SpriteSystem* spriteSystem);
     ~ClientGame();
 
     void init();
@@ -39,6 +39,8 @@ private:
     PlayerMovementSystem* _playerMovementSystem;
     HealthSystem* _healthSystem;
     ArmamentSystem* _armamentSystem;
+    HitboxSystem* _hitboxSystem;
+    JanitorSystem* _janitorSystem;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class
