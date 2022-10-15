@@ -52,12 +52,12 @@ ClientGame::~ClientGame() {
 void ClientGame::init() {
     srand(time(0));
 
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
+    // makeEnemy(this->_entManager, this->_spriteSystem);
     makeEnemy(this->_entManager, this->_spriteSystem);
 
     makeEndboss(this->_entManager, this->_spriteSystem);

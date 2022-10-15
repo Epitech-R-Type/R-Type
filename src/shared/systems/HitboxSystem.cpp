@@ -57,19 +57,19 @@ bool HitboxSystem::isColliding(EntityID entity1, EntityID entity2) {
     }
 
     if (                                                        //
-        collisionBox1->botLeft.x > collisionBox2->topRight.x    //
-        && collisionBox1->botLeft.x < collisionBox2->topLeft.x  //
+        collisionBox1->botLeft.x < collisionBox2->topRight.x    //
+        && collisionBox1->botLeft.x > collisionBox2->topLeft.x  //
         && collisionBox1->botLeft.y > collisionBox2->topRight.y //
-        && collisionBox1->botLeft.y < collisionBox2->topRight.y //
+        && collisionBox1->botLeft.y < collisionBox2->botRight.y //
     ) {
         return true;
     }
 
     if (                                                        //
-        collisionBox1->topLeft.x > collisionBox2->topRight.x    //
-        && collisionBox1->topLeft.x < collisionBox2->topLeft.x  //
+        collisionBox1->topLeft.x < collisionBox2->topRight.x    //
+        && collisionBox1->topLeft.x > collisionBox2->topLeft.x  //
         && collisionBox1->topLeft.y > collisionBox2->topRight.y //
-        && collisionBox1->topLeft.y < collisionBox2->topRight.y //
+        && collisionBox1->topLeft.y < collisionBox2->botRight.y //
     ) {
         return true;
     }
