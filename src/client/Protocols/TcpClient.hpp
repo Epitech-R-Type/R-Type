@@ -1,9 +1,9 @@
 /*
-** EPITECH PROJECT, 2022
-** TcpServer.hpp
-** File description:
-** .
-*/
+ ** EPITECH PROJECT, 2022
+ ** TcpClient.hpp
+ ** File description:
+ ** .
+ */
 
 #pragma once
 
@@ -18,21 +18,17 @@
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/AsioConstants.hpp"
 
-void tcp_server_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                     std::shared_ptr<std::atomic<bool>> stopFlag);
+void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+                            std::shared_ptr<std::atomic<bool>> stopFlag, asio::ip::address addr, asio::ip::port_type port);
 
-class TcpServer {
+class TcpClient {
 public:
-    TcpServer(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-              std::shared_ptr<std::atomic<bool>> stopFlag);
-
-    // Setup action accepting new connections on socket
-    // Note: Needs to be called again in order to loop
-    void setup_acceptor_handler();
+    TcpClient(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+              std::shared_ptr<std::atomic<bool>> stopFlag, asio::ip::address addr, asio::ip::port_type port);
 
     // Setup action receiving TCP messages
     // Note: Needs to be called again in order to loop
-    void setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> peer);
+    void setup_incoming_handler();
 
     // Setup action polling MQ for new messages to send
     // Note: Needs to be called again in order to loop
@@ -43,29 +39,26 @@ public:
     // Note: Needs to be called again in order to loop
     void stop_signal_handler();
 
-    // Searches through peers and returns shared ptr to peer socket
-    std::shared_ptr<asio::ip::tcp::socket> findPeer(asio::ip::address addr, asio::ip::port_type port);
-    // Removes peer from vector
-    void remove_peer(std::shared_ptr<asio::ip::tcp::socket> peer);
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);
     std::optional<Message<std::string>> pop_message(void);
     bool getStopFlag();
-    void pushNewPeer(std::shared_ptr<asio::ip::tcp::socket> newPeer);
 
     // Execute context
     void run();
     // Stop context
     void stop();
 
+    // Socket used to connect to server
+    asio::ip::tcp::socket _sock;
+
 private:
     // Async context executed in com thread
     asio::io_context _ctxt;
 
-    // Asio networking
-    asio::ip::tcp::acceptor _acceptor;
-
-    std::vector<std::shared_ptr<asio::ip::tcp::socket>> _peers; // Peers socket vector
+    // Server addr and port
+    asio::ip::address _addr;
+    asio::ip::port_type _port;
 
     // Buffer used for msg reception
     char _buffer[MAX_BUFFER_SIZE];

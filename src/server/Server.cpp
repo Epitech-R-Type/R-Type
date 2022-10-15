@@ -18,7 +18,7 @@ Server::Server()
 
     // Init tcp com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    this->_comThread = new std::thread(tcp_server_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 }
 
 Server::~Server() {
