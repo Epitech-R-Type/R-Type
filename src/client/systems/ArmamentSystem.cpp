@@ -30,8 +30,12 @@ void ArmamentSystem::apply() {
         // Convert to milliseconds
         if (elapsed_seconds.count() > ((double)armament->interval / 1000.0)) {
 
-            if (armament->ammo != 0)
-                makeBullet(this->_ECS, this->_spriteSystem, *beg);
+            if (armament->ammo != 0) {
+                if (armament->type == Armament::Type::Laser)
+                    makeLaser(this->_ECS, this->_spriteSystem, *beg);
+                if (armament->type == Armament::Type::LaserBuckshot)
+                    makeLaserBuckshot(this->_ECS, this->_spriteSystem, *beg);
+            }
             if (armament->ammo > 0)
                 armament->ammo -= 1;
 

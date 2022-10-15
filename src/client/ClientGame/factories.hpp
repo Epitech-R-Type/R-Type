@@ -10,6 +10,8 @@ void makeEndboss(ECSManager* ECS, SpriteSystem* spriteSystem);
 
 void makeEnemy(ECSManager* ECS, SpriteSystem* spriteSystem);
 
-void makeBullet(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source);
+void makeLaser(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source);
+
+void makeLaserBuckshot(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source);
 
 EntityID getPlayerID(ECSManager* ECS);

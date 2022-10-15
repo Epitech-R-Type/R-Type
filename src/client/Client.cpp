@@ -20,7 +20,11 @@ int Client::launchGame() {
     this->_game = new ClientGame(this->_ECS, this->_spriteSystem);
     this->_game->init();
     this->_game->mainLoop();
-    this->_ECS->flush();
+    delete this->_ECS;
+    delete this->_game;
+
+    this->_ECS = new ECSManager();
+    this->_spriteSystem = new SpriteSystem(this->_ECS);
 
     return 0;
 }

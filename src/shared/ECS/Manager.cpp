@@ -9,8 +9,6 @@
 #include <algorithm>
 
 EntityID ECSManager::newEntity() {
-    int j = 0;
-
     // If previously free'd entities available use those in preference
     if (!this->_unusedEntities.empty() && false) { // Pop last index from unusedEntities vector
         Index i = this->_unusedEntities.back();
@@ -24,7 +22,8 @@ EntityID ECSManager::newEntity() {
         this->_entities[i].id = id;
         return id;
     } else {
-
+        if (this->_entities.size() >= MAX_ENTITIES)
+            return -1;
         // Create new id and entity
         Index i = this->_entities.size();
         Version v = 0;
@@ -65,4 +64,10 @@ void ECSManager::flush() {
     for (auto entity : this->_entities) {
         this->deleteEntity(entity.id);
     }
+
+    this->_entities = {};
+    this->_unusedEntities = {};
+
+    this->_compPools = std::vector<std::unique_ptr<CompPool>>{};
+    this->_excludedInView.reset();
 };

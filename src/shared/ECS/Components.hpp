@@ -69,8 +69,8 @@ namespace Animation {
     struct Component {
         AnimationID animationID;
         unsigned long layer = 1;
-        float rotation = 0;
-        float scale = 3;
+        double rotation = 0;
+        double scale = 3;
         int index = 0;
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
@@ -138,8 +138,8 @@ namespace Damage {
 
 namespace Armament {
     enum Type {
-        Bullet,
-        Spray,
+        Laser,
+        LaserBuckshot,
     };
 
     struct Component {

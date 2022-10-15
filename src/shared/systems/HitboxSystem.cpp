@@ -7,8 +7,6 @@
 #include <complex>
 #include <iostream>
 
-#define DRAW_HITBOX
-
 HitboxSystem::HitboxSystem(ECSManager* ECS) {
     this->_ECS = ECS;
 }

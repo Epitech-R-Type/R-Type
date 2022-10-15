@@ -47,23 +47,23 @@ ClientGame::ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem) {
 ClientGame::~ClientGame() {
     // Delete com thread
     delete this->_udpComThread;
+    delete this->_hitboxSystem;
+    delete this->_janitorSystem;
+    delete this->_armamentSystem;
+    delete this->_healthSystem;
+    delete this->_playerMovementSystem;
+    delete this->_velocitySystem;
 }
 
 void ClientGame::init() {
     srand(time(0));
 
-    // makeEnemy(this->_entManager, this->_spriteSystem);
-    // makeEnemy(this->_entManager, this->_spriteSystem);
-    // makeEnemy(this->_entManager, this->_spriteSystem);
-    // makeEnemy(this->_entManager, this->_spriteSystem);
-    // makeEnemy(this->_entManager, this->_spriteSystem);
-    // makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-
     makeEndboss(this->_entManager, this->_spriteSystem);
 }
 
 void ClientGame::mainLoop() {
+    std::chrono::time_point<std::chrono::system_clock> timer;
+
     while (this->_entManager->entityIsActive(this->_player)) // Detect window close button or ESC key
     {
         BeginDrawing();
@@ -79,6 +79,15 @@ void ClientGame::mainLoop() {
 
         // Always last
         this->_janitorSystem->apply();
+
+        const auto now = getNow();
+        std::chrono::duration<double> elapsed_seconds = now - timer;
+
+        // Convert to milliseconds
+        if (elapsed_seconds.count() > 0.5) {
+            makeEnemy(this->_entManager, this->_spriteSystem);
+            timer = getNow();
+        }
 
         EndDrawing();
     }

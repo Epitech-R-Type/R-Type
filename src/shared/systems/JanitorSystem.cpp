@@ -2,7 +2,7 @@
 #include "../ECS/Components.hpp"
 #include "../ECS/Manager.hpp"
 
-#define INVISIBLE_BOX 3000
+#define INVISIBLE_BOX 2500
 
 JanitorSystem::JanitorSystem(ECSManager* ECS) {
     this->_ECS = ECS;
@@ -17,7 +17,7 @@ void JanitorSystem::apply() {
 
         const Position::Component* position = this->_ECS->getComponent<Position::Component>(*beg);
 
-        if (position->x < -INVISIBLE_BOX || position->x > INVISIBLE_BOX || position->y < -INVISIBLE_BOX || position->y > INVISIBLE_BOX) {
+        if (position->x < -100 || position->x > INVISIBLE_BOX || position->y < -100 || position->y > INVISIBLE_BOX) {
             this->_ECS->deleteEntity(*beg);
             continue;
         }
