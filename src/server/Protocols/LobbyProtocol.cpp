@@ -83,6 +83,9 @@ bool LobbyProtocol::handleCommands() {
                 continue;
             }
 
+            // Send positive response
+            this->sendResponse("200", "Alles Gut", addr, port);
+
             // Set boolean that game should start
             gameShouldStart = true;
 
