@@ -7,9 +7,11 @@
 
 #pragma once
 
+#include <chrono>
+
 // CONSTANTS
 #define MAX_ENTITIES 1024
-#define MAX_COMPONENTS 4
+#define MAX_COMPONENTS 32
 
 #define INVALID_INDEX -1
 
@@ -58,5 +60,9 @@ inline EntityID createId(Index i, Version v) {
 
     return new_id;
 }
+
+inline std::chrono::time_point<std::chrono::system_clock> getNow() {
+    return std::chrono::system_clock::now();
+};
 
 class Manager;

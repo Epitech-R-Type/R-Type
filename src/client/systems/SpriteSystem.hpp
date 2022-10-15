@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../../WindowsGuard.hpp"
+
 #include <chrono>
 #include <cmrc/cmrc.hpp>
 #include <raylib.h>
@@ -18,7 +20,7 @@
 
 CMRC_DECLARE(client);
 
-std::chrono::time_point<std::chrono::system_clock> getNow();
+// std::chrono::time_point<std::chrono::system_clock> getNow();
 
 struct AnimationStr {
     std::vector<Texture2D> sequence{};
@@ -46,12 +48,13 @@ public:
     /**
      * Load the part of an image file into a Texture2D object
      * */
-    Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen);
+    Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen,
+                         Animation::Component* animation);
 
     /**
      * Parses image file to extract all frames of an animation
      * */
-    AnimationStr* loadAnimation(AnimationSheet animationSheet);
+    AnimationStr* loadAnimation(AnimationSheet animationSheet, Animation::Component* animation);
 
     /**
      * Increments currently displayed frame of animation if enough time passed since the last update
@@ -69,10 +72,10 @@ public:
      * the linked animation
      * */
     void addAnimation(EntityID ID, Animation::Component* component);
+    static std::map<Animation::AnimationID, AnimationSheet> ANIMATION_SHEET;
 
 private:
     cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
     std::map<int, std::map<EntityID, AnimationStr*>> _animationLayers;
     Manager* _ECS;
-    std::map<Animation::AnimationID, AnimationSheet> _sheet;
 };
