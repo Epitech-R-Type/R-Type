@@ -6,7 +6,7 @@
 
 class HealthSystem : public System {
 public:
-    HealthSystem(Manager* ECS);
+    HealthSystem(ECSManager* ECS);
 
     void apply();
 
@@ -15,6 +15,6 @@ public:
     void drawPlayerHP();
 
 private:
-    Manager* _ECS;
+    ECSManager* _ECS;
     EntityID _player;
 };

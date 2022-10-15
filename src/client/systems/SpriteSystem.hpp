@@ -26,7 +26,7 @@ typedef std::vector<Texture2D> AnimationArr;
 
 class SpriteSystem : public System {
 public:
-    SpriteSystem(Manager* ECS);
+    SpriteSystem(ECSManager* ECS);
 
     /**
      * Draw all entities with Animation Components
@@ -39,7 +39,7 @@ private:
     /**
      * Load the part of an image file into a Texture2D object
      * */
-    Texture2D loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen);
+    Texture2D loadSprite(Animation::Sheet sheet, const float xpos, const float ypos);
 
     /**
      * Parses image file to extract all frames of an animation
@@ -55,5 +55,5 @@ private:
 
     std::map<Animation::AnimationID, AnimationArr> _animations;
 
-    Manager* _ECS;
+    ECSManager* _ECS;
 };

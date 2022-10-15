@@ -7,9 +7,7 @@
 #include <complex>
 #include <iostream>
 
-#define DRAW_HITBOX
-
-HitboxSystem::HitboxSystem(Manager* ECS) {
+HitboxSystem::HitboxSystem(ECSManager* ECS) {
     this->_ECS = ECS;
 }
 
@@ -28,54 +26,89 @@ void HitboxSystem::apply() {
         DrawLine(hitbox->botLeft.x, hitbox->botLeft.y, hitbox->botRight.x, hitbox->botRight.y, RED);
         DrawLine(hitbox->botRight.x, hitbox->botRight.y, hitbox->topRight.x, hitbox->topRight.y, RED);
 
-        DrawCircle(position->xPos, position->yPos, 2, BLUE);
+        DrawCircle(position->x, position->y, 2, BLUE);
 #endif
 
         HitboxSystem::checkCollision(*beg);
     }
 }
 
+Point project(Point point, Point axis) {
+    return Point{
+        ((point.x * axis.x + point.y * axis.y) / (axis.x * axis.x + axis.y * axis.y)) * axis.x,
+        ((point.x * axis.x + point.y * axis.y) / (axis.x * axis.x + axis.y * axis.y)) * axis.y,
+    };
+}
+
+double toScalar(Point point, Point axis) {
+    return point.x * axis.x + point.y * axis.y;
+}
+
+bool getOverlap(const Hitbox::Component* rectA, const Hitbox::Component* rectB, Point axis) {
+    // p stands for projection
+    // Rectangle A
+    Point pTopRightA = project(rectA->topRight, axis);
+    Point pTopLeftA = project(rectA->topLeft, axis);
+    Point pBotRightA = project(rectA->topLeft, axis);
+    Point pBotLeftA = project(rectA->botLeft, axis);
+
+    // Rectangle B
+
+    Point pTopRightB = project(rectB->topRight, axis);
+    Point pTopLeftB = project(rectB->topLeft, axis);
+    Point pBotRightB = project(rectB->topLeft, axis);
+    Point pBotLeftB = project(rectB->botLeft, axis);
+
+    std::vector<double> scalarValuesA;
+
+    scalarValuesA.push_back(toScalar(pTopRightA, axis));
+    scalarValuesA.push_back(toScalar(pTopLeftA, axis));
+    scalarValuesA.push_back(toScalar(pBotRightA, axis));
+    scalarValuesA.push_back(toScalar(pBotLeftA, axis));
+
+    std::vector<double> scalarValuesB;
+
+    scalarValuesB.push_back(toScalar(pTopRightB, axis));
+    scalarValuesB.push_back(toScalar(pTopLeftB, axis));
+    scalarValuesB.push_back(toScalar(pBotRightB, axis));
+    scalarValuesB.push_back(toScalar(pBotLeftB, axis));
+
+    double maxA = scalarValuesA[0];
+    double minA = scalarValuesA[0];
+    double maxB = scalarValuesB[0];
+    double minB = scalarValuesB[0];
+
+    for (int val : scalarValuesA) {
+        if (val > maxA)
+            maxA = val;
+        if (val < minA)
+            minA = val;
+    }
+
+    for (int val : scalarValuesB) {
+        if (val > maxB)
+            maxB = val;
+        if (val < minB)
+            minB = val;
+    }
+
+    return (minB <= maxA) && (maxB >= minA);
+};
+
+bool HitboxSystem::isColliding(EntityID entity1, EntityID entity2, ECSManager* ECS) {
+    const Hitbox::Component* rectA = ECS->getComponent<Hitbox::Component>(entity1);
+    const Hitbox::Component* rectB = ECS->getComponent<Hitbox::Component>(entity2);
+
+    Point Axis1 = {rectA->topRight.x - rectA->topLeft.x, rectA->topRight.y - rectA->topLeft.y};
+    Point Axis2 = {rectA->topRight.x - rectA->botRight.x, rectA->topRight.y - rectA->botRight.y};
+    Point Axis3 = {rectB->topLeft.x - rectB->botLeft.x, rectB->topLeft.y - rectB->botLeft.y};
+    Point Axis4 = {rectB->topLeft.x - rectA->topRight.x, rectB->topLeft.y - rectA->topRight.y};
+
+    return (getOverlap(rectA, rectB, Axis1) && getOverlap(rectA, rectB, Axis2) && getOverlap(rectA, rectB, Axis3) && getOverlap(rectA, rectB, Axis4));
+}
+
 bool HitboxSystem::isColliding(EntityID entity1, EntityID entity2) {
-    const Hitbox::Component* collisionBox1 = this->_ECS->getComponent<Hitbox::Component>(entity1);
-    const Hitbox::Component* collisionBox2 = this->_ECS->getComponent<Hitbox::Component>(entity2);
-
-    if (                                                         //
-        collisionBox1->topRight.x > collisionBox2->topLeft.x     //
-        && collisionBox1->topRight.x < collisionBox2->topRight.x //
-        && collisionBox1->topRight.y > collisionBox2->topLeft.y  //
-        && collisionBox1->topRight.y < collisionBox2->botLeft.y  //
-    ) {
-        return true;
-    }
-
-    if (                                                         //
-        collisionBox1->botRight.x > collisionBox2->topLeft.x     //
-        && collisionBox1->botRight.x < collisionBox2->topRight.x //
-        && collisionBox1->botRight.y > collisionBox2->topLeft.y  //
-        && collisionBox1->botRight.y < collisionBox2->botLeft.y  //
-    ) {
-        return true;
-    }
-
-    if (                                                        //
-        collisionBox1->botLeft.x < collisionBox2->topRight.x    //
-        && collisionBox1->botLeft.x > collisionBox2->topLeft.x  //
-        && collisionBox1->botLeft.y > collisionBox2->topRight.y //
-        && collisionBox1->botLeft.y < collisionBox2->botRight.y //
-    ) {
-        return true;
-    }
-
-    if (                                                        //
-        collisionBox1->topLeft.x < collisionBox2->topRight.x    //
-        && collisionBox1->topLeft.x > collisionBox2->topLeft.x  //
-        && collisionBox1->topLeft.y > collisionBox2->topRight.y //
-        && collisionBox1->topLeft.y < collisionBox2->botRight.y //
-    ) {
-        return true;
-    }
-
-    return false;
+    return HitboxSystem::isColliding(entity1, entity2, this->_ECS);
 }
 
 /**
@@ -89,11 +122,8 @@ void HitboxSystem::checkCollision(EntityID entity) {
         if (!isColliding(entity, *beg))
             continue;
 
-        std::cout << "is colliding" << std::endl;
-        if (this->_ECS->hasComponent<Health::Component>(*beg) && this->_ECS->hasComponent<Damage::Component>(entity))
-            this->_ECS->getComponent<Health::Component>(*beg)->health -= this->_ECS->getComponent<Damage::Component>(entity)->damage;
-        if (this->_ECS->hasComponent<Health::Component>(entity) && this->_ECS->hasComponent<Damage::Component>(*beg))
-            this->_ECS->getComponent<Health::Component>(entity)->health -= this->_ECS->getComponent<Damage::Component>(*beg)->damage;
+        (*this->_ECS->getComponent<CollisionEffect::Component>(entity))(entity, *beg, this->_ECS);
+        (*this->_ECS->getComponent<CollisionEffect::Component>(*beg))(*beg, entity, this->_ECS);
     }
 }
 
@@ -107,20 +137,21 @@ Point HitboxSystem::rotate(Point point, Point origin, double rad) {
         res.imag(),
     };
 }
-double toRad(double degree) {
+
+double HitboxSystem::toRadians(double degree) {
     constexpr double pi = 22 / 7;
     return (double)degree * (pi / 180.0);
 }
 
 Hitbox::Component HitboxSystem::buildHitbox(Animation::Component* animation, Position::Component* position) {
-    const double radRotation = toRad(animation->rotation);
-    const double xPos = position->xPos;
-    const double yPos = position->yPos;
+    const double radRotation = HitboxSystem::toRadians(animation->rotation);
+    const double xPos = position->x;
+    const double yPos = position->y;
 
     const Point origin{xPos, yPos};
 
-    const double width = Hitbox::getWidth(animation);
-    const double height = Hitbox::getHeight(animation);
+    const double width = Animation::Sheets[animation->animationID].frameWidth * animation->scale;
+    const double height = (Animation::Sheets[animation->animationID].frameHeight * animation->scale);
 
     Point tLeft = HitboxSystem::rotate({xPos, yPos}, origin, radRotation);
     Point tRight = HitboxSystem::rotate({xPos + width, yPos}, origin, radRotation);

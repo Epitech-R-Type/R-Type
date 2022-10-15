@@ -8,7 +8,7 @@
 
 class HitboxSystem : public System {
 public:
-    HitboxSystem(Manager* ECS);
+    HitboxSystem(ECSManager* ECS);
 
     void apply();
 
@@ -20,8 +20,14 @@ public:
 
     bool isColliding(EntityID entity1, EntityID entity2);
 
+    static bool isColliding(EntityID entity1, EntityID entity2, ECSManager* ECS);
+
     static Point rotate(Point point, Point origin, double rad);
 
+    static double toRadians(double degree);
+
 private:
-    Manager* _ECS;
+    void dealDamage(EntityID defender, EntityID attacker);
+
+    ECSManager* _ECS;
 };

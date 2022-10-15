@@ -7,11 +7,11 @@
 
 class VelocitySystem : public System {
 public:
-    VelocitySystem(Manager* ECS);
+    VelocitySystem(ECSManager* ECS);
 
     void apply();
 
 private:
-    Manager* _ECS;
+    ECSManager* _ECS;
     std::chrono::time_point<std::chrono::system_clock> _timer = std::chrono::system_clock::now();
 };

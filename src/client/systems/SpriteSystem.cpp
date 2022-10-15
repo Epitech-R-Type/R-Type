@@ -13,18 +13,18 @@
 
 #define HAS_KEY(map, key) (map.find(key) != map.end())
 
-SpriteSystem::SpriteSystem(Manager* ECS) {
+SpriteSystem::SpriteSystem(ECSManager* ECS) {
     this->_ECS = ECS;
 }
 
-Texture2D SpriteSystem::loadSprite(const std::string path, const float xpos, const float ypos, const float xlen, const float ylen) {
-    const cmrc::file image = this->_fs.open(path);
+Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, const float ypos) {
+    const cmrc::file image = this->_fs.open(sheet.path);
 
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
 
     Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());
 
-    const Rectangle crop{xpos, ypos, xlen, ylen};
+    const Rectangle crop{xpos, ypos, sheet.frameWidth, sheet.frameHeight};
 
     ImageCrop(&sprite, crop);
 
@@ -50,7 +50,7 @@ void SpriteSystem::loadAnimation(Animation::AnimationID id) {
         for (int x = 0; x < animationSheet.animWidth; x++) {
             const float xPos = animationSheet.startX + (animationSheet.frameWidth * x) + (animationSheet.separationX * x);
             const float yPos = animationSheet.startY + (animationSheet.frameHeight * y) + (animationSheet.separationY * y);
-            Texture2D sprite = this->loadSprite(animationSheet.path, xPos, yPos, animationSheet.frameWidth, animationSheet.frameHeight);
+            Texture2D sprite = this->loadSprite(animationSheet, xPos, yPos);
             this->_animations[id].push_back(sprite);
         }
     }
@@ -95,7 +95,7 @@ void SpriteSystem::apply() {
                 this->loadAnimation(animation->animationID);
 
             Texture2D frame = this->_animations[animation->animationID][animation->index];
-            Vector2 posVec{position->xPos, position->yPos};
+            Vector2 posVec{position->x, position->y};
             DrawTextureEx(frame, posVec, animation->rotation, animation->scale, WHITE);
             this->nextFrame(animation);
         }

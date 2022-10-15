@@ -34,6 +34,5 @@ private:
     bool _lobbyRunning;
     ClientGame* _game;
     SpriteSystem* _spriteSystem;
-    Manager* _ECS;
-    bool valid = true;
+    ECSManager* _ECS;
 };

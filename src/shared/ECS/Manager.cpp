@@ -8,9 +8,7 @@
 #include "Manager.hpp"
 #include <algorithm>
 
-EntityID Manager::newEntity() {
-    int j = 0;
-
+EntityID ECSManager::newEntity() {
     // If previously free'd entities available use those in preference
     if (!this->_unusedEntities.empty() && false) { // Pop last index from unusedEntities vector
         Index i = this->_unusedEntities.back();
@@ -24,7 +22,8 @@ EntityID Manager::newEntity() {
         this->_entities[i].id = id;
         return id;
     } else {
-
+        if (this->_entities.size() >= MAX_ENTITIES)
+            return -1;
         // Create new id and entity
         Index i = this->_entities.size();
         Version v = 0;
@@ -39,7 +38,7 @@ EntityID Manager::newEntity() {
     }
 }
 
-void Manager::deleteEntity(EntityID id) {
+void ECSManager::deleteEntity(EntityID id) {
     Index i = getIndex(id);
 
     // Check entity is valid
@@ -57,6 +56,18 @@ void Manager::deleteEntity(EntityID id) {
     this->_unusedEntities.push_back(i);
 }
 
-bool Manager::entityIsActive(EntityID id) {
+bool ECSManager::entityIsActive(EntityID id) {
     return (std::find(this->_unusedEntities.begin(), this->_unusedEntities.end(), id) == this->_unusedEntities.end());
 }
+
+void ECSManager::flush() {
+    for (auto entity : this->_entities) {
+        this->deleteEntity(entity.id);
+    }
+
+    this->_entities = {};
+    this->_unusedEntities = {};
+
+    this->_compPools = std::vector<std::unique_ptr<CompPool>>{};
+    this->_excludedInView.reset();
+};

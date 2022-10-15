@@ -24,6 +24,7 @@ file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMak
 "${CMAKE_BINARY_DIR}/CMakeRC.cmake")
 include("${CMAKE_BINARY_DIR}/CMakeRC.cmake")
 
+
 add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
@@ -61,6 +62,11 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
 )
+
+# compile_definitions(NO_HOSTILITY=1)
+
+target_compile_definitions(Server PUBLIC SERVER=1)
+target_compile_definitions(Client PUBLIC CLIENT=1)
 
 
 cmrc_add_resource_library(

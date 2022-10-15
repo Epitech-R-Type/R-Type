@@ -18,7 +18,12 @@ struct Point {
     double y;
 };
 
-enum ComponentType { ARMOR, HEALTH, POSITION, ANIMATION };
+enum ComponentType {
+    ARMOR,
+    HEALTH,
+    POSITION,
+    ANIMATION,
+};
 
 namespace Armor {
     struct Component {
@@ -27,7 +32,7 @@ namespace Armor {
 
     std::string toString(Armor::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Armor
 
 namespace Health {
@@ -39,18 +44,18 @@ namespace Health {
 
     std::string toString(Health::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Health
 
 namespace Position {
     struct Component {
-        float xPos = 0;
-        float yPos = 0;
+        float x = 0;
+        float y = 0;
     };
 
     std::string toString(Position::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Position
 
 namespace Animation {
@@ -64,8 +69,8 @@ namespace Animation {
     struct Component {
         AnimationID animationID;
         unsigned long layer = 1;
-        float rotation = 0;
-        float scale = 3;
+        double rotation = 0;
+        double scale = 3;
         int index = 0;
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
@@ -94,19 +99,19 @@ namespace Animation {
 
     std::string toString(Animation::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Animation
 
 namespace Velocity {
     struct Component {
-        float xVelocity = 0;
-        float yVelocity = 0;
+        float x = 0;
+        float y = 0;
         EntityID follow = -1;
     };
 
     std::string toString(Velocity::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Velocity
 
 // a struct for client side use only, to get the Player Entity  via the ECS
@@ -116,27 +121,38 @@ namespace Player {
         int score;
     };
 
+    std::string toString(Player::Component component);
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Player
 
 namespace Damage {
     struct Component {
         int damage = 0;
     };
+
+    std::string toString(Damage::Component component);
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Damage
 
 namespace Armament {
-    enum ArmamentType {
-        Bullet,
-        Spray,
+    enum Type {
+        Laser,
+        LaserBuckshot,
     };
 
     struct Component {
-        Armament::ArmamentType type;
+        Armament::Type type;
         // in milliseconds
         double interval = 0.1;
         long long ammo = -1;
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
+
+    std::string toString(Armament::Component component);
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Armament
 
 namespace Hitbox {
@@ -149,15 +165,7 @@ namespace Hitbox {
 
     std::string toString(Hitbox::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
-
-    inline float getWidth(const Animation::Component* animation) {
-        return (Animation::Sheets[animation->animationID].frameWidth * animation->scale);
-    }
-
-    inline float getHeight(const Animation::Component* animation) {
-        return (Animation::Sheets[animation->animationID].frameHeight * animation->scale);
-    }
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
 } // namespace Hitbox
 
 namespace Team {
@@ -166,3 +174,18 @@ namespace Team {
         Enemy,
     };
 } // namespace Team
+
+namespace ImmunityFrame {
+    struct Component {
+        double duration = 0;
+        std::chrono::time_point<std::chrono::system_clock> timer;
+    };
+
+} // namespace ImmunityFrame
+
+namespace CollisionEffect {
+    typedef void (*Component)(EntityID defender, EntityID attacker, ECSManager* ECS);
+
+    // should not need serialization or update since logic happens serverside
+    // if we do need to just use a map and enum
+} // namespace CollisionEffect
