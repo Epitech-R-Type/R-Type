@@ -10,7 +10,7 @@
 #include "raylib.h"
 
 Client::Client() {
-    this->_ECS = new Manager();
+    this->_ECS = new ECSManager();
     this->_spriteSystem = new SpriteSystem(this->_ECS);
     this->_lobbyRunning = true;
 }

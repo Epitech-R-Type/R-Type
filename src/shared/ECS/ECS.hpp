@@ -68,4 +68,4 @@ inline std::chrono::time_point<std::chrono::system_clock> getNow() {
     return std::chrono::system_clock::now();
 };
 
-class Manager;
+class ECSManager;

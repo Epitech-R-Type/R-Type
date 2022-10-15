@@ -22,7 +22,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(Manager* ECS, SpriteSystem* spriteSystem);
+    ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem);
     ~ClientGame();
 
     void init();
@@ -30,7 +30,7 @@ public:
     void mainLoop();
 
 private:
-    Manager* _entManager;
+    ECSManager* _entManager;
 
     EntityID _player;
 

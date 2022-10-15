@@ -8,7 +8,7 @@
 #include "Manager.hpp"
 #include <algorithm>
 
-EntityID Manager::newEntity() {
+EntityID ECSManager::newEntity() {
     int j = 0;
 
     // If previously free'd entities available use those in preference
@@ -39,7 +39,7 @@ EntityID Manager::newEntity() {
     }
 }
 
-void Manager::deleteEntity(EntityID id) {
+void ECSManager::deleteEntity(EntityID id) {
     Index i = getIndex(id);
 
     // Check entity is valid
@@ -57,6 +57,6 @@ void Manager::deleteEntity(EntityID id) {
     this->_unusedEntities.push_back(i);
 }
 
-bool Manager::entityIsActive(EntityID id) {
+bool ECSManager::entityIsActive(EntityID id) {
     return (std::find(this->_unusedEntities.begin(), this->_unusedEntities.end(), id) == this->_unusedEntities.end());
 }

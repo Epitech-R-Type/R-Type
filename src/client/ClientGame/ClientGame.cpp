@@ -12,7 +12,7 @@
 #include "factories.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame(Manager* ECS, SpriteSystem* spriteSystem) {
+ClientGame::ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem) {
     // Construct messaging queues
     this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();

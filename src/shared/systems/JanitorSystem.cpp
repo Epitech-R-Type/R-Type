@@ -4,7 +4,7 @@
 
 #define INVISIBLE_BOX 3000
 
-JanitorSystem::JanitorSystem(Manager* ECS) {
+JanitorSystem::JanitorSystem(ECSManager* ECS) {
     this->_ECS = ECS;
 }
 
@@ -17,7 +17,7 @@ void JanitorSystem::apply() {
 
         const Position::Component* position = this->_ECS->getComponent<Position::Component>(*beg);
 
-        if (position->xPos < -INVISIBLE_BOX || position->xPos > INVISIBLE_BOX || position->yPos < -INVISIBLE_BOX || position->yPos > INVISIBLE_BOX) {
+        if (position->x < -INVISIBLE_BOX || position->x > INVISIBLE_BOX || position->y < -INVISIBLE_BOX || position->y > INVISIBLE_BOX) {
             this->_ECS->deleteEntity(*beg);
             continue;
         }

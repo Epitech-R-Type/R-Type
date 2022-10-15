@@ -20,7 +20,7 @@
 //          - Udp communication handling
 //          - Ecs handling
 class Game {
-    public:
+public:
     // All the game setup is done in here
     Game();
     ~Game();
@@ -28,8 +28,8 @@ class Game {
     // Main Loop
     int mainLoop();
 
-    private:
-    Manager _entManager;
+private:
+    ECSManager _entManager;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class

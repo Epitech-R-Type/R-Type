@@ -5,9 +5,9 @@
 
 class JanitorSystem : public System {
 public:
-    JanitorSystem(Manager* ECS);
+    JanitorSystem(ECSManager* ECS);
     void apply();
 
 private:
-    Manager* _ECS;
+    ECSManager* _ECS;
 };

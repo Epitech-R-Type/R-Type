@@ -21,7 +21,7 @@ struct Entity {
     std::bitset<MAX_COMPONENTS> components;
 };
 
-class Manager {
+class ECSManager {
 public:
     // Create entity
     EntityID newEntity();
@@ -128,7 +128,7 @@ public:
     template <class... Comps>
     class Iterator {
     public:
-        Iterator(Index start, Manager* man) : _currIndex(start), _man(man) {
+        Iterator(Index start, ECSManager* man) : _currIndex(start), _man(man) {
             Index includedIds[] = {getID<Comps>()...};
             this->_wanted.reset();
 
@@ -165,7 +165,7 @@ public:
 
     private:
         Index _currIndex;
-        Manager* _man;
+        ECSManager* _man;
         std::bitset<MAX_COMPONENTS> _wanted;
     };
 

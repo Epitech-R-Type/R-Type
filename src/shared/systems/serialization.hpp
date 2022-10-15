@@ -16,7 +16,7 @@
 #include <string>
 
 template <class T>
-std::string componentToString(EntityID entityId, Manager* manager) {
+std::string componentToString(EntityID entityId, ECSManager* manager) {
     if (!manager->hasComponent<T>(entityId)) {
         std::cout << "[Warning]: Missing component." << std::endl;
         return "";
@@ -28,7 +28,7 @@ std::string componentToString(EntityID entityId, Manager* manager) {
 }
 
 template <class... ComponentTypes>
-std::string entityToString(EntityID entityID, Manager* manager) {
+std::string entityToString(EntityID entityID, ECSManager* manager) {
     Index entityIndex = getIndex(entityID);
 
     std::stringstream stream;
@@ -66,7 +66,7 @@ std::vector<std::string> componentSplit(std::string entity) {
     return components;
 }
 
-void stringToEntity(const std::string entity, Manager* manager) {
+void stringToEntity(const std::string entity, ECSManager* manager) {
 
     std::vector<std::string> components = componentSplit(entity);
 

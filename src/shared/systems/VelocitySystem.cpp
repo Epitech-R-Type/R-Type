@@ -3,7 +3,7 @@
 #include "../ECS/Components.hpp"
 #include "../ECS/Manager.hpp"
 
-VelocitySystem::VelocitySystem(Manager* ECS) {
+VelocitySystem::VelocitySystem(ECSManager* ECS) {
     this->_ECS = ECS;
 }
 
@@ -25,11 +25,11 @@ void VelocitySystem::apply() {
             if (velocity->follow >= 0) {
                 const Position::Component* trackedEntityPosition = this->_ECS->getComponent<Position::Component>(velocity->follow);
 
-                position->xPos = trackedEntityPosition->xPos;
-                position->yPos = trackedEntityPosition->yPos;
+                position->x = trackedEntityPosition->x;
+                position->y = trackedEntityPosition->y;
             } else {
-                position->xPos += velocity->xVelocity;
-                position->yPos += velocity->yVelocity;
+                position->x += velocity->x;
+                position->y += velocity->y;
             }
         }
         this->_timer = now;
