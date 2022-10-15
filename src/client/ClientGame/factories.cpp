@@ -10,7 +10,7 @@ EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
     const float startY = (float)(GetScreenHeight() / 1.5);
 
     Position::Component* position = ECS->addComp<Position::Component>(player, {startX, startY});
-    Animation::Component* animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2});
+    Animation::Component* animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2, 45});
     ECS->addComp<Health::Component>(player, {25, 30});
     ECS->addComp<Player::Component>(player, {true});
     ECS->addComp<Armament::Component>(player, {Armament::ArmamentType::Bullet, 150, 50});
