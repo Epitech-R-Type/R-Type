@@ -6,6 +6,7 @@
 #include <cmath>
 #include <complex>
 #include <iostream>
+
 #define DRAW_HITBOX
 
 HitboxSystem::HitboxSystem(Manager* ECS) {
@@ -47,39 +48,14 @@ bool HitboxSystem::isColliding(EntityID entity1, EntityID entity2) {
         return true;
     }
 
-    // if (collisionBox1->topRight.x > collisionBox2->topRight.x && //
-    //     collisionBox1->topRight.x < collisionBox2->topLeft.x &&  //
-    //     collisionBox1->topRight.y > collisionBox2->topRight.y && //
-    //     collisionBox1->topRight.y < collisionBox2->botRight.y) {
-    //     std::cout << "coll" << i++ << std::endl;
-    //     return true;
-    // }
-
-    // if (collisionBox1->topLeft.x > collisionBox2->topRight.x && //
-    //     collisionBox1->topLeft.x < collisionBox2->topLeft.x &&  //
-    //     collisionBox1->topLeft.y > collisionBox2->topRight.y && //
-    //     collisionBox1->topLeft.y < collisionBox2->botRight.y) {
-    //     std::cout << "coll" << i++ << std::endl;
-
-    //     return true;
-    // }
-
-    // if (collisionBox1->botRight.x > collisionBox2->topRight.x && //
-    //     collisionBox1->botRight.x < collisionBox2->topLeft.x &&  //
-    //     collisionBox1->botRight.y > collisionBox2->topRight.y && //
-    //     collisionBox1->botRight.y < collisionBox2->botRight.y) {
-    //     std::cout << "coll" << i++ << std::endl;
-
-    //     return true;
-    // }
-
-    // if (collisionBox1->botLeft.x > collisionBox2->topRight.x && //
-    //     collisionBox1->botLeft.x < collisionBox2->topLeft.x &&  //
-    //     collisionBox1->botLeft.y > collisionBox2->topRight.y && //
-    //     collisionBox1->botLeft.y < collisionBox2->botRight.y) {
-    //     std::cout << "coll" << i++ << std::endl;
-    //     return true;
-    // }
+    if (                                                         //
+        collisionBox1->botRight.x > collisionBox2->topLeft.x     //
+        && collisionBox1->botRight.x < collisionBox2->topRight.x //
+        && collisionBox1->botRight.y > collisionBox2->topLeft.y  //
+        && collisionBox1->botRight.y < collisionBox2->botLeft.y  //
+    ) {
+        return true;
+    }
 
     return false;
 }

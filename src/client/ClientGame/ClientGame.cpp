@@ -59,14 +59,6 @@ void ClientGame::init() {
     makeEnemy(this->_entManager, this->_spriteSystem);
     makeEnemy(this->_entManager, this->_spriteSystem);
     makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
 
     makeEndboss(this->_entManager, this->_spriteSystem);
 }
