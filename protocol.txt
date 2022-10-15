@@ -84,8 +84,9 @@ Table of Contents
 
         <SP>     -> Ascii space character
 
-        <HEADER> -> Comma separated User UUID and Server UUID. Both are
-                    distributed by the server on connection.
+        <HEADER> -> For client commands, user UUID. For server commands,
+                    server UUID. Both distributed by server on
+                    connection.
         
         <ARGS>   -> Arguments for given command. These args are
                     separated by the ',' ascii character.
@@ -101,7 +102,11 @@ Table of Contents
 
         Responses will follow the following syntax :
 
-                <SPECIFY SYNTAX>
+                <CODE> <SP> <HEADER> <SP> <BODY> <CRLF>
+
+        The response format is similar to the command synthaxe, except
+        that the cmd is replaced by a three digit response code that
+        mimics that of the HTTP protocol.
 
 3. UDP Protocol
 
