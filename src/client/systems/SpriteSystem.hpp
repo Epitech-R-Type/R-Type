@@ -24,20 +24,6 @@ CMRC_DECLARE(client);
 
 typedef std::vector<Texture2D> AnimationArr;
 
-struct AnimationSheet {
-    std::string path;
-    float startX;
-    float startY;
-    float frameWidth;
-    float frameHeight;
-    int animWidth;
-    int animHeight;
-    int separationX;
-    int separationY;
-    // adds the same frames in reverse to the animation
-    bool reverse;
-};
-
 class SpriteSystem : public System {
 public:
     SpriteSystem(Manager* ECS);
@@ -46,8 +32,6 @@ public:
      * Draw all entities with Animation Components
      * */
     void apply();
-
-    static std::map<Animation::AnimationID, AnimationSheet> ANIMATION_SHEET;
 
 private:
     /**

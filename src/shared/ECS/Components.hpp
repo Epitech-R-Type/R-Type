@@ -9,8 +9,11 @@
 
 #include "ECS.hpp"
 #include <ctime>
+#include <map>
 #include <sstream>
 #include <vector>
+
+#define SCALE 3
 
 enum ComponentType { ARMOR, HEALTH, POSITION, ANIMATION };
 
@@ -58,9 +61,30 @@ namespace Animation {
         AnimationID animationID;
         unsigned long layer = 1;
         float rotation = 0;
-        float scale = 3;
+        float scale = SCALE;
         int index = 0;
         std::chrono::time_point<std::chrono::system_clock> timer;
+    };
+
+    struct Sheet {
+        std::string path;
+        float startX;
+        float startY;
+        float frameWidth;
+        float frameHeight;
+        int animWidth;
+        int animHeight;
+        int separationX;
+        int separationY;
+        // adds the same frames in reverse to the animation
+        bool reverse;
+    };
+
+    static std::map<Animation::AnimationID, Animation::Sheet> Sheets = {
+        {Animation::AnimationID::Orb, {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0}},
+        {Animation::AnimationID::Vortex, {"resources/r-typesheet30a.png", 1, 3, 32, 32, 3, 1, 2, 0, 0}},
+        {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
+        {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
     };
 
     std::string toString(Animation::Component component);
@@ -109,3 +133,17 @@ namespace Armament {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 } // namespace Armament
+
+namespace Hitbox {
+    struct Component {
+        double topLeft;
+        double topRight;
+        double botLeft;
+        double botRight;
+    };
+
+    std::string toString(Hitbox::Component component);
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, Manager* manager);
+
+} // namespace Hitbox

@@ -43,10 +43,10 @@ void SpriteSystem::loadAnimation(Animation::Component* component) {
 
     this->_animations[component->animationID] = {};
 
-    if (!HAS_KEY(SpriteSystem::ANIMATION_SHEET, component->animationID))
+    if (!HAS_KEY(Animation::Sheets, component->animationID))
         throw "Now Animation Sheet defined for enum " + component->animationID;
 
-    const AnimationSheet animationSheet = SpriteSystem::ANIMATION_SHEET[component->animationID];
+    const Animation::Sheet animationSheet = Animation::Sheets[component->animationID];
 
     for (int y = 0; y < animationSheet.animHeight; y++) {
         for (int x = 0; x < animationSheet.animWidth; x++) {
@@ -104,10 +104,3 @@ void SpriteSystem::apply() {
         }
     }
 }
-
-std::map<Animation::AnimationID, AnimationSheet> SpriteSystem::ANIMATION_SHEET = {
-    {Animation::AnimationID::Orb, {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0}},
-    {Animation::AnimationID::Vortex, {"resources/r-typesheet30a.png", 1, 3, 32, 32, 3, 1, 2, 0, 0}},
-    {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
-    {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
-};

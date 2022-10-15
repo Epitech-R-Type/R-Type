@@ -22,9 +22,9 @@ void makeEndboss(Manager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<Animation::Component>(endboss, {Animation::AnimationID::Cluster, 1, 1});
     ECS->addComp<Health::Component>(endboss, {300 * players, 300 * players, false});
 
-    float xOffset = SpriteSystem::ANIMATION_SHEET[Animation::AnimationID::Cluster].frameHeight * 3 / 2;
+    float xOffset = Animation::Sheets[Animation::AnimationID::Cluster].frameHeight * 3 / 2;
 
-    float yOffset = SpriteSystem::ANIMATION_SHEET[Animation::AnimationID::Cluster].frameWidth * 3 / 2;
+    float yOffset = Animation::Sheets[Animation::AnimationID::Cluster].frameWidth * 3 / 2;
 
     ECS->addComp<Position::Component>(endboss, {(float)(GetScreenWidth() - xOffset), (float)(GetScreenHeight() - yOffset)});
 }

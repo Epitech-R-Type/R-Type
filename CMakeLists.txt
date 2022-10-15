@@ -28,6 +28,7 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/main.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Game.cpp"
+
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"

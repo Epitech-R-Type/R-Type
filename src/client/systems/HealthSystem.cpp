@@ -36,8 +36,8 @@ void HealthSystem::apply() {
         Animation::Component* anim = this->_ECS->getComponent<Animation::Component>(id);
 
         if (health->visible) {
-            float width = SpriteSystem::ANIMATION_SHEET[anim->animationID].frameWidth * anim->scale;
-            float height = SpriteSystem::ANIMATION_SHEET[anim->animationID].frameWidth * anim->scale;
+            float width = Animation::Sheets[anim->animationID].frameWidth * anim->scale;
+            float height = Animation::Sheets[anim->animationID].frameWidth * anim->scale;
 
             const float remainingHP = width * ((float)health->health / (float)health->maxHealth);
             DrawRectangle(position->xPos - width / 2, position->yPos - height * 1.5, width, barHeight, WHITE);
