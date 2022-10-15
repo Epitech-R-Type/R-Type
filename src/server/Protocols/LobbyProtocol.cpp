@@ -20,6 +20,19 @@ bool LobbyProtocol::isAuthenticated(std::string uuid) {
     return conn ? true : false;
 }
 
+void LobbyProtocol::sendResponse(std::string code, std::string args, asio::ip::address addr, asio::ip::port_type port) {
+    std::string body = code;
+
+    body += " ";
+    body << this->_connMan.getServerUUID();
+    body += " ";
+    body += args;
+    body += "\r\n";
+
+    Message<std::string> msg(body, addr, port);
+    this->_outgoingMQ->push(msg);
+}
+
 bool LobbyProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
     bool gameShouldStart = false;
@@ -37,8 +50,10 @@ bool LobbyProtocol::handleCommands() {
         if (splitBody.size() != 3) {
             Message<std::string> msg("500 Wrong request\r\n", addr, port);
             this->_outgoingMQ->push(msg);
+            continue;
         }
 
+        // Retrieve main command
         std::string cmd = splitBody[0];
 
         // CONNECT Command
@@ -56,12 +71,24 @@ bool LobbyProtocol::handleCommands() {
             Message<std::string> msg(body, addr, port);
 
             this->_outgoingMQ->push(msg);
+            continue;
         }
+
+        UUID uuid(splitBody[1]); // Potential failure here
 
         // START command
         if (cmd == "START") {
+            if (!this->_connMan.uuidValid(uuid))
+                this->sendResponse("401", "Forbidden", addr, port);
+
+            // Set boolean that game should start
+            gameShouldStart = true;
+
+            this->startGame();
+            continue;
         }
     }
+    return gameShouldStart;
 }
 
 // Server Commands

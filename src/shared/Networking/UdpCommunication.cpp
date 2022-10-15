@@ -8,8 +8,8 @@
 #include "UdpCommunication.hpp"
 
 // Function passed to communication thread on creation
-void communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                        std::shared_ptr<std::atomic<bool>> stopFlag) {
+void udp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+                            std::shared_ptr<std::atomic<bool>> stopFlag) {
     UdpCommunication com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio

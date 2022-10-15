@@ -26,7 +26,7 @@ TcpCommunication::TcpCommunication(std::shared_ptr<MessageQueue<std::string>> in
     : _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)),
-      _acceptor(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT + 1)) {
+      _acceptor(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT)) {
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }

@@ -19,7 +19,7 @@ ClientGame::ClientGame() {
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 
     this->_entManager = new Manager();
     this->_spriteSystem = new SpriteSystem(this->_entManager);

@@ -36,6 +36,8 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/TcpCommunication.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/LobbyProtocol.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/Connections.cpp"
 )
 
 add_executable(Client

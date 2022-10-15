@@ -32,7 +32,7 @@ public:
     // Returns UUID for given connection
     // Returns empty string if connection doesn't exist
     std::optional<UUID> getUUID(asio::ip::address addr, asio::ip::port_type port);
-    bool connectionExists(asio::ip::address addr, asio::ip::port_type port);
+    bool uuidValid(UUID uuid) const;
     std::optional<Connection> getConnection(UUID uuid) const;
 
     // Remove connection

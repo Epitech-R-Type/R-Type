@@ -38,6 +38,10 @@ public:
     // Returns true if game should start
     bool handleCommands();
 
+    // Utility function in order to form response automatically
+    // Handles putting uuid in and str forming
+    void sendResponse(std::string code, std::string args, asio::ip::address addr, asio::ip::port_type port);
+
 private:
     // Connection manager
     ConnectionManager _connMan;

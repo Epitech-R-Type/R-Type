@@ -35,6 +35,13 @@ std::optional<UUID> ConnectionManager::getUUID(asio::ip::address addr, asio::ip:
     return {};
 }
 
+bool ConnectionManager::uuidValid(UUID uuid) const {
+    for (auto conn : this->_connections)
+        if (conn.uuid == uuid)
+            return true;
+    return false;
+}
+
 std::optional<Connection> ConnectionManager::getConnection(UUID uuid) const {
     for (auto conn : this->_connections)
         if (conn.uuid == uuid)
