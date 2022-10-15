@@ -69,14 +69,21 @@ EntityID getPlayerID(Manager* ECS) {
     return -1;
 }
 
+double toRadians(double degree) {
+    constexpr double pi = 22 / 7;
+    return (double)degree * (pi / 180.0);
+}
+
 void makeBullet(Manager* ECS, SpriteSystem* spriteSystem, EntityID source) {
     const EntityID bullet = ECS->newEntity();
 
     const Position::Component* sourcePos = ECS->getComponent<Position::Component>(source);
     const Velocity::Component* sourceVelocity = ECS->getComponent<Velocity::Component>(source);
     const Animation::Component* sourceAnimation = ECS->getComponent<Animation::Component>(source);
-    const float centerX = sourcePos->xPos + (float)Animation::Sheets[sourceAnimation->animationID].animWidth / 2;
-    const float centerY = sourcePos->yPos + (float)Animation::Sheets[sourceAnimation->animationID].animHeight / 2;
+    const float centerX = sourcePos->xPos + (float)Animation::Sheets[sourceAnimation->animationID].frameWidth * sourceAnimation->scale / 2.0;
+    const float centerY = sourcePos->yPos + (float)Animation::Sheets[sourceAnimation->animationID].frameHeight * sourceAnimation->scale / 2.0;
+
+    Point center = HitboxSystem::rotate({centerX, centerY}, {sourcePos->xPos, sourcePos->yPos}, toRadians(sourceAnimation->rotation));
 
     Position::Component positionPre{};
     Velocity::Component velocity{};
@@ -84,14 +91,14 @@ void makeBullet(Manager* ECS, SpriteSystem* spriteSystem, EntityID source) {
     Team::Component team = *ECS->getComponent<Team::Component>(source);
 
     if (team == Team::Component::Ally) {
-        positionPre.xPos = centerX - (float)Animation::Sheets[sourceAnimation->animationID].animWidth;
-        positionPre.yPos = centerY;
+        positionPre.xPos = center.x - (float)Animation::Sheets[sourceAnimation->animationID].animWidth;
+        positionPre.yPos = center.y;
         velocity.xVelocity = 40;
     }
 
     if (team == Team::Component::Enemy) {
-        positionPre.xPos = centerX + (float)Animation::Sheets[sourceAnimation->animationID].animWidth;
-        positionPre.yPos = centerY;
+        positionPre.xPos = center.x + (float)Animation::Sheets[sourceAnimation->animationID].animWidth;
+        positionPre.yPos = center.y;
         velocity.xVelocity = -40;
     }
 

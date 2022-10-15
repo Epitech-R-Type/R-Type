@@ -20,6 +20,8 @@ public:
 
     bool isColliding(EntityID entity1, EntityID entity2);
 
+    static Point rotate(Point point, Point origin, double rad);
+
 private:
     Manager* _ECS;
 };

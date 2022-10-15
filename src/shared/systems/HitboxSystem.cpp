@@ -27,9 +27,10 @@ void HitboxSystem::apply() {
         DrawLine(hitbox->topLeft.x, hitbox->topLeft.y, hitbox->botLeft.x, hitbox->botLeft.y, RED);
         DrawLine(hitbox->botLeft.x, hitbox->botLeft.y, hitbox->botRight.x, hitbox->botRight.y, RED);
         DrawLine(hitbox->botRight.x, hitbox->botRight.y, hitbox->topRight.x, hitbox->topRight.y, RED);
-#endif
 
         DrawCircle(position->xPos, position->yPos, 2, BLUE);
+#endif
+
         HitboxSystem::checkCollision(*beg);
     }
 }
@@ -96,7 +97,7 @@ void HitboxSystem::checkCollision(EntityID entity) {
     }
 }
 
-Point rotate(Point point, Point origin, double rad) {
+Point HitboxSystem::rotate(Point point, Point origin, double rad) {
     std::complex<double> P = {point.x, point.y};
     std::complex<double> Q = {origin.x, origin.y};
 
@@ -106,7 +107,6 @@ Point rotate(Point point, Point origin, double rad) {
         res.imag(),
     };
 }
-
 double toRad(double degree) {
     constexpr double pi = 22 / 7;
     return (double)degree * (pi / 180.0);
@@ -122,10 +122,10 @@ Hitbox::Component HitboxSystem::buildHitbox(Animation::Component* animation, Pos
     const double width = Hitbox::getWidth(animation);
     const double height = Hitbox::getHeight(animation);
 
-    Point tLeft = rotate({xPos, yPos}, origin, radRotation);
-    Point tRight = rotate({xPos + width, yPos}, origin, radRotation);
-    Point bLeft = rotate({xPos, yPos + height}, origin, radRotation);
-    Point bRight = rotate({xPos + width, yPos + height}, origin, radRotation);
+    Point tLeft = HitboxSystem::rotate({xPos, yPos}, origin, radRotation);
+    Point tRight = HitboxSystem::rotate({xPos + width, yPos}, origin, radRotation);
+    Point bLeft = HitboxSystem::rotate({xPos, yPos + height}, origin, radRotation);
+    Point bRight = HitboxSystem::rotate({xPos + width, yPos + height}, origin, radRotation);
 
     return {tLeft, tRight, bLeft, bRight};
 }
