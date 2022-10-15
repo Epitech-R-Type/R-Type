@@ -184,6 +184,8 @@ public:
         return Iterator<Comp...>(this->_entities.size(), this);
     }
 
+    void flush();
+
 private:
     std::vector<Entity> _entities;
     std::vector<Index> _unusedEntities;

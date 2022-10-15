@@ -35,5 +35,4 @@ private:
     ClientGame* _game;
     SpriteSystem* _spriteSystem;
     ECSManager* _ECS;
-    bool valid = true;
 };

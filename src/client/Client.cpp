@@ -20,7 +20,7 @@ int Client::launchGame() {
     this->_game = new ClientGame(this->_ECS, this->_spriteSystem);
     this->_game->init();
     this->_game->mainLoop();
-    this->valid = false;
+    this->_ECS->flush();
 
     return 0;
 }
@@ -29,7 +29,7 @@ int Client::mainLoop() {
 
     while (this->_lobbyRunning && !WindowShouldClose()) {
 
-        if (this->valid)
+        if (IsKeyPressed(KEY_ENTER))
             this->launchGame();
 
         BeginDrawing();

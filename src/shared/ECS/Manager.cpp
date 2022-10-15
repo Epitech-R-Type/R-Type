@@ -60,3 +60,9 @@ void ECSManager::deleteEntity(EntityID id) {
 bool ECSManager::entityIsActive(EntityID id) {
     return (std::find(this->_unusedEntities.begin(), this->_unusedEntities.end(), id) == this->_unusedEntities.end());
 }
+
+void ECSManager::flush() {
+    for (auto entity : this->_entities) {
+        this->deleteEntity(entity.id);
+    }
+};
