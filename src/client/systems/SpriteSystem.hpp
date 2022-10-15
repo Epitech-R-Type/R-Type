@@ -22,11 +22,7 @@ CMRC_DECLARE(client);
 
 // std::chrono::time_point<std::chrono::system_clock> getNow();
 
-struct AnimationStr {
-    std::vector<Texture2D> sequence{};
-    int index = 0;
-    std::chrono::time_point<std::chrono::system_clock> timer = std::chrono::system_clock::now();
-};
+typedef std::vector<Texture2D> AnimationArr;
 
 struct AnimationSheet {
     std::string path;
@@ -45,6 +41,15 @@ struct AnimationSheet {
 class SpriteSystem : public System {
 public:
     SpriteSystem(Manager* ECS);
+
+    /**
+     * Draw all entities with Animation Components
+     * */
+    void apply();
+
+    static std::map<Animation::AnimationID, AnimationSheet> ANIMATION_SHEET;
+
+private:
     /**
      * Load the part of an image file into a Texture2D object
      * */
@@ -54,28 +59,16 @@ public:
     /**
      * Parses image file to extract all frames of an animation
      * */
-    AnimationStr* loadAnimation(AnimationSheet animationSheet, Animation::Component* animation);
+    void loadAnimation(Animation::Component* animation);
 
     /**
      * Increments currently displayed frame of animation if enough time passed since the last update
      * */
-    void nextFrame(AnimationStr* animation);
+    void nextFrame(Animation::Component* animation);
 
-    /**
-     * Draw all entities with Animation Components
-     * */
-    void apply();
-
-    /**
-     * Adds an animation to the animation storing struct
-     * the entityID and Layer value in the component are used to access
-     * the linked animation
-     * */
-    void addAnimation(EntityID ID, Animation::Component* component);
-    static std::map<Animation::AnimationID, AnimationSheet> ANIMATION_SHEET;
-
-private:
     cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
-    std::map<int, std::map<EntityID, AnimationStr*>> _animationLayers;
+
+    std::map<Animation::AnimationID, AnimationArr> _animations;
+
     Manager* _ECS;
 };

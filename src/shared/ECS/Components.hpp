@@ -59,6 +59,8 @@ namespace Animation {
         unsigned long layer = 1;
         float rotation = 0;
         float scale = 3;
+        int index = 0;
+        std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
     std::string toString(Animation::Component component);
