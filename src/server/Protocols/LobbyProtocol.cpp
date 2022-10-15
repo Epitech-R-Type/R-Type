@@ -78,8 +78,10 @@ bool LobbyProtocol::handleCommands() {
 
         // START command
         if (cmd == "START") {
-            if (!this->_connMan.uuidValid(uuid))
+            if (!this->_connMan.uuidValid(uuid)) {
                 this->sendResponse("401", "Forbidden", addr, port);
+                continue;
+            }
 
             // Set boolean that game should start
             gameShouldStart = true;
