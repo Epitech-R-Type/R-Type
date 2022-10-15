@@ -12,6 +12,10 @@ class HitboxSystem : public System {
 
     void hitboxFromAnimation(EntityID entity);
 
+    EntityID checkCollision(EntityID entity);
+
+    bool isColliding(EntityID entity1, EntityID entity2);
+
 private:
     Manager* _ECS;
 };

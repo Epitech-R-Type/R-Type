@@ -1,6 +1,7 @@
 #include "factories.hpp"
 #include "../../shared/ECS/Manager.hpp"
 #include "../systems/SpriteSystem.hpp"
+#include "../systems/Systems.hpp"
 
 EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
     EntityID player = ECS->newEntity();
@@ -12,7 +13,9 @@ EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<Armament::Component>(player, {Armament::ArmamentType::Bullet, 150, 50});
     ECS->addComp<Velocity::Component>(player, {10, 10});
 
-    return player;
+    HitboxSystem->
+
+        return player;
 }
 
 void makeEndboss(Manager* ECS, SpriteSystem* spriteSystem) {

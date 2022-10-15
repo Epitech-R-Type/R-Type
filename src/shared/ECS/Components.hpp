@@ -15,6 +15,11 @@
 
 #define SCALE 3
 
+struct Point {
+    float x;
+    float y;
+};
+
 enum ComponentType { ARMOR, HEALTH, POSITION, ANIMATION };
 
 namespace Armor {
@@ -136,10 +141,10 @@ namespace Armament {
 
 namespace Hitbox {
     struct Component {
-        double topLeft;
-        double topRight;
-        double botLeft;
-        double botRight;
+        Point topLeft;
+        Point topRight;
+        Point botLeft;
+        Point botRight;
     };
 
     std::string toString(Hitbox::Component component);
