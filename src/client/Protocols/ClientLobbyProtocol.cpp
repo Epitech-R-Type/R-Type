@@ -22,8 +22,6 @@ void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
 
     this->_serverUUID = UUIDM(splitstr[0]);
     this->_clientUUID = UUIDM(splitstr[1]);
-
-    std::cout << this->_clientUUID << " " << this->_serverUUID << std::endl;
 }
 
 void ClientLobbyProtocol::sendStart() {
@@ -45,7 +43,7 @@ void ClientLobbyProtocol::handleIncMessages() {
         }
 
         const std::string msg = message.getMsg();
-        std::cout << "[Received] " << msg << std::endl;
+        std::cout << "[Received] " << msg;
 
         const std::vector<std::string> msgBits = Utilities::splitStr(msg, " ");
 
