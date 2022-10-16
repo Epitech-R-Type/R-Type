@@ -24,4 +24,10 @@ private:
 
     std::shared_ptr<MessageQueue<std::string>> _incomingMQ;
     std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
+
+    asio::ip::address _serverIP;
+    asio::ip::port_type _serverPort = 0;
+
+    bool _connected = false;
+    bool _authenticated = false;
 };
