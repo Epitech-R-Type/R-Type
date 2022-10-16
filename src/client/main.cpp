@@ -19,6 +19,10 @@ bool isFlagSet(char** begin, char** end, const std::string& option) {
 int main(int argc, char** argv) {
     Client client;
 
+    if (!isFlagSet(argv, argv + argc, "-v")) {
+        SetTraceLogLevel(TraceLogType::LOG_NONE);
+    }
+
     if (isFlagSet(argv, argv + argc, "-ip")) {
         std::string ip = getFlagValue(argv, argv + argc, "-ip");
         if (isFlagSet(argv, argv + argc, "-port"))
