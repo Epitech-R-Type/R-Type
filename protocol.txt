@@ -160,8 +160,6 @@ Table of Contents
                     ENTITY        ->    Provide entity description, with
                                         component args.
                     DEL_ENT       ->    Delete entity
-                    COMPONENT     ->    Provide component instance id
-                                        and args for specified entity.
                     DEL_COMP      ->    Delete component
 
         3.2.2. Server Command Arguments
@@ -174,8 +172,6 @@ Table of Contents
             ENTITY ->
                 (entity id, (component id, component args...)...)
             DEL_ENT -> (entity id)
-            COMPONENT ->
-                (entity id, (component id, component args...)...)
             DEL_COMP -> (entity id, component id)
 
     3.3. Client Commands
@@ -200,7 +196,6 @@ Table of Contents
 
                 HERE        ->      Signal connection to server
                 GET_ENT     ->      Get specification for entity
-                GET_COMP    ->      Get specification for component
 
             These commands WILL NOT illicit any response:
 
