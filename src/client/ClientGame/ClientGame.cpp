@@ -8,6 +8,7 @@
 #include "../../WindowsGuard.hpp"
 
 #include "../../shared/ECS/Components.hpp"
+#include "../../shared/ECS/Serialization.hpp"
 #include "ClientGame.hpp"
 #include "factories.hpp"
 #include "raylib.h"
@@ -94,22 +95,6 @@ void ClientGame::mainLoop() {
             makeEnemy(this->_entManager, this->_spriteSystem);
             timer = getNow();
         }
-
-        EndDrawing();
-    }
-
-    while (1) {
-        const auto now = getNow();
-        std::chrono::duration<double> elapsed_seconds = now - timer;
-
-        // Convert to milliseconds
-        if (elapsed_seconds.count() > 2) {
-            break;
-        }
-        BeginDrawing();
-
-        ClearBackground(BLACK);
-        this->_spriteSystem->drawImage(Animation::AnimationID::Lost);
 
         EndDrawing();
     }

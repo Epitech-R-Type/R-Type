@@ -27,18 +27,18 @@ public:
     Server();
     ~Server();
 
-    // Setup function
-    // All setup goes in here, such as generation of all component ids
-    // We could also send to the client information on the ECS such as MAX_COMPONENTS & MAX_ENTITIES
-    int setup();
+        // Setup function
+        // All setup goes in here, such as generation of all component ids
+        // We could also send to the client information on the ECS such as MAX_COMPONENTS & MAX_ENTITIES
+        int setup();
 
-    // Main Loop
-    int mainLoop();
+        // Main Loop
+        int mainLoop();
 
-    // Launches game
-    // Note: Execution will hang until game is over,
-    // in the future this can be done in a separate thread
-    int launchGame();
+        // Launches game
+        // Note: Execution will hang until game is over,
+        // in the future this can be done in a separate thread
+        int launchGame();
 
 private:
     bool _lobbyRunning;

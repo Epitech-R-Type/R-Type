@@ -60,6 +60,14 @@ public:
         return true;
     }
 
+    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity) const {
+        Index i = getIndex(entity);
+        // Make sure entity is valid
+        if (0 > getIndex(this->_entities[i].id))
+            return {};
+        return this->_entities[i].components;
+    };
+
     // Add comp
     template <class T>
     T* addComp(EntityID id, T comp) {
@@ -124,11 +132,33 @@ public:
         this->_excludedInView.reset();
     }
 
+    bool isValidID(EntityID id) {
+        Index i = getIndex(id);
+
+        if (i == INVALID_INDEX || i >= this->_entities.size())
+            return false;
+        return true;
+    }
+
+    bool isValidComp(EntityID id, Index i) {
+        if (!this->isValidID(id))
+            return false;
+        if (i >= MAX_COMPONENTS || i >= g_idCounter)
+            return false;
+
+        Index entityIndex = getIndex(id);
+        if (!this->_entities[entityIndex].components[i])
+            return false;
+        return true;
+    }
+
     // ITERATOR IMPLEMENTATION
     template <class... Comps>
     class Iterator {
     public:
-        Iterator(Index start, ECSManager* man) : _currIndex(start), _man(man) {
+        Iterator(Index start, ECSManager* man)
+            : _currIndex(start),
+              _man(man) {
             Index includedIds[] = {getID<Comps>()...};
             this->_wanted.reset();
 

@@ -9,5 +9,4 @@ AccessModifierOffset: -4
 AlwaysBreakTemplateDeclarations: Yes
 NamespaceIndentation: All
 IndentCaseLabels: true
-IndentPPDirectives: BeforeHash
 PackConstructorInitializers: Never
