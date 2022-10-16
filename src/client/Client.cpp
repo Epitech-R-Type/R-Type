@@ -42,9 +42,7 @@ void Client::connect(std::string serverIP, int port) {
 }
 
 int Client::mainLoop() {
-
     while (this->_lobbyRunning) {
-        this->_protocol->sendMessage("Hey");
         this->_protocol->handleMessages();
     }
 

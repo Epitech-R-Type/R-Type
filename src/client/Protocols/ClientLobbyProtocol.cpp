@@ -12,6 +12,8 @@ void ClientLobbyProtocol::connect(std::string serverIP, int port) {
     // Init tcp com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
+
+    this->sendMessage("CONNECT\r\n");
 }
 
 void ClientLobbyProtocol::handleMessages() {
@@ -25,10 +27,11 @@ void ClientLobbyProtocol::handleMessages() {
         }
 
         const std::string msg = message->getMsg();
+        std::cout << msg << std::endl;
 
         const std::vector<std::string> msgBits = Utilities::splitStr(msg, " ");
 
-        if (msgBits[0] == "CONNECTED")
+        if (msgBits[0] == "200")
             this->_connected = true;
 
         // if (msgBits[0] == "START_GAME")

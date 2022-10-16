@@ -1,3 +1,10 @@
+/*
+** EPITECH PROJECT, 2022
+** TcpCommunication.cpp
+** File description:
+** .
+*/
+
 #include "TcpClient.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
@@ -6,7 +13,6 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming,
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
     com.connect(serverIP, port);
-
     com.setupOutgoingHandler();
     com.stopSignalHandler();
     // Run asio context
@@ -31,16 +37,16 @@ void TcpClient::setupIncomingHandler(std::shared_ptr<asio::ip::tcp::socket> serv
 
             this->push_message(Message(std::string(this->_buffer), addr, port));
 
+            // Reset incoming handler
+
             // Reset buffer
             memset(this->_buffer, 0, 1024);
-            std::cout << this->_buffer << std::endl;
-            // Reset incoming handler
             this->setupIncomingHandler(server);
         } else {
             // Reset buffer
             memset(this->_buffer, 0, 1024);
 
-            // Handle server disconnection
+            // // Handle server disconnection
             // if (err.value() == asio::error::eof)
             //     this->remove_peer(server);
 
@@ -98,9 +104,8 @@ void TcpClient::stopSignalHandler() {
 }
 
 void TcpClient::connect(std::string serverIP, int port) {
-    asio::io_service io_service;
     // socket creation
-    this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(io_service));
+    this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(this->_ctxt));
     // connection
     this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
 
