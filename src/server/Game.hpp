@@ -13,6 +13,7 @@
 #include "../shared/ECS/Manager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Networking/UdpCommunication.hpp"
+#include "Protocols/TcpServer.hpp"
 
 // This class embodies everything having to do with a single game
 // It will include:

@@ -39,7 +39,9 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/TcpServer.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/LobbyProtocol.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/Connections.cpp"
 )
 
 add_executable(Client
@@ -50,6 +52,7 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/systems/PlayerMovementSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/factories.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/TcpClient.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/JanitorSystem.cpp"
