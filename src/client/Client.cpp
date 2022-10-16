@@ -7,7 +7,6 @@
 
 #include "Client.hpp"
 #include "../shared/ECS/Manager.hpp"
-#include "Protocols/ClientLobbyProtocol.hpp"
 #include "raylib.h"
 
 Client::Client() {

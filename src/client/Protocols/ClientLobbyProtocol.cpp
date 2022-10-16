@@ -1,11 +1,10 @@
 
 #include "ClientLobbyProtocol.hpp"
-#include "../../shared/Networking/AsioConstants.hpp"
 #include "TcpClient.hpp"
 
 ClientLobbyProtocol::ClientLobbyProtocol() {}
 
-void ClientLobbyProtocol::connect(std::string serverIP, int port = TCP_PORT) {
+void ClientLobbyProtocol::connect(std::string serverIP, int port) {
     this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
 

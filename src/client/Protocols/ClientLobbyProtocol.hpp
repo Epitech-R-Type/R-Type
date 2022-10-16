@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../shared/MessageQueue/MessageQueue.hpp"
+#include "../../shared/Networking/AsioConstants.hpp"
 
 class ClientLobbyProtocol {
 public:

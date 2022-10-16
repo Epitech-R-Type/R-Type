@@ -9,6 +9,7 @@
 
 #include "../shared/ECS/ECS.hpp"
 #include "ClientGame/ClientGame.hpp"
+#include "Protocols/ClientLobbyProtocol.hpp"
 #include "Protocols/TcpClient.hpp"
 #include "systems/SpriteSystem.hpp"
 #include <thread>
