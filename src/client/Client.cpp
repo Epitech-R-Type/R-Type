@@ -7,12 +7,14 @@
 
 #include "Client.hpp"
 #include "../shared/ECS/Manager.hpp"
+#include "Protocols/ClientLobbyProtocol.hpp"
 #include "raylib.h"
 
 Client::Client() {
 
     this->_ECS = new ECSManager();
     this->_spriteSystem = new SpriteSystem(this->_ECS);
+    this->_protocol = new ClientLobbyProtocol();
     this->_lobbyRunning = true;
     this->_connected = false;
 }
@@ -37,16 +39,7 @@ int Client::launchGame() {
 }
 
 void Client::connect(std::string serverIP, int port) {
-    this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
-
-    // For some reason initializer list initialization wasn't working
-    // this->_protocol = new LobbyProtocol(this->_incomingMQ, this->_outgoingMQ);
-
-    // Init tcp com thread
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
-    this->_connected = true;
+    this->_protocol->connect(serverIP, port);
 }
 
 int Client::mainLoop() {

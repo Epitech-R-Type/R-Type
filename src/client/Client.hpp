@@ -40,13 +40,5 @@ private:
     ClientGame* _game;
     SpriteSystem* _spriteSystem;
     ECSManager* _ECS;
-
-    // LobbyProtocol* _protocol;
-
-    // Tcp com thread stuff
-    std::thread* _comThread;
-    std::shared_ptr<std::atomic<bool>> _stopFlag;
-
-    std::shared_ptr<MessageQueue<std::string>> _incomingMQ;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
+    ClientLobbyProtocol* _protocol;
 };

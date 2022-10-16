@@ -53,6 +53,7 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/factories.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/TcpClient.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/ClientLobbyProtocol.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/JanitorSystem.cpp"
