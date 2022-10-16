@@ -10,6 +10,16 @@
 #include "raylib.h"
 
 Client::Client() {
+    this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
+    this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
+
+    // For some reason initializer list initialization wasn't working
+    // this->_protocol = new LobbyProtocol(this->_incomingMQ, this->_outgoingMQ);
+
+    // Init tcp com thread
+    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+
     this->_ECS = new ECSManager();
     this->_spriteSystem = new SpriteSystem(this->_ECS);
     this->_lobbyRunning = true;
