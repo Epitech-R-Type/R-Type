@@ -8,6 +8,7 @@
 #pragma once
 
 #include <asio.hpp>
+#include <exception>
 #include <memory>
 #include <optional>
 #include <sstream>
@@ -44,19 +45,20 @@ public:
     bool waitForClients();
 
     // COMMAND HANDLING
-    void handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    bool handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    void handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    void handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    void handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    void handleGetComp(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
 
     // COMMAND SENDING
     // By default, commands do nothing if invalid
-    void sendNewEntity(EntityID id) const;
-    void sendNewEntity(EntityID id, Connection client) const;
+    template <class... T>
+    void sendEntity(EntityID id) const;
+    template <class... T>
+    void sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const;
 
     void sendDelEntity(EntityID id) const;
-
-    template <class T>
-    void sendComponent(EntityID id) const;
-    template <class T>
-    void sendComponent(EntityID id, Connection client) const;
 
     template <class T>
     void sendDelComponent(EntityID id) const;
@@ -66,6 +68,7 @@ public:
     // UILITIES
     static std::optional<ParsedCmd> parseCommand(Message<std::string> msg);
     static Message<std::string> createMessage(std::string cmd, std::string args, asio::ip::address addr, asio::ip::port_type port);
+    int getPlayer(asio::ip::address addr, asio::ip::port_type port);
 
 private:
     // Udp messaging queues
@@ -78,4 +81,5 @@ private:
     // Client tracking
     std::vector<Connection> _connectedClients; // Addr info is udp here
     std::vector<Connection> _expectedClients;  // Note: the addr info in this vector are for tcp, NOT udp
+    std::vector<int> _players;                 // Each player has distinct int id, index of conn in _connectedClients = index in _players
 };

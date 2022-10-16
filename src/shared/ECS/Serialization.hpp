@@ -19,6 +19,8 @@
 
 class Serialization {
 public:
+    static std::bitset<MAX_COMPONENTS> hiddenComponents;
+
     template <class... ComponentTypes>
     static std::string entityToString(EntityID entityID, Manager* manager) {
         Index entityIndex = getIndex(entityID);
@@ -91,9 +93,6 @@ public:
         }
     }
 
-    static std::bitset<MAX_COMPONENTS> hiddenComponents;
-
-private:
     template <class T>
     static std::string componentToString(EntityID entityId, Manager* manager) {
         if (!manager->hasComponent<T>(entityId)) {

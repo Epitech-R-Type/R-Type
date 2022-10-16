@@ -141,7 +141,7 @@ public:
     bool isValidComp(EntityID id, Index i) {
         if (!this->isValidID(id))
             return false;
-        if (i >= MAX_COMPONENTS)
+        if (i >= MAX_COMPONENTS || i >= g_idCounter)
             return false;
 
         Index entityIndex = getIndex(id);
