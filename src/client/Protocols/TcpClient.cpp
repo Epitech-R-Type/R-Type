@@ -17,25 +17,24 @@ TcpClient::TcpClient(std::shared_ptr<MessageQueue<std::string>> incoming, std::s
                      std::shared_ptr<std::atomic<bool>> stopFlag)
     : _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
-      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)),
-      _acceptor(_ctxt, asio::ip::tcp::endpoint(asio::ip::tcp::v6(), TCP_PORT)) {
+      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
 
-void TcpClient::setupIncomingHandler(std::shared_ptr<asio::ip::tcp::socket> server) {
-    server->async_receive(asio::buffer(this->_buffer), [this, server](const asio::error_code& err, std::size_t bytesTransfered) {
+void TcpClient::setupIncomingHandler() {
+    this->_server->async_receive(asio::buffer(this->_buffer), [this](const asio::error_code& err, std::size_t bytesTransfered) {
         if (!err) {
-            auto addr = server->remote_endpoint().address();
-            auto port = server->remote_endpoint().port();
+            auto addr = _server->remote_endpoint().address();
+            auto port = _server->remote_endpoint().port();
 
             this->push_message(Message(std::string(this->_buffer), addr, port));
 
             // Reset buffer
-            memset(this->_buffer, 0, 1024);
             std::cout << this->_buffer << std::endl;
+            memset(this->_buffer, 0, 1024);
             // Reset incoming handler
-            this->setupIncomingHandler(server);
+            this->setupIncomingHandler();
         } else {
             // Reset buffer
             memset(this->_buffer, 0, 1024);
@@ -45,7 +44,7 @@ void TcpClient::setupIncomingHandler(std::shared_ptr<asio::ip::tcp::socket> serv
             //     this->remove_peer(server);
 
             // Reset incoming handler
-            this->setupIncomingHandler(server);
+            this->setupIncomingHandler();
         }
     });
 }
@@ -98,13 +97,13 @@ void TcpClient::stopSignalHandler() {
 }
 
 void TcpClient::connect(std::string serverIP, int port) {
-    asio::io_service io_service;
     // socket creation
-    this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(io_service));
+    this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(this->_ctxt));
     // connection
     this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
+    std::cout << "Tcp Client info is :" << this->_server->local_endpoint().port() << std::endl;
 
-    this->setupIncomingHandler(this->_server);
+    this->setupIncomingHandler();
 }
 
 // Context runtime functions

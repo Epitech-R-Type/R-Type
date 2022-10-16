@@ -105,6 +105,7 @@ void TcpServer::setup_acceptor_handler() {
             auto port = newPeer->remote_endpoint().port();
 
             this->push_out_message(Message<std::string>("CONNECTED\r\n", addr, port));
+            std::cout << "Tcp Client info is :" << newPeer->local_endpoint().port() << std::endl;
             this->setup_incoming_handler(newPeer);
         }
         this->setup_acceptor_handler();

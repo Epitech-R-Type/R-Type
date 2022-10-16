@@ -22,7 +22,7 @@ public:
 
     // Setup action receiving TCP messages
     // Note: Needs to be called again in order to loop
-    void setupIncomingHandler(std::shared_ptr<asio::ip::tcp::socket> _server);
+    void setupIncomingHandler();
 
     // Setup action polling MQ for new messages to send
     // Note: Needs to be called again in order to loop
@@ -47,14 +47,11 @@ public:
     // Stop context
     void stop();
 
+    std::shared_ptr<asio::ip::tcp::socket> _server;
+
 private:
     // Async context executed in com thread
     asio::io_context _ctxt;
-
-    // Asio networking
-    asio::ip::tcp::acceptor _acceptor;
-
-    std::shared_ptr<asio::ip::tcp::socket> _server;
 
     // Buffer used for msg reception
     char _buffer[MAX_BUFFER_SIZE];
