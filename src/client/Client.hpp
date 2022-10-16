@@ -31,8 +31,12 @@ public:
     // Return is 0 if success or 1 if failure
     int launchGame();
 
+    void connect();
+
 private:
     bool _lobbyRunning;
+    bool _connected;
+
     ClientGame* _game;
     SpriteSystem* _spriteSystem;
     ECSManager* _ECS;
