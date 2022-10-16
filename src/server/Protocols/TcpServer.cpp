@@ -98,6 +98,7 @@ void TcpServer::setup_acceptor_handler() {
 
     this->_acceptor.async_accept(*newPeer, [this, newPeer](const asio::error_code& err) {
         if (!err) {
+            std::cout << "General Kenobi....." << std::endl;
             auto addr = newPeer->remote_endpoint().address();
             auto port = newPeer->remote_endpoint().port();
 

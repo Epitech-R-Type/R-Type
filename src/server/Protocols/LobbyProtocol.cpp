@@ -58,7 +58,7 @@ bool LobbyProtocol::handleCommands() {
 
         std::cout << cmd << std::endl;
         // CONNECT Command
-        if (cmd == "CONNECT") {
+        if (cmd == "CONNECT\r\n") {
             // Add to connection manager and get new uuid
             auto uuid = this->_connMan.addConnection(addr, port);
 
