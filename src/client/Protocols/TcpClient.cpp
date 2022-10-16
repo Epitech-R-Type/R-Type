@@ -1,11 +1,11 @@
 #include "TcpClient.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                            std::shared_ptr<std::atomic<bool>> stopFlag) {
+                            std::shared_ptr<std::atomic<bool>> stopFlag, std::string ipv6) {
     TcpClient com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
-    com.connect();
+    com.connect(ipv6);
 
     com.setupOutgoingHandler();
     com.stopSignalHandler();
@@ -97,12 +97,12 @@ void TcpClient::stopSignalHandler() {
     });
 }
 
-void TcpClient::connect() {
+void TcpClient::connect(std::string serverIP) {
     asio::io_service io_service;
     // socket creation
     this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(io_service));
     // connection
-    this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string("192.168.178.22"), TCP_PORT));
+    this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), TCP_PORT));
 
     this->setupIncomingHandler(this->_server);
 }

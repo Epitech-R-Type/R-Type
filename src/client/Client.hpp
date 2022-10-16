@@ -31,7 +31,7 @@ public:
     // Return is 0 if success or 1 if failure
     int launchGame();
 
-    void connect();
+    void connect(std::string serverIP);
 
 private:
     bool _lobbyRunning;

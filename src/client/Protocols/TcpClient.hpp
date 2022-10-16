@@ -12,7 +12,7 @@
 #include "../../shared/Networking/AsioConstants.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                            std::shared_ptr<std::atomic<bool>> stopFlag);
+                            std::shared_ptr<std::atomic<bool>> stopFlag, std::string ipv6);
 
 class TcpClient {
 public:
@@ -32,7 +32,7 @@ public:
     // Note: Needs to be called again in order to loop
     void stopSignalHandler();
 
-    void connect();
+    void connect(std::string ipv6);
 
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);

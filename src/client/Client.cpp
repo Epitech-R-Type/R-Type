@@ -18,6 +18,11 @@ Client::Client() {
 }
 
 int Client::launchGame() {
+    if (!this->_connected) {
+        std::cout << "You are not connected to a server" << std::endl;
+        return;
+    }
+
     // Note: For performance reasons we could free the lobby ecs before launching the game
     this->_game = new ClientGame(this->_ECS, this->_spriteSystem);
     this->_game->init();
@@ -31,7 +36,7 @@ int Client::launchGame() {
     return 0;
 }
 
-void Client::connect() {
+void Client::connect(std::string serverIP) {
     this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
 
@@ -40,20 +45,17 @@ void Client::connect() {
 
     // Init tcp com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP);
+    this->_connected = true;
 }
 
 int Client::mainLoop() {
 
     while (this->_lobbyRunning && !WindowShouldClose()) {
 
-        if (IsKeyPressed(KEY_ENTER) && this->_connected)
+        if (IsKeyPressed(KEY_ENTER))
             this->launchGame();
 
-        if (IsKeyPressed(KEY_C) && !this->_connected) {
-            this->connect();
-            this->_connected = true;
-        }
         BeginDrawing();
 
         ClearBackground(BLACK);
