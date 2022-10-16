@@ -34,9 +34,14 @@ public:
 
     void connect(std::string serverIP, int port = TCP_PORT);
 
+    void handleUserCommands();
+
 private:
     bool _lobbyRunning;
     bool _connected;
+
+    std::shared_ptr<MessageQueue<std::string>> _userCommands = std::make_shared<MessageQueue<std::string>>();
+    std::thread* _userInputThread;
 
     ClientGame* _game;
     SpriteSystem* _spriteSystem;

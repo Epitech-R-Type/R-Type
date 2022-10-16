@@ -14,12 +14,12 @@
 
 ClientGame::ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem) {
     // Construct messaging queues
-    this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
+    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
+    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    // this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 
     this->_entManager = ECS;
 
@@ -47,7 +47,7 @@ ClientGame::ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem) {
 ClientGame::~ClientGame() {
     // Signal thread to stop and join thread
     this->_stopFlag->store(true);
-    this->_udpComThread->join();
+    // this->_udpComThread->join();
 
     // Delete com thread
     delete this->_udpComThread;

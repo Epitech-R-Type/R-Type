@@ -7,8 +7,8 @@
 
 #include "TcpServer.hpp"
 
-void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                            std::shared_ptr<std::atomic<bool>> stopFlag) {
+void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag) {
     TcpServer com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
@@ -20,7 +20,7 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming,
     com.run();
 }
 
-TcpServer::TcpServer(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+TcpServer::TcpServer(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
                      std::shared_ptr<std::atomic<bool>> stopFlag)
     : _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),

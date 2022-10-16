@@ -38,7 +38,7 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/TcpServer.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/LobbyProtocol.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/Connections.cpp"
@@ -57,7 +57,7 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/JanitorSystem.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/UUID.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/systems/HitboxSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"

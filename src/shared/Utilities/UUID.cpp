@@ -39,6 +39,10 @@ bool UUIDM::operator==(const UUIDM& uuid) {
     return uuid._uuid == this->_uuid;
 }
 
+bool UUIDM::operator!=(const UUIDM& uuid) {
+    return uuid._uuid != this->_uuid;
+}
+
 std::string UUIDM::operator+(std::string str) {
     return this->toString() + str;
 };

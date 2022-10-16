@@ -44,8 +44,8 @@ private:
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class
-    std::shared_ptr<MessageQueue<std::string>> _incomingMQ;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
 
     bool _isRunning;
     std::thread* _udpComThread;

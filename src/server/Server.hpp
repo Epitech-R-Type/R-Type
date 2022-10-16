@@ -22,25 +22,25 @@
 // This class will handle the tcp communication required for game lobby
 // forming along with launching games.
 class Server {
-    public:
-        // Constructor: Instantiates x class and launch com thread
-        Server();
-        ~Server();
+public:
+    // Constructor: Instantiates x class and launch com thread
+    Server();
+    ~Server();
 
-        // Setup function
-        // All setup goes in here, such as generation of all component ids
-        // We could also send to the client information on the ECS such as MAX_COMPONENTS & MAX_ENTITIES
-        int setup();
+    // Setup function
+    // All setup goes in here, such as generation of all component ids
+    // We could also send to the client information on the ECS such as MAX_COMPONENTS & MAX_ENTITIES
+    int setup();
 
-        // Main Loop
-        int mainLoop();
+    // Main Loop
+    int mainLoop();
 
-        // Launches game
-        // Note: Execution will hang until game is over,
-        // in the future this can be done in a separate thread
-        int launchGame();
+    // Launches game
+    // Note: Execution will hang until game is over,
+    // in the future this can be done in a separate thread
+    int launchGame();
 
-    private:
+private:
     bool _lobbyRunning;
     Game _game;
     LobbyProtocol* _protocol;
@@ -50,6 +50,6 @@ class Server {
     std::shared_ptr<std::atomic<bool>> _stopFlag;
 
     // Tcp message queues
-    std::shared_ptr<MessageQueue<std::string>> _incomingMQ;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
 };

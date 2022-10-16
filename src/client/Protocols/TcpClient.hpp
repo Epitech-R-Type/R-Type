@@ -12,12 +12,13 @@
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/AsioConstants.hpp"
 
-void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                            std::shared_ptr<std::atomic<bool>> stopFlag, std::string ipv6, int port);
+void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
+                            std::string ipv6, int port);
 
 class TcpClient {
 public:
-    TcpClient(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+    TcpClient(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
               std::shared_ptr<std::atomic<bool>> stopFlag);
 
     // Setup action receiving TCP messages
@@ -57,8 +58,8 @@ private:
     char _buffer[MAX_BUFFER_SIZE];
 
     // Messaging queues
-    std::shared_ptr<MessageQueue<std::string>> _incomingMessages;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMessages;
 
     // Timers
     asio::steady_timer _outgoingTimer; // Check for outgoing msg interval timer

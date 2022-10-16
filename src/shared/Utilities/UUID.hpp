@@ -28,6 +28,8 @@ public:
 
     bool operator==(const UUIDM& uuid);
 
+    bool operator!=(const UUIDM& uuid);
+
     friend std::ostream& operator<<(std::ostream& os, const UUIDM& uuid) {
         return os << uuid._uuid;
     };

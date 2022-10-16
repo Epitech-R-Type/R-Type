@@ -14,14 +14,13 @@ template <class T>
 MessageQueue<T>::~MessageQueue() {}
 
 template <class T>
-void MessageQueue<T>::push(Message<T> el) {
+void MessageQueue<T>::push(T el) {
     std::lock_guard<std::mutex> lock(this->_mtx);
-    std::cout << "push" << std::endl;
     this->_queue.push(el);
 }
 
 template <class T>
-std::optional<Message<T>> MessageQueue<T>::pop() {
+std::optional<T> MessageQueue<T>::pop() {
     std::lock_guard<std::mutex> lock(this->_mtx);
     if (!this->_queue.size())
         return {};
@@ -32,14 +31,5 @@ std::optional<Message<T>> MessageQueue<T>::pop() {
     }
 }
 
-template <class T>
-size_t MessageQueue<T>::size() {
-    return this->_queue.size();
-};
-
-template <class T>
-bool MessageQueue<T>::isEmpty() {
-    return this->_queue.size() == 0;
-};
-
+template class MessageQueue<Message<std::string>>;
 template class MessageQueue<std::string>;

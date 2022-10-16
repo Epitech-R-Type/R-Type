@@ -25,12 +25,12 @@
 #include "AsioConstants.hpp"
 
 // Function passed to communication thread on creation
-void udp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                            std::shared_ptr<std::atomic<bool>> stopFlag);
+void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag);
 
 class UdpCommunication {
 public:
-    UdpCommunication(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+    UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
                      std::shared_ptr<std::atomic<bool>> stopFlag);
 
     // Setup action receiving UDP packets
@@ -67,8 +67,8 @@ private:
     char _buffer[MAX_BUFFER_SIZE];
 
     // Messaging queues
-    std::shared_ptr<MessageQueue<std::string>> _incomingMessages;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMessages;
 
     // Timers
     asio::steady_timer _outgoingTimer; // Check for outgoing msg interval timer

@@ -73,15 +73,11 @@ public:
     ~MessageQueue();
 
     // Note : Does not implement size() as no code can safely depend on size
-    void push(Message<T> el);
+    void push(T el);
 
-    std::optional<Message<T>> pop(void);
-
-    size_t size();
-
-    bool isEmpty();
+    std::optional<T> pop(void);
 
 private:
     std::mutex _mtx;
-    std::queue<Message<T>> _queue;
+    std::queue<T> _queue;
 };

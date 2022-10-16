@@ -7,7 +7,8 @@
 
 #include "LobbyProtocol.hpp"
 
-LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing)
+LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing)
     : _connMan(UUIDM()) {
     // Set Messaging queues
     this->_incomingMQ = incoming;
@@ -92,7 +93,6 @@ bool LobbyProtocol::handleCommands() {
         if (cmd == "START") {
 
             // Set boolean that game should start
-            gameShouldStart = true;
 
             this->startGame();
             continue;
@@ -104,10 +104,6 @@ bool LobbyProtocol::handleCommands() {
 
 // Server Commands
 void LobbyProtocol::startGame() {
-    // If less than 2 connections, do nothing
-    if (this->_connMan.getConnectionCount() < 2)
-        return;
-
     // Get Connections
     auto connections = this->_connMan.getConnections();
 
