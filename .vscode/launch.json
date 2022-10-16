@@ -22,7 +22,7 @@
             "name": "(gdb) Launch Client",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${cwd}/build/bin/Server",
+            "program": "${cwd}/build/bin/Client",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${cwd}",

@@ -36,7 +36,7 @@ int Client::launchGame() {
     return 0;
 }
 
-void Client::connect(std::string serverIP) {
+void Client::connect(std::string serverIP, int port) {
     this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
 
@@ -45,7 +45,7 @@ void Client::connect(std::string serverIP) {
 
     // Init tcp com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP);
+    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
     this->_connected = true;
 }
 
