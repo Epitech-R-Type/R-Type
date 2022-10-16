@@ -18,6 +18,7 @@
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/ProtocolShared.hpp"
+#include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 #include "Connections.hpp"
@@ -58,8 +59,6 @@ public:
     void sendDelComponent(EntityID id, Connection client) const;
 
     // UILITIES
-    static std::optional<ParsedCmd> parseCommand(Message<std::string> msg);
-    static Message<std::string> createMessage(std::string cmd, std::string args, asio::ip::address addr, asio::ip::port_type port);
     int getPlayer(asio::ip::address addr, asio::ip::port_type port);
 
 private:
