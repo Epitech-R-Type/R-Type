@@ -7,8 +7,8 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming,
     // Setup incoming udp packet handler and outgoing packets handler in asio
     com.connect();
 
-    // com.setup_outgoing_handler();
-    // com.stop_signal_handler();
+    com.setupOutgoingHandler();
+    com.stopSignalHandler();
     // Run asio context
     com.run();
 }
@@ -50,12 +50,59 @@ void TcpClient::setupIncomingHandler(std::shared_ptr<asio::ip::tcp::socket> serv
     });
 }
 
+// Outgoing Handler
+void TcpClient::setupOutgoingHandler() {
+    this->_outgoingTimer = asio::steady_timer(this->_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL));
+
+    this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
+        if (err) {
+            std::cout << "Error is : " << err.message() << std::endl;
+            this->setupOutgoingHandler();
+            return;
+        }
+        std::optional<Message<std::string>> msg;
+        char buffer[1024];
+
+        while ((msg = this->pop_message())) {
+
+            std::string msgStr = msg->getMsg();
+
+            // Prepare buffer
+            int len = msgStr.length();
+            strcpy(buffer, msgStr.c_str());
+            memset(&buffer[len], 0, 1024 - len);
+
+            this->_server->send(asio::buffer(buffer));
+        }
+        this->setupOutgoingHandler();
+    });
+}
+
+// Handler methods
+void TcpClient::stopSignalHandler() {
+    this->_stopTimer = asio::steady_timer(this->_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL));
+
+    this->_stopTimer.async_wait([this](const asio::error_code& err) {
+        if (err) {
+            std::cerr << "Error in stop_signal_handler(): " << err.message() << std::endl;
+            this->stopSignalHandler();
+            return;
+        }
+
+        if (this->getStopFlag())
+            this->stop();
+
+        // Re schedule stop signal handler
+        this->stopSignalHandler();
+    });
+}
+
 void TcpClient::connect() {
     asio::io_service io_service;
     // socket creation
     this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(io_service));
     // connection
-    this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string("127.0.0.1"), 5301));
+    this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string("192.168.178.22"), TCP_PORT));
 
     this->setupIncomingHandler(this->_server);
 }

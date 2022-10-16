@@ -25,12 +25,12 @@ public:
 
     // Setup action polling MQ for new messages to send
     // Note: Needs to be called again in order to loop
-    void setup_outgoing_handler();
+    void setupOutgoingHandler();
 
     // This function will use an asio steady timer async wait in order to signal
     // context to stop if needed
     // Note: Needs to be called again in order to loop
-    void stop_signal_handler();
+    void stopSignalHandler();
 
     void connect();
 
