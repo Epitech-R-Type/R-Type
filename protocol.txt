@@ -198,6 +198,7 @@ Table of Contents
             These commands WILL illicit a response, this response will
             take the form of commands, so should not be waited for:
 
+                HERE        ->      Signal connection to server
                 GET_ENT     ->      Get specification for entity
                 GET_COMP    ->      Get specification for component
 
