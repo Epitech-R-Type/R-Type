@@ -44,7 +44,7 @@ Table of Contents
             3.2.1. Server Command Listing .............................X
             3.2.2. Server Command Arguments ...........................X
         3.3. Client Commands ..........................................X
-            3.3.1. Response Format ....................................X
+            3.3.1. Server Response ....................................X
             3.3.2. Client Command Listing .............................X
             3.3.3. Client Command Arguments ...........................X
 
@@ -157,11 +157,12 @@ Table of Contents
 
             The following is a listing of all valid server commands :
 
-                    NEW_ENT       ->    Create entity
+                    ENTITY        ->    Provide entity description, with
+                                        component args.
                     DEL_ENT       ->    Delete entity
-                    ADD_COMP      ->    Add component
+                    COMPONENT     ->    Provide component instance id
+                                        and args for specified entity.
                     DEL_COMP      ->    Delete component
-                    UPDATE_COMP   ->    Update component
 
         3.2.2. Server Command Arguments
 
@@ -170,12 +171,12 @@ Table of Contents
 
                       <THIS LIST NEEDS ELABORATING>
 
-            NEW_ENT ->
-                (entity id, id, component id (component args), ...)
+            ENTITY ->
+                (entity id, (component id, component args...)...)
             DEL_ENT -> (entity id)
-            ADD_COMP -> (entity id, comp id, comp args (args))
-            DEL_COMP -> (entity id, comp id)
-            UPDATE_COMP -> (entity id, comp id, comp args (args))
+            COMPONENT ->
+                (entity id, (component id, component args...)...)
+            DEL_COMP -> (entity id, component id)
 
     3.3. Client Commands
 
@@ -188,25 +189,17 @@ Table of Contents
         await this response (when needed) without blocking the main
         gameplay thread.
 
-        3.3.1. Response Format
+        3.3.1. Server Response
 
-            The server responses will be formatted in the following way:
-
-            RESP<SP><DATA><CRLF>
-
-            All responses will start with the keyword RESP followed by
-            the <SP> character separator.
-
-                    <THE FOLLOWING NEEDS ELABORATING>
-            <DATA> will contain all the data associated with the clients
-            request.
-
-            Finally as with all commands, the response will be ended by
-            the <CRLF> character combination.
+            The server response to client commands will always be in the
+            form of server commands. This means and allows the client to
+            not have to wait on the server response as the "server
+            response" only needs to be handled like any other command.
 
         3.3.2. Client Command Listing
 
-            These commands WILL illicit a response:
+            These commands WILL illicit a response, this response will
+            take the form of commands, so should not be waited for:
 
                 GET_ENT     ->      Get specification for entity
                 GET_COMP    ->      Get specification for component
