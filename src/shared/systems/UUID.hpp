@@ -24,6 +24,8 @@ public:
      * */
     std::string toString();
 
+    bool isValid();
+
     bool operator==(const UUID& uuid);
 
     friend std::ostream& operator<<(std::ostream& os, const UUID& uuid) {

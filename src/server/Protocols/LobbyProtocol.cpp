@@ -47,7 +47,7 @@ bool LobbyProtocol::handleCommands() {
         auto splitBody = Utilities::splitStr(msgBody, " ");
 
         // If invalid size error 500
-        if (splitBody.size() != 3) {
+        if (splitBody.size() < 1) {
             Message<std::string> msg("500 Wrong request\r\n", addr, port);
             this->_outgoingMQ->push(msg);
             continue;
@@ -56,6 +56,7 @@ bool LobbyProtocol::handleCommands() {
         // Retrieve main command
         std::string cmd = splitBody[0];
 
+        std::cout << cmd << std::endl;
         // CONNECT Command
         if (cmd == "CONNECT") {
             // Add to connection manager and get new uuid
@@ -76,12 +77,13 @@ bool LobbyProtocol::handleCommands() {
 
         UUID uuid(splitBody[1]); // Potential failure here
 
+        if (!this->_connMan.uuidValid(uuid)) {
+            this->sendResponse("401", "Forbidden", addr, port);
+            continue;
+        }
+
         // START command
         if (cmd == "START") {
-            if (!this->_connMan.uuidValid(uuid)) {
-                this->sendResponse("401", "Forbidden", addr, port);
-                continue;
-            }
 
             // Set boolean that game should start
             gameShouldStart = true;
