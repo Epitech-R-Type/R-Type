@@ -17,7 +17,10 @@ UUID::UUID(std::string uuidStr) {
     std::smatch match;
     std::regex_search(uuidStr, match, pattern);
 
-    this->_uuid = uuids::uuid::from_string(match.str()).value();
+    std::optional<uuids::uuid> potUUID = uuids::uuid::from_string(match.str());
+
+    if (potUUID.has_value())
+        this->_uuid = potUUID.value();
 };
 
 std::string UUID::toString() {
@@ -27,6 +30,10 @@ std::string UUID::toString() {
 
     return ss.str();
 };
+
+bool UUID::isValid() {
+    return !this->_uuid.is_nil();
+}
 
 bool UUID::operator==(const UUID& uuid) {
     return uuid._uuid == this->_uuid;

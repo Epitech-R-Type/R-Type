@@ -9,8 +9,7 @@ int main() {
 
     Client client;
 
-    client.setup();
-    client.mainLoop();
+    client.launchGame();
 
     return 0;
 }

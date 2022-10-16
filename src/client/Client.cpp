@@ -46,7 +46,3 @@ int Client::mainLoop() {
 
     return 0;
 }
-
-int Client::setup() {
-    return 0;
-}

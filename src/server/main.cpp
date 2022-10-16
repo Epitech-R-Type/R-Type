@@ -9,4 +9,5 @@ int main() {
     Server serv;
 
     serv.setup();
+    serv.mainLoop();
 }

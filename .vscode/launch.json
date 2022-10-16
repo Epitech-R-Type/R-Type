@@ -5,7 +5,21 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "(gdb) Launch",
+            "name": "(gdb) Launch Server",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "${cwd}/build/bin/Server",
+            "args": [],
+            "stopAtEntry": false,
+            "cwd": "${cwd}",
+            "environment": [],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [],
+            "miDebuggerPath": "/usr/bin/gdb"
+        },
+        {
+            "name": "(gdb) Launch Client",
             "type": "cppdbg",
             "request": "launch",
             "program": "${cwd}/build/bin/Server",
