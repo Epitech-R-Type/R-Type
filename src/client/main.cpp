@@ -13,7 +13,7 @@ int main(int argc, char** argv) {
         client.connect(argv[1]);
     }
 
-    client.launchGame();
+    client.mainLoop();
 
     return 0;
 }
