@@ -7,17 +7,17 @@
 
 #include "Connections.hpp"
 
-ConnectionManager::ConnectionManager(UUID serverUUID) {
+ConnectionManager::ConnectionManager(UUIDM serverUUID) {
     this->_serverUUID = serverUUID;
 }
 
-UUID ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_type port) {
+UUIDM ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_type port) {
     auto existingUUID = this->getUUID(addr, port);
 
     // If connection doesn't already exist
     if (!existingUUID) {
         // Generate new uuid
-        UUID newUUID;
+        UUIDM newUUID;
 
         // Push new connection
         this->_connections.push_back({addr, port, newUUID});
@@ -27,7 +27,7 @@ UUID ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_typ
     }
 }
 
-std::optional<UUID> ConnectionManager::getUUID(asio::ip::address addr, asio::ip::port_type port) {
+std::optional<UUIDM> ConnectionManager::getUUID(asio::ip::address addr, asio::ip::port_type port) {
     for (auto conn : this->_connections)
         if (conn.addr == addr && conn.port == port)
             return std::optional(conn.uuid);
@@ -35,14 +35,14 @@ std::optional<UUID> ConnectionManager::getUUID(asio::ip::address addr, asio::ip:
     return {};
 }
 
-bool ConnectionManager::uuidValid(UUID uuid) const {
+bool ConnectionManager::uuidValid(UUIDM uuid) const {
     for (auto conn : this->_connections)
         if (conn.uuid == uuid)
             return true;
     return false;
 }
 
-std::optional<Connection> ConnectionManager::getConnection(UUID uuid) const {
+std::optional<Connection> ConnectionManager::getConnection(UUIDM uuid) const {
     for (auto conn : this->_connections)
         if (conn.uuid == uuid)
             return std::optional(conn);
@@ -61,11 +61,11 @@ void ConnectionManager::removeConnection(std::string uuid) {
             this->_connections.erase(this->_connections.begin() + i);
 }
 
-void ConnectionManager::setServerUUID(UUID serverUUID) {
+void ConnectionManager::setServerUUID(UUIDM serverUUID) {
     this->_serverUUID = serverUUID;
 }
 
-UUID ConnectionManager::getServerUUID() const {
+UUIDM ConnectionManager::getServerUUID() const {
     return this->_serverUUID;
 }
 

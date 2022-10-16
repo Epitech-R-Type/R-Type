@@ -8,7 +8,7 @@ class SpriteSystem;
 
 class ArmamentSystem : public System {
 public:
-    ArmamentSystem(Manager* ECS);
+    ArmamentSystem(ECSManager* ECS);
 
     void apply();
 
@@ -17,7 +17,7 @@ public:
     void setSpriteSystem(SpriteSystem* spriteSystem);
 
 private:
-    Manager* _ECS;
+    ECSManager* _ECS;
     EntityID _player;
     SpriteSystem* _spriteSystem;
 };

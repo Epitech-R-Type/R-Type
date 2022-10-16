@@ -22,7 +22,7 @@ public:
     static std::bitset<MAX_COMPONENTS> hiddenComponents;
 
     template <class... ComponentTypes>
-    static std::string entityToString(EntityID entityID, Manager* manager) {
+    static std::string entityToString(EntityID entityID, ECSManager* manager) {
         Index entityIndex = getIndex(entityID);
         std::stringstream stream;
         std::vector<std::string> cerealizedComponents = {Serialization::componentToString<ComponentTypes>(entityID, manager)...};
@@ -64,7 +64,7 @@ public:
         return stream.str();
     }
 
-    static void stringToEntity(const std::string entity, Manager* manager) {
+    static void stringToEntity(const std::string entity, ECSManager* manager) {
 
         std::vector<std::string> components = Utilities::splitStr(entity, ";");
 
@@ -94,7 +94,7 @@ public:
     }
 
     template <class T>
-    static std::string componentToString(EntityID entityId, Manager* manager) {
+    static std::string componentToString(EntityID entityId, ECSManager* manager) {
         if (!manager->hasComponent<T>(entityId)) {
             std::cout << "[Warning]: Missing component." << std::endl;
             return "";

@@ -7,8 +7,8 @@
 
 #include "GameProtocol.hpp"
 
-GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                           std::vector<Connection> connections, std::shared_ptr<Manager> entManager)
+GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+                           std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager)
     : _incomingMQ(incoming),
       _outgoingMQ(outgoing),
       _expectedClients(connections),
@@ -50,7 +50,7 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     if (cmd.args[0].size() != 1)
         return false;
 
-    UUID candidate(cmd.args[0][1]);
+    UUIDM candidate(cmd.args[0][1]);
     for (auto conn : this->_expectedClients)
         if (conn.uuid == candidate) {
             this->_connectedClients.push_back({addr, port, candidate});

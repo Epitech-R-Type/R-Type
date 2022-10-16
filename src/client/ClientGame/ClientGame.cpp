@@ -13,17 +13,18 @@
 #include "factories.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame() {
+ClientGame::ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem) {
     // Construct messaging queues
-    this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
+    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
+    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    // this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 
-    this->_entManager = new Manager();
-    this->_spriteSystem = new SpriteSystem(this->_entManager);
+    this->_entManager = ECS;
+
+    this->_spriteSystem = spriteSystem;
     this->_velocitySystem = new VelocitySystem(this->_entManager);
 
     // ClientGame will take the player EntityID as consturctor param, replace y Server message
@@ -39,33 +40,38 @@ ClientGame::ClientGame() {
     this->_armamentSystem = new ArmamentSystem(this->_entManager);
     this->_armamentSystem->setPlayer(this->_player);
     this->_armamentSystem->setSpriteSystem(this->_spriteSystem);
+
+    this->_hitboxSystem = new HitboxSystem(this->_entManager);
+    this->_janitorSystem = new JanitorSystem(this->_entManager);
 }
 
 ClientGame::~ClientGame() {
     // Signal thread to stop and join thread
     this->_stopFlag->store(true);
-    this->_udpComThread->join();
+    // this->_udpComThread->join();
 
     // Delete com thread
     delete this->_udpComThread;
+    delete this->_hitboxSystem;
+    delete this->_janitorSystem;
+    delete this->_armamentSystem;
+    delete this->_healthSystem;
+    delete this->_playerMovementSystem;
+    delete this->_velocitySystem;
 }
 
 void ClientGame::init() {
     srand(time(0));
 
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-    makeEnemy(this->_entManager, this->_spriteSystem);
-
     makeEndboss(this->_entManager, this->_spriteSystem);
 }
 
 void ClientGame::mainLoop() {
-    std::cout << "Entering main loop()" << std::endl;
+    InitWindow(1600, 900, "R-Type");
 
-    // Main game loop
-    while (!WindowShouldClose()) // Detect window close button or ESC key
+    std::chrono::time_point<std::chrono::system_clock> timer;
+
+    while (this->_entManager->entityIsActive(this->_player)) // Detect window close button or ESC key
     {
         BeginDrawing();
 
@@ -76,6 +82,19 @@ void ClientGame::mainLoop() {
         this->_playerMovementSystem->apply();
         this->_healthSystem->apply();
         this->_armamentSystem->apply();
+        this->_hitboxSystem->apply();
+
+        // Always last
+        this->_janitorSystem->apply();
+
+        const auto now = getNow();
+        std::chrono::duration<double> elapsed_seconds = now - timer;
+
+        // Convert to milliseconds
+        if (elapsed_seconds.count() > 0.5) {
+            makeEnemy(this->_entManager, this->_spriteSystem);
+            timer = getNow();
+        }
 
         EndDrawing();
     }

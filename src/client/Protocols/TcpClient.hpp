@@ -1,12 +1,6 @@
-/*
- ** EPITECH PROJECT, 2022
- ** TcpClient.hpp
- ** File description:
- ** .
- */
-
 #pragma once
 
+#include "../../WindowsGuard.hpp"
 #include <asio.hpp>
 #include <atomic>
 #include <iostream>
@@ -18,30 +12,35 @@
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/AsioConstants.hpp"
 
-void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                            std::shared_ptr<std::atomic<bool>> stopFlag, asio::ip::address addr, asio::ip::port_type port);
+void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
+                            std::string ipv6, int port);
 
 class TcpClient {
 public:
-    TcpClient(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-              std::shared_ptr<std::atomic<bool>> stopFlag, asio::ip::address addr, asio::ip::port_type port);
+    TcpClient(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+              std::shared_ptr<std::atomic<bool>> stopFlag);
 
     // Setup action receiving TCP messages
     // Note: Needs to be called again in order to loop
-    void setup_incoming_handler();
+    void setupIncomingHandler();
 
     // Setup action polling MQ for new messages to send
     // Note: Needs to be called again in order to loop
-    void setup_outgoing_handler();
+    void setupOutgoingHandler();
 
     // This function will use an asio steady timer async wait in order to signal
     // context to stop if needed
     // Note: Needs to be called again in order to loop
-    void stop_signal_handler();
+    void stopSignalHandler();
+
+    void connect(std::string serverIP, int port);
 
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);
+
     std::optional<Message<std::string>> pop_message(void);
+
     bool getStopFlag();
 
     // Execute context
@@ -49,23 +48,18 @@ public:
     // Stop context
     void stop();
 
-    // Socket used to connect to server
-    asio::ip::tcp::socket _sock;
+    std::shared_ptr<asio::ip::tcp::socket> _server;
 
 private:
     // Async context executed in com thread
     asio::io_context _ctxt;
 
-    // Server addr and port
-    asio::ip::address _addr;
-    asio::ip::port_type _port;
-
     // Buffer used for msg reception
     char _buffer[MAX_BUFFER_SIZE];
 
     // Messaging queues
-    std::shared_ptr<MessageQueue<std::string>> _incomingMessages;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMessages;
 
     // Timers
     asio::steady_timer _outgoingTimer; // Check for outgoing msg interval timer

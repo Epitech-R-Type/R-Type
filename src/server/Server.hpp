@@ -22,10 +22,10 @@
 // This class will handle the tcp communication required for game lobby
 // forming along with launching games.
 class Server {
-    public:
-        // Constructor: Instantiates x class and launch com thread
-        Server();
-        ~Server();
+public:
+    // Constructor: Instantiates x class and launch com thread
+    Server();
+    ~Server();
 
         // Setup function
         // All setup goes in here, such as generation of all component ids
@@ -40,7 +40,7 @@ class Server {
         // in the future this can be done in a separate thread
         int launchGame();
 
-    private:
+private:
     bool _lobbyRunning;
     Game _game;
     LobbyProtocol* _protocol;
@@ -50,6 +50,6 @@ class Server {
     std::shared_ptr<std::atomic<bool>> _stopFlag;
 
     // Tcp message queues
-    std::shared_ptr<MessageQueue<std::string>> _incomingMQ;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
 };

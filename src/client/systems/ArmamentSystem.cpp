@@ -5,7 +5,7 @@
 #include "SpriteSystem.hpp"
 #include <chrono>
 
-ArmamentSystem::ArmamentSystem(Manager* ECS) {
+ArmamentSystem::ArmamentSystem(ECSManager* ECS) {
     this->_ECS = ECS;
 }
 
@@ -17,7 +17,10 @@ void ArmamentSystem::setSpriteSystem(SpriteSystem* spriteSystem) {
 }
 
 void ArmamentSystem::apply() {
+#ifndef NO_HOSTILITY
     for (auto beg = this->_ECS->begin<Armament::Component>(); beg != this->_ECS->end<Armament::Component>(); ++beg) {
+        if (this->_ECS->hasComponent<Player::Component>(*beg) && !IsKeyDown(KEY_SPACE))
+            continue;
 
         Armament::Component* armament = this->_ECS->getComponent<Armament::Component>(*beg);
 
@@ -26,13 +29,18 @@ void ArmamentSystem::apply() {
 
         // Convert to milliseconds
         if (elapsed_seconds.count() > ((double)armament->interval / 1000.0)) {
-            if (this->_ECS->hasComponent<Player::Component>(this->_player) && armament->ammo != 0 && IsKeyDown(KEY_SPACE)) {
-                makeBullet(this->_ECS, this->_spriteSystem);
-                if (armament->ammo > 0)
-                    armament->ammo -= 1;
-            } else {
+
+            if (armament->ammo != 0) {
+                if (armament->type == Armament::Type::Laser)
+                    makeLaser(this->_ECS, this->_spriteSystem, *beg);
+                if (armament->type == Armament::Type::LaserBuckshot)
+                    makeLaserBuckshot(this->_ECS, this->_spriteSystem, *beg);
             }
+            if (armament->ammo > 0)
+                armament->ammo -= 1;
+
             armament->timer = now;
         }
     }
+#endif
 }

@@ -7,7 +7,12 @@
 
 #pragma once
 
+#include "../shared/ECS/ECS.hpp"
 #include "ClientGame/ClientGame.hpp"
+#include "Protocols/ClientLobbyProtocol.hpp"
+#include "Protocols/TcpClient.hpp"
+#include "systems/SpriteSystem.hpp"
+#include <thread>
 
 // This class implementls the main loop for lobby handling of the client
 // The lobby main logic will most likely depend on a local ecs
@@ -16,9 +21,8 @@
 class Client {
 public:
     // Note: Construtor/Destructor shall be added as needed
-
+    Client();
     // Intialization of game lobby
-    int setup();
 
     // Menu main loop
     // Return 0 if success or 1 if failure
@@ -28,7 +32,19 @@ public:
     // Return is 0 if success or 1 if failure
     int launchGame();
 
+    void connect(std::string serverIP, int port = TCP_PORT);
+
+    void handleUserCommands();
+
 private:
     bool _lobbyRunning;
-    ClientGame _game;
+    bool _connected;
+
+    std::shared_ptr<MessageQueue<std::string>> _userCommands = std::make_shared<MessageQueue<std::string>>();
+    std::thread* _userInputThread;
+
+    ClientGame* _game;
+    SpriteSystem* _spriteSystem;
+    ECSManager* _ECS;
+    ClientLobbyProtocol* _protocol;
 };

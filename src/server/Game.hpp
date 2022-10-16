@@ -21,7 +21,7 @@
 //          - Udp communication handling
 //          - Ecs handling
 class Game {
-    public:
+public:
     // All the game setup is done in here
     Game();
     ~Game();
@@ -29,13 +29,13 @@ class Game {
     // Main Loop
     int mainLoop();
 
-    private:
-    Manager _entManager;
+private:
+    ECSManager _entManager;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class
-    std::shared_ptr<MessageQueue<std::string>> _incomingMQ;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
 
     bool _isRunning;
     std::thread* _udpComThread;

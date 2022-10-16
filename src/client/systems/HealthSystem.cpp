@@ -1,9 +1,10 @@
 #include "HealthSystem.hpp"
 #include "../../shared/ECS/Manager.hpp"
 #include "SpriteSystem.hpp"
+#include "Systems.hpp"
 #include "raylib.h"
 
-HealthSystem::HealthSystem(Manager* ECS) {
+HealthSystem::HealthSystem(ECSManager* ECS) {
     this->_ECS = ECS;
 }
 
@@ -35,13 +36,18 @@ void HealthSystem::apply() {
 
         Animation::Component* anim = this->_ECS->getComponent<Animation::Component>(id);
 
+        const float centerX = position->x + (float)Animation::Sheets[anim->animationID].frameWidth * anim->scale / 2.0;
+        const float centerY = position->y + (float)Animation::Sheets[anim->animationID].frameHeight * anim->scale / 2.0;
+
+        Point center = HitboxSystem::rotate({centerX, centerY}, {position->x, position->y}, HitboxSystem::toRadians(anim->rotation));
+
         if (health->visible) {
-            float width = SpriteSystem::ANIMATION_SHEET[anim->animationID].frameWidth * anim->scale;
-            float height = SpriteSystem::ANIMATION_SHEET[anim->animationID].frameWidth * anim->scale;
+            float width = Animation::Sheets[anim->animationID].frameWidth * anim->scale;
+            float height = Animation::Sheets[anim->animationID].frameWidth * anim->scale;
 
             const float remainingHP = width * ((float)health->health / (float)health->maxHealth);
-            DrawRectangle(position->xPos - width / 2, position->yPos - height * 1.5, width, barHeight, WHITE);
-            DrawRectangle(position->xPos + 1 - width / 2, position->yPos + 1 - height * 1.5, remainingHP, barHeight - 2, RED);
+            DrawRectangle(center.x - width / 2, center.y - height * 1.5, width, barHeight, WHITE);
+            DrawRectangle(center.x + 1 - width / 2, center.y + 1 - height * 1.5, remainingHP, barHeight - 2, RED);
         }
     }
 

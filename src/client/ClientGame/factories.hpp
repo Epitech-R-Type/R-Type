@@ -4,12 +4,14 @@
 
 class SpriteSystem;
 
-EntityID makePlayer(Manager* ECS, SpriteSystem* spriteSystem);
+EntityID makePlayer(ECSManager* ECS, SpriteSystem* spriteSystem);
 
-void makeEndboss(Manager* ECS, SpriteSystem* spriteSystem);
+void makeEndboss(ECSManager* ECS, SpriteSystem* spriteSystem);
 
-void makeEnemy(Manager* ECS, SpriteSystem* spriteSystem);
+void makeEnemy(ECSManager* ECS, SpriteSystem* spriteSystem);
 
-void makeBullet(Manager* ECS, SpriteSystem* spriteSystem);
+void makeLaser(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source);
 
-EntityID getPlayerID(Manager* ECS);
+void makeLaserBuckshot(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source);
+
+EntityID getPlayerID(ECSManager* ECS);

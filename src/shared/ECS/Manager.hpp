@@ -7,27 +7,29 @@
 
 #pragma once
 
+#include "CompPool.hpp"
+#include "ECS.hpp"
+
 #include <bitset>
 #include <iostream>
 #include <iterator>
 #include <memory>
 #include <vector>
 
-#include "CompPool.hpp"
-#include "ECS.hpp"
-
 struct Entity {
     EntityID id;
     std::bitset<MAX_COMPONENTS> components;
 };
 
-class Manager {
+class ECSManager {
 public:
     // Create entity
     EntityID newEntity();
 
     // Delete entity
     void deleteEntity(EntityID id);
+
+    bool entityIsActive(EntityID id);
 
     // Get component for given entity
     template <class T>
@@ -154,7 +156,7 @@ public:
     template <class... Comps>
     class Iterator {
     public:
-        Iterator(Index start, Manager* man)
+        Iterator(Index start, ECSManager* man)
             : _currIndex(start),
               _man(man) {
             Index includedIds[] = {getID<Comps>()...};
@@ -193,7 +195,7 @@ public:
 
     private:
         Index _currIndex;
-        Manager* _man;
+        ECSManager* _man;
         std::bitset<MAX_COMPONENTS> _wanted;
     };
 
@@ -211,6 +213,8 @@ public:
     const Iterator<Comp...> end() {
         return Iterator<Comp...>(this->_entities.size(), this);
     }
+
+    void flush();
 
 private:
     std::vector<Entity> _entities;

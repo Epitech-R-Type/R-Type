@@ -10,7 +10,7 @@
 #include <chrono>
 
 // CONSTANTS
-#define MAX_ENTITIES 1024
+#define MAX_ENTITIES 4194304
 #define MAX_COMPONENTS 32
 
 #define INVALID_INDEX -1
@@ -52,11 +52,14 @@ inline Version getVersion(EntityID id) {
     return (Version)id;
 }
 
+inline bool isValid(EntityID id) {
+    return !(0 > getIndex(id));
+}
 // Create Id from Index and Version
 inline EntityID createId(Index i, Version v) {
-    EntityID new_id = i;   // Put index in new_id
-    new_id = new_id << 32; // Shift index to top bytes
-    new_id = new_id | v;   // Add version to bottom bytes
+    EntityID new_id = (EntityID)i; // Put index in new_id
+    new_id = new_id << 32;         // Shift index to top bytes
+    new_id = new_id | (EntityID)v; // Add version to bottom bytes
 
     return new_id;
 }
@@ -65,4 +68,4 @@ inline std::chrono::time_point<std::chrono::system_clock> getNow() {
     return std::chrono::system_clock::now();
 };
 
-class Manager;
+class ECSManager;

@@ -7,8 +7,9 @@
 
 #include "LobbyProtocol.hpp"
 
-LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing)
-    : _connMan(UUID()) {
+LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing)
+    : _connMan(UUIDM()) {
     // Set Messaging queues
     this->_incomingMQ = incoming;
     this->_outgoingMQ = outgoing;
@@ -47,7 +48,7 @@ bool LobbyProtocol::handleCommands() {
         auto splitBody = Utilities::splitStr(msgBody, " ");
 
         // If invalid size error 500
-        if (splitBody.size() != 3) {
+        if (splitBody.size() < 1) {
             Message<std::string> msg("500 Wrong request\r\n", addr, port);
             this->_outgoingMQ->push(msg);
             continue;
@@ -57,7 +58,7 @@ bool LobbyProtocol::handleCommands() {
         std::string cmd = splitBody[0];
 
         // CONNECT Command
-        if (cmd == "CONNECT") {
+        if (cmd == "CONNECT\r\n") {
             // Add to connection manager and get new uuid
             auto uuid = this->_connMan.addConnection(addr, port);
 
@@ -74,20 +75,24 @@ bool LobbyProtocol::handleCommands() {
             continue;
         }
 
-        UUID uuid(splitBody[1]); // Potential failure here
+        // If invalid size error 500
+        if (splitBody.size() < 2) {
+            Message<std::string> msg("500 Wrong request\r\n", addr, port);
+            this->_outgoingMQ->push(msg);
+            continue;
+        }
+
+        UUIDM uuid(splitBody[1]); // Potential failure here
+
+        if (!this->_connMan.uuidValid(uuid)) {
+            this->sendResponse("401", "Forbidden", addr, port);
+            continue;
+        }
 
         // START command
         if (cmd == "START") {
-            if (!this->_connMan.uuidValid(uuid)) {
-                this->sendResponse("401", "Forbidden", addr, port);
-                continue;
-            }
-
-            // Send positive response
-            this->sendResponse("200", "Alles Gut", addr, port);
 
             // Set boolean that game should start
-            gameShouldStart = true;
 
             this->startGame();
             continue;
@@ -99,10 +104,6 @@ bool LobbyProtocol::handleCommands() {
 
 // Server Commands
 void LobbyProtocol::startGame() {
-    // If less than 2 connections, do nothing
-    if (this->_connMan.getConnectionCount() < 2)
-        return;
-
     // Get Connections
     auto connections = this->_connMan.getConnections();
 

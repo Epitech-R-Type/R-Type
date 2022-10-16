@@ -18,13 +18,13 @@
 class SpriteSystem;
 class PlayerMovementSystem : public System {
 public:
-    PlayerMovementSystem(Manager* ECS);
+    PlayerMovementSystem(ECSManager* ECS);
     void apply();
     void setPlayer(EntityID player);
 
 private:
     SpriteSystem* _spriteSystem;
     EntityID _player;
-    Manager* _ECS;
+    ECSManager* _ECS;
     std::chrono::time_point<std::chrono::system_clock> _timer = std::chrono::system_clock::now();
 };

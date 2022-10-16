@@ -1,63 +1,70 @@
 /*
 ** EPITECH PROJECT, 2022
-** TcpClient.cpp
+** TcpCommunication.cpp
 ** File description:
 ** .
 */
 
 #include "TcpClient.hpp"
 
-void tcp_client_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                     std::shared_ptr<std::atomic<bool>> stopFlag, asio::ip::address addr, asio::ip::port_type port) {
-    TcpClient com(incoming, outgoing, stopFlag, addr, port);
+void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
+                            std::string serverIP, int port) {
+    TcpClient com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
-    // com.setup_incoming_handler();
-    com.setup_outgoing_handler();
-    com.stop_signal_handler();
-
+    com.connect(serverIP, port);
+    com.setupOutgoingHandler();
+    com.stopSignalHandler();
     // Run asio context
     com.run();
 }
 
-TcpClient::TcpClient(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                     std::shared_ptr<std::atomic<bool>> stopFlag, asio::ip::address addr, asio::ip::port_type port)
+TcpClient::TcpClient(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+                     std::shared_ptr<std::atomic<bool>> stopFlag)
     : _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
-      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)),
-      _sock(_ctxt) {
-    this->_sock.connect(asio::ip::tcp::endpoint(addr, port)); // Note: NO ERROR HANDLING WHATSOEVER HERE
+      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
+    this->_incomingMessages = incoming;
+    this->_outgoingMessages = outgoing;
 }
 
-// Incoming Handler
-void TcpClient::setup_incoming_handler() {
-    this->_sock.async_receive(asio::buffer(this->_buffer), [this](const asio::error_code& err, std::size_t bytesTransfered) {
+void TcpClient::setupIncomingHandler() {
+    this->_server->async_receive(asio::buffer(this->_buffer), [this](const asio::error_code& err, std::size_t bytesTransfered) {
         if (!err) {
-            this->push_message(Message(std::string(this->_buffer), this->_addr, this->_port));
+            auto addr = _server->remote_endpoint().address();
+            auto port = _server->remote_endpoint().port();
 
-            // Reset buffer
-            memset(this->_buffer, 0, MAX_BUFFER_SIZE);
+            this->push_message(Message(std::string(this->_buffer), addr, port));
 
             // Reset incoming handler
-            this->setup_incoming_handler();
+
+            // Reset buffer
+            memset(this->_buffer, 0, 1024);
+            // Reset incoming handler
+            this->setupIncomingHandler();
         } else {
             // Reset buffer
-            memset(this->_buffer, 0, MAX_BUFFER_SIZE);
+            memset(this->_buffer, 0, 1024);
+
+            // // Handle server disconnection
+            // if (err.value() == asio::error::eof)
+            //     this->remove_peer(server);
 
             // Reset incoming handler
-            this->setup_incoming_handler();
+            this->setupIncomingHandler();
         }
     });
 }
 
 // Outgoing Handler
-void TcpClient::setup_outgoing_handler() {
+void TcpClient::setupOutgoingHandler() {
     this->_outgoingTimer = asio::steady_timer(this->_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL));
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
             std::cout << "Error is : " << err.message() << std::endl;
-            this->setup_outgoing_handler();
+            this->setupOutgoingHandler();
             return;
         }
         std::optional<Message<std::string>> msg;
@@ -72,20 +79,20 @@ void TcpClient::setup_outgoing_handler() {
             strcpy(buffer, msgStr.c_str());
             memset(&buffer[len], 0, 1024 - len);
 
-            this->_sock.send(asio::buffer(buffer));
+            this->_server->send(asio::buffer(buffer));
         }
-        this->setup_outgoing_handler();
+        this->setupOutgoingHandler();
     });
 }
 
 // Handler methods
-void TcpClient::stop_signal_handler() {
+void TcpClient::stopSignalHandler() {
     this->_stopTimer = asio::steady_timer(this->_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL));
 
     this->_stopTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
             std::cerr << "Error in stop_signal_handler(): " << err.message() << std::endl;
-            this->stop_signal_handler();
+            this->stopSignalHandler();
             return;
         }
 
@@ -93,10 +100,32 @@ void TcpClient::stop_signal_handler() {
             this->stop();
 
         // Re schedule stop signal handler
-        this->stop_signal_handler();
+        this->stopSignalHandler();
     });
 }
 
+void TcpClient::connect(std::string serverIP, int port) {
+    // socket creation
+    this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(this->_ctxt));
+    // connection
+    this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
+    std::cout << "Tcp Client info is :" << this->_server->local_endpoint().port() << std::endl;
+
+    this->setupIncomingHandler();
+}
+
+// Context runtime functions
+void TcpClient::run() {
+    // Execute context
+    this->_ctxt.run();
+}
+
+void TcpClient::stop() {
+    // Stop context
+    this->_ctxt.stop();
+}
+
+// Access Methods
 void TcpClient::push_message(Message<std::string> msg) {
     this->_incomingMessages->push(msg);
 }
@@ -107,12 +136,4 @@ std::optional<Message<std::string>> TcpClient::pop_message(void) {
 
 bool TcpClient::getStopFlag() {
     return *this->_stopFlag;
-}
-
-void TcpClient::run() {
-    this->_ctxt.run();
-}
-
-void TcpClient::stop() {
-    this->_ctxt.stop();
 }

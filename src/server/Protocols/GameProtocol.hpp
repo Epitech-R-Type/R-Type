@@ -36,8 +36,8 @@ struct ParsedCmd {
 class GameProtocol {
 public:
     // Constructor
-    GameProtocol(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                 std::vector<Connection> connections, std::shared_ptr<Manager> entManager);
+    GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+                 std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager);
 
     // Blocks in this method until all clients have joined or timeout has been reached
     // Returns false if enough clients have joined in order to start game
@@ -72,11 +72,11 @@ public:
 
 private:
     // Udp messaging queues
-    std::shared_ptr<MessageQueue<std::string>> _incomingMQ;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
 
     // Entity manager
-    std::shared_ptr<Manager> _entityManager;
+    std::shared_ptr<ECSManager> _entityManager;
 
     // Client tracking
     std::vector<Connection> _connectedClients; // Addr info is udp here
