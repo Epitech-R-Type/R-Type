@@ -17,21 +17,13 @@
 #include "../../shared/ECS/Manager.hpp"
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
+#include "../../shared/Networking/ProtocolShared.hpp"
 #include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 #include "Connections.hpp"
 
 #define CONNECTION_DELAY 20 // Time in seconds to wait for clients to connect
 #define MIN_CLIENTS 2
-
-// Command enum
-enum Command { Here };
-
-// Parsed command structure$
-struct ParsedCmd {
-    Command cmd;
-    std::vector<std::vector<std::string>> args;
-};
 
 class GameProtocol {
 public:
