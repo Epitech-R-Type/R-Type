@@ -35,3 +35,8 @@ void ClientLobbyProtocol::handleMessages() {
         //     this->_connected = true;
     }
 }
+
+void ClientLobbyProtocol::sendMessage(std::string msgContent) {
+    Message<std::string> message(msgContent, this->_serverIP, this->_serverPort);
+    this->_outgoingMQ->push(message);
+};

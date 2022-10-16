@@ -51,8 +51,13 @@ public:
     void remove_peer(std::shared_ptr<asio::ip::tcp::socket> peer);
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);
-    std::optional<Message<std::string>> pop_message(void);
+
+    std::optional<Message<std::string>> pop_out_message(void);
+
+    void push_out_message(Message<std::string> msg);
+
     bool getStopFlag();
+
     void pushNewPeer(std::shared_ptr<asio::ip::tcp::socket> newPeer);
 
     // Execute context

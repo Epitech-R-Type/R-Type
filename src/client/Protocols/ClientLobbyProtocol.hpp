@@ -15,7 +15,7 @@ public:
 
     void handleMessages();
 
-    void sendMessage();
+    void sendMessage(std::string msgContent);
 
 private:
     // Tcp com thread stuff

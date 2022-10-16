@@ -12,7 +12,6 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming,
     TcpServer com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
-    // com.setup_incoming_handler();
     com.setup_outgoing_handler();
     com.stop_signal_handler();
     com.setup_acceptor_handler();
@@ -72,7 +71,7 @@ void TcpServer::setup_outgoing_handler() {
         std::optional<Message<std::string>> msg;
         char buffer[1024];
 
-        while ((msg = this->pop_message())) {
+        while ((msg = this->pop_out_message())) {
 
             std::string msgStr = msg->getMsg();
 
@@ -82,8 +81,13 @@ void TcpServer::setup_outgoing_handler() {
             memset(&buffer[len], 0, 1024 - len);
 
             auto peer = this->findPeer(msg->getAddr(), msg->getPort());
-            if (!peer)
+            if (!peer) {
+                std::cout << "Peer: " << msg->getAddr() << ":" << msg->getPort() << " didn't stay around to receive their message" << std::endl;
                 break;
+            }
+
+            std::cout << "Sending: " << buffer << " to: " << msg->getAddr() << ":" << msg->getPort() << std::endl;
+
             peer->send(asio::buffer(buffer));
         }
         this->setup_outgoing_handler();
@@ -101,7 +105,7 @@ void TcpServer::setup_acceptor_handler() {
             auto addr = newPeer->remote_endpoint().address();
             auto port = newPeer->remote_endpoint().port();
 
-            this->push_message(Message<std::string>("CONNECTED\r\n", addr, port));
+            this->push_out_message(Message<std::string>("CONNECTED\r\n", addr, port));
             this->setup_incoming_handler(newPeer);
         }
         this->setup_acceptor_handler();
@@ -170,8 +174,13 @@ void TcpServer::push_message(Message<std::string> msg) {
     this->_incomingMessages->push(msg);
 }
 
-std::optional<Message<std::string>> TcpServer::pop_message(void) {
+// Access Methods
+std::optional<Message<std::string>> TcpServer::pop_out_message(void) {
     return this->_outgoingMessages->pop();
+}
+
+void TcpServer::push_out_message(Message<std::string> msg) {
+    this->_outgoingMessages->push(msg);
 }
 
 bool TcpServer::getStopFlag() {
