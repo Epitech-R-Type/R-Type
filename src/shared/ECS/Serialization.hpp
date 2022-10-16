@@ -10,6 +10,7 @@
 #include "../ECS/Components.hpp"
 #include "../ECS/ECS.hpp"
 #include "../ECS/Manager.hpp"
+#include <cstring>
 #include <iostream>
 #include <regex>
 #include <sstream>
@@ -30,13 +31,36 @@ std::string componentToString(EntityID entityId, Manager* manager) {
 template <class... ComponentTypes>
 std::string entityToString(EntityID entityID, Manager* manager) {
     Index entityIndex = getIndex(entityID);
-
     std::stringstream stream;
+    std::vector<std::string> cerealizedComponents = {componentToString<ComponentTypes>(entityID, manager)...};
 
     stream << entityIndex << ";";
 
-    for (const std::string component : {componentToString<ComponentTypes>(entityID, manager)...}) {
-        stream << component;
+    if (cerealizedComponents.size() == 0) {
+        const std::bitset<MAX_COMPONENTS> setComponents = manager->getSetComponents(entityID);
+
+        for (int componentTypeID = 0; componentTypeID < MAX_COMPONENTS; componentTypeID++) {
+            if (setComponents[componentTypeID] != 1)
+                continue;
+
+            switch (componentTypeID) {
+                case ComponentType::ARMOR:
+                    stream << componentToString<Armor::Component>(entityID, manager);
+                    break;
+                case ComponentType::HEALTH:
+                    stream << componentToString<Health::Component>(entityID, manager);
+                    break;
+                case ComponentType::POSITION:
+                    stream << componentToString<Position::Component>(entityID, manager);
+                    break;
+                default:
+                    std::cout << "[entityToString] Unhandled Component: " << componentTypeID << "." << std::endl;
+            }
+        }
+    } else {
+        for (const std::string component : cerealizedComponents) {
+            stream << component;
+        }
     }
 
     return stream.str();
@@ -89,6 +113,8 @@ void stringToEntity(const std::string entity, Manager* manager) {
             case ComponentType::POSITION:
                 Position::applyUpdate(args, entityID, manager);
                 break;
+            default:
+                std::cout << "[stringToEntity] Unhandled Component: " << componentTypeID << "." << std::endl;
         }
     }
 }

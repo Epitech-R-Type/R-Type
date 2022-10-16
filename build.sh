@@ -1,10 +1,10 @@
-# if [[ ! -d "build" ]]
-# then
-#     mkdir build;
+if [[ ! -d "build" ]]
+then
+    mkdir build;
 # else
 #     rm -rf build;
 #     mkdir build;
-# fi
+fi
 
 cd build;
 

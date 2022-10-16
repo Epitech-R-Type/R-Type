@@ -8,6 +8,7 @@
 #include "../../WindowsGuard.hpp"
 
 #include "../../shared/ECS/Components.hpp"
+#include "../../shared/ECS/Serialization.hpp"
 #include "ClientGame.hpp"
 #include "factories.hpp"
 #include "raylib.h"
