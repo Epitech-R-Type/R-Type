@@ -20,7 +20,7 @@ Client::Client() {
 int Client::launchGame() {
     if (!this->_connected) {
         std::cout << "You are not connected to a server" << std::endl;
-        return;
+        return 84;
     }
 
     // Note: For performance reasons we could free the lobby ecs before launching the game
