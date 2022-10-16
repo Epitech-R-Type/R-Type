@@ -68,6 +68,6 @@ void ECSManager::flush() {
     this->_entities = {};
     this->_unusedEntities = {};
 
-    this->_compPools = std::vector<std::unique_ptr<CompPool>>{};
+    this->_compPools = std::map<Index, std::unique_ptr<CompPool>>{};
     this->_excludedInView.reset();
 };

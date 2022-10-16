@@ -13,6 +13,7 @@
 #include <bitset>
 #include <iostream>
 #include <iterator>
+#include <map>
 #include <memory>
 #include <vector>
 
@@ -78,7 +79,7 @@ public:
         // Check pool if given component exists
         if (this->_compPools.size() <= compId) {
             // Create new pool
-            this->_compPools.resize(compId + 1);
+            // this->_compPools.resize(compId + 1);
             this->_compPools[compId] = std::make_unique<CompPool>(sizeof(T));
         }
 
@@ -189,7 +190,6 @@ public:
 private:
     std::vector<Entity> _entities;
     std::vector<Index> _unusedEntities;
-    std::vector<std::unique_ptr<CompPool>> _compPools;
-
+    std::map<Index, std::unique_ptr<CompPool>> _compPools;
     std::bitset<MAX_COMPONENTS> _excludedInView;
 };
