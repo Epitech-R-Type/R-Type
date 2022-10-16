@@ -35,8 +35,6 @@ int main(int argc, char** argv) {
         return 84;
     }
 
-    InitWindow(1600, 900, "R-Type");
-
     client.mainLoop();
 
     return 0;

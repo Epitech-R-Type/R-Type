@@ -31,4 +31,14 @@ std::optional<Message<T>> MessageQueue<T>::pop() {
     }
 }
 
+template <class T>
+size_t MessageQueue<T>::size() {
+    return this->_queue.size();
+};
+
+template <class T>
+bool MessageQueue<T>::isEmpty() {
+    return this->_queue.size() == 0;
+};
+
 template class MessageQueue<std::string>;

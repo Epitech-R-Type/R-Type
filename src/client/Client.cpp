@@ -43,17 +43,7 @@ void Client::connect(std::string serverIP, int port) {
 
 int Client::mainLoop() {
 
-    while (this->_lobbyRunning && !WindowShouldClose()) {
-
-        if (IsKeyPressed(KEY_ENTER))
-            this->launchGame();
-
-        BeginDrawing();
-
-        ClearBackground(BLACK);
-        this->_spriteSystem->drawImage(Animation::AnimationID::Lost);
-
-        EndDrawing();
+    while (this->_lobbyRunning) {
     }
 
     return 0;

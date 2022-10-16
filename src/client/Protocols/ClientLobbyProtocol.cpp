@@ -14,4 +14,10 @@ void ClientLobbyProtocol::connect(std::string serverIP, int port) {
     // Init tcp com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
+
+    while (this->_incomingMQ->isEmpty()) {
+    }
+
+    auto message = this->_incomingMQ->pop();
+    this->_outgoingMQ->push(Message<std::string>("CONNECT\r\n", message->getAddr(), message->getPort()));
 }

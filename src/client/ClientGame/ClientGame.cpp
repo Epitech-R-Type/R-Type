@@ -66,6 +66,8 @@ void ClientGame::init() {
 }
 
 void ClientGame::mainLoop() {
+    InitWindow(1600, 900, "R-Type");
+
     std::chrono::time_point<std::chrono::system_clock> timer;
 
     while (this->_entManager->entityIsActive(this->_player)) // Detect window close button or ESC key
@@ -92,6 +94,22 @@ void ClientGame::mainLoop() {
             makeEnemy(this->_entManager, this->_spriteSystem);
             timer = getNow();
         }
+
+        EndDrawing();
+    }
+
+    while (1) {
+        const auto now = getNow();
+        std::chrono::duration<double> elapsed_seconds = now - timer;
+
+        // Convert to milliseconds
+        if (elapsed_seconds.count() > 2) {
+            break;
+        }
+        BeginDrawing();
+
+        ClearBackground(BLACK);
+        this->_spriteSystem->drawImage(Animation::AnimationID::Lost);
 
         EndDrawing();
     }
