@@ -1,7 +1,7 @@
 
 #include "UUID.hpp"
 
-UUID::UUID() {
+UUIDM::UUIDM() {
     std::random_device rd;
     auto seed_data = std::array<int, std::mt19937::state_size>{};
     std::generate(std::begin(seed_data), std::end(seed_data), std::ref(rd));
@@ -12,7 +12,7 @@ UUID::UUID() {
     this->_uuid = gen();
 }
 
-UUID::UUID(std::string uuidStr) {
+UUIDM::UUIDM(std::string uuidStr) {
     std::regex pattern("(\\w+-){4}\\w+");
     std::smatch match;
     std::regex_search(uuidStr, match, pattern);
@@ -23,7 +23,7 @@ UUID::UUID(std::string uuidStr) {
         this->_uuid = potUUID.value();
 };
 
-std::string UUID::toString() {
+std::string UUIDM::toString() {
     std::stringstream ss;
 
     ss << this->_uuid;
@@ -31,18 +31,18 @@ std::string UUID::toString() {
     return ss.str();
 };
 
-bool UUID::isValid() {
+bool UUIDM::isValid() {
     return !this->_uuid.is_nil();
 }
 
-bool UUID::operator==(const UUID& uuid) {
+bool UUIDM::operator==(const UUIDM& uuid) {
     return uuid._uuid == this->_uuid;
 }
 
-std::string UUID::operator+(std::string str) {
+std::string UUIDM::operator+(std::string str) {
     return this->toString() + str;
 };
 
-std::string UUID::operator+(char* str) {
+std::string UUIDM::operator+(char* str) {
     return this->toString() + str;
 };

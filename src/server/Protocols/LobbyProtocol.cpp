@@ -8,7 +8,7 @@
 #include "LobbyProtocol.hpp"
 
 LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing)
-    : _connMan(UUID()) {
+    : _connMan(UUIDM()) {
     // Set Messaging queues
     this->_incomingMQ = incoming;
     this->_outgoingMQ = outgoing;
@@ -75,7 +75,7 @@ bool LobbyProtocol::handleCommands() {
             continue;
         }
 
-        UUID uuid(splitBody[1]); // Potential failure here
+        UUIDM uuid(splitBody[1]); // Potential failure here
 
         if (!this->_connMan.uuidValid(uuid)) {
             this->sendResponse("401", "Forbidden", addr, port);

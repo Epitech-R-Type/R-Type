@@ -7,17 +7,17 @@
 #include <sstream>
 #include <string>
 
-class UUID {
+class UUIDM {
 public:
     /**
      * Generate a new UUID
      * */
-    UUID();
+    UUIDM();
 
     /**
      * Extract the first UUID of a string
      * */
-    UUID(std::string uuidStr);
+    UUIDM(std::string uuidStr);
 
     /**
      * Cast UUID to string, to send it over network or similar
@@ -26,13 +26,13 @@ public:
 
     bool isValid();
 
-    bool operator==(const UUID& uuid);
+    bool operator==(const UUIDM& uuid);
 
-    friend std::ostream& operator<<(std::ostream& os, const UUID& uuid) {
+    friend std::ostream& operator<<(std::ostream& os, const UUIDM& uuid) {
         return os << uuid._uuid;
     };
 
-    friend std::string& operator<<(std::string& str, const UUID& uuid) {
+    friend std::string& operator<<(std::string& str, const UUIDM& uuid) {
         std::stringstream ss;
 
         ss << str << uuid;
