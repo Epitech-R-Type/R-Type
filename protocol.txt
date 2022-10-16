@@ -184,10 +184,7 @@ Table of Contents
         server along with their arguments and usage.
 
         In contrast with Server Commands, some of these commands will
-        elicit a response that needs to be awaited by the client. With
-        that in mind, it is recommended that the client find a way to
-        await this response (when needed) without blocking the main
-        gameplay thread.
+        elicit a response.
 
         3.3.1. Server Response
 
