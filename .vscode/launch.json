@@ -23,7 +23,12 @@
             "type": "cppdbg",
             "request": "launch",
             "program": "${cwd}/build/bin/Client",
-            "args": [],
+            "args": [
+                "-ip",
+                "127.0.0.1",
+                "-port",
+                "3501"
+            ],
             "stopAtEntry": false,
             "cwd": "${cwd}",
             "environment": [],

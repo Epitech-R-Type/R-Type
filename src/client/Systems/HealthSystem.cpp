@@ -1,5 +1,6 @@
 #include "HealthSystem.hpp"
 #include "../../shared/ECS/Manager.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 #include "SpriteSystem.hpp"
 #include "Systems.hpp"
 #include "raylib.h"
@@ -39,7 +40,7 @@ void HealthSystem::apply() {
         const float centerX = position->x + (float)Animation::Sheets[anim->animationID].frameWidth * anim->scale / 2.0;
         const float centerY = position->y + (float)Animation::Sheets[anim->animationID].frameHeight * anim->scale / 2.0;
 
-        Point center = HitboxSystem::rotate({centerX, centerY}, {position->x, position->y}, HitboxSystem::toRadians(anim->rotation));
+        Point center = Utilities::rotate({centerX, centerY}, {position->x, position->y}, Utilities::toRadians(anim->rotation));
 
         if (health->visible) {
             float width = Animation::Sheets[anim->animationID].frameWidth * anim->scale;

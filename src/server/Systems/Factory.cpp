@@ -1,7 +1,8 @@
-#include "factories.hpp"
+#include "Factory.hpp"
+#include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/Manager.hpp"
-#include "../systems/SpriteSystem.hpp"
-#include "../systems/Systems.hpp"
+#include "../../shared/Systems/HitboxSystem.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 
 void dealDamage(EntityID attacker, EntityID defender, ECSManager* ECS) {
     if (!ECS->hasComponent<Health::Component>(defender) || !ECS->getComponent<Damage::Component>(attacker))
@@ -20,23 +21,17 @@ void dealDamage(EntityID attacker, EntityID defender, ECSManager* ECS) {
         immunityFrame->timer = getNow();
     }
 
-    // std::cout << defender << "(" << healthC->health << "/" << healthC->maxHealth << ") was dealt " << damageC->damage << " damage by " << attacker
-    //           << std::endl;
-
     healthC->health = healthC->health - (damageC->damage - (armor != nullptr ? armor->armor : 0));
 }
 
-EntityID makePlayer(ECSManager* ECS, SpriteSystem* spriteSystem) {
+EntityID Factory::Ally::makePlayer(ECSManager* ECS) {
     EntityID player = ECS->newEntity();
 
-    const float startX = (float)(GetScreenWidth() * (1.0 / 3.0));
-    const float startY = (float)(GetScreenHeight() / 1.5);
-
-    Position::Component* position = ECS->addComp<Position::Component>(player, {startX, startY});
+    Position::Component* position = ECS->addComp<Position::Component>(player, {0, 0});
     Animation::Component* animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2});
     ECS->addComp<Health::Component>(player, {50, 50});
     ECS->addComp<Player::Component>(player, {true});
-    ECS->addComp<Armament::Component>(player, {Armament::Type::LaserBuckshot, 150, -1});
+    ECS->addComp<Armament::Component>(player, {Armament::Type::Buckshot, 150, -1});
     ECS->addComp<Velocity::Component>(player, {10, 10});
     ECS->addComp<Hitbox::Component>(player, HitboxSystem::buildHitbox(animation, position));
     ECS->addComp<Team::Component>(player, Team::Ally);
@@ -47,7 +42,7 @@ EntityID makePlayer(ECSManager* ECS, SpriteSystem* spriteSystem) {
     return player;
 }
 
-void makeEndboss(ECSManager* ECS, SpriteSystem* spriteSystem) {
+void Factory::Enemy::makeEndboss(ECSManager* ECS) {
     EntityID endboss = ECS->newEntity();
     int players = 0;
     for (auto beg = ECS->begin<Player::Component>(); beg != ECS->end<Player::Component>(); ++beg) {
@@ -57,12 +52,10 @@ void makeEndboss(ECSManager* ECS, SpriteSystem* spriteSystem) {
     Animation::Component* animation = ECS->addComp<Animation::Component>(endboss, {Animation::AnimationID::Cluster, 1, -90.0});
 
     float xOffset = Animation::Sheets[Animation::AnimationID::Cluster].frameHeight * 3;
-
     float yOffset = Animation::Sheets[Animation::AnimationID::Cluster].frameWidth / 2;
 
-    const float startX = (float)(GetScreenWidth() - xOffset);
-
-    const float startY = (float)(GetScreenHeight() - yOffset);
+    const float startX = WINDOW_WIDTH - xOffset;
+    const float startY = WINDOW_HEIGHT - yOffset;
 
     Position::Component* position = ECS->addComp<Position::Component>(endboss, {startX, startY});
 
@@ -73,12 +66,11 @@ void makeEndboss(ECSManager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<CollisionEffect::Component>(endboss, &dealDamage);
 }
 
-void makeEnemy(ECSManager* ECS, SpriteSystem* spriteSystem) {
+void Factory::Enemy::makeEnemy(ECSManager* ECS) {
     EntityID enemy = ECS->newEntity();
 
-    const float startX = (float)(GetScreenWidth());
-
-    const float startY = (float)(rand() % GetScreenHeight());
+    const float startX = WINDOW_WIDTH;
+    const float startY = rand() % (int)WINDOW_HEIGHT;
 
     Position::Component* position = ECS->addComp<Position::Component>(enemy, {startX, startY});
     Animation::Component* animation = ECS->addComp<Animation::Component>(enemy, {Animation::AnimationID::Orb, 3});
@@ -93,14 +85,7 @@ void makeEnemy(ECSManager* ECS, SpriteSystem* spriteSystem) {
     ECS->addComp<CollisionEffect::Component>(enemy, &dealDamage);
 }
 
-EntityID getPlayerID(ECSManager* ECS) {
-    for (auto beg = ECS->begin<Player::Component>(); beg != ECS->end<Player::Component>(); ++beg) {
-        return *beg;
-    }
-    return -1;
-}
-
-void bullet(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source, int velocityX, int velocityY, double rotation) {
+void bullet(ECSManager* ECS, EntityID source, int velocityX, int velocityY, double rotation) {
     const EntityID bullet = ECS->newEntity();
 
     const Position::Component* sourcePos = ECS->getComponent<Position::Component>(source);
@@ -111,7 +96,7 @@ void bullet(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source, int ve
         sourcePos->y + (float)Animation::Sheets[sourceAnimation->animationID].frameHeight * sourceAnimation->scale / 2.0,
     };
 
-    Point center = HitboxSystem::rotate(oldCenter, {sourcePos->x, sourcePos->y}, HitboxSystem::toRadians(sourceAnimation->rotation));
+    Point center = Utilities::rotate(oldCenter, {sourcePos->x, sourcePos->y}, Utilities::toRadians(sourceAnimation->rotation));
 
     Position::Component positionPre{};
     Velocity::Component velocity{};
@@ -141,15 +126,14 @@ void bullet(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source, int ve
     ECS->addComp<CollisionEffect::Component>(bullet, &dealDamage);
 }
 
-void makeLaser(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source) {
-    bullet(ECS, spriteSystem, source, 40, 0, 0);
+void Factory::Weapon::makeLaser(ECSManager* ECS, EntityID source) {
+    bullet(ECS, source, 40, 0, 0);
 }
 
-void makeLaserBuckshot(ECSManager* ECS, SpriteSystem* spriteSystem, EntityID source) {
-
-    bullet(ECS, spriteSystem, source, 40, 0, 0);
-    bullet(ECS, spriteSystem, source, 40, 5, 6);
-    bullet(ECS, spriteSystem, source, 40, 10, 12);
-    bullet(ECS, spriteSystem, source, 40, -5, -6);
-    bullet(ECS, spriteSystem, source, 40, -10, -12);
+void Factory::Weapon::makeBuckshot(ECSManager* ECS, EntityID source) {
+    bullet(ECS, source, 40, 0, 0);
+    bullet(ECS, source, 40, 5, 6);
+    bullet(ECS, source, 40, 10, 12);
+    bullet(ECS, source, 40, -5, -6);
+    bullet(ECS, source, 40, -10, -12);
 }

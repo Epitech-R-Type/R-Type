@@ -11,7 +11,7 @@
 #include "ClientGame/ClientGame.hpp"
 #include "Protocols/ClientLobbyProtocol.hpp"
 #include "Protocols/TcpClient.hpp"
-#include "systems/SpriteSystem.hpp"
+#include "Systems/SpriteSystem.hpp"
 #include <thread>
 
 // This class implementls the main loop for lobby handling of the client
@@ -44,7 +44,5 @@ private:
     std::thread* _userInputThread;
 
     ClientGame* _game;
-    SpriteSystem* _spriteSystem;
-    ECSManager* _ECS;
     ClientLobbyProtocol* _protocol;
 };

@@ -7,16 +7,12 @@
 
 #pragma once
 
+#include "../Utilities/Utilities.hpp"
 #include "ECS.hpp"
 #include <ctime>
 #include <map>
 #include <sstream>
 #include <vector>
-
-struct Point {
-    double x;
-    double y;
-};
 
 enum ComponentType {
     ARMOR,
@@ -139,7 +135,7 @@ namespace Damage {
 namespace Armament {
     enum Type {
         Laser,
-        LaserBuckshot,
+        Buckshot,
     };
 
     struct Component {

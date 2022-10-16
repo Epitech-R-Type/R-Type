@@ -12,7 +12,7 @@
 #include "../../shared/ECS/Manager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
-#include "../systems/Systems.hpp"
+#include "../Systems/Systems.hpp"
 #include <memory>
 #include <string>
 #include <thread>
@@ -22,7 +22,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem);
+    ClientGame();
     ~ClientGame();
 
     void init();
@@ -31,16 +31,12 @@ public:
 
 private:
     ECSManager* _entManager;
-
     EntityID _player;
 
     SpriteSystem* _spriteSystem;
     VelocitySystem* _velocitySystem;
     PlayerMovementSystem* _playerMovementSystem;
     HealthSystem* _healthSystem;
-    ArmamentSystem* _armamentSystem;
-    HitboxSystem* _hitboxSystem;
-    JanitorSystem* _janitorSystem;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class

@@ -15,6 +15,9 @@
 
 #define INVALID_INDEX -1
 
+#define WINDOW_WIDTH 1600.0
+#define WINDOW_HEIGHT 900.0
+
 // TYPE DEFINITIONS
 
 // Type used to represent entity ID

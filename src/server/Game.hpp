@@ -14,6 +14,7 @@
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Networking/UdpCommunication.hpp"
 #include "Protocols/TcpServer.hpp"
+#include "Systems/Systems.hpp"
 
 // This class embodies everything having to do with a single game
 // It will include:
@@ -24,13 +25,19 @@ class Game {
 public:
     // All the game setup is done in here
     Game();
+
     ~Game();
 
+    void init();
     // Main Loop
     int mainLoop();
 
 private:
-    ECSManager _entManager;
+    ECSManager* _entManager;
+    VelocitySystem* _velocitySystem;
+    ArmamentSystem* _armamentSystem;
+    HitboxSystem* _hitboxSystem;
+    JanitorSystem* _janitorSystem;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class

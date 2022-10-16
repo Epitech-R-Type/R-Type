@@ -7,9 +7,14 @@
 
 #pragma once
 
+#include <complex>
 #include <string>
 #include <vector>
 
+struct Point {
+    double x;
+    double y;
+};
 class Utilities {
 public:
     Utilities();
@@ -26,5 +31,21 @@ public:
         }
         output.push_back(str);
         return output;
+    }
+
+    static Point rotate(Point point, Point origin, double rad) {
+        std::complex<double> P = {point.x, point.y};
+        std::complex<double> Q = {origin.x, origin.y};
+
+        std::complex<double> res = (P - Q) * std::polar(1.0, rad) + Q;
+        return {
+            res.real(),
+            res.imag(),
+        };
+    }
+
+    static double toRadians(double degree) {
+        constexpr double pi = 22 / 7;
+        return (double)degree * (pi / 180.0);
     }
 };
