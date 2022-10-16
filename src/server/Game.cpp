@@ -47,7 +47,6 @@ int Game::mainLoop() {
     std::cout << "Entering main loop()" << std::endl;
 
     std::chrono::time_point<std::chrono::system_clock> timer;
-    Factory::Enemy::makeEnemy(this->_entManager);
 
     while (this->_isRunning) {
         this->_velocitySystem->apply();
@@ -61,7 +60,7 @@ int Game::mainLoop() {
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 0.5) {
+        if (elapsed_seconds.count() > 4) {
             Factory::Enemy::makeEnemy(this->_entManager);
             timer = getNow();
         }

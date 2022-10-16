@@ -14,6 +14,8 @@ void HealthSystem::setPlayer(EntityID playerID) {
 };
 
 void HealthSystem::drawPlayerHP() {
+    if (!isValid(this->_player))
+        return;
     Health::Component* health = this->_ECS->getComponent<Health::Component>(this->_player);
     const float width = 150;
 

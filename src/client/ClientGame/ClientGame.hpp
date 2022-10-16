@@ -31,7 +31,7 @@ public:
 
 private:
     ECSManager* _entManager;
-    EntityID _player;
+    EntityID _player = INVALID_INDEX;
 
     SpriteSystem* _spriteSystem;
     VelocitySystem* _velocitySystem;
