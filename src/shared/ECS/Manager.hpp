@@ -130,6 +130,26 @@ public:
         this->_excludedInView.reset();
     }
 
+    bool isValidID(EntityID id) {
+        Index i = getIndex(id);
+
+        if (i == INVALID_INDEX || i >= this->_entities.size())
+            return false;
+        return true;
+    }
+
+    bool isValidComp(EntityID id, Index i) {
+        if (!this->isValidID(id))
+            return false;
+        if (i >= MAX_COMPONENTS)
+            return false;
+
+        Index entityIndex = getIndex(id);
+        if (!this->_entities[entityIndex].components[i])
+            return false;
+        return true;
+    }
+
     // ITERATOR IMPLEMENTATION
     template <class... Comps>
     class Iterator {
