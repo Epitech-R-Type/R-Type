@@ -7,7 +7,8 @@
 
 #include "LobbyProtocol.hpp"
 
-LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing)
+LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing)
     : _connMan(UUIDM()) {
     // Set Messaging queues
     this->_incomingMQ = incoming;
@@ -56,7 +57,6 @@ bool LobbyProtocol::handleCommands() {
         // Retrieve main command
         std::string cmd = splitBody[0];
 
-        std::cout << cmd << std::endl;
         // CONNECT Command
         if (cmd == "CONNECT\r\n") {
             // Add to connection manager and get new uuid
@@ -75,6 +75,13 @@ bool LobbyProtocol::handleCommands() {
             continue;
         }
 
+        // If invalid size error 500
+        if (splitBody.size() < 2) {
+            Message<std::string> msg("500 Wrong request\r\n", addr, port);
+            this->_outgoingMQ->push(msg);
+            continue;
+        }
+
         UUIDM uuid(splitBody[1]); // Potential failure here
 
         if (!this->_connMan.uuidValid(uuid)) {
@@ -86,7 +93,6 @@ bool LobbyProtocol::handleCommands() {
         if (cmd == "START") {
 
             // Set boolean that game should start
-            gameShouldStart = true;
 
             this->startGame();
             continue;
@@ -98,10 +104,6 @@ bool LobbyProtocol::handleCommands() {
 
 // Server Commands
 void LobbyProtocol::startGame() {
-    // If less than 2 connections, do nothing
-    if (this->_connMan.getConnectionCount() < 2)
-        return;
-
     // Get Connections
     auto connections = this->_connMan.getConnections();
 

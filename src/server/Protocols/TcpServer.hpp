@@ -20,12 +20,12 @@
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/AsioConstants.hpp"
 
-void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                            std::shared_ptr<std::atomic<bool>> stopFlag);
+void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag);
 
 class TcpServer {
 public:
-    TcpServer(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+    TcpServer(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
               std::shared_ptr<std::atomic<bool>> stopFlag);
 
     // Setup action accepting new connections on socket
@@ -51,8 +51,13 @@ public:
     void remove_peer(std::shared_ptr<asio::ip::tcp::socket> peer);
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);
-    std::optional<Message<std::string>> pop_message(void);
+
+    std::optional<Message<std::string>> pop_out_message(void);
+
+    void push_out_message(Message<std::string> msg);
+
     bool getStopFlag();
+
     void pushNewPeer(std::shared_ptr<asio::ip::tcp::socket> newPeer);
 
     // Execute context
@@ -73,8 +78,8 @@ private:
     char _buffer[MAX_BUFFER_SIZE];
 
     // Messaging queues
-    std::shared_ptr<MessageQueue<std::string>> _incomingMessages;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMessages;
 
     // Timers
     asio::steady_timer _outgoingTimer; // Check for outgoing msg interval timer

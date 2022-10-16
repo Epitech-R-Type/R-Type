@@ -9,6 +9,7 @@
 
 #include "../shared/ECS/ECS.hpp"
 #include "ClientGame/ClientGame.hpp"
+#include "Protocols/ClientLobbyProtocol.hpp"
 #include "Protocols/TcpClient.hpp"
 #include "systems/SpriteSystem.hpp"
 #include <thread>
@@ -33,20 +34,17 @@ public:
 
     void connect(std::string serverIP, int port = TCP_PORT);
 
+    void handleUserCommands();
+
 private:
     bool _lobbyRunning;
     bool _connected;
 
+    std::shared_ptr<MessageQueue<std::string>> _userCommands = std::make_shared<MessageQueue<std::string>>();
+    std::thread* _userInputThread;
+
     ClientGame* _game;
     SpriteSystem* _spriteSystem;
     ECSManager* _ECS;
-
-    // LobbyProtocol* _protocol;
-
-    // Tcp com thread stuff
-    std::thread* _comThread;
-    std::shared_ptr<std::atomic<bool>> _stopFlag;
-
-    std::shared_ptr<MessageQueue<std::string>> _incomingMQ;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMQ;
+    ClientLobbyProtocol* _protocol;
 };

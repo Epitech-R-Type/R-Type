@@ -7,10 +7,11 @@
 
 #include "Game.hpp"
 
-Game::Game() : _isRunning(true) {
+Game::Game()
+    : _isRunning(true) {
     // Construct messaging queues
-    this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
+    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
+    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);

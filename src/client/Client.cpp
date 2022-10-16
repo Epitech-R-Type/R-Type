@@ -7,12 +7,15 @@
 
 #include "Client.hpp"
 #include "../shared/ECS/Manager.hpp"
+#include "../shared/MessageQueue/MessageQueue.hpp"
 #include "raylib.h"
 
 Client::Client() {
 
     this->_ECS = new ECSManager();
     this->_spriteSystem = new SpriteSystem(this->_ECS);
+    this->_protocol = new ClientLobbyProtocol();
+
     this->_lobbyRunning = true;
     this->_connected = false;
 }
@@ -37,31 +40,42 @@ int Client::launchGame() {
 }
 
 void Client::connect(std::string serverIP, int port) {
-    this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
+    this->_protocol->connect(serverIP, port);
+}
 
-    // For some reason initializer list initialization wasn't working
-    // this->_protocol = new LobbyProtocol(this->_incomingMQ, this->_outgoingMQ);
+void Client::handleUserCommands() {
+    std::optional<std::string> potMsg;
+    while ((potMsg = this->_userCommands->pop())) {
+        std::string msg = potMsg.value();
 
-    // Init tcp com thread
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
-    this->_connected = true;
+        if (msg == "Start")
+            this->_protocol->sendStart();
+    }
+}
+
+void userInput(std::shared_ptr<MessageQueue<std::string>> userCommands) {
+    while (1) {
+        std::string command;
+
+        std::cin >> command;
+
+        userCommands->push(command);
+    }
 }
 
 int Client::mainLoop() {
+    this->_userInputThread = new std::thread(userInput, this->_userCommands);
 
-    while (this->_lobbyRunning && !WindowShouldClose()) {
+    while (this->_lobbyRunning) {
+        this->_protocol->handleIncMessages();
 
-        if (IsKeyPressed(KEY_ENTER))
+        this->handleUserCommands();
+
+        this->_connected = this->_protocol->isConnected();
+
+        if (this->_protocol->shouldGameStart()) {
             this->launchGame();
-
-        BeginDrawing();
-
-        ClearBackground(BLACK);
-        this->_spriteSystem->drawImage(Animation::AnimationID::Lost);
-
-        EndDrawing();
+        }
     }
 
     return 0;

@@ -14,12 +14,12 @@
 
 ClientGame::ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem) {
     // Construct messaging queues
-    this->_incomingMQ = std::make_shared<MessageQueue<std::string>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<std::string>>();
+    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
+    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    // this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 
     this->_entManager = ECS;
 
@@ -47,7 +47,7 @@ ClientGame::ClientGame(ECSManager* ECS, SpriteSystem* spriteSystem) {
 ClientGame::~ClientGame() {
     // Signal thread to stop and join thread
     this->_stopFlag->store(true);
-    this->_udpComThread->join();
+    // this->_udpComThread->join();
 
     // Delete com thread
     delete this->_udpComThread;
@@ -66,6 +66,8 @@ void ClientGame::init() {
 }
 
 void ClientGame::mainLoop() {
+    InitWindow(1600, 900, "R-Type");
+
     std::chrono::time_point<std::chrono::system_clock> timer;
 
     while (this->_entManager->entityIsActive(this->_player)) // Detect window close button or ESC key
@@ -92,6 +94,22 @@ void ClientGame::mainLoop() {
             makeEnemy(this->_entManager, this->_spriteSystem);
             timer = getNow();
         }
+
+        EndDrawing();
+    }
+
+    while (1) {
+        const auto now = getNow();
+        std::chrono::duration<double> elapsed_seconds = now - timer;
+
+        // Convert to milliseconds
+        if (elapsed_seconds.count() > 2) {
+            break;
+        }
+        BeginDrawing();
+
+        ClearBackground(BLACK);
+        this->_spriteSystem->drawImage(Animation::AnimationID::Lost);
 
         EndDrawing();
     }

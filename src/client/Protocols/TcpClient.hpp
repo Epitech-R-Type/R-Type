@@ -12,17 +12,18 @@
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/AsioConstants.hpp"
 
-void tcp_communication_main(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
-                            std::shared_ptr<std::atomic<bool>> stopFlag, std::string ipv6, int port);
+void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
+                            std::string ipv6, int port);
 
 class TcpClient {
 public:
-    TcpClient(std::shared_ptr<MessageQueue<std::string>> incoming, std::shared_ptr<MessageQueue<std::string>> outgoing,
+    TcpClient(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
               std::shared_ptr<std::atomic<bool>> stopFlag);
 
     // Setup action receiving TCP messages
     // Note: Needs to be called again in order to loop
-    void setupIncomingHandler(std::shared_ptr<asio::ip::tcp::socket> _server);
+    void setupIncomingHandler();
 
     // Setup action polling MQ for new messages to send
     // Note: Needs to be called again in order to loop
@@ -47,21 +48,18 @@ public:
     // Stop context
     void stop();
 
+    std::shared_ptr<asio::ip::tcp::socket> _server;
+
 private:
     // Async context executed in com thread
     asio::io_context _ctxt;
-
-    // Asio networking
-    asio::ip::tcp::acceptor _acceptor;
-
-    std::shared_ptr<asio::ip::tcp::socket> _server;
 
     // Buffer used for msg reception
     char _buffer[MAX_BUFFER_SIZE];
 
     // Messaging queues
-    std::shared_ptr<MessageQueue<std::string>> _incomingMessages;
-    std::shared_ptr<MessageQueue<std::string>> _outgoingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMessages;
+    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMessages;
 
     // Timers
     asio::steady_timer _outgoingTimer; // Check for outgoing msg interval timer

@@ -20,7 +20,10 @@
 template <class T>
 class Message {
 public:
-    Message(T msg, asio::ip::address addr, asio::ip::port_type port) : _msg(msg), _addr(addr), _port(port){};
+    Message(T msg, asio::ip::address addr, asio::ip::port_type port)
+        : _msg(msg),
+          _addr(addr),
+          _port(port){};
 
     // << to stream overload
     template <class T2>
@@ -70,10 +73,11 @@ public:
     ~MessageQueue();
 
     // Note : Does not implement size() as no code can safely depend on size
-    void push(Message<T> el);
-    std::optional<Message<T>> pop(void);
+    void push(T el);
+
+    std::optional<T> pop(void);
 
 private:
     std::mutex _mtx;
-    std::queue<Message<T>> _queue;
+    std::queue<T> _queue;
 };

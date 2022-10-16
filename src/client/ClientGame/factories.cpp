@@ -20,8 +20,8 @@ void dealDamage(EntityID attacker, EntityID defender, ECSManager* ECS) {
         immunityFrame->timer = getNow();
     }
 
-    std::cout << defender << "(" << healthC->health << "/" << healthC->maxHealth << ") was dealt " << damageC->damage << " damage by " << attacker
-              << std::endl;
+    // std::cout << defender << "(" << healthC->health << "/" << healthC->maxHealth << ") was dealt " << damageC->damage << " damage by " << attacker
+    //           << std::endl;
 
     healthC->health = healthC->health - (damageC->damage - (armor != nullptr ? armor->armor : 0));
 }
