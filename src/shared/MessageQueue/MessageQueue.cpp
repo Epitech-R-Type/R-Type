@@ -16,6 +16,7 @@ MessageQueue<T>::~MessageQueue() {}
 template <class T>
 void MessageQueue<T>::push(Message<T> el) {
     std::lock_guard<std::mutex> lock(this->_mtx);
+    std::cout << "push" << std::endl;
     this->_queue.push(el);
 }
 

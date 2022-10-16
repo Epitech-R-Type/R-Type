@@ -56,7 +56,6 @@ bool LobbyProtocol::handleCommands() {
         // Retrieve main command
         std::string cmd = splitBody[0];
 
-        std::cout << cmd << std::endl;
         // CONNECT Command
         if (cmd == "CONNECT\r\n") {
             // Add to connection manager and get new uuid
@@ -71,6 +70,13 @@ bool LobbyProtocol::handleCommands() {
 
             Message<std::string> msg(body, addr, port);
 
+            this->_outgoingMQ->push(msg);
+            continue;
+        }
+
+        // If invalid size error 500
+        if (splitBody.size() < 2) {
+            Message<std::string> msg("500 Wrong request\r\n", addr, port);
             this->_outgoingMQ->push(msg);
             continue;
         }

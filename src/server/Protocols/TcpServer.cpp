@@ -72,7 +72,6 @@ void TcpServer::setup_outgoing_handler() {
         char buffer[1024];
 
         while ((msg = this->pop_out_message())) {
-
             std::string msgStr = msg->getMsg();
 
             // Prepare buffer
