@@ -38,21 +38,28 @@ class ProtocolUtils {
 public:
     static std::optional<ParsedCmd> parseCommand(Message<std::string> msg) {
         std::optional<ParsedCmd> output;
-        auto splitMsg = Utilities::splitStr(msg.getMsg(), " ");
+        std::vector<std::string> splitMsg = Utilities::splitStr(msg.getMsg(), " ");
+
+        std::cout << msg.getMsg() << std::endl;
 
         // Error handling
         if (splitMsg.size() != 2)
             return {};
         // Check for CRLF
-        if (splitMsg[1][splitMsg.size() - 1] != '\n' || splitMsg[1][splitMsg.size() - 2] != '\r')
+        if (splitMsg[1][splitMsg.size() - 1] != '\n' || splitMsg[1][splitMsg.size() - 2] != '\r') {
+            ERROR("Carriage Return Line Feed missing.");
             return {};
+        }
         splitMsg[1].erase(splitMsg[1].length() - 2, 2);
 
         // Get command type
-        if (splitMsg[0] == "HERE")
+        if (splitMsg[0] == "HERE") {
+            LOG("HERE");
             output->cmd = Command::Here; // Note make sure you do ELSE IF
-        else
+        } else {
+            LOG("THERE");
             return {};
+        }
 
         // Split args up in args and subargs
         auto splitArgs = Utilities::splitStr(splitMsg[1], ";");
