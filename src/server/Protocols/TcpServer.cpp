@@ -135,8 +135,8 @@ void TcpServer::stop_signal_handler() {
 std::shared_ptr<asio::ip::tcp::socket> TcpServer::findPeer(asio::ip::address addr, asio::ip::port_type port) {
     for (auto peer : this->_peers) {
         if (!peer->is_open()) {
-            continue;
             ERROR("Invalid Peer");
+            continue;
         }
         auto peerAddr = peer->remote_endpoint().address();
         auto peerPort = peer->remote_endpoint().port();
