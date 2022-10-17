@@ -55,6 +55,7 @@ void ClientGame::mainLoop() {
 
         ClearBackground(BLACK);
 
+        this->_protocol.handleCommands();
         this->_spriteSystem->apply();
         this->_velocitySystem->apply();
         this->_playerMovementSystem->apply();
