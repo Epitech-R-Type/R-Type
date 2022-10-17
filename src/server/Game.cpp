@@ -19,8 +19,6 @@ Game::Game(std::vector<Connection> connections, int port)
       _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _protocol(_incomingMQ, _outgoingMQ, connections, _entManager) {
     // Construct messaging queues
-    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
