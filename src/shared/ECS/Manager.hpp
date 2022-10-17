@@ -14,6 +14,7 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <vector>
 
 struct Entity {
@@ -241,7 +242,13 @@ public:
 
     void flush();
 
+    std::optional<EntityID> getModified();
+
+    void pushModified(EntityID);
+
 private:
+    std::vector<EntityID> _modifiedEntities;
+
     std::vector<Entity> _entities;
     std::vector<Index> _unusedEntities;
     std::vector<std::unique_ptr<CompPool>> _compPools;

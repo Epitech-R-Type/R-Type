@@ -75,10 +75,10 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 }
 
 void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
-    int player = this->getPlayer(addr, port);
+    int playerUID = this->getPlayer(addr, port);
 
     // Error handling
-    if (0 > player || cmd.args.size() != 1 || cmd.args[0].size() != 1) {
+    if (0 > playerUID || cmd.args.size() != 1 || cmd.args[0].size() != 1) {
         ERROR("Command is invalid.");
         return;
     }
@@ -87,7 +87,22 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     // This in case client has missed message that his character is dead
     std::string direction;
 
-    LOG("Player " << player << " is moving " << direction << ".");
+    EntityID entityID = INVALID_INDEX;
+    for (auto beg = this->_entityManager->begin<Player::Component>(); beg != this->_entityManager->end<Player::Component>(); ++beg) {
+        Player::Component* playerComp = this->_entityManager->getComponent<Player::Component>(*beg);
+
+        if (playerComp->uniqueID == playerUID) {
+            entityID = *beg;
+            break;
+        }
+    }
+
+    if (entityID == INVALID_INDEX) {
+        ERROR("Unable to find Entity attached to player " << playerUID << ".");
+        return;
+    }
+
+    LOG("Player " << playerUID << " is moving " << direction << ".");
 
     Position::Component* position = this->_entityManager->getComponent<Position::Component>(entityID);
     Velocity::Component* velocity = this->_entityManager->getComponent<Velocity::Component>(entityID);
@@ -101,6 +116,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
         position->x -= velocity->x;
     if (direction == "RIGHT")
         position->x += velocity->x;
+    this->_entityManager->pushModified(entityID);
 }
 
 void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {

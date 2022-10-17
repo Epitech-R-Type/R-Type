@@ -33,6 +33,8 @@ public:
     // Main Loop
     int mainLoop();
 
+    void sendModified();
+
 private:
     // ECS and Systems
     std::shared_ptr<ECSManager> _entManager;
