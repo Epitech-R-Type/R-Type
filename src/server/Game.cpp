@@ -65,7 +65,7 @@ int Game::mainLoop() {
 
         // Convert to milliseconds
         if (elapsed_seconds.count() > 4) {
-            Factory::Enemy::makeEnemy(this->_entManager);
+            this->_protocol.sendEntity(Factory::Enemy::makeEnemy(this->_entManager));
             timer = getNow();
         }
     }
