@@ -30,8 +30,8 @@ int main(int argc, char** argv) {
         else
             client.connect(ip);
     } else {
-        std::cout << "You need to provide an IP, you can specify a port, defaults to " << TCP_PORT << "." << std::endl;
-        std::cout << "Use --help for more." << std::endl;
+        LOG("You need to provide an IP, you can specify a port, defaults to " << TCP_PORT << ".");
+        LOG("Use --help for more.");
         return 84;
     }
 

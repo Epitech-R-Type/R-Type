@@ -54,13 +54,13 @@ void Game::sendModified() {
     std::optional<EntityID> entityID;
 
     while ((entityID = this->_entManager->getModified())) {
-        std::cout << "broadcasting " << entityID << std::endl;
+        std::cout << "broadcasting " << entityID.value() << std::endl;
         this->_protocol.sendEntity(entityID.value());
     }
 };
 
 int Game::mainLoop() {
-    std::cout << "Entering main loop()" << std::endl;
+    LOG("Starting Game");
 
     std::chrono::time_point<std::chrono::system_clock> timer;
 

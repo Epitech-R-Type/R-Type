@@ -40,8 +40,6 @@ public:
         std::optional<ParsedCmd> output = {{Command::Here, std::vector<std::vector<std::string>>()}};
         std::vector<std::string> splitMsg = Utilities::splitStr(msg.getMsg(), " ");
 
-        std::cout << msg.getMsg() << std::endl;
-
         // Error handling
         if (splitMsg.size() != 2) {
             ERROR("Message length not 2.");
