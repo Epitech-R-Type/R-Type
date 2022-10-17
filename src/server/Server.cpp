@@ -46,8 +46,10 @@ int Server::mainLoop() {
         // DO STUFF
 
         // Handle messages and launch game if game should start
-        if ((port = this->_protocol->handleCommands()))
+        if ((port = this->_protocol->handleCommands())) {
+            LOG("Launching game");
             this->launchGame(port);
+        }
     }
 
     return 0;

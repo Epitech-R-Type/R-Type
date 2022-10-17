@@ -50,8 +50,6 @@ void ClientGame::init() {
 }
 
 void ClientGame::mainLoop() {
-    this->init();
-
     while (this->_entManager->entityIsActive(this->_player)) // Detect window close button or ESC key
     {
         BeginDrawing();

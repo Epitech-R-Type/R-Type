@@ -40,7 +40,7 @@ std::vector<Connection> LobbyProtocol::getConnections() {
 
 int LobbyProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
-    int port = 0;
+    int outputPort = 0;
 
     while ((msg = this->_incomingMQ->pop())) {
         // Get peer info
@@ -98,18 +98,18 @@ int LobbyProtocol::handleCommands() {
         if (cmd == "START") {
 
             // Set boolean that game should start
-            port = UDP_PORT;
+            outputPort = UDP_PORT;
 
             // Find an available port
-            while (!Utilities::isPortAvailable(port))
-                port++;
+            while (!Utilities::isPortAvailable(outputPort))
+                outputPort++;
 
-            this->startGame(port);
+            this->startGame(outputPort);
             continue;
         }
     }
 
-    return port;
+    return outputPort;
 }
 
 // Server Commands
@@ -121,11 +121,13 @@ void LobbyProtocol::startGame(int port) {
     std::stringstream msgBody;
     msgBody << START_GAME << SP << this->_connMan.getServerUUID() << ";" << port << SP << END;
 
-    LOG("Starting Game.");
+    LOG("Sending start game command.");
     // Send START_GAME command to all connected clients
     for (auto conn : connections) {
         Message<std::string> msg(msgBody.str(), conn.addr, conn.port);
 
         this->_outgoingMQ->push(msg);
     }
+
+    LOG("Done sending start game command.");
 }

@@ -42,6 +42,7 @@ Game::~Game() {
 }
 
 void Game::init() {
+    LOG("Initializing game");
     srand(time(0));
     this->_protocol.waitForClients();
 }

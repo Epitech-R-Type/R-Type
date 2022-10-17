@@ -23,6 +23,7 @@ bool GameProtocol::waitForClients() {
 
     while (this->_connectedClients.size() < targetClientCount && !timeout.isExpired()) {
         while ((msg = this->_incomingMQ->pop())) {
+            LOG("Received new message");
             // Parse command
             auto parsedCmd = ProtocolUtils::parseCommand(*msg);
 
