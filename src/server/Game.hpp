@@ -13,6 +13,7 @@
 #include "../shared/ECS/Manager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Networking/UdpCommunication.hpp"
+#include "Protocols/GameProtocol.hpp"
 #include "Protocols/TcpServer.hpp"
 #include "Systems/Systems.hpp"
 
@@ -33,17 +34,19 @@ public:
     int mainLoop();
 
 private:
+    // ECS and Systems
     ECSManager* _entManager;
     VelocitySystem* _velocitySystem;
     ArmamentSystem* _armamentSystem;
     HitboxSystem* _hitboxSystem;
     JanitorSystem* _janitorSystem;
 
-    // Messaging queues for protocol
-    // These should eventually be moved to the protocol class
+    // UDP Networking
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+    // GameProtocol _protocol;
 
+    // Multithreading
     bool _isRunning;
     std::thread* _udpComThread;
     std::shared_ptr<std::atomic<bool>> _stopFlag;

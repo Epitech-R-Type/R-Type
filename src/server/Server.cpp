@@ -52,7 +52,12 @@ int Server::mainLoop() {
 }
 
 int Server::launchGame() {
-    this->_game.mainLoop();
+    this->_game = new Game();
+
+    this->_game->init();
+    this->_game->mainLoop();
+
+    delete this->_game;
 
     return 0;
 }

@@ -42,7 +42,7 @@ public:
 
 private:
     bool _lobbyRunning;
-    Game _game;
+    Game* _game;
     LobbyProtocol* _protocol;
 
     // Tcp com thread stuff
