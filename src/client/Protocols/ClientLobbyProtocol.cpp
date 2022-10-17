@@ -32,6 +32,10 @@ void ClientLobbyProtocol::sendStart() {
     this->sendMessage(ss.str());
 }
 
+UUIDM ClientLobbyProtocol::getUUID() {
+    return this->_clientUUID;
+}
+
 void ClientLobbyProtocol::handleIncMessages() {
     std::optional<Message<std::string>> potMsg;
     while ((potMsg = this->_incomingMQ->pop())) {

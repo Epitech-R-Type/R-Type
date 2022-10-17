@@ -26,12 +26,12 @@
 
 // Function passed to communication thread on creation
 void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag);
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag, int port_incr);
 
 class UdpCommunication {
 public:
     UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
-                     std::shared_ptr<std::atomic<bool>> stopFlag);
+                     std::shared_ptr<std::atomic<bool>> stopFlag, int port_incr);
 
     // Setup action receiving UDP packets
     // Note: Both of these need to be called again in order to maintain the loop goig

@@ -52,7 +52,7 @@ int Server::mainLoop() {
 }
 
 int Server::launchGame() {
-    this->_game = new Game();
+    this->_game = new Game(this->_protocol->getConnections());
 
     this->_game->init();
     this->_game->mainLoop();

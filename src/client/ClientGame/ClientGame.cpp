@@ -12,14 +12,16 @@
 #include "ClientGame.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame() {
-    // Construct messaging queues
-    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
+ClientGame::ClientGame(UUIDM uuid)
+    : _uuid(uuid),
+      _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _entManager(std::make_shared<ECSManager>()),
+      _protocol(_incomingMQ, _outgoingMQ, _entManager, asio::ip::address::from_string("127.0.0.1"), asio::ip::port_type(3502), _uuid) {
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    // this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, 1);
 
     this->_entManager = std::make_shared<ECSManager>();
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
@@ -39,7 +41,9 @@ ClientGame::~ClientGame() {
 
 void ClientGame::init() {
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
-    // this->_player = getPlayer();
+
+    // Send here command
+    this->_protocol.sendHere();
 
     this->_playerMovementSystem->setPlayer(this->_player);
     this->_healthSystem->setPlayer(this->_player);

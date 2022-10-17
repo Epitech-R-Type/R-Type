@@ -44,6 +44,8 @@ public:
     // Handles putting uuid in and str forming
     void sendResponse(std::string code, std::string args, asio::ip::address addr, asio::ip::port_type port);
 
+    std::vector<Connection> getConnections();
+
 private:
     // Connection manager
     ConnectionManager _connMan;

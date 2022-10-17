@@ -31,6 +31,8 @@ public:
 
     void sendStart();
 
+    UUIDM getUUID();
+
 private:
     UUIDM _serverUUID;
     UUIDM _clientUUID;

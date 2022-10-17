@@ -19,6 +19,8 @@ bool GameProtocol::waitForClients() {
     Timer timeout(CONNECTION_DELAY);
     std::optional<Message<std::string>> msg;
 
+    std::cout << "Starting wait for clients" << std::endl;
+
     while (this->_connectedClients.size() < targetClientCount && !timeout.isExpired()) {
         while ((msg = this->_incomingMQ->pop())) {
             // Parse command
@@ -35,6 +37,7 @@ bool GameProtocol::waitForClients() {
             }
         }
     }
+    std::cout << "Done waiting for clients" << std::endl;
 }
 
 //
@@ -56,6 +59,7 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
             this->_connectedClients.push_back({addr, port, candidate});
             break;
         }
+    std::cout << "New client is here !" << std::endl;
     return true;
 }
 

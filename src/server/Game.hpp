@@ -25,7 +25,7 @@
 class Game {
 public:
     // All the game setup is done in here
-    Game();
+    Game(std::vector<Connection> connections);
 
     ~Game();
 
@@ -44,7 +44,7 @@ private:
     // UDP Networking
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
-    // GameProtocol _protocol;
+    GameProtocol _protocol;
 
     // Multithreading
     bool _isRunning;

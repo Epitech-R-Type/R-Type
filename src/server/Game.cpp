@@ -12,17 +12,19 @@
 #include "../shared/ECS/Serialization.hpp"
 #include "Systems/Factory.hpp"
 
-Game::Game()
-    : _isRunning(true) {
+Game::Game(std::vector<Connection> connections)
+    : _isRunning(true),
+      _entManager(std::make_shared<ECSManager>()),
+      _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _protocol(_incomingMQ, _outgoingMQ, connections, _entManager) {
     // Construct messaging queues
     this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
-
-    this->_entManager = std::make_shared<ECSManager>();
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, 2);
 
     this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
     this->_armamentSystem = std::make_unique<ArmamentSystem>(this->_entManager);
@@ -41,6 +43,7 @@ Game::~Game() {
 
 void Game::init() {
     srand(time(0));
+    this->_protocol.waitForClients();
 }
 
 int Game::mainLoop() {

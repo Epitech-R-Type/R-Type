@@ -34,6 +34,10 @@ void LobbyProtocol::sendResponse(std::string code, std::string args, asio::ip::a
     this->_outgoingMQ->push(msg);
 }
 
+std::vector<Connection> LobbyProtocol::getConnections() {
+    return this->_connMan.getConnections();
+}
+
 bool LobbyProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
     bool gameShouldStart = false;

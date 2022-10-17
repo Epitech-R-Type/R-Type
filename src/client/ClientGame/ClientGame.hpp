@@ -12,6 +12,8 @@
 #include "../../shared/ECS/Manager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
+#include "../../shared/Utilities/UUID.hpp"
+#include "../Protocols/ClientGameProtocol.hpp"
 #include "../Systems/Systems.hpp"
 #include <memory>
 #include <string>
@@ -22,7 +24,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame();
+    ClientGame(UUIDM uuid);
     ~ClientGame();
 
     void init();
@@ -42,6 +44,10 @@ private:
     // These should eventually be moved to the protocol class
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+
+    ClientGameProtocol _protocol;
+
+    UUIDM _uuid;
 
     bool _isRunning;
     std::thread* _udpComThread;
