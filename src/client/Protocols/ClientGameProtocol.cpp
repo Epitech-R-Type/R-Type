@@ -27,7 +27,7 @@ void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
     if (cmd.args.size() < 1)
         return;
 
-    Serialization::stringToEntity(raw, this->_entityManager.get());
+    Serialization::stringToEntity(raw, this->_entityManager);
 }
 
 void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {

@@ -4,7 +4,7 @@
 #include "../../shared/Systems/HitboxSystem.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
-EntityID Factory::Ally::makePlayer(ECSManager* ECS) {
+EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS) {
     EntityID player = ECS->newEntity();
 
     Position::Component* position = ECS->addComp<Position::Component>(player, {0, 0});
@@ -22,7 +22,7 @@ EntityID Factory::Ally::makePlayer(ECSManager* ECS) {
     return player;
 }
 
-void Factory::Enemy::makeEndboss(ECSManager* ECS) {
+void Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
     EntityID endboss = ECS->newEntity();
     int players = 0;
     for (auto beg = ECS->begin<Player::Component>(); beg != ECS->end<Player::Component>(); ++beg) {
@@ -46,7 +46,7 @@ void Factory::Enemy::makeEndboss(ECSManager* ECS) {
     ECS->addComp<CollisionEffect::Component>(endboss, &CollisionEffect::dealDamage);
 }
 
-void Factory::Enemy::makeEnemy(ECSManager* ECS) {
+void Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
     EntityID enemy = ECS->newEntity();
 
     const float startX = WINDOW_WIDTH;
@@ -65,7 +65,7 @@ void Factory::Enemy::makeEnemy(ECSManager* ECS) {
     ECS->addComp<CollisionEffect::Component>(enemy, &CollisionEffect::dealDamage);
 }
 
-void bullet(ECSManager* ECS, EntityID source, int velocityX, int velocityY, double rotation) {
+void bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX, int velocityY, double rotation) {
     const EntityID bullet = ECS->newEntity();
 
     const Position::Component* sourcePos = ECS->getComponent<Position::Component>(source);
@@ -106,11 +106,11 @@ void bullet(ECSManager* ECS, EntityID source, int velocityX, int velocityY, doub
     ECS->addComp<CollisionEffect::Component>(bullet, &CollisionEffect::dealDamage);
 }
 
-void Factory::Weapon::makeLaser(ECSManager* ECS, EntityID source) {
+void Factory::Weapon::makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source) {
     bullet(ECS, source, 40, 0, 0);
 }
 
-void Factory::Weapon::makeBuckshot(ECSManager* ECS, EntityID source) {
+void Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source) {
     bullet(ECS, source, 40, 0, 0);
     bullet(ECS, source, 40, 5, 6);
     bullet(ECS, source, 40, 10, 12);

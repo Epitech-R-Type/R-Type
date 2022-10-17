@@ -13,6 +13,7 @@
 #include "../Utilities/Utilities.hpp"
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <regex>
 #include <sstream>
 #include <string>
@@ -22,7 +23,7 @@ public:
     static std::bitset<MAX_COMPONENTS> hiddenComponents;
 
     template <class... ComponentTypes>
-    static std::string entityToString(EntityID entityID, ECSManager* manager) {
+    static std::string entityToString(EntityID entityID, std::shared_ptr<ECSManager> manager) {
         Index entityIndex = getIndex(entityID);
         std::stringstream stream;
         std::vector<std::string> cerealizedComponents = {Serialization::componentToString<ComponentTypes>(entityID, manager)...};
@@ -91,7 +92,7 @@ public:
         return stream.str();
     }
 
-    static void stringToEntity(const std::string entity, ECSManager* manager) {
+    static void stringToEntity(const std::string entity, std::shared_ptr<ECSManager> manager) {
 
         std::vector<std::string> components = Utilities::splitStr(entity, ";");
 
@@ -148,7 +149,7 @@ public:
     }
 
     template <class T>
-    static std::string componentToString(EntityID entityId, ECSManager* manager) {
+    static std::string componentToString(EntityID entityId, std::shared_ptr<ECSManager> manager) {
         if (!manager->hasComponent<T>(entityId)) {
             std::cout << "[Warning]: Missing component." << std::endl;
             return "";

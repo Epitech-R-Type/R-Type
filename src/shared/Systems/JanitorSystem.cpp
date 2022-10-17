@@ -4,7 +4,7 @@
 
 #define INVISIBLE_BOX 2500
 
-JanitorSystem::JanitorSystem(ECSManager* ECS) {
+JanitorSystem::JanitorSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 

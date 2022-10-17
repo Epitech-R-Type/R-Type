@@ -6,7 +6,7 @@
 #include <cmath>
 #include <iostream>
 
-HitboxSystem::HitboxSystem(ECSManager* ECS) {
+HitboxSystem::HitboxSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 
@@ -94,7 +94,7 @@ bool getOverlap(const Hitbox::Component* rectA, const Hitbox::Component* rectB, 
     return (minB <= maxA) && (maxB >= minA);
 };
 
-bool HitboxSystem::isColliding(EntityID entity1, EntityID entity2, ECSManager* ECS) {
+bool HitboxSystem::isColliding(EntityID entity1, EntityID entity2, std::shared_ptr<ECSManager> ECS) {
     const Hitbox::Component* rectA = ECS->getComponent<Hitbox::Component>(entity1);
     const Hitbox::Component* rectB = ECS->getComponent<Hitbox::Component>(entity2);
 

@@ -13,7 +13,7 @@
 
 #define HAS_KEY(map, key) (map.find(key) != map.end())
 
-SpriteSystem::SpriteSystem(ECSManager* ECS) {
+SpriteSystem::SpriteSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 

@@ -10,7 +10,7 @@
 #include "../../shared/ECS/Manager.hpp"
 #include "PlayerMovementSystem.hpp"
 
-PlayerMovementSystem::PlayerMovementSystem(ECSManager* ECS) {
+PlayerMovementSystem::PlayerMovementSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 

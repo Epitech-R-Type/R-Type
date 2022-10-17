@@ -3,15 +3,14 @@
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/ECS.hpp"
 #include "../../shared/Systems/ISystem.hpp"
-
-class SpriteSystem;
+#include <memory>
 
 class ArmamentSystem : public System {
 public:
-    ArmamentSystem(ECSManager* ECS);
+    ArmamentSystem(std::shared_ptr<ECSManager> ECS);
 
     void apply();
 
 private:
-    ECSManager* _ECS;
+    std::shared_ptr<ECSManager> _ECS;
 };

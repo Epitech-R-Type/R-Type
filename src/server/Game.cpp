@@ -22,12 +22,12 @@ Game::Game()
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 
-    this->_entManager = new ECSManager();
+    this->_entManager = std::make_shared<ECSManager>();
 
-    this->_velocitySystem = new VelocitySystem(this->_entManager);
-    this->_armamentSystem = new ArmamentSystem(this->_entManager);
-    this->_hitboxSystem = new HitboxSystem(this->_entManager);
-    this->_janitorSystem = new JanitorSystem(this->_entManager);
+    this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
+    this->_armamentSystem = std::make_unique<ArmamentSystem>(this->_entManager);
+    this->_hitboxSystem = std::make_unique<HitboxSystem>(this->_entManager);
+    this->_janitorSystem = std::make_unique<JanitorSystem>(this->_entManager);
 }
 
 Game::~Game() {

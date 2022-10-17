@@ -142,7 +142,7 @@ template <class... T>
 void GameProtocol::sendEntity(EntityID id) const {
     if (!this->_entityManager->isValidID(id))
         return;
-    std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager.get());
+    std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
 
     for (auto conn : this->_connectedClients)
         this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
@@ -153,7 +153,7 @@ template <class... T>
 void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const {
     if (!this->_entityManager->isValidID(id))
         return;
-    std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager.get());
+    std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
     this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
 }
 

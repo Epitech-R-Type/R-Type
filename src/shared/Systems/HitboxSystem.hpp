@@ -8,7 +8,7 @@
 
 class HitboxSystem : public System {
 public:
-    HitboxSystem(ECSManager* ECS);
+    HitboxSystem(std::shared_ptr<ECSManager> ECS);
 
     /**
      * Updates the hitbox position if the entity has moved
@@ -38,10 +38,10 @@ public:
     /**
      * static version for use in other contextes
      * */
-    static bool isColliding(EntityID entity1, EntityID entity2, ECSManager* ECS);
+    static bool isColliding(EntityID entity1, EntityID entity2, std::shared_ptr<ECSManager> ECS);
 
 private:
     void dealDamage(EntityID defender, EntityID attacker);
 
-    ECSManager* _ECS;
+    std::shared_ptr<ECSManager> _ECS;
 };

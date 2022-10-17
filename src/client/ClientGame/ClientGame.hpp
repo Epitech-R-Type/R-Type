@@ -30,13 +30,13 @@ public:
     void mainLoop();
 
 private:
-    ECSManager* _entManager;
     EntityID _player = INVALID_INDEX;
 
-    SpriteSystem* _spriteSystem;
-    VelocitySystem* _velocitySystem;
-    PlayerMovementSystem* _playerMovementSystem;
-    HealthSystem* _healthSystem;
+    std::shared_ptr<ECSManager> _entManager;
+    std::unique_ptr<SpriteSystem> _spriteSystem;
+    std::unique_ptr<VelocitySystem> _velocitySystem;
+    std::unique_ptr<PlayerMovementSystem> _playerMovementSystem;
+    std::unique_ptr<HealthSystem> _healthSystem;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class

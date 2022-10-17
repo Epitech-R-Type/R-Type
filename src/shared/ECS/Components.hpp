@@ -11,6 +11,7 @@
 #include "ECS.hpp"
 #include <ctime>
 #include <map>
+#include <memory>
 #include <sstream>
 #include <vector>
 
@@ -36,7 +37,7 @@ namespace Armor {
 
     std::string toString(Armor::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Armor
 
 namespace Health {
@@ -48,7 +49,7 @@ namespace Health {
 
     std::string toString(Health::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Health
 
 namespace Position {
@@ -59,7 +60,7 @@ namespace Position {
 
     std::string toString(Position::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Position
 
 namespace Animation {
@@ -103,7 +104,7 @@ namespace Animation {
 
     std::string toString(Animation::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Animation
 
 namespace Velocity {
@@ -115,7 +116,7 @@ namespace Velocity {
 
     std::string toString(Velocity::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Velocity
 
 // a struct for client side use only, to get the Player Entity  via the ECS
@@ -127,7 +128,7 @@ namespace Player {
 
     std::string toString(Player::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Player
 
 namespace Damage {
@@ -137,7 +138,7 @@ namespace Damage {
 
     std::string toString(Damage::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Damage
 
 namespace Armament {
@@ -156,7 +157,7 @@ namespace Armament {
 
     std::string toString(Armament::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Armament
 
 namespace Hitbox {
@@ -169,7 +170,7 @@ namespace Hitbox {
 
     std::string toString(Hitbox::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Hitbox
 
 namespace Team {
@@ -180,7 +181,7 @@ namespace Team {
 
     std::string toString(Team::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 
 } // namespace Team
 
@@ -192,18 +193,18 @@ namespace ImmunityFrame {
 
     std::string toString(ImmunityFrame::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 
 } // namespace ImmunityFrame
 
 namespace CollisionEffect {
-    typedef void (*Component)(EntityID defender, EntityID attacker, ECSManager* ECS);
+    typedef void (*Component)(EntityID defender, EntityID attacker, std::shared_ptr<ECSManager> ECS);
 
     std::string toString(CollisionEffect::Component component);
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 
-    void dealDamage(EntityID attacker, EntityID defender, ECSManager* ECS);
+    void dealDamage(EntityID attacker, EntityID defender, std::shared_ptr<ECSManager> ECS);
     // should not need serialization or update since logic happens serverside
     // if we do need to just use a map and enum
 } // namespace CollisionEffect

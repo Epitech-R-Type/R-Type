@@ -35,11 +35,11 @@ public:
 
 private:
     // ECS and Systems
-    ECSManager* _entManager;
-    VelocitySystem* _velocitySystem;
-    ArmamentSystem* _armamentSystem;
-    HitboxSystem* _hitboxSystem;
-    JanitorSystem* _janitorSystem;
+    std::shared_ptr<ECSManager> _entManager;
+    std::unique_ptr<VelocitySystem> _velocitySystem;
+    std::unique_ptr<ArmamentSystem> _armamentSystem;
+    std::unique_ptr<HitboxSystem> _hitboxSystem;
+    std::unique_ptr<JanitorSystem> _janitorSystem;
 
     // UDP Networking
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;

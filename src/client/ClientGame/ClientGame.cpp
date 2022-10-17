@@ -21,11 +21,11 @@ ClientGame::ClientGame() {
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     // this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
 
-    this->_entManager = new ECSManager();
-    this->_spriteSystem = new SpriteSystem(this->_entManager);
-    this->_velocitySystem = new VelocitySystem(this->_entManager);
-    this->_playerMovementSystem = new PlayerMovementSystem(this->_entManager);
-    this->_healthSystem = new HealthSystem(this->_entManager);
+    this->_entManager = std::make_shared<ECSManager>();
+    this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
+    this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
+    this->_playerMovementSystem = std::make_unique<PlayerMovementSystem>(this->_entManager);
+    this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
 }
 
 ClientGame::~ClientGame() {
@@ -35,7 +35,6 @@ ClientGame::~ClientGame() {
 
     // Delete com thread
     delete this->_udpComThread;
-    delete this->_entManager;
 }
 
 void ClientGame::init() {
