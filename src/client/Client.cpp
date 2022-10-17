@@ -15,6 +15,9 @@ Client::Client() {
 
     this->_lobbyRunning = true;
     this->_connected = false;
+
+    // Gangster Workaround to insure same comptype order client
+    Utilities::createCompPoolIndexes();
 }
 
 int Client::launchGame() {

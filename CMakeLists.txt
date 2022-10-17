@@ -47,6 +47,7 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Timer.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Utilities.cpp"
 )
 
 add_executable(Client
@@ -67,6 +68,7 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Utilities.cpp"
 )
 
 # compile_definitions(NO_HOSTILITY=1)

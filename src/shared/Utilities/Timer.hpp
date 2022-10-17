@@ -9,8 +9,20 @@
 
 class Timer {
 public:
-    Timer(float target);
+    /**
+     * Creates a timer, starting to count on creation
+     * target is the timer length in seconds
+     * */
+    Timer(double target);
+
+    /**
+     * verifies if more time has passed than specified by target
+     * */
     bool isExpired();
+
+    /**
+     * resets the timer time to now
+     * */
     void resetTimer();
 
 private:

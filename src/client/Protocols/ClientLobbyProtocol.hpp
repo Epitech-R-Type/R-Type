@@ -8,6 +8,9 @@ class ClientLobbyProtocol {
 public:
     ClientLobbyProtocol();
 
+    /**
+     * Connects the client to the TCP socket of the server
+     * */
     void connect(std::string serverIP, int port = TCP_PORT);
 
     void startGame();

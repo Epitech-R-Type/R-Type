@@ -4,14 +4,14 @@
 
 #include "Timer.hpp"
 
-Timer::Timer(float target)
-    : _target(target) {
+Timer::Timer(double target) {
+    this->_target = target;
     this->_start = std::chrono::high_resolution_clock::now();
 }
 
 bool Timer::isExpired() {
     auto currentTime = std::chrono::high_resolution_clock::now();
-    std::chrono::duration<float> duration = currentTime - this->_start;
+    std::chrono::duration<double> duration = currentTime - this->_start;
     if (duration.count() >= this->_target)
         this->_expired = true;
     return this->_expired;
