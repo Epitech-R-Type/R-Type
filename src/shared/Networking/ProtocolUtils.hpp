@@ -37,7 +37,7 @@ struct ParsedCmd {
 class ProtocolUtils {
 public:
     static std::optional<ParsedCmd> parseCommand(Message<std::string> msg) {
-        std::optional<ParsedCmd> output;
+        std::optional<ParsedCmd> output = {{Command::Here, std::vector<std::vector<std::string>>()}};
         std::vector<std::string> splitMsg = Utilities::splitStr(msg.getMsg(), " ");
 
         std::cout << msg.getMsg() << std::endl;
