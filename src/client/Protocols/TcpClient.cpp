@@ -6,6 +6,7 @@
 */
 
 #include "TcpClient.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
@@ -44,6 +45,8 @@ void TcpClient::setupIncomingHandler() {
             // Reset incoming handler
             this->setupIncomingHandler();
         } else {
+            ERROR(err.message());
+
             // Reset buffer
             memset(this->_buffer, 0, 1024);
 
@@ -63,7 +66,7 @@ void TcpClient::setupOutgoingHandler() {
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            std::cout << "Error is : " << err.message() << std::endl;
+            ERROR(err.message());
             this->setupOutgoingHandler();
             return;
         }
@@ -91,7 +94,7 @@ void TcpClient::stopSignalHandler() {
 
     this->_stopTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            std::cerr << "Error in stop_signal_handler(): " << err.message() << std::endl;
+            ERROR(err.message());
             this->stopSignalHandler();
             return;
         }
@@ -109,7 +112,8 @@ void TcpClient::connect(std::string serverIP, int port) {
     this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(this->_ctxt));
     // connection
     this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
-    std::cout << "Tcp Client info is :" << this->_server->local_endpoint().port() << std::endl;
+
+    LOG("Tcp Client info is :" << this->_server->local_endpoint().port());
 
     this->setupIncomingHandler();
 }

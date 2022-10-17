@@ -7,6 +7,19 @@
 
 #pragma once
 
+#ifndef __FUNCTION_NAME__
+#ifdef WIN32 // WINDOWS
+#define __FUNCTION_NAME__ __FUNCTION__
+#else //*NIX
+#define __FUNCTION_NAME__ __func__
+#endif
+#endif
+
+#define REDL "\e[0;31m"
+#define ERROR(msg) std::cout << REDL << "[ERROR]   " << __FUNCTION_NAME__ << ": " << msg << std::endl
+#define WARNING(msg) std::cout << "[WARNING] " << __FUNCTION_NAME__ << ": " << msg << std::endl
+#define LOG(msg) std::cout << "[LOG]     " << __FUNCTION_NAME__ << ": " << msg << std::endl
+
 #include <asio.hpp>
 #include <string>
 #include <vector>

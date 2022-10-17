@@ -20,8 +20,17 @@ void ClientLobbyProtocol::connect(std::string serverIP, int port) {
 void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
     std::vector<std::string> splitstr = Utilities::splitStr(uuids, ";");
 
-    this->_serverUUID = UUIDM(splitstr[0]);
-    this->_clientUUID = UUIDM(splitstr[1]);
+    UUIDM serverUUID = UUIDM(splitstr[0]);
+    UUIDM clientUUID = UUIDM(splitstr[1]);
+
+    if (!this->_serverUUID.isValid() || !this->_clientUUID.isValid()) {
+        ERROR("Unable to get auhtentication from message.");
+        return;
+    }
+    this->_serverUUID = serverUUID;
+    this->_clientUUID = clientUUID;
+
+    LOG("Client authenticated! ServerUUID: " << this->_serverUUID << "; ClientUUID: " << this->_clientUUID);
 }
 
 void ClientLobbyProtocol::sendStart() {
@@ -55,7 +64,8 @@ void ClientLobbyProtocol::handleIncMessages() {
         }
 
         const std::string msg = message.getMsg();
-        std::cout << "[Received] " << msg;
+
+        LOG("Received from Server: " << msg);
 
         const std::vector<std::string> msgBits = Utilities::splitStr(msg, " ");
 
@@ -65,7 +75,7 @@ void ClientLobbyProtocol::handleIncMessages() {
         }
 
         if (UUIDM(msg) != this->_serverUUID) {
-            std::cout << "Couldn't authenticate Server." << std::endl;
+            ERROR("Couldn't authenticate Server.");
             continue;
         }
 
@@ -84,6 +94,7 @@ void ClientLobbyProtocol::handleUserCommands(std::string command) {
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
     Message<std::string> message(msgContent, this->_serverIP, this->_serverPort);
+    LOG("Sending to Server: " << msgContent);
     this->_outgoingMQ->push(message);
 }
 

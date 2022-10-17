@@ -53,6 +53,7 @@ int LobbyProtocol::handleCommands() {
 
         // If invalid size error 500
         if (splitBody.size() < 1) {
+            ERROR("Wrong message: " << msgBody);
             Message<std::string> msg("500 Wrong request\r\n", addr, port);
             this->_outgoingMQ->push(msg);
             continue;
@@ -120,6 +121,7 @@ void LobbyProtocol::startGame(int port) {
     std::stringstream msgBody;
     msgBody << START_GAME << SP << this->_connMan.getServerUUID() << ";" << port << SP << END;
 
+    LOG("Starting Game.");
     // Send START_GAME command to all connected clients
     for (auto conn : connections) {
         Message<std::string> msg(msgBody.str(), conn.addr, conn.port);
