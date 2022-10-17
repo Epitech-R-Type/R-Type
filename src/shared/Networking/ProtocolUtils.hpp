@@ -46,7 +46,7 @@ public:
         if (splitMsg.size() != 2)
             return {};
         // Check for CRLF
-        if (splitMsg[1][splitMsg.size() - 1] != '\n' || splitMsg[1][splitMsg.size() - 2] != '\r') {
+        if (splitMsg[1][splitMsg[1].size() - 1] != '\n' || splitMsg[1][splitMsg[1].size() - 2] != '\r') {
             ERROR("Carriage Return Line Feed missing.");
             return {};
         }
