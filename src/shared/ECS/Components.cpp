@@ -146,3 +146,105 @@ void Armament::applyUpdate(std::vector<std::string> args, EntityID entityID, ECS
                                               {Armament::Type(atoi(args[1].c_str())), strtof(args[1].c_str(), nullptr), atoi(args[1].c_str())});
     }
 };
+
+std::string Hitbox::toString(Hitbox::Component component) {
+    std::stringstream ss;
+
+    ss << component.topLeft.x << ",";
+    ss << component.topLeft.y << ",";
+    ss << component.topRight.x << ",";
+    ss << component.topRight.y << ",";
+    ss << component.botLeft.x << ",";
+    ss << component.botLeft.y << ",";
+    ss << component.botRight.x << ",";
+    ss << component.botRight.y << ";";
+
+    return ss.str();
+};
+
+void Hitbox::applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager) {
+    Hitbox::Component* component;
+    if (!manager->hasComponent<Hitbox::Component>(entityID))
+        component = manager->addComp<Hitbox::Component>(entityID, {});
+    else
+        component = manager->getComponent<Hitbox::Component>(entityID);
+    component->topLeft.x = std::strtof(args[0].c_str(), nullptr);
+    component->topLeft.y = std::strtof(args[0].c_str(), nullptr);
+    component->topRight.x = std::strtof(args[0].c_str(), nullptr);
+    component->topRight.y = std::strtof(args[0].c_str(), nullptr);
+    component->botLeft.x = std::strtof(args[0].c_str(), nullptr);
+    component->botLeft.y = std::strtof(args[0].c_str(), nullptr);
+    component->botRight.x = std::strtof(args[0].c_str(), nullptr);
+    component->botRight.y = std::strtof(args[0].c_str(), nullptr);
+};
+
+std::string Team::toString(Team::Component component) {
+    std::stringstream ss;
+
+    ss << component << ";";
+
+    return ss.str();
+};
+
+void Team::applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager) {
+    Team::Component* component;
+    if (!manager->hasComponent<Team::Component>(entityID))
+        component = manager->addComp<Team::Component>(entityID, {});
+    else
+        component = manager->getComponent<Team::Component>(entityID);
+    *component = Team::Component(std::stoi(args[0].c_str(), nullptr));
+};
+
+std::string ImmunityFrame::toString(ImmunityFrame::Component component) {
+    std::stringstream ss;
+
+    ss << component.duration << ";";
+
+    return ss.str();
+};
+
+void ImmunityFrame::applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager) {
+    ImmunityFrame::Component* component;
+    if (!manager->hasComponent<ImmunityFrame::Component>(entityID))
+        component = manager->addComp<ImmunityFrame::Component>(entityID, {});
+    else
+        component = manager->getComponent<ImmunityFrame::Component>(entityID);
+    component->duration = std::strtod(args[0].c_str(), nullptr);
+};
+
+std::string CollisionEffect::toString(CollisionEffect::Component component) {
+    std::stringstream ss;
+
+    ss << ";";
+
+    return ss.str();
+};
+
+void CollisionEffect::applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager) {
+    CollisionEffect::Component* component;
+    if (!manager->hasComponent<CollisionEffect::Component>(entityID))
+        component = manager->addComp<CollisionEffect::Component>(entityID, {});
+    else
+        component = manager->getComponent<CollisionEffect::Component>(entityID);
+    *component = &CollisionEffect::dealDamage;
+};
+
+void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, ECSManager* ECS) {
+    if (!ECS->hasComponent<Health::Component>(defender) || !ECS->getComponent<Damage::Component>(attacker))
+        return;
+    Health::Component* healthC = ECS->getComponent<Health::Component>(defender);
+    ImmunityFrame::Component* immunityFrame = ECS->getComponent<ImmunityFrame::Component>(defender);
+    Armor::Component* armor = ECS->getComponent<Armor::Component>(defender);
+    Damage::Component* damageC = ECS->getComponent<Damage::Component>(attacker);
+
+    if (immunityFrame != nullptr) {
+        const auto now = getNow();
+        std::chrono::duration<double> elapsed_seconds = now - immunityFrame->timer;
+
+        if (elapsed_seconds.count() < immunityFrame->duration)
+            return;
+        immunityFrame->timer = getNow();
+    }
+
+    healthC->health = healthC->health - (damageC->damage - (armor != nullptr ? armor->armor : 0));
+}

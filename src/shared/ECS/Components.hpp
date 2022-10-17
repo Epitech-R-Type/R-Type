@@ -19,6 +19,14 @@ enum ComponentType {
     HEALTH,
     POSITION,
     ANIMATION,
+    VELOCITY,
+    PLAYER,
+    DAMAGE,
+    ARMAMENT,
+    HITBOX,
+    TEAM,
+    IMMUNITY_FRAME,
+    COLLISIONEFFECT,
 };
 
 namespace Armor {
@@ -169,6 +177,11 @@ namespace Team {
         Ally,
         Enemy,
     };
+
+    std::string toString(Team::Component component);
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+
 } // namespace Team
 
 namespace ImmunityFrame {
@@ -177,11 +190,20 @@ namespace ImmunityFrame {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
+    std::string toString(ImmunityFrame::Component component);
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+
 } // namespace ImmunityFrame
 
 namespace CollisionEffect {
     typedef void (*Component)(EntityID defender, EntityID attacker, ECSManager* ECS);
 
+    std::string toString(CollisionEffect::Component component);
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, ECSManager* manager);
+
+    void dealDamage(EntityID attacker, EntityID defender, ECSManager* ECS);
     // should not need serialization or update since logic happens serverside
     // if we do need to just use a map and enum
 } // namespace CollisionEffect

@@ -4,26 +4,6 @@
 #include "../../shared/Systems/HitboxSystem.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
-void dealDamage(EntityID attacker, EntityID defender, ECSManager* ECS) {
-    if (!ECS->hasComponent<Health::Component>(defender) || !ECS->getComponent<Damage::Component>(attacker))
-        return;
-    Health::Component* healthC = ECS->getComponent<Health::Component>(defender);
-    ImmunityFrame::Component* immunityFrame = ECS->getComponent<ImmunityFrame::Component>(defender);
-    Armor::Component* armor = ECS->getComponent<Armor::Component>(defender);
-    Damage::Component* damageC = ECS->getComponent<Damage::Component>(attacker);
-
-    if (immunityFrame != nullptr) {
-        const auto now = getNow();
-        std::chrono::duration<double> elapsed_seconds = now - immunityFrame->timer;
-
-        if (elapsed_seconds.count() < immunityFrame->duration)
-            return;
-        immunityFrame->timer = getNow();
-    }
-
-    healthC->health = healthC->health - (damageC->damage - (armor != nullptr ? armor->armor : 0));
-}
-
 EntityID Factory::Ally::makePlayer(ECSManager* ECS) {
     EntityID player = ECS->newEntity();
 
@@ -37,7 +17,7 @@ EntityID Factory::Ally::makePlayer(ECSManager* ECS) {
     ECS->addComp<Team::Component>(player, Team::Ally);
     ECS->addComp<ImmunityFrame::Component>(player, {1});
     ECS->addComp<Damage::Component>(player, {20});
-    ECS->addComp<CollisionEffect::Component>(player, &dealDamage);
+    ECS->addComp<CollisionEffect::Component>(player, &CollisionEffect::dealDamage);
 
     return player;
 }
@@ -63,7 +43,7 @@ void Factory::Enemy::makeEndboss(ECSManager* ECS) {
     ECS->addComp<Health::Component>(endboss, {300 * players, 300 * players, false});
     ECS->addComp<Hitbox::Component>(endboss, HitboxSystem::buildHitbox(animation, position));
     ECS->addComp<Team::Component>(endboss, Team::Enemy);
-    ECS->addComp<CollisionEffect::Component>(endboss, &dealDamage);
+    ECS->addComp<CollisionEffect::Component>(endboss, &CollisionEffect::dealDamage);
 }
 
 void Factory::Enemy::makeEnemy(ECSManager* ECS) {
@@ -82,7 +62,7 @@ void Factory::Enemy::makeEnemy(ECSManager* ECS) {
     ECS->addComp<Hitbox::Component>(enemy, HitboxSystem::buildHitbox(animation, position));
     ECS->addComp<Team::Component>(enemy, Team::Enemy);
     ECS->addComp<Armament::Component>(enemy, {Armament::Type::Laser, 1000, 50});
-    ECS->addComp<CollisionEffect::Component>(enemy, &dealDamage);
+    ECS->addComp<CollisionEffect::Component>(enemy, &CollisionEffect::dealDamage);
 }
 
 void bullet(ECSManager* ECS, EntityID source, int velocityX, int velocityY, double rotation) {
@@ -123,7 +103,7 @@ void bullet(ECSManager* ECS, EntityID source, int velocityX, int velocityY, doub
     Position::Component* position = ECS->addComp<Position::Component>(bullet, positionPre);
     ECS->addComp<Team::Component>(bullet, *ECS->getComponent<Team::Component>(source));
     ECS->addComp<Hitbox::Component>(bullet, HitboxSystem::buildHitbox(animation, position));
-    ECS->addComp<CollisionEffect::Component>(bullet, &dealDamage);
+    ECS->addComp<CollisionEffect::Component>(bullet, &CollisionEffect::dealDamage);
 }
 
 void Factory::Weapon::makeLaser(ECSManager* ECS, EntityID source) {

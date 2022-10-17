@@ -2,6 +2,8 @@
 
 #include "../../shared/ECS/ECS.hpp"
 
+void dealDamage(EntityID attacker, EntityID defender, ECSManager* ECS);
+
 namespace Factory {
     namespace Ally {
         EntityID makePlayer(ECSManager* ECS);
