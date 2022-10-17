@@ -16,7 +16,7 @@
 
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/ECS.hpp"
-#include "../../shared/systems/ISystem.hpp"
+#include "../../shared/Systems/ISystem.hpp"
 
 CMRC_DECLARE(client);
 

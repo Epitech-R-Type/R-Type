@@ -2,9 +2,8 @@
 #include "HitboxSystem.hpp"
 #include "../ECS/Components.hpp"
 #include "../ECS/Manager.hpp"
-#include "raylib.h"
+#include "../Utilities/Utilities.hpp"
 #include <cmath>
-#include <complex>
 #include <iostream>
 
 HitboxSystem::HitboxSystem(ECSManager* ECS) {
@@ -127,24 +126,8 @@ void HitboxSystem::checkCollision(EntityID entity) {
     }
 }
 
-Point HitboxSystem::rotate(Point point, Point origin, double rad) {
-    std::complex<double> P = {point.x, point.y};
-    std::complex<double> Q = {origin.x, origin.y};
-
-    std::complex<double> res = (P - Q) * std::polar(1.0, rad) + Q;
-    return {
-        res.real(),
-        res.imag(),
-    };
-}
-
-double HitboxSystem::toRadians(double degree) {
-    constexpr double pi = 22 / 7;
-    return (double)degree * (pi / 180.0);
-}
-
 Hitbox::Component HitboxSystem::buildHitbox(Animation::Component* animation, Position::Component* position) {
-    const double radRotation = HitboxSystem::toRadians(animation->rotation);
+    const double radRotation = Utilities::toRadians(animation->rotation);
     const double xPos = position->x;
     const double yPos = position->y;
 
@@ -153,10 +136,10 @@ Hitbox::Component HitboxSystem::buildHitbox(Animation::Component* animation, Pos
     const double width = Animation::Sheets[animation->animationID].frameWidth * animation->scale;
     const double height = (Animation::Sheets[animation->animationID].frameHeight * animation->scale);
 
-    Point tLeft = HitboxSystem::rotate({xPos, yPos}, origin, radRotation);
-    Point tRight = HitboxSystem::rotate({xPos + width, yPos}, origin, radRotation);
-    Point bLeft = HitboxSystem::rotate({xPos, yPos + height}, origin, radRotation);
-    Point bRight = HitboxSystem::rotate({xPos + width, yPos + height}, origin, radRotation);
+    Point tLeft = Utilities::rotate({xPos, yPos}, origin, radRotation);
+    Point tRight = Utilities::rotate({xPos + width, yPos}, origin, radRotation);
+    Point bLeft = Utilities::rotate({xPos, yPos + height}, origin, radRotation);
+    Point bRight = Utilities::rotate({xPos + width, yPos + height}, origin, radRotation);
 
     return {tLeft, tRight, bLeft, bRight};
 }

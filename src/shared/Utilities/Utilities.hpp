@@ -10,21 +10,33 @@
 #include <string>
 #include <vector>
 
+struct Point {
+    double x;
+    double y;
+};
 class Utilities {
 public:
     Utilities();
+
     ~Utilities();
 
-    static std::vector<std::string> splitStr(std::string str, std::string sep) {
-        size_t pos = 0;
-        std::string token;
-        std::vector<std::string> output;
+    /**
+     * splits a string
+     * */
+    static std::vector<std::string> splitStr(std::string str, std::string sep);
 
-        while ((pos = str.find(sep)) && pos != std::string::npos) {
-            output.push_back(str.substr(0, pos));
-            str.erase(0, pos + sep.length());
-        }
-        output.push_back(str);
-        return output;
-    }
+    /**
+     * rotate a point around an origin
+     * */
+    static Point rotate(Point point, Point origin, double rad);
+
+    /**
+     * trasnform degree to radians
+     * */
+    static double toRadians(double degree);
+
+    /**
+     * Generate fixed order of comppools, better alternative would be using a map instead
+     * */
+    static void createCompPoolIndexes();
 };
