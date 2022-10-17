@@ -6,6 +6,7 @@
 */
 
 #include "TcpServer.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag) {
@@ -133,6 +134,10 @@ void TcpServer::stop_signal_handler() {
 
 std::shared_ptr<asio::ip::tcp::socket> TcpServer::findPeer(asio::ip::address addr, asio::ip::port_type port) {
     for (auto peer : this->_peers) {
+        if (!peer->is_open()) {
+            continue;
+            ERROR("Invalid Peer");
+        }
         auto peerAddr = peer->remote_endpoint().address();
         auto peerPort = peer->remote_endpoint().port();
 
