@@ -11,7 +11,6 @@
 void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag, int port) {
 
-    LOG("UDP listening on port: " << port);
     if (port < 1) { // bind to available port
         UdpCommunication com(incoming, outgoing, stopFlag);
 
@@ -55,6 +54,7 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
+    LOG("UDP Listening on port : " << this->_sock.local_endpoint().port());
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
