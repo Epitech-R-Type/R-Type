@@ -96,14 +96,13 @@ int LobbyProtocol::handleCommands() {
 
         // START command
         if (cmd == "START") {
-
-            // Set boolean that game should start
             outputPort = UDP_PORT;
 
             // Find an available port
             while (!Utilities::isPortAvailable(outputPort))
                 outputPort++;
 
+            LOG("Using port: " << outputPort);
             this->startGame(outputPort);
             continue;
         }

@@ -10,6 +10,8 @@
 // Function passed to communication thread on creation
 void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag, int port) {
+
+    LOG("UDP listening on port: " << port);
     if (port < 1) { // bind to available port
         UdpCommunication com(incoming, outgoing, stopFlag);
 
