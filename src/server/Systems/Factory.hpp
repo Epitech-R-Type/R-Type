@@ -7,7 +7,7 @@ void dealDamage(EntityID attacker, EntityID defender, std::shared_ptr<ECSManager
 
 namespace Factory {
     namespace Ally {
-        EntityID makePlayer(std::shared_ptr<ECSManager> ECS);
+        EntityID makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID);
     }
     namespace Enemy {
         EntityID makeEndboss(std::shared_ptr<ECSManager> ECS);

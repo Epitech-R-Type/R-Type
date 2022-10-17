@@ -124,6 +124,7 @@ namespace Velocity {
 namespace Player {
     struct Component {
         int score;
+        int uniqueID;
     };
 
     std::string toString(Player::Component component);

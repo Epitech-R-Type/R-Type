@@ -95,10 +95,12 @@ public:
 
         std::vector<std::string> components = Utilities::splitStr(entity, ";");
 
-        EntityID entityID = atoi(components[0].c_str());
+        EntityID entityID = std::stoll(components[0]);
 
         // CHECK IF ENTITY EXISTS
         manager->newEntity(entityID);
+
+        LOG("Treating entity " << entityID);
 
         for (auto beg = components.begin() + 1; beg != components.end() && (*beg)[(*beg).size() - 1] != '\n'; beg++) {
             const std::string component = *beg;
@@ -148,8 +150,6 @@ public:
                     std::cout << "[stringToEntity] Unhandled Component: " << componentTypeID << "." << std::endl;
             }
         }
-
-        std::cout << "Anim ID: " << manager->getComponent<Animation::Component>(entityID)->animationID << std::endl;
     }
 
     template <class T>

@@ -43,6 +43,12 @@ void Game::init() {
     LOG("Initializing game");
     srand(time(0));
     this->_protocol.waitForClients();
+
+    std::vector<Connection> connections = this->_protocol.getConnectedClients();
+
+    for (int i = 0; i < connections.size(); i++) {
+        this->_protocol.sendEntity(Factory::Ally::makePlayer(this->_entManager, i));
+    }
 }
 
 int Game::mainLoop() {
@@ -62,7 +68,7 @@ int Game::mainLoop() {
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 4) {
+        if (elapsed_seconds.count() > 0.2) {
             this->_protocol.sendEntity(Factory::Enemy::makeEnemy(this->_entManager));
             timer = getNow();
         }

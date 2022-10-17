@@ -4,13 +4,13 @@
 #include "../../shared/Systems/HitboxSystem.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
-EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS) {
+EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID) {
     EntityID player = ECS->newEntity();
 
     Position::Component* position = ECS->addComp<Position::Component>(player, {0, 0});
     Animation::Component* animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2});
     ECS->addComp<Health::Component>(player, {50, 50});
-    ECS->addComp<Player::Component>(player, {true});
+    ECS->addComp<Player::Component>(player, {true, uniqueID});
     ECS->addComp<Armament::Component>(player, {Armament::Type::Buckshot, 150, -1});
     ECS->addComp<Velocity::Component>(player, {10, 10});
     ECS->addComp<Hitbox::Component>(player, HitboxSystem::buildHitbox(animation, position));
@@ -57,13 +57,13 @@ EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
     Animation::Component* animation = ECS->addComp<Animation::Component>(enemy, {Animation::AnimationID::Orb, 3});
 
     ECS->addComp<Velocity::Component>(enemy, {-10, 0});
-    ECS->addComp<Health::Component>(enemy, {20, 20, true});
-    ECS->addComp<Damage::Component>(enemy, {20});
+    // ECS->addComp<Health::Component>(enemy, {20, 20, true});
+    // ECS->addComp<Damage::Component>(enemy, {20});
 
-    ECS->addComp<Hitbox::Component>(enemy, HitboxSystem::buildHitbox(animation, position));
-    ECS->addComp<Team::Component>(enemy, Team::Enemy);
-    ECS->addComp<Armament::Component>(enemy, {Armament::Type::Laser, 1000, 50});
-    ECS->addComp<CollisionEffect::Component>(enemy, &CollisionEffect::dealDamage);
+    // ECS->addComp<Hitbox::Component>(enemy, HitboxSystem::buildHitbox(animation, position));
+    // ECS->addComp<Team::Component>(enemy, Team::Enemy);
+    // ECS->addComp<Armament::Component>(enemy, {Armament::Type::Laser, 1000, 50});
+    // ECS->addComp<CollisionEffect::Component>(enemy, &CollisionEffect::dealDamage);
 
     return enemy;
 }

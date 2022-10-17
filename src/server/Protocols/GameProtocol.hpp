@@ -64,6 +64,10 @@ public:
     // UILITIES
     int getPlayer(asio::ip::address addr, asio::ip::port_type port);
 
+    std::vector<Connection> getConnectedClients() {
+        return this->_connectedClients;
+    };
+
 private:
     // Udp messaging queues
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;

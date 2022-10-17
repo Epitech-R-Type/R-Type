@@ -41,13 +41,14 @@ std::string Position::toString(Position::Component component) {
 }
 
 void Position::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
-    if (manager->hasComponent<Position::Component>(entityID)) {
-        Position::Component* component = manager->getComponent<Position::Component>(entityID);
-        component->x = strtof(args[1].c_str(), nullptr);
-        component->y = strtof(args[2].c_str(), nullptr);
-    } else {
-        manager->addComp<Position::Component>(entityID, {strtof(args[1].c_str(), nullptr), strtof(args[2].c_str(), nullptr)});
-    }
+    Position::Component* component;
+
+    if (manager->hasComponent<Position::Component>(entityID))
+        component = manager->getComponent<Position::Component>(entityID);
+    else
+        component = manager->addComp<Position::Component>(entityID, {});
+    component->x = strtof(args[1].c_str(), nullptr);
+    component->y = strtof(args[2].c_str(), nullptr);
 }
 
 std::string Animation::toString(Animation::Component component) {
@@ -62,13 +63,16 @@ std::string Animation::toString(Animation::Component component) {
 }
 
 void Animation::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
+    Animation::Component* component;
     if (manager->hasComponent<Animation::Component>(entityID)) {
-        Animation::Component* component = manager->getComponent<Animation::Component>(entityID);
-        component->animationID = AnimationID(atoi(args[1].c_str()));
-        component->layer = std::stoul(args[2].c_str(), nullptr);
+        component = manager->getComponent<Animation::Component>(entityID);
     } else {
-        manager->addComp<Animation::Component>(entityID, {AnimationID(atoi(args[2].c_str())), std::stoul(args[1].c_str())});
+        component = manager->addComp<Animation::Component>(entityID, {});
     }
+    component->animationID = AnimationID(atoi(args[1].c_str()));
+    component->layer = std::stoul(args[2].c_str(), nullptr);
+    component->rotation = std::stod(args[3].c_str(), nullptr);
+    component->scale = std::stod(args[4].c_str(), nullptr);
 }
 
 std::string Velocity::toString(Velocity::Component component) {
@@ -223,10 +227,10 @@ std::string CollisionEffect::toString(CollisionEffect::Component component) {
 void CollisionEffect::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
     CollisionEffect::Component* component;
     if (!manager->hasComponent<CollisionEffect::Component>(entityID))
-        component = manager->addComp<CollisionEffect::Component>(entityID, {});
+        component = manager->addComp<CollisionEffect::Component>(entityID, &CollisionEffect::dealDamage);
     else
         component = manager->getComponent<CollisionEffect::Component>(entityID);
-    *component = &CollisionEffect::dealDamage;
+    // *component = &CollisionEffect::dealDamage;
 };
 
 void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shared_ptr<ECSManager> ECS) {
