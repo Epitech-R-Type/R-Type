@@ -98,7 +98,8 @@ public:
         EntityID entityID = std::stoll(components[0]);
 
         // CHECK IF ENTITY EXISTS
-        manager->newEntity(entityID);
+        if (!manager->entityExists(entityID))
+            manager->newEntity(entityID);
 
         LOG("Treating entity " << entityID);
 

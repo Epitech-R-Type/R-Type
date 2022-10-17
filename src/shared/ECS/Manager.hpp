@@ -163,6 +163,16 @@ public:
         return true;
     }
 
+    bool entityExists(EntityID id) {
+        Index i = getIndex(id);
+
+        if (i >= this->_entities.size() || i >= MAX_ENTITIES)
+            return false;
+        if (getIndex(this->_entities[i].id) == INVALID_INDEX)
+            return false;
+        return true;
+    }
+
     // ITERATOR IMPLEMENTATION
     template <class... Comps>
     class Iterator {
