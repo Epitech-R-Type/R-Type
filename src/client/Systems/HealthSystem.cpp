@@ -5,7 +5,7 @@
 #include "Systems.hpp"
 #include "raylib.h"
 
-HealthSystem::HealthSystem(ECSManager* ECS) {
+HealthSystem::HealthSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 

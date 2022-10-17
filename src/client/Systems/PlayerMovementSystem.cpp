@@ -9,39 +9,22 @@
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/Manager.hpp"
 #include "PlayerMovementSystem.hpp"
+#include "raylib.h"
 
-PlayerMovementSystem::PlayerMovementSystem(ECSManager* ECS) {
-    this->_ECS = ECS;
-}
-
-void PlayerMovementSystem::setPlayer(EntityID player) {
-    this->_player = player;
+PlayerMovementSystem::PlayerMovementSystem(std::shared_ptr<ClientGameProtocol> protocol) {
+    this->_protocol = protocol;
 }
 
 void PlayerMovementSystem::apply() {
-    if (!isValid(this->_player))
-        return;
-    const auto now = getNow();
-    std::chrono::duration<double> elapsed_seconds = now - this->_timer;
 
-    if (elapsed_seconds.count() > MOVEMENT_TIMER) {
-        Position::Component* position = this->_ECS->getComponent<Position::Component>(this->_player);
-        Animation::Component* animation = this->_ECS->getComponent<Animation::Component>(this->_player);
-        Velocity::Component* velocity = this->_ECS->getComponent<Velocity::Component>(this->_player);
-
-        if (IsKeyDown(KEY_A) && position->x > 0) {
-            this->_ECS->getComponent<Position::Component>(this->_player)->x -= velocity->x;
-        }
-        if (IsKeyDown(KEY_D) && position->x < (GetScreenWidth() - (Animation::Sheets[animation->animationID].frameWidth * animation->scale))) {
-            this->_ECS->getComponent<Position::Component>(this->_player)->x += velocity->x;
-        }
-        if (IsKeyDown(KEY_W) && position->y > 0) {
-            this->_ECS->getComponent<Position::Component>(this->_player)->y -= velocity->y;
-        }
-        if (IsKeyDown(KEY_S) && position->y < (GetScreenHeight() - (Animation::Sheets[animation->animationID].frameHeight * animation->scale))) {
-            this->_ECS->getComponent<Position::Component>(this->_player)->y += velocity->y;
-        }
-
-        this->_timer = now;
-    }
+    if (IsKeyDown(KEY_A))
+        this->_protocol->sendActMove(Move::LEFT);
+    if (IsKeyDown(KEY_D))
+        this->_protocol->sendActMove(Move::RIGHT);
+    if (IsKeyDown(KEY_W))
+        this->_protocol->sendActMove(Move::UP);
+    if (IsKeyDown(KEY_S))
+        this->_protocol->sendActMove(Move::DOWN);
+    if (IsKeyDown(KEY_SPACE))
+        this->_protocol->sendActFire();
 }

@@ -13,13 +13,13 @@
 
 #define HAS_KEY(map, key) (map.find(key) != map.end())
 
-SpriteSystem::SpriteSystem(ECSManager* ECS) {
+SpriteSystem::SpriteSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 
 Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, const float ypos) {
     const cmrc::file image = this->_fs.open(sheet.path);
-
+    LOG("Loading image " << sheet.path);
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
 
     Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());

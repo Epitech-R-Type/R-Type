@@ -8,7 +8,7 @@ public:
     /**
      * System that handles deletion of entities
      * */
-    JanitorSystem(ECSManager* ECS);
+    JanitorSystem(std::shared_ptr<ECSManager> ECS);
 
     /**
      * deletes all entities that match certain criteria such as:
@@ -18,5 +18,5 @@ public:
     void apply();
 
 private:
-    ECSManager* _ECS;
+    std::shared_ptr<ECSManager> _ECS;
 };

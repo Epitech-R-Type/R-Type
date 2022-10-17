@@ -13,6 +13,7 @@
 #include "../Utilities/Utilities.hpp"
 #include <cstring>
 #include <iostream>
+#include <memory>
 #include <regex>
 #include <sstream>
 #include <string>
@@ -22,12 +23,11 @@ public:
     static std::bitset<MAX_COMPONENTS> hiddenComponents;
 
     template <class... ComponentTypes>
-    static std::string entityToString(EntityID entityID, ECSManager* manager) {
-        Index entityIndex = getIndex(entityID);
+    static std::string entityToString(EntityID entityID, std::shared_ptr<ECSManager> manager) {
         std::stringstream stream;
         std::vector<std::string> cerealizedComponents = {Serialization::componentToString<ComponentTypes>(entityID, manager)...};
 
-        stream << entityIndex << ";";
+        stream << entityID << ";";
 
         if (cerealizedComponents.size() == 0) {
             const std::bitset<MAX_COMPONENTS> setComponents = manager->getSetComponents(entityID);
@@ -91,15 +91,21 @@ public:
         return stream.str();
     }
 
-    static void stringToEntity(const std::string entity, ECSManager* manager) {
+    static void stringToEntity(const std::string entity, std::shared_ptr<ECSManager> manager) {
 
         std::vector<std::string> components = Utilities::splitStr(entity, ";");
 
-        EntityID entityID = atoi(components[0].c_str());
+        EntityID entityID = std::stoll(components[0]);
 
-        for (auto beg = components.begin() + 1; beg != components.end(); beg++) {
+        // CHECK IF ENTITY EXISTS
+        if (!manager->entityExists(entityID))
+            manager->newEntity(entityID);
+
+        LOG("Treating entity " << entityID);
+
+        for (auto beg = components.begin() + 1; beg != components.end() && (*beg)[(*beg).size() - 1] != '\n'; beg++) {
             const std::string component = *beg;
-
+            std::cout << "Component: " << component << std::endl;
             std::vector<std::string> args = Utilities::splitStr(component, ",");
 
             ComponentType componentTypeID = ComponentType(atoi(args[0].c_str()));
@@ -115,7 +121,7 @@ public:
                     Position::applyUpdate(args, entityID, manager);
                     break;
                 case ComponentType::ANIMATION:
-                    Position::applyUpdate(args, entityID, manager);
+                    Animation::applyUpdate(args, entityID, manager);
                     break;
                 case ComponentType::VELOCITY:
                     Velocity::applyUpdate(args, entityID, manager);
@@ -148,9 +154,9 @@ public:
     }
 
     template <class T>
-    static std::string componentToString(EntityID entityId, ECSManager* manager) {
+    static std::string componentToString(EntityID entityId, std::shared_ptr<ECSManager> manager) {
         if (!manager->hasComponent<T>(entityId)) {
-            std::cout << "[Warning]: Missing component." << std::endl;
+            WARNING("Missing component.");
             return "";
         }
 

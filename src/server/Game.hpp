@@ -13,6 +13,7 @@
 #include "../shared/ECS/Manager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Networking/UdpCommunication.hpp"
+#include "Protocols/GameProtocol.hpp"
 #include "Protocols/TcpServer.hpp"
 #include "Systems/Systems.hpp"
 
@@ -24,7 +25,7 @@
 class Game {
 public:
     // All the game setup is done in here
-    Game();
+    Game(std::vector<Connection> connections, int port);
 
     ~Game();
 
@@ -33,17 +34,19 @@ public:
     int mainLoop();
 
 private:
-    ECSManager* _entManager;
-    VelocitySystem* _velocitySystem;
-    ArmamentSystem* _armamentSystem;
-    HitboxSystem* _hitboxSystem;
-    JanitorSystem* _janitorSystem;
+    // ECS and Systems
+    std::shared_ptr<ECSManager> _entManager;
+    std::unique_ptr<VelocitySystem> _velocitySystem;
+    std::unique_ptr<ArmamentSystem> _armamentSystem;
+    std::unique_ptr<HitboxSystem> _hitboxSystem;
+    std::unique_ptr<JanitorSystem> _janitorSystem;
 
-    // Messaging queues for protocol
-    // These should eventually be moved to the protocol class
+    // UDP Networking
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+    GameProtocol _protocol;
 
+    // Multithreading
     bool _isRunning;
     std::thread* _udpComThread;
     std::shared_ptr<std::atomic<bool>> _stopFlag;

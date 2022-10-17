@@ -12,20 +12,20 @@
 #include "ClientGame.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame() {
-    // Construct messaging queues
-    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
-
+ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
+    : _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _entManager(std::make_shared<ECSManager>()),
+      _protocol(this->_incomingMQ, this->_outgoingMQ, this->_entManager, addr, asio::ip::port_type(port), uuid) {
     // Init com thread
+    this->_uuid = uuid;
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    // this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    this->_udpComThread =
+        new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1); // Bind to available port
 
-    this->_entManager = new ECSManager();
-    this->_spriteSystem = new SpriteSystem(this->_entManager);
-    this->_velocitySystem = new VelocitySystem(this->_entManager);
-    this->_playerMovementSystem = new PlayerMovementSystem(this->_entManager);
-    this->_healthSystem = new HealthSystem(this->_entManager);
+    this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
+    this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
+    this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
 }
 
 ClientGame::~ClientGame() {
@@ -35,31 +35,43 @@ ClientGame::~ClientGame() {
 
     // Delete com thread
     delete this->_udpComThread;
-    delete this->_entManager;
 }
 
 void ClientGame::init() {
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
-    // this->_player = getPlayer();
 
-    this->_playerMovementSystem->setPlayer(this->_player);
+    // Send here command
+    this->_protocol.sendHere();
+
     this->_healthSystem->setPlayer(this->_player);
 }
 
 void ClientGame::mainLoop() {
-    this->init();
-
     while (this->_entManager->entityIsActive(this->_player)) // Detect window close button or ESC key
     {
         BeginDrawing();
 
         ClearBackground(BLACK);
 
+        this->_protocol.handleCommands();
         this->_spriteSystem->apply();
         this->_velocitySystem->apply();
-        this->_playerMovementSystem->apply();
         this->_healthSystem->apply();
-
+        this->handlePlayerInput();
         EndDrawing();
     }
+}
+
+void ClientGame::handlePlayerInput() {
+
+    if (IsKeyDown(KEY_A))
+        this->_protocol.sendActMove(Move::LEFT);
+    if (IsKeyDown(KEY_D))
+        this->_protocol.sendActMove(Move::RIGHT);
+    if (IsKeyDown(KEY_W))
+        this->_protocol.sendActMove(Move::UP);
+    if (IsKeyDown(KEY_S))
+        this->_protocol.sendActMove(Move::DOWN);
+    if (IsKeyDown(KEY_SPACE))
+        this->_protocol.sendActFire();
 }

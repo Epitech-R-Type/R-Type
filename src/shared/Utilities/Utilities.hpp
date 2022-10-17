@@ -7,6 +7,23 @@
 
 #pragma once
 
+#ifndef __FUNCTION_NAME__
+#ifdef WIN32 // WINDOWS
+#define __FUNCTION_NAME__ __FUNCTION__
+#define NC ""
+#define REDL ""
+#else //*NIX
+#define __FUNCTION_NAME__ __func__
+#define NC "\e[0m"
+#define REDL "\e[0;31m"
+#endif
+#endif
+
+#define ERROR(msg) std::cout << REDL << "[ERROR]   " << __FUNCTION_NAME__ << ": " << msg << NC << std::endl
+#define WARNING(msg) std::cout << "[WARNING] " << __FUNCTION_NAME__ << ": " << msg << std::endl
+#define LOG(msg) std::cout << "[LOG]     " << __FUNCTION_NAME__ << ": " << msg << std::endl
+
+#include <asio.hpp>
 #include <string>
 #include <vector>
 
@@ -39,4 +56,6 @@ public:
      * Generate fixed order of comppools, better alternative would be using a map instead
      * */
     static void createCompPoolIndexes();
+
+    static bool isPortAvailable(int port);
 };

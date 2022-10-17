@@ -6,7 +6,6 @@
 */
 
 #include "Manager.hpp"
-#include "Components.hpp"
 #include <algorithm>
 
 EntityID ECSManager::newEntity() {
@@ -37,6 +36,20 @@ EntityID ECSManager::newEntity() {
 
         return id;
     }
+}
+
+EntityID ECSManager::newEntity(EntityID entityID) {
+    if (this->_entities.size() >= MAX_ENTITIES)
+        return -1;
+    // Create new id and entity
+
+    if (this->_entities.size() < getIndex(entityID))
+        this->_entities.resize(getIndex(entityID) + 1);
+
+    // Push to entities
+    this->_entities.emplace(this->_entities.begin() + getIndex(entityID), Entity{entityID, 0});
+
+    return entityID;
 }
 
 void ECSManager::deleteEntity(EntityID id) {

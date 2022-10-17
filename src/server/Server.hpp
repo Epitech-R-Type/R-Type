@@ -38,18 +38,18 @@ public:
         // Launches game
         // Note: Execution will hang until game is over,
         // in the future this can be done in a separate thread
-        int launchGame();
+        int launchGame(int port);
 
-private:
-    bool _lobbyRunning;
-    Game _game;
-    LobbyProtocol* _protocol;
+    private:
+        bool _lobbyRunning;
+        Game* _game;
+        LobbyProtocol* _protocol;
 
-    // Tcp com thread stuff
-    std::thread* _comThread;
-    std::shared_ptr<std::atomic<bool>> _stopFlag;
+        // Tcp com thread stuff
+        std::thread* _comThread;
+        std::shared_ptr<std::atomic<bool>> _stopFlag;
 
-    // Tcp message queues
-    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
-    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+        // Tcp message queues
+        std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
+        std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
 };

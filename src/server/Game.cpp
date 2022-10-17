@@ -12,22 +12,22 @@
 #include "../shared/ECS/Serialization.hpp"
 #include "Systems/Factory.hpp"
 
-Game::Game()
-    : _isRunning(true) {
+Game::Game(std::vector<Connection> connections, int port)
+    : _isRunning(true),
+      _entManager(std::make_shared<ECSManager>()),
+      _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _protocol(_incomingMQ, _outgoingMQ, connections, _entManager) {
     // Construct messaging queues
-    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, port);
 
-    this->_entManager = new ECSManager();
-
-    this->_velocitySystem = new VelocitySystem(this->_entManager);
-    this->_armamentSystem = new ArmamentSystem(this->_entManager);
-    this->_hitboxSystem = new HitboxSystem(this->_entManager);
-    this->_janitorSystem = new JanitorSystem(this->_entManager);
+    this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
+    this->_armamentSystem = std::make_unique<ArmamentSystem>(this->_entManager);
+    this->_hitboxSystem = std::make_unique<HitboxSystem>(this->_entManager);
+    this->_janitorSystem = std::make_unique<JanitorSystem>(this->_entManager);
 }
 
 Game::~Game() {
@@ -40,7 +40,15 @@ Game::~Game() {
 }
 
 void Game::init() {
+    LOG("Initializing game");
     srand(time(0));
+    this->_protocol.waitForClients();
+
+    std::vector<Connection> connections = this->_protocol.getConnectedClients();
+
+    for (int i = 0; i < connections.size(); i++) {
+        this->_protocol.sendEntity(Factory::Ally::makePlayer(this->_entManager, i));
+    }
 }
 
 int Game::mainLoop() {
@@ -60,8 +68,8 @@ int Game::mainLoop() {
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 4) {
-            Factory::Enemy::makeEnemy(this->_entManager);
+        if (elapsed_seconds.count() > 0.2) {
+            this->_protocol.sendEntity(Factory::Enemy::makeEnemy(this->_entManager));
             timer = getNow();
         }
     }

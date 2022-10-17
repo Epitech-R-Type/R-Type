@@ -14,6 +14,7 @@
 #include <sstream>
 
 #include "../../shared/MessageQueue/MessageQueue.hpp"
+#include "../../shared/Networking/AsioConstants.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 #include "Connections.hpp"
 
@@ -31,18 +32,20 @@ public:
 
     // Server Commands
     // Sends start game command to every connected client
-    void startGame();
+    void startGame(int port);
 
     // Utility function to check if users UUID is valid
     bool isAuthenticated(std::string uuid);
 
     // Handle commands
     // Returns true if game should start
-    bool handleCommands();
+    int handleCommands();
 
     // Utility function in order to form response automatically
     // Handles putting uuid in and str forming
     void sendResponse(std::string code, std::string args, asio::ip::address addr, asio::ip::port_type port);
+
+    std::vector<Connection> getConnections();
 
 private:
     // Connection manager

@@ -26,6 +26,8 @@ public:
     // Create entity
     EntityID newEntity();
 
+    EntityID newEntity(EntityID id);
+
     // Delete entity
     void deleteEntity(EntityID id);
 
@@ -157,6 +159,16 @@ public:
 
         Index entityIndex = getIndex(id);
         if (!this->_entities[entityIndex].components[i])
+            return false;
+        return true;
+    }
+
+    bool entityExists(EntityID id) {
+        Index i = getIndex(id);
+
+        if (i >= this->_entities.size() || i >= MAX_ENTITIES)
+            return false;
+        if (getIndex(this->_entities[i].id) == INVALID_INDEX)
             return false;
         return true;
     }

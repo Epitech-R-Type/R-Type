@@ -40,19 +40,28 @@ int Server::setup() {
 }
 
 int Server::mainLoop() {
+    int port;
+
     while (this->_lobbyRunning) {
         // DO STUFF
 
         // Handle messages and launch game if game should start
-        if (this->_protocol->handleCommands())
-            this->launchGame();
+        if ((port = this->_protocol->handleCommands())) {
+            LOG("Launching game");
+            this->launchGame(port);
+        }
     }
 
     return 0;
 }
 
-int Server::launchGame() {
-    this->_game.mainLoop();
+int Server::launchGame(int port) {
+    this->_game = new Game(this->_protocol->getConnections(), port);
+
+    this->_game->init();
+    this->_game->mainLoop();
+
+    delete this->_game;
 
     return 0;
 }

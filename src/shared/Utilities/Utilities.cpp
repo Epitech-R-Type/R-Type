@@ -17,6 +17,16 @@ void Utilities::createCompPoolIndexes() {
     getID<CollisionEffect::Component>();
 }
 
+bool Utilities::isPortAvailable(int port) {
+    asio::io_service svc;
+    asio::ip::tcp::acceptor a(svc);
+
+    asio::error_code ec;
+    a.open(asio::ip::tcp::v4(), ec) || a.bind(asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port), ec);
+
+    return ec == asio::error::address_in_use;
+}
+
 double Utilities::toRadians(double degree) {
     constexpr double pi = 22 / 7;
     return (double)degree * (pi / 180.0);

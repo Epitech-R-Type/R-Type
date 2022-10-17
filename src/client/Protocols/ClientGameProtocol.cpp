@@ -6,6 +6,7 @@
 */
 
 #include "ClientGameProtocol.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 
 ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                        std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<ECSManager> entManager,
@@ -15,7 +16,9 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
       _entityManager(entManager),
       _addr(addr),
       _port(port),
-      _uuid(uuid) {}
+      _uuid(uuid) {
+    LOG("UDP Sending to port : " << port);
+}
 
 //
 //
@@ -27,21 +30,26 @@ void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
     if (cmd.args.size() < 1)
         return;
 
-    Serialization::stringToEntity(raw, this->_entityManager.get());
+    std::vector<std::string> res = Utilities::splitStr(raw, " ");
+    Serialization::stringToEntity(res[1], this->_entityManager);
 }
 
 void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
     EntityID id;
 
-    if (cmd.args.size() != 1)
+    if (cmd.args.size() != 1) {
+        ERROR("Command " << cmd.cmd << " has not exactly one arg.");
         return;
+    }
 
     try {
         id = std::stoll(cmd.args[0][0]);
     } catch (...) {
+        ERROR("Unable to convert argument to long long.");
         return;
     }
 
+    LOG("Deleting Entity " << id);
     this->_entityManager->deleteEntity(id);
 }
 
@@ -49,16 +57,20 @@ void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
     EntityID id;
     Index compId;
 
-    if (cmd.args.size() != 2)
+    if (cmd.args.size() != 2) {
+        ERROR("Command " << cmd.cmd << " has not exactly two args.");
         return;
+    }
 
     try {
         id = std::stoll(cmd.args[0][0]);
         compId = std::stol(cmd.args[1][0]);
     } catch (...) {
+        ERROR("Unable to convert arguments.");
         return;
     }
 
+    LOG("Deleting Component " << compId << " of entity " << id);
     this->_entityManager->removeComp(id, compId);
 }
 
@@ -66,6 +78,7 @@ bool ClientGameProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
 
     while ((msg = this->_incomingMQ->pop())) {
+        LOG("Handling command: " << msg.value());
         auto parsed = ProtocolUtils::parseCommand(*msg);
 
         if (!parsed)
@@ -81,6 +94,8 @@ bool ClientGameProtocol::handleCommands() {
             case DeleteComponent:
                 this->handleDeleteComponent(*parsed);
                 break;
+            default:
+                WARNING("Command " << parsed->cmd << " unhandled.");
         }
     }
 }
@@ -110,16 +125,21 @@ void ClientGameProtocol::sendActMove(Move direction) {
     }
 
     auto msg = ProtocolUtils::createMessage("ACT_MOVE", body, this->_addr, this->_port);
+
+    LOG("Sending to Server: " << msg.getMsg());
+
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendActFire() {
     auto msg = ProtocolUtils::createMessage("FIRE", "", this->_addr, this->_port);
+    LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendHere() {
     auto msg = ProtocolUtils::createMessage("HERE", this->_uuid.toString(), this->_addr, this->_port);
+    LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
@@ -128,5 +148,6 @@ void ClientGameProtocol::sendGetEnt(EntityID id) {
     ss << id;
 
     auto msg = ProtocolUtils::createMessage("GET_ENT", ss.str(), this->_addr, this->_port);
+    LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }

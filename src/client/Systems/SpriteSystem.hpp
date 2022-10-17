@@ -26,7 +26,7 @@ typedef std::vector<Texture2D> AnimationArr;
 
 class SpriteSystem : public System {
 public:
-    SpriteSystem(ECSManager* ECS);
+    SpriteSystem(std::shared_ptr<ECSManager> ECS);
 
     /**
      * Draw all entities with Animation Components
@@ -55,5 +55,5 @@ private:
 
     std::map<Animation::AnimationID, AnimationArr> _animations;
 
-    ECSManager* _ECS;
+    std::shared_ptr<ECSManager> _ECS;
 };

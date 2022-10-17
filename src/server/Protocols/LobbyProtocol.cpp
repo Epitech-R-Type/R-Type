@@ -34,9 +34,13 @@ void LobbyProtocol::sendResponse(std::string code, std::string args, asio::ip::a
     this->_outgoingMQ->push(msg);
 }
 
-bool LobbyProtocol::handleCommands() {
+std::vector<Connection> LobbyProtocol::getConnections() {
+    return this->_connMan.getConnections();
+}
+
+int LobbyProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
-    bool gameShouldStart = false;
+    int outputPort = 0;
 
     while ((msg = this->_incomingMQ->pop())) {
         // Get peer info
@@ -49,6 +53,7 @@ bool LobbyProtocol::handleCommands() {
 
         // If invalid size error 500
         if (splitBody.size() < 1) {
+            ERROR("Wrong message: " << msgBody);
             Message<std::string> msg("500 Wrong request\r\n", addr, port);
             this->_outgoingMQ->push(msg);
             continue;
@@ -91,30 +96,37 @@ bool LobbyProtocol::handleCommands() {
 
         // START command
         if (cmd == "START") {
+            outputPort = UDP_PORT;
 
-            // Set boolean that game should start
-            gameShouldStart = true;
-            this->startGame();
+            // Find an available port
+            while (!Utilities::isPortAvailable(outputPort))
+                outputPort++;
+
+            LOG("Using port: " << outputPort);
+            this->startGame(outputPort);
             continue;
         }
     }
 
-    return gameShouldStart;
+    return outputPort;
 }
 
 // Server Commands
-void LobbyProtocol::startGame() {
+void LobbyProtocol::startGame(int port) {
     // Get Connections
     auto connections = this->_connMan.getConnections();
 
     // Form message body
     std::stringstream msgBody;
-    msgBody << START_GAME << SP << this->_connMan.getServerUUID() << SP << EMPTY_ARGS << END;
+    msgBody << START_GAME << SP << this->_connMan.getServerUUID() << ";" << port << SP << END;
 
+    LOG("Sending start game command.");
     // Send START_GAME command to all connected clients
     for (auto conn : connections) {
         Message<std::string> msg(msgBody.str(), conn.addr, conn.port);
 
         this->_outgoingMQ->push(msg);
     }
+
+    LOG("Done sending start game command.");
 }

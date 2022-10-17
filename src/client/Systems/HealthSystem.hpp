@@ -6,7 +6,7 @@
 
 class HealthSystem : public System {
 public:
-    HealthSystem(ECSManager* ECS);
+    HealthSystem(std::shared_ptr<ECSManager> ECS);
 
     void apply();
 
@@ -15,6 +15,6 @@ public:
     void drawPlayerHP();
 
 private:
-    ECSManager* _ECS;
+    std::shared_ptr<ECSManager> _ECS;
     EntityID _player;
 };

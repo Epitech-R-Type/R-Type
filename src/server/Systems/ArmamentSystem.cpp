@@ -4,7 +4,7 @@
 #include "Factory.hpp"
 #include <chrono>
 
-ArmamentSystem::ArmamentSystem(ECSManager* ECS) {
+ArmamentSystem::ArmamentSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 

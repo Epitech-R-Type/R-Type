@@ -12,6 +12,8 @@
 #include "../../shared/ECS/Manager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
+#include "../../shared/Utilities/UUID.hpp"
+#include "../Protocols/ClientGameProtocol.hpp"
 #include "../Systems/Systems.hpp"
 #include <memory>
 #include <string>
@@ -22,7 +24,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame();
+    ClientGame(UUIDM uuid, asio::ip::address addr, int port);
     ~ClientGame();
 
     void init();
@@ -30,18 +32,23 @@ public:
     void mainLoop();
 
 private:
-    ECSManager* _entManager;
+    void handlePlayerInput();
+
     EntityID _player = INVALID_INDEX;
 
-    SpriteSystem* _spriteSystem;
-    VelocitySystem* _velocitySystem;
-    PlayerMovementSystem* _playerMovementSystem;
-    HealthSystem* _healthSystem;
+    std::shared_ptr<ECSManager> _entManager;
+    std::unique_ptr<SpriteSystem> _spriteSystem;
+    std::unique_ptr<VelocitySystem> _velocitySystem;
+    std::unique_ptr<HealthSystem> _healthSystem;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+
+    ClientGameProtocol _protocol;
+
+    UUIDM _uuid;
 
     bool _isRunning;
     std::thread* _udpComThread;
