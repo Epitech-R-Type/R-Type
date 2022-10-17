@@ -62,6 +62,29 @@ void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
     this->_entityManager->removeComp(id, compId);
 }
 
+bool ClientGameProtocol::handleCommands() {
+    std::optional<Message<std::string>> msg;
+
+    while ((msg = this->_incomingMQ->pop())) {
+        auto parsed = ProtocolUtils::parseCommand(*msg);
+
+        if (!parsed)
+            continue;
+
+        switch (parsed->cmd) {
+            case Entity:
+                this->handleEntity(*parsed, msg->getMsg());
+                break;
+            case DeleteEntity:
+                this->handleDeleteEntity(*parsed);
+                break;
+            case DeleteComponent:
+                this->handleDeleteComponent(*parsed);
+                break;
+        }
+    }
+}
+
 //
 //
 // COMMAND SENDING

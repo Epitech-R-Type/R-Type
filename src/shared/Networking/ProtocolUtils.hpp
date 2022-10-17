@@ -18,7 +18,15 @@
 // may be used by both the server and the client
 
 // Command enum
-enum Command { Here };
+enum Command {
+    Here, // Server commands start here
+    GetEntity,
+    ActShoot,
+    ActMove,
+    Entity, // Client commands start here
+    DeleteEntity,
+    DeleteComponent,
+};
 
 // Parsed command structure$
 struct ParsedCmd {

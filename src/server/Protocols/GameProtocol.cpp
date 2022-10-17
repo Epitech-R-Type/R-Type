@@ -109,6 +109,28 @@ void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip:
     this->sendEntity(id);
 }
 
+void GameProtocol::handleCommands() {
+    std::optional<Message<std::string>> msg;
+
+    while ((msg = this->_incomingMQ->pop())) {
+        auto parsed = ProtocolUtils::parseCommand(*msg);
+
+        if (!parsed)
+            continue;
+
+        switch (parsed->cmd) {
+            case GetEntity:
+                this->handleGetEnt(*parsed, msg->getAddr(), msg->getPort());
+                break;
+            case ActShoot:
+                this->handleShoot(*parsed, msg->getAddr(), msg->getPort());
+                break;
+            case ActMove:
+                this->handleMove(*parsed, msg->getAddr(), msg->getPort());
+        }
+    }
+}
+
 //
 //
 // COMMAND SENDING

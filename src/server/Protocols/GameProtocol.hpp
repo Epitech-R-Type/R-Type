@@ -43,6 +43,8 @@ public:
     void handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
     void handleGetComp(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
 
+    void handleCommands();
+
     // COMMAND SENDING
     // By default, commands do nothing if invalid
     template <class... T>

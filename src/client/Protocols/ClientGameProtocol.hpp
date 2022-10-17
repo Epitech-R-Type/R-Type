@@ -33,6 +33,9 @@ public:
     void handleDeleteEntity(ParsedCmd cmd);
     void handleDeleteComponent(ParsedCmd cmd);
 
+    // Returns true if player died
+    bool handleCommands();
+
     // COMMAND SENDING
     void sendActMove(Move direction);
     void sendActFire();
