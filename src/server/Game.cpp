@@ -54,8 +54,11 @@ void Game::sendModified() {
     std::optional<EntityID> entityID;
 
     while ((entityID = this->_entManager->getModified())) {
-        std::cout << "broadcasting " << entityID.value() << std::endl;
-        this->_protocol.sendEntity(entityID.value());
+        DEBUG("broadcasting " << entityID.value());
+        if (this->_entManager->entityIsActive(entityID.value()))
+            this->_protocol.sendEntity(entityID.value());
+        else
+            this->_protocol.sendDelEntity(entityID.value());
     }
 };
 
@@ -65,6 +68,7 @@ int Game::mainLoop() {
     std::chrono::time_point<std::chrono::system_clock> timer;
 
     while (this->_isRunning) {
+        this->_protocol.handleCommands();
         this->_velocitySystem->apply();
         this->_armamentSystem->apply();
         this->_hitboxSystem->apply();
@@ -76,7 +80,7 @@ int Game::mainLoop() {
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 3) {
+        if (elapsed_seconds.count() > 1) {
             this->_entManager->pushModified(Factory::Enemy::makeEnemy(this->_entManager));
             timer = getNow();
         }

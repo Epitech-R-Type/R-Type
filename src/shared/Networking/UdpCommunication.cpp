@@ -66,8 +66,8 @@ void UdpCommunication::setup_incoming_handler() {
         if (!err) {
             auto addr = this->_endpoint.address();
             auto port = this->_endpoint.port();
-            LOG("Received packet from : " << addr << ":" << port);
-            LOG("Packet contents : " << this->_buffer);
+            DEBUG("Received packet from : " << addr << ":" << port);
+            DEBUG("Packet contents : " << this->_buffer);
 
             this->push_message(Message(std::string(this->_buffer), addr, port));
 

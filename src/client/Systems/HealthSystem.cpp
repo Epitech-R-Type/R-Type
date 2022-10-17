@@ -54,5 +54,5 @@ void HealthSystem::apply() {
         }
     }
 
-    this->drawPlayerHP();
+    // this->drawPlayerHP();
 }

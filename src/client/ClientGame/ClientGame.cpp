@@ -47,7 +47,7 @@ void ClientGame::init() {
 }
 
 void ClientGame::mainLoop() {
-    while (this->_entManager->entityIsActive(this->_player)) // Detect window close button or ESC key
+    while (this->_isRunning) // Detect window close button or ESC key
     {
         BeginDrawing();
 
@@ -58,6 +58,7 @@ void ClientGame::mainLoop() {
         this->_velocitySystem->apply();
         this->_healthSystem->apply();
         this->handlePlayerInput();
+
         EndDrawing();
     }
 }

@@ -112,6 +112,8 @@ namespace Velocity {
         float x = 0;
         float y = 0;
         EntityID follow = -1;
+        double tickrate = 0.02;
+        std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
     std::string toString(Velocity::Component component);

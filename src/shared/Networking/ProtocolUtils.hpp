@@ -54,10 +54,14 @@ public:
         splitMsg[1].erase(splitMsg[1].length() - 2, 2);
 
         // Get command type
-        if (splitMsg[0] == "HERE") {
+        if (splitMsg[0] == "HERE")
             output->cmd = Command::Here; // Note make sure you do ELSE IF
-        } else if (splitMsg[0] == "ENTITY")
+        else if (splitMsg[0] == "ENTITY")
             output->cmd = Command::Entityd;
+        else if (splitMsg[0] == "ACT_SHOOT")
+            output->cmd = Command::ActShoot;
+        else if (splitMsg[0] == "ACT_MOVE")
+            output->cmd = Command::ActMove;
         else {
             ERROR("Unhandled Command: " << splitMsg[0]);
             return {};

@@ -12,6 +12,7 @@ void JanitorSystem::apply() {
     for (auto beg = this->_ECS->begin<Health::Component>(); beg != this->_ECS->end<Health::Component>(); ++beg) {
         if (this->_ECS->getComponent<Health::Component>(*beg)->health <= 0) {
             this->_ECS->deleteEntity(*beg);
+            this->_ECS->pushModified(*beg);
             continue;
         }
 
@@ -19,6 +20,7 @@ void JanitorSystem::apply() {
 
         if (position->x < -100 || position->x > INVISIBLE_BOX || position->y < -100 || position->y > INVISIBLE_BOX) {
             this->_ECS->deleteEntity(*beg);
+            this->_ECS->pushModified(*beg);
             continue;
         }
     }

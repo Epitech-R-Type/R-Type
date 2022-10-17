@@ -41,6 +41,7 @@ bool GameProtocol::waitForClients() {
         }
     }
     LOG("Done waiting for clients");
+    return true;
 }
 
 //
@@ -85,7 +86,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
     // In system if player is dead, send del Ent again ? or say something at least
     // This in case client has missed message that his character is dead
-    std::string direction;
+    std::string direction = cmd.args[0][0];
 
     EntityID entityID = INVALID_INDEX;
     for (auto beg = this->_entityManager->begin<Player::Component>(); beg != this->_entityManager->end<Player::Component>(); ++beg) {
@@ -102,21 +103,31 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
         return;
     }
 
-    LOG("Player " << playerUID << " is moving " << direction << ".");
+    DEBUG("Player " << playerUID << " is moving " << direction << ".");
 
     Position::Component* position = this->_entityManager->getComponent<Position::Component>(entityID);
     Velocity::Component* velocity = this->_entityManager->getComponent<Velocity::Component>(entityID);
 
-    // Note: Prints are placeholder and should be replaced by call to adequate system
-    if (direction == "UP")
-        position->y -= velocity->y;
-    if (direction == "DOWN")
-        position->y += velocity->y;
-    if (direction == "LEFT")
-        position->x -= velocity->x;
-    if (direction == "RIGHT")
-        position->x += velocity->x;
-    this->_entityManager->pushModified(entityID);
+    const auto now = getNow();
+    std::chrono::duration<double> elapsed_seconds = now - velocity->timer;
+
+    if (elapsed_seconds.count() > velocity->tickrate) {
+        DEBUG("Before X:" << position->x << " Y: " << position->y);
+        // Note: Prints are placeholder and should be replaced by call to adequate system
+        if (direction == "UP")
+            position->y -= velocity->y;
+        if (direction == "DOWN")
+            position->y += velocity->y;
+        if (direction == "LEFT")
+            position->x -= velocity->x;
+        if (direction == "RIGHT")
+            position->x += velocity->x;
+
+        DEBUG("AFTER X:" << position->x << " Y: " << position->y);
+
+        this->_entityManager->pushModified(entityID);
+        velocity->timer = getNow();
+    }
 }
 
 void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
@@ -213,10 +224,10 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
 }
 
 void GameProtocol::sendDelEntity(EntityID id) const {
-    // if (!this->_entityManager->isValidID(id)) {
-    //     ERROR("Entity ID is invalid: " << id);
-    //     return;
-    // }
+    if (!this->_entityManager->isValidID(id)) {
+        ERROR("Entity ID is invalid: " << id);
+        return;
+    }
 
     std::stringstream ss;
     ss << id;

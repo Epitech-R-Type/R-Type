@@ -111,16 +111,16 @@ void ClientGameProtocol::sendActMove(Move direction) {
 
     switch (direction) {
         case UP:
-            "UP";
+            body = "UP";
             break;
         case DOWN:
-            "DOWN";
+            body = "DOWN";
             break;
         case LEFT:
-            "LEFT";
+            body = "LEFT";
             break;
         case RIGHT:
-            "RIGHT";
+            body = "RIGHT";
             break;
     }
 
@@ -132,7 +132,7 @@ void ClientGameProtocol::sendActMove(Move direction) {
 }
 
 void ClientGameProtocol::sendActFire() {
-    auto msg = ProtocolUtils::createMessage("FIRE", "", this->_addr, this->_port);
+    auto msg = ProtocolUtils::createMessage("ACT_SHOOT", "", this->_addr, this->_port);
     LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }

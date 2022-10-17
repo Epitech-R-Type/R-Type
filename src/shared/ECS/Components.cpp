@@ -20,17 +20,21 @@ void Armor::applyUpdate(std::vector<std::string> args, EntityID entityID, std::s
 std::string Health::toString(Health::Component component) {
     std::stringstream ss;
 
-    ss << component.health << ";";
+    ss << component.health << ",";
+    ss << component.maxHealth << ",";
+    ss << component.visible << ";";
     return ss.str();
 }
 
 void Health::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
-    if (manager->hasComponent<Health::Component>(entityID)) {
-        Health::Component* component = manager->getComponent<Health::Component>(entityID);
-        component->health = stoi(args[1]);
-    } else {
-        manager->addComp<Health::Component>(entityID, {stoi(args[1])});
-    }
+    Health::Component* component;
+    if (manager->hasComponent<Health::Component>(entityID))
+        component = manager->getComponent<Health::Component>(entityID);
+    else
+        component = manager->addComp<Health::Component>(entityID, {stoi(args[1])});
+    component->health = stoi(args[1]);
+    component->maxHealth = stoi(args[2]);
+    component->visible = stoi(args[3]);
 }
 
 std::string Position::toString(Position::Component component) {

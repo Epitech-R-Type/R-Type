@@ -132,7 +132,7 @@ public:
     // Set components to exclude in view
     template <class... Excluded>
     void setExcluded() {
-        int excludedIds[] = {getID<Excluded...>()};
+        Index excludedIds[] = {getID<Excluded...>()};
         this->_excludedInView.reset();
 
         for (auto excluded : excludedIds)

@@ -9,7 +9,7 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
 
     Position::Component* position = ECS->addComp<Position::Component>(player, {0, 0});
     Animation::Component* animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2});
-    ECS->addComp<Health::Component>(player, {50, 50});
+    ECS->addComp<Health::Component>(player, {50, 50, true});
     ECS->addComp<Player::Component>(player, {true, uniqueID});
     ECS->addComp<Armament::Component>(player, {Armament::Type::Buckshot, 150, -1});
     ECS->addComp<Velocity::Component>(player, {10, 10});
