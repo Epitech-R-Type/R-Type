@@ -24,7 +24,6 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
     this->_udpComThread =
         new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1); // Bind to available port
 
-    this->_entManager = std::make_shared<ECSManager>();
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
     this->_playerMovementSystem = std::make_unique<PlayerMovementSystem>(this->_entManager);

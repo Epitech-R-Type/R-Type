@@ -51,7 +51,10 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
     : _sock(_ctxt, asio::ip::udp::v6()),
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
-      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {}
+      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
+    this->_incomingMessages = incoming;
+    this->_outgoingMessages = outgoing;
+}
 
 // Handler Method
 void UdpCommunication::setup_incoming_handler() {
