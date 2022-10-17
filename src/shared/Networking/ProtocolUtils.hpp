@@ -43,13 +43,16 @@ public:
         std::cout << msg.getMsg() << std::endl;
 
         // Error handling
-        if (splitMsg.size() != 2)
+        if (splitMsg.size() != 2) {
+            ERROR("Message length not 2.");
             return {};
+        }
         // Check for CRLF
         if (splitMsg[1][splitMsg[1].size() - 1] != '\n' || splitMsg[1][splitMsg[1].size() - 2] != '\r') {
             ERROR("Carriage Return Line Feed missing.");
             return {};
         }
+
         splitMsg[1].erase(splitMsg[1].length() - 2, 2);
 
         // Get command type
