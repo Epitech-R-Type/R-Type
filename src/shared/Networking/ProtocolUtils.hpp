@@ -57,10 +57,11 @@ public:
 
         // Get command type
         if (splitMsg[0] == "HERE") {
-            LOG("HERE");
             output->cmd = Command::Here; // Note make sure you do ELSE IF
-        } else {
-            LOG("THERE");
+        } else if (splitMsg[0] == "ENTITY")
+            output->cmd = Command::Entity;
+        else {
+            ERROR("Unhandled Command: " << splitMsg[0]);
             return {};
         }
 

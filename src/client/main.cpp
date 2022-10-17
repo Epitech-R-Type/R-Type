@@ -17,7 +17,6 @@ bool isFlagSet(char** begin, char** end, const std::string& option) {
 }
 
 int main(int argc, char** argv) {
-    ERROR("Hey");
     Client client;
 
     if (!isFlagSet(argv, argv + argc, "-v")) {

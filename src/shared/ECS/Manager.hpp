@@ -26,6 +26,8 @@ public:
     // Create entity
     EntityID newEntity();
 
+    EntityID newEntity(EntityID id);
+
     // Delete entity
     void deleteEntity(EntityID id);
 
