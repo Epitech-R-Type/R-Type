@@ -22,7 +22,7 @@ bool GameProtocol::waitForClients() {
     while (this->_connectedClients.size() < targetClientCount && !timeout.isExpired()) {
         while ((msg = this->_incomingMQ->pop())) {
             // Parse command
-            auto parsedCmd = this->parseCommand(*msg);
+            auto parsedCmd = ProtocolUtils::parseCommand(*msg);
 
             // if command invalid continue
             if (!parsedCmd)
@@ -109,6 +109,28 @@ void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip:
     this->sendEntity(id);
 }
 
+void GameProtocol::handleCommands() {
+    std::optional<Message<std::string>> msg;
+
+    while ((msg = this->_incomingMQ->pop())) {
+        auto parsed = ProtocolUtils::parseCommand(*msg);
+
+        if (!parsed)
+            continue;
+
+        switch (parsed->cmd) {
+            case GetEntity:
+                this->handleGetEnt(*parsed, msg->getAddr(), msg->getPort());
+                break;
+            case ActShoot:
+                this->handleShoot(*parsed, msg->getAddr(), msg->getPort());
+                break;
+            case ActMove:
+                this->handleMove(*parsed, msg->getAddr(), msg->getPort());
+        }
+    }
+}
+
 //
 //
 // COMMAND SENDING
@@ -123,7 +145,7 @@ void GameProtocol::sendEntity(EntityID id) const {
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager.get());
 
     for (auto conn : this->_connectedClients)
-        this->_outgoingMQ->push(this->createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
+        this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
 }
 
 // Sends to only one client
@@ -132,7 +154,7 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
     if (!this->_entityManager->isValidID(id))
         return;
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager.get());
-    this->_outgoingMQ->push(this->createMessage("ENTITY", entitySerialization, addr, port));
+    this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
 }
 
 void GameProtocol::sendDelEntity(EntityID id) const {
@@ -140,7 +162,7 @@ void GameProtocol::sendDelEntity(EntityID id) const {
     ss << id;
 
     for (auto conn : this->_connectedClients)
-        this->_outgoingMQ->push(this->createMessage("DEL_ENT", ss.str(), conn.addr, conn.port));
+        this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_ENT", ss.str(), conn.addr, conn.port));
 }
 
 template <class T>
@@ -149,7 +171,7 @@ void GameProtocol::sendDelComponent(EntityID id) const {
     ss << id << ";" << getID<T>();
 
     for (auto conn : this->_connectedClients)
-        this->_outgoingMQ->push(this->createMessage("DEL_COMP", ss.str(), conn.addr, conn.port));
+        this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), conn.addr, conn.port));
 }
 
 template <class T>
@@ -157,7 +179,7 @@ void GameProtocol::sendDelComponent(EntityID id, Connection client) const {
     std::stringstream ss;
     ss << id << ";" << getID<T>();
 
-    this->_outgoingMQ->push(this->createMessage("DEL_COMP", ss.str(), client.addr, client.port));
+    this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), client.addr, client.port));
 }
 
 //
@@ -165,39 +187,6 @@ void GameProtocol::sendDelComponent(EntityID id, Connection client) const {
 // UTILITIES
 //
 //
-
-std::optional<ParsedCmd> GameProtocol::parseCommand(Message<std::string> msg) {
-    std::optional<ParsedCmd> output;
-    auto splitMsg = Utilities::splitStr(msg.getMsg(), " ");
-
-    // Error handling
-    if (splitMsg.size() != 2)
-        return {};
-    // Check for CRLF
-    if (splitMsg[1][splitMsg.size() - 1] != '\n' || splitMsg[1][splitMsg.size() - 2] != '\r')
-        return {};
-    splitMsg[1].erase(splitMsg[1].length() - 2, 2);
-
-    // Get command type
-    if (splitMsg[0] == "HERE")
-        output->cmd = Command::Here; // Note make sure you do ELSE IF
-    else
-        return {};
-
-    // Split args up in args and subargs
-    auto splitArgs = Utilities::splitStr(splitMsg[1], ";");
-    for (auto arg : splitArgs)
-        output->args.push_back(Utilities::splitStr(arg, ","));
-
-    return output;
-}
-
-Message<std::string> GameProtocol::createMessage(std::string cmd, std::string args, asio::ip::address addr, asio::ip::port_type port) {
-    std::string body = cmd;
-    body += " " + args + "\r\n";
-
-    return Message<std::string>(body, addr, port);
-}
 
 int GameProtocol::getPlayer(asio::ip::address addr, asio::ip::port_type port) {
     int i;

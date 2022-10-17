@@ -69,6 +69,7 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Utilities.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/ClientGameProtocol.cpp"
 )
 
 # compile_definitions(NO_HOSTILITY=1)

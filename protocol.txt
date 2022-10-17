@@ -210,6 +210,6 @@ Table of Contents
             command.
 
                 GET_ENT     ->      (entity id)
-                GET_COMP    ->      (entity id, component id)
                 ACT_SHOOT   ->      No arguments
                 ACT_MOVE    ->      (direction)
+                HERE        ->      (client UUID)
