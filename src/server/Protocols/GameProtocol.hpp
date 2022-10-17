@@ -17,7 +17,6 @@
 #include "../../shared/ECS/Manager.hpp"
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
-#include "../../shared/Networking/ProtocolShared.hpp"
 #include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/Utilities.hpp"

@@ -117,6 +117,15 @@ public:
         this->_entities[i].components[compIndex] = 0;
     }
 
+    void removeComp(EntityID id, Index compId) {
+        if (!this->isValidComp(id, compId))
+            return;
+
+        Index i = getIndex(id);
+
+        this->_entities[i].components[compId] = 0;
+    }
+
     // Set components to exclude in view
     template <class... Excluded>
     void setExcluded() {
