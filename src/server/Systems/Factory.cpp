@@ -22,7 +22,7 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS) {
     return player;
 }
 
-void Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
+EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
     EntityID endboss = ECS->newEntity();
     int players = 0;
     for (auto beg = ECS->begin<Player::Component>(); beg != ECS->end<Player::Component>(); ++beg) {
@@ -44,9 +44,10 @@ void Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
     ECS->addComp<Hitbox::Component>(endboss, HitboxSystem::buildHitbox(animation, position));
     ECS->addComp<Team::Component>(endboss, Team::Enemy);
     ECS->addComp<CollisionEffect::Component>(endboss, &CollisionEffect::dealDamage);
+    return endboss;
 }
 
-void Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
+EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
     EntityID enemy = ECS->newEntity();
 
     const float startX = WINDOW_WIDTH;
@@ -63,9 +64,11 @@ void Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
     ECS->addComp<Team::Component>(enemy, Team::Enemy);
     ECS->addComp<Armament::Component>(enemy, {Armament::Type::Laser, 1000, 50});
     ECS->addComp<CollisionEffect::Component>(enemy, &CollisionEffect::dealDamage);
+
+    return enemy;
 }
 
-void bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX, int velocityY, double rotation) {
+EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX, int velocityY, double rotation) {
     const EntityID bullet = ECS->newEntity();
 
     const Position::Component* sourcePos = ECS->getComponent<Position::Component>(source);
@@ -104,16 +107,18 @@ void bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX, int
     ECS->addComp<Team::Component>(bullet, *ECS->getComponent<Team::Component>(source));
     ECS->addComp<Hitbox::Component>(bullet, HitboxSystem::buildHitbox(animation, position));
     ECS->addComp<CollisionEffect::Component>(bullet, &CollisionEffect::dealDamage);
+
+    return bullet;
 }
 
-void Factory::Weapon::makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source) {
-    bullet(ECS, source, 40, 0, 0);
+EntityID Factory::Weapon::makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source) {
+    return bullet(ECS, source, 40, 0, 0);
 }
 
-void Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source) {
+EntityID Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source) {
     bullet(ECS, source, 40, 0, 0);
     bullet(ECS, source, 40, 5, 6);
     bullet(ECS, source, 40, 10, 12);
     bullet(ECS, source, 40, -5, -6);
-    bullet(ECS, source, 40, -10, -12);
+    return bullet(ECS, source, 40, -10, -12);
 }

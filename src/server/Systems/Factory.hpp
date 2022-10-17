@@ -10,13 +10,13 @@ namespace Factory {
         EntityID makePlayer(std::shared_ptr<ECSManager> ECS);
     }
     namespace Enemy {
-        void makeEndboss(std::shared_ptr<ECSManager> ECS);
+        EntityID makeEndboss(std::shared_ptr<ECSManager> ECS);
 
-        void makeEnemy(std::shared_ptr<ECSManager> ECS);
+        EntityID makeEnemy(std::shared_ptr<ECSManager> ECS);
     } // namespace Enemy
     namespace Weapon {
-        void makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source);
+        EntityID makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source);
 
-        void makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source);
+        EntityID makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source);
     } // namespace Weapon
 } // namespace Factory
