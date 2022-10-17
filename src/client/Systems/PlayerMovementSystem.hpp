@@ -9,22 +9,15 @@
 
 #include "../../WindowsGuard.hpp"
 
-#include <chrono>
-#include <raylib.h>
-
-#include "../../shared/ECS/ECS.hpp"
 #include "../../shared/Systems/ISystem.hpp"
+#include "../Protocols/ClientGameProtocol.hpp"
 
-class SpriteSystem;
 class PlayerMovementSystem : public System {
 public:
-    PlayerMovementSystem(std::shared_ptr<ECSManager> ECS);
+    PlayerMovementSystem(std::shared_ptr<ClientGameProtocol> ECS);
+
     void apply();
-    void setPlayer(EntityID player);
 
 private:
-    SpriteSystem* _spriteSystem;
-    EntityID _player;
-    std::shared_ptr<ECSManager> _ECS;
-    std::chrono::time_point<std::chrono::system_clock> _timer = std::chrono::system_clock::now();
+    std::shared_ptr<ClientGameProtocol> _protocol;
 };

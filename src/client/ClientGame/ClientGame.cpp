@@ -25,7 +25,6 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
 
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
-    this->_playerMovementSystem = std::make_unique<PlayerMovementSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
 }
 
@@ -44,7 +43,6 @@ void ClientGame::init() {
     // Send here command
     this->_protocol.sendHere();
 
-    this->_playerMovementSystem->setPlayer(this->_player);
     this->_healthSystem->setPlayer(this->_player);
 }
 
@@ -58,9 +56,22 @@ void ClientGame::mainLoop() {
         this->_protocol.handleCommands();
         this->_spriteSystem->apply();
         this->_velocitySystem->apply();
-        this->_playerMovementSystem->apply();
         this->_healthSystem->apply();
-
+        this->handlePlayerInput();
         EndDrawing();
     }
+}
+
+void ClientGame::handlePlayerInput() {
+
+    if (IsKeyDown(KEY_A))
+        this->_protocol.sendActMove(Move::LEFT);
+    if (IsKeyDown(KEY_D))
+        this->_protocol.sendActMove(Move::RIGHT);
+    if (IsKeyDown(KEY_W))
+        this->_protocol.sendActMove(Move::UP);
+    if (IsKeyDown(KEY_S))
+        this->_protocol.sendActMove(Move::DOWN);
+    if (IsKeyDown(KEY_SPACE))
+        this->_protocol.sendActFire();
 }

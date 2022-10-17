@@ -59,7 +59,6 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/TcpClient.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/SpriteSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/HealthSystem.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/PlayerMovementSystem.cpp"
 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
