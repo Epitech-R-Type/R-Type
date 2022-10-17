@@ -2,7 +2,7 @@
 
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/ECS.hpp"
-#include "../../shared/systems/ISystem.hpp"
+#include "../../shared/Systems/ISystem.hpp"
 
 class SpriteSystem;
 
@@ -12,12 +12,6 @@ public:
 
     void apply();
 
-    void setPlayer(EntityID playerID);
-
-    void setSpriteSystem(SpriteSystem* spriteSystem);
-
 private:
     ECSManager* _ECS;
-    EntityID _player;
-    SpriteSystem* _spriteSystem;
 };

@@ -13,7 +13,7 @@
 #include <raylib.h>
 
 #include "../../shared/ECS/ECS.hpp"
-#include "../../shared/systems/ISystem.hpp"
+#include "../../shared/Systems/ISystem.hpp"
 
 class SpriteSystem;
 class PlayerMovementSystem : public System {

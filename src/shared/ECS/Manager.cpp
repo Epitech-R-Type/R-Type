@@ -6,6 +6,7 @@
 */
 
 #include "Manager.hpp"
+#include "Components.hpp"
 #include <algorithm>
 
 EntityID ECSManager::newEntity() {

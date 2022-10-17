@@ -19,6 +19,8 @@ void PlayerMovementSystem::setPlayer(EntityID player) {
 }
 
 void PlayerMovementSystem::apply() {
+    if (!isValid(this->_player))
+        return;
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - this->_timer;
 

@@ -6,6 +6,11 @@
 */
 
 #include "Game.hpp"
+#include "../WindowsGuard.hpp"
+
+#include "../shared/ECS/Components.hpp"
+#include "../shared/ECS/Serialization.hpp"
+#include "Systems/Factory.hpp"
 
 Game::Game()
     : _isRunning(true) {
@@ -16,6 +21,13 @@ Game::Game()
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+
+    this->_entManager = new ECSManager();
+
+    this->_velocitySystem = new VelocitySystem(this->_entManager);
+    this->_armamentSystem = new ArmamentSystem(this->_entManager);
+    this->_hitboxSystem = new HitboxSystem(this->_entManager);
+    this->_janitorSystem = new JanitorSystem(this->_entManager);
 }
 
 Game::~Game() {
@@ -27,25 +39,30 @@ Game::~Game() {
     delete this->_udpComThread;
 }
 
-int Game::mainLoop() {
+void Game::init() {
+    srand(time(0));
+}
 
+int Game::mainLoop() {
     std::cout << "Entering main loop()" << std::endl;
 
+    std::chrono::time_point<std::chrono::system_clock> timer;
+
     while (this->_isRunning) {
-        std::optional<Message<std::string>> msg;
+        this->_velocitySystem->apply();
+        this->_armamentSystem->apply();
+        this->_hitboxSystem->apply();
 
-        if ((msg = this->_incomingMQ->pop())) {
-            std::cout << "Received :" << *msg << std::endl;
-            std::string contents;
-            contents << *msg;
+        // Always last
+        this->_janitorSystem->apply();
 
-            if (contents == "quit\n") {
-                std::cout << "In if" << std::endl;
-                this->_isRunning = false;
-            }
+        const auto now = getNow();
+        std::chrono::duration<double> elapsed_seconds = now - timer;
 
-            // Send back same message
-            this->_outgoingMQ->push(*msg);
+        // Convert to milliseconds
+        if (elapsed_seconds.count() > 4) {
+            Factory::Enemy::makeEnemy(this->_entManager);
+            timer = getNow();
         }
     }
 

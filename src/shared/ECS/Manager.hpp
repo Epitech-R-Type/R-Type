@@ -212,6 +212,10 @@ public:
     const Iterator<Comp...> begin() {
         auto iter = Iterator<Comp...>(0, this);
 
+        // crashes otherwise
+        if (this->_entities.size() == 0)
+            return iter;
+
         // advance until first matching entity
         if (!iter.isValid())
             ++iter;

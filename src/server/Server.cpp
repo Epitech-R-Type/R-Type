@@ -19,6 +19,9 @@ Server::Server()
     // Init tcp com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+
+    // Gangster Workaround to insure same comptype order client and server side
+    Utilities::createCompPoolIndexes();
 }
 
 Server::~Server() {

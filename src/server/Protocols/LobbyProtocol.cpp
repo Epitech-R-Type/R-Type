@@ -93,7 +93,7 @@ bool LobbyProtocol::handleCommands() {
         if (cmd == "START") {
 
             // Set boolean that game should start
-
+            gameShouldStart = true;
             this->startGame();
             continue;
         }
