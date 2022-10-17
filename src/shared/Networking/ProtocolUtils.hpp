@@ -23,7 +23,7 @@ enum Command {
     GetEntity,
     ActShoot,
     ActMove,
-    Entity, // Client commands start here
+    Entityd, // Client commands start here
     DeleteEntity,
     DeleteComponent,
 };
@@ -59,7 +59,7 @@ public:
         if (splitMsg[0] == "HERE") {
             output->cmd = Command::Here; // Note make sure you do ELSE IF
         } else if (splitMsg[0] == "ENTITY")
-            output->cmd = Command::Entity;
+            output->cmd = Command::Entityd;
         else {
             ERROR("Unhandled Command: " << splitMsg[0]);
             return {};

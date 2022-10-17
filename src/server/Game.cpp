@@ -46,10 +46,18 @@ void Game::init() {
 
     std::vector<Connection> connections = this->_protocol.getConnectedClients();
 
-    for (int i = 0; i < connections.size(); i++) {
-        this->_protocol.sendEntity(Factory::Ally::makePlayer(this->_entManager, i));
-    }
+    for (int i = 0; i < connections.size(); i++)
+        this->_entManager->pushModified(Factory::Ally::makePlayer(this->_entManager, i));
 }
+
+void Game::sendModified() {
+    std::optional<EntityID> entityID;
+
+    while ((entityID = this->_entManager->getModified())) {
+        std::cout << "broadcasting " << entityID << std::endl;
+        this->_protocol.sendEntity(entityID.value());
+    }
+};
 
 int Game::mainLoop() {
     std::cout << "Entering main loop()" << std::endl;
@@ -68,10 +76,12 @@ int Game::mainLoop() {
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 0.2) {
-            this->_protocol.sendEntity(Factory::Enemy::makeEnemy(this->_entManager));
+        if (elapsed_seconds.count() > 3) {
+            this->_entManager->pushModified(Factory::Enemy::makeEnemy(this->_entManager));
             timer = getNow();
         }
+
+        this->sendModified();
     }
 
     return 0;
