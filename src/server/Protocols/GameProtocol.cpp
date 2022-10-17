@@ -89,15 +89,18 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
     LOG("Player " << player << " is moving " << direction << ".");
 
+    Position::Component* position = this->_entityManager->getComponent<Position::Component>(entityID);
+    Velocity::Component* velocity = this->_entityManager->getComponent<Velocity::Component>(entityID);
+
     // Note: Prints are placeholder and should be replaced by call to adequate system
     if (direction == "UP")
-        std::cout << "Client is moving UP" << std::endl;
+        position->y -= velocity->y;
     if (direction == "DOWN")
-        std::cout << "Client is moving DOWN" << std::endl;
+        position->y += velocity->y;
     if (direction == "LEFT")
-        std::cout << "Client is moving LEFT" << std::endl;
+        position->x -= velocity->x;
     if (direction == "RIGHT")
-        std::cout << "Client is moving RIGHT" << std::endl;
+        position->x += velocity->x;
 }
 
 void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {

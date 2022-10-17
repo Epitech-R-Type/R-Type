@@ -85,7 +85,7 @@ bool ClientGameProtocol::handleCommands() {
             continue;
 
         switch (parsed->cmd) {
-            case Entity:
+            case Entityd:
                 this->handleEntity(*parsed, msg->getMsg());
                 break;
             case DeleteEntity:
