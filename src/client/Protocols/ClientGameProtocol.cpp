@@ -16,7 +16,9 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
       _entityManager(entManager),
       _addr(addr),
       _port(port),
-      _uuid(uuid) {}
+      _uuid(uuid) {
+    LOG("UDP Sending to port : " << port);
+}
 
 //
 //

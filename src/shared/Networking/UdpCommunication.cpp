@@ -41,6 +41,7 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
+    LOG("UDP Listening on port : " << this->_sock.local_endpoint().port());
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }

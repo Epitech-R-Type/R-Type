@@ -22,6 +22,7 @@
 #include <asio.hpp>
 
 #include "../MessageQueue/MessageQueue.hpp"
+#include "../Utilities/Utilities.hpp"
 #include "AsioConstants.hpp"
 
 // Function passed to communication thread on creation
