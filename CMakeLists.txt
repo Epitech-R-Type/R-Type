@@ -68,6 +68,7 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/ClientGameProtocol.cpp"
 )
 
 # compile_definitions(NO_HOSTILITY=1)

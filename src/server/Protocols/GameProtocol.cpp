@@ -145,7 +145,7 @@ void GameProtocol::sendEntity(EntityID id) const {
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager.get());
 
     for (auto conn : this->_connectedClients)
-        this->_outgoingMQ->push(this->createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
+        this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
 }
 
 // Sends to only one client
@@ -154,7 +154,7 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
     if (!this->_entityManager->isValidID(id))
         return;
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager.get());
-    this->_outgoingMQ->push(this->createMessage("ENTITY", entitySerialization, addr, port));
+    this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
 }
 
 void GameProtocol::sendDelEntity(EntityID id) const {
@@ -171,7 +171,7 @@ void GameProtocol::sendDelComponent(EntityID id) const {
     ss << id << ";" << getID<T>();
 
     for (auto conn : this->_connectedClients)
-        this->_outgoingMQ->push(this->createMessage("DEL_COMP", ss.str(), conn.addr, conn.port));
+        this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), conn.addr, conn.port));
 }
 
 template <class T>
@@ -179,7 +179,7 @@ void GameProtocol::sendDelComponent(EntityID id, Connection client) const {
     std::stringstream ss;
     ss << id << ";" << getID<T>();
 
-    this->_outgoingMQ->push(this->createMessage("DEL_COMP", ss.str(), client.addr, client.port));
+    this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), client.addr, client.port));
 }
 
 //
