@@ -7,6 +7,8 @@
 
 #pragma once
 
+#include "../../WindowsGuard.hpp"
+
 #include <asio.hpp>
 #include <exception>
 #include <memory>
@@ -14,7 +16,6 @@
 #include <sstream>
 #include <vector>
 
-#include "../../WindowsGuard.hpp"
 #include "../../shared/ECS/Manager.hpp"
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
