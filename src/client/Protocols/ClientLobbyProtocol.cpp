@@ -27,6 +27,7 @@ void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
         ERROR("Unable to get auhtentication from message.");
         return;
     }
+
     this->_serverUUID = serverUUID;
     this->_clientUUID = clientUUID;
 

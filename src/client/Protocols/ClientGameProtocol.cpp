@@ -77,6 +77,7 @@ bool ClientGameProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
 
     while ((msg = this->_incomingMQ->pop())) {
+        LOG("Handling command: " << msg.value());
         auto parsed = ProtocolUtils::parseCommand(*msg);
 
         if (!parsed)

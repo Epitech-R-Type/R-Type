@@ -60,8 +60,10 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
         return false;
     }
 
-    UUIDM candidate(cmd.args[0][1]);
+    UUIDM candidate(cmd.args[0][0]);
+
     for (auto conn : this->_expectedClients) {
+        LOG("Connection: " << conn.uuid << " Candiate " << candidate);
         if (conn.uuid == candidate) {
             this->_connectedClients.push_back({addr, port, candidate});
             break;
@@ -173,8 +175,10 @@ void GameProtocol::sendEntity(EntityID id) const {
 
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
     LOG("Sending to Clients: ENTITY " << entitySerialization);
-    for (auto conn : this->_connectedClients)
+    for (auto conn : this->_connectedClients) {
+        LOG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
+    }
 }
 
 // Sends to only one client
@@ -185,7 +189,7 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
         return;
     }
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-    LOG("Sending to Clients: ENTITY " << entitySerialization);
+    LOG("Sending to Client: ENTITY " << entitySerialization);
     this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
 }
 
@@ -198,8 +202,10 @@ void GameProtocol::sendDelEntity(EntityID id) const {
     std::stringstream ss;
     ss << id;
     LOG("Sending to Clients: DEL_ENT " << ss.str());
-    for (auto conn : this->_connectedClients)
+    for (auto conn : this->_connectedClients) {
+        LOG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_ENT", ss.str(), conn.addr, conn.port));
+    }
 }
 
 template <class T>
@@ -208,8 +214,10 @@ void GameProtocol::sendDelComponent(EntityID id) const {
     ss << id << ";" << getID<T>();
 
     LOG("Sending to Clients: DEL_COMP " << ss.str());
-    for (auto conn : this->_connectedClients)
+    for (auto conn : this->_connectedClients) {
+        LOG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), conn.addr, conn.port));
+    }
 }
 
 template <class T>
