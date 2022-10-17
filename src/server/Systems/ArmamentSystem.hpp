@@ -11,6 +11,8 @@ public:
 
     void apply();
 
+    static void makeWeapon(EntityID entityID, std::shared_ptr<ECSManager> ECS);
+
 private:
     std::shared_ptr<ECSManager> _ECS;
 };

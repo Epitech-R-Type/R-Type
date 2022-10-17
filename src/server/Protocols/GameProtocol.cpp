@@ -6,6 +6,7 @@
 */
 
 #include "GameProtocol.hpp"
+#include "../Systems/ArmamentSystem.hpp"
 
 GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
                            std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager)
@@ -131,15 +132,32 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 }
 
 void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
-    int player = this->getPlayer(addr, port);
+    int playerUID = this->getPlayer(addr, port);
 
     // Error handling
-    if (0 > player || cmd.args.size()) {
+    if (0 > playerUID || cmd.args.size()) {
         ERROR("Command is invalid.");
         return;
     }
 
-    LOG("Player " << player << " has fired their weapon.");
+    EntityID entityID = INVALID_INDEX;
+    for (auto beg = this->_entityManager->begin<Player::Component>(); beg != this->_entityManager->end<Player::Component>(); ++beg) {
+        Player::Component* playerComp = this->_entityManager->getComponent<Player::Component>(*beg);
+
+        if (playerComp->uniqueID == playerUID) {
+            entityID = *beg;
+            break;
+        }
+    }
+
+    if (entityID == INVALID_INDEX) {
+        ERROR("Unable to find Entity attached to player " << playerUID << ".");
+        return;
+    }
+
+    ArmamentSystem::makeWeapon(entityID, this->_entityManager);
+
+    LOG("Player " << playerUID << " has fired their weapon.");
 }
 
 void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
@@ -224,11 +242,6 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
 }
 
 void GameProtocol::sendDelEntity(EntityID id) const {
-    if (!this->_entityManager->isValidID(id)) {
-        ERROR("Entity ID is invalid: " << id);
-        return;
-    }
-
     std::stringstream ss;
     ss << id;
     LOG("Sending to Clients: DEL_ENT " << ss.str());

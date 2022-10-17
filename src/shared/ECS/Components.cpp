@@ -40,13 +40,13 @@ void Health::applyUpdate(std::vector<std::string> args, EntityID entityID, std::
 std::string Position::toString(Position::Component component) {
     std::stringstream ss;
 
-    ss << component.x << "," << component.y << ";";
+    ss << component.x << ",";
+    ss << component.y << ";";
     return ss.str();
 }
 
 void Position::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
     Position::Component* component;
-
     if (manager->hasComponent<Position::Component>(entityID))
         component = manager->getComponent<Position::Component>(entityID);
     else

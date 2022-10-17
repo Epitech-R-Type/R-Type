@@ -6,9 +6,12 @@
 */
 
 #include "Manager.hpp"
+#include "../Utilities/Utilities.hpp"
 #include <algorithm>
 
 EntityID ECSManager::newEntity() {
+    ERROR("NEW");
+
     // If previously free'd entities available use those in preference
     if (!this->_unusedEntities.empty() && false) { // Pop last index from unusedEntities vector
         Index i = this->_unusedEntities.back();
@@ -39,6 +42,7 @@ EntityID ECSManager::newEntity() {
 }
 
 EntityID ECSManager::newEntity(EntityID entityID) {
+    ERROR("NEW");
     if (this->_entities.size() >= MAX_ENTITIES)
         return -1;
     // Create new id and entity

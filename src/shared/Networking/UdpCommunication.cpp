@@ -66,8 +66,8 @@ void UdpCommunication::setup_incoming_handler() {
         if (!err) {
             auto addr = this->_endpoint.address();
             auto port = this->_endpoint.port();
-            DEBUG("Received packet from : " << addr << ":" << port);
-            DEBUG("Packet contents : " << this->_buffer);
+            // DEBUG("Received packet from : " << addr << ":" << port);
+            // DEBUG("Packet contents : " << this->_buffer);
 
             this->push_message(Message(std::string(this->_buffer), addr, port));
 
@@ -100,7 +100,7 @@ void UdpCommunication::setup_outgoing_handler() {
         char buffer[1024];
 
         while ((msg = this->pop_message())) {
-            LOG("Sending UDP packer to : " << msg->getAddr() << ":" << msg->getPort());
+            // DEBUG("Sending UDP packer to : " << msg->getAddr() << ":" << msg->getPort());
             std::string msgStr = msg->getMsg();
 
             // Prepare buffer

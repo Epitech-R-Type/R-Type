@@ -78,7 +78,6 @@ bool ClientGameProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
 
     while ((msg = this->_incomingMQ->pop())) {
-        LOG("Handling command: " << msg.value());
         auto parsed = ProtocolUtils::parseCommand(*msg);
 
         if (!parsed)
@@ -86,18 +85,19 @@ bool ClientGameProtocol::handleCommands() {
 
         switch (parsed->cmd) {
             case Entityd:
-                this->handleEntity(*parsed, msg->getMsg());
+                this->handleEntity(parsed.value(), msg->getMsg());
                 break;
             case DeleteEntity:
-                this->handleDeleteEntity(*parsed);
+                this->handleDeleteEntity(parsed.value());
                 break;
             case DeleteComponent:
-                this->handleDeleteComponent(*parsed);
+                this->handleDeleteComponent(parsed.value());
                 break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
         }
     }
+    return true;
 }
 
 //
@@ -126,20 +126,20 @@ void ClientGameProtocol::sendActMove(Move direction) {
 
     auto msg = ProtocolUtils::createMessage("ACT_MOVE", body, this->_addr, this->_port);
 
-    LOG("Sending to Server: " << msg.getMsg());
+    // LOG("Sending to Server: " << msg.getMsg());
 
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendActFire() {
     auto msg = ProtocolUtils::createMessage("ACT_SHOOT", "", this->_addr, this->_port);
-    LOG("Sending to Server: " << msg.getMsg());
+    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendHere() {
     auto msg = ProtocolUtils::createMessage("HERE", this->_uuid.toString(), this->_addr, this->_port);
-    LOG("Sending to Server: " << msg.getMsg());
+    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
@@ -148,6 +148,6 @@ void ClientGameProtocol::sendGetEnt(EntityID id) {
     ss << id;
 
     auto msg = ProtocolUtils::createMessage("GET_ENT", ss.str(), this->_addr, this->_port);
-    LOG("Sending to Server: " << msg.getMsg());
+    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }

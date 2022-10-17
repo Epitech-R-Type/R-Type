@@ -17,6 +17,11 @@
 // This header is used to store any small part of protocol implementation that
 // may be used by both the server and the client
 
+#define UPDATE_ENTITY "ENTITY"
+#define DELETE_ENTITY "DEL_ENT"
+#define ACTION_MOVE "ACT_MOVE"
+#define ACTION_SHOOT "ACT_SHOOT"
+#define HERE "HERE"
 // Command enum
 enum Command {
     Here, // Server commands start here
@@ -54,14 +59,16 @@ public:
         splitMsg[1].erase(splitMsg[1].length() - 2, 2);
 
         // Get command type
-        if (splitMsg[0] == "HERE")
-            output->cmd = Command::Here; // Note make sure you do ELSE IF
-        else if (splitMsg[0] == "ENTITY")
+        if (splitMsg[0] == HERE)
+            output->cmd = Command::Here;
+        else if (splitMsg[0] == UPDATE_ENTITY)
             output->cmd = Command::Entityd;
-        else if (splitMsg[0] == "ACT_SHOOT")
+        else if (splitMsg[0] == ACTION_SHOOT)
             output->cmd = Command::ActShoot;
-        else if (splitMsg[0] == "ACT_MOVE")
+        else if (splitMsg[0] == ACTION_MOVE)
             output->cmd = Command::ActMove;
+        else if (splitMsg[0] == DELETE_ENTITY)
+            output->cmd = Command::DeleteEntity;
         else {
             ERROR("Unhandled Command: " << splitMsg[0]);
             return {};

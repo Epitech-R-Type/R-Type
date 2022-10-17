@@ -53,9 +53,9 @@ EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
     const float startX = WINDOW_WIDTH;
     const float startY = rand() % (int)WINDOW_HEIGHT;
 
-    Position::Component* position = ECS->addComp<Position::Component>(enemy, {startX, startY});
+    Position::Component* position = ECS->addComp<Position::Component>(enemy, {x : startX, y : startY});
     Animation::Component* animation = ECS->addComp<Animation::Component>(enemy, {Animation::AnimationID::Orb, 3});
-
+    ERROR(startX << " " << startY);
     ECS->addComp<Velocity::Component>(enemy, {-10, 0});
     ECS->addComp<Health::Component>(enemy, {20, 20, true});
     ECS->addComp<Damage::Component>(enemy, {20});
@@ -116,9 +116,9 @@ EntityID Factory::Weapon::makeLaser(std::shared_ptr<ECSManager> ECS, EntityID so
 }
 
 EntityID Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source) {
-    bullet(ECS, source, 40, 0, 0);
-    bullet(ECS, source, 40, 5, 6);
-    bullet(ECS, source, 40, 10, 12);
-    bullet(ECS, source, 40, -5, -6);
-    return bullet(ECS, source, 40, -10, -12);
+    ECS->pushModified(bullet(ECS, source, 40, 0, 0));
+    ECS->pushModified(bullet(ECS, source, 40, 5, 6));
+    ECS->pushModified(bullet(ECS, source, 40, 10, 12));
+    ECS->pushModified(bullet(ECS, source, 40, -5, -6));
+    ECS->pushModified(bullet(ECS, source, 40, -10, -12));
 }

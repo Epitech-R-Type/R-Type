@@ -54,8 +54,7 @@ void Game::sendModified() {
     std::optional<EntityID> entityID;
 
     while ((entityID = this->_entManager->getModified())) {
-        DEBUG("broadcasting " << entityID.value());
-        if (this->_entManager->entityIsActive(entityID.value()))
+        if (this->_entManager->entityIsActive(entityID.value() && this->_entManager->entityExists(entityID.value())))
             this->_protocol.sendEntity(entityID.value());
         else
             this->_protocol.sendDelEntity(entityID.value());
@@ -74,13 +73,13 @@ int Game::mainLoop() {
         this->_hitboxSystem->apply();
 
         // Always last
-        this->_janitorSystem->apply();
+        // this->_janitorSystem->apply();
 
         const auto now = getNow();
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 1) {
+        if (elapsed_seconds.count() > 4) {
             this->_entManager->pushModified(Factory::Enemy::makeEnemy(this->_entManager));
             timer = getNow();
         }
