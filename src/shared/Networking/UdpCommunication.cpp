@@ -10,9 +10,8 @@
 // Function passed to communication thread on creation
 void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag, int port) {
-
-    LOG("UDP listening on port: " << port);
-    if (port < 1) { // bind to available port
+    if (port < 0) { // bind to available port
+        LOG("Binding to available port");
         UdpCommunication com(incoming, outgoing, stopFlag);
 
         // Setup incoming udp packet handler and outgoing packets handler in asio
@@ -23,6 +22,7 @@ void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> 
         // Run asio context
         com.run();
     } else { // Bind to specific port
+        LOG("Binding to port : " << port);
         UdpCommunication com(incoming, outgoing, stopFlag, port);
 
         // Setup incoming udp packet handler and outgoing packets handler in asio
@@ -43,7 +43,7 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
-    LOG("UDP Listening on port : " << this->_sock.local_endpoint().port());
+    LOG("UDP Local port : " << this->_sock.local_endpoint().port());
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
@@ -55,6 +55,7 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
+    LOG("UDP Local port : " << this->_sock.local_endpoint().port());
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
@@ -65,6 +66,8 @@ void UdpCommunication::setup_incoming_handler() {
         if (!err) {
             auto addr = this->_endpoint.address();
             auto port = this->_endpoint.port();
+            LOG("Received packet from : " << addr << ":" << port);
+            LOG("Packet contents : " << this->_buffer);
 
             this->push_message(Message(std::string(this->_buffer), addr, port));
 
@@ -97,7 +100,7 @@ void UdpCommunication::setup_outgoing_handler() {
         char buffer[1024];
 
         while ((msg = this->pop_message())) {
-
+            LOG("Sending UDP packer to : " << msg->getAddr() << ":" << msg->getPort());
             std::string msgStr = msg->getMsg();
 
             // Prepare buffer
