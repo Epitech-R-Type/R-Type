@@ -30,8 +30,13 @@ void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> 
 
 class UdpCommunication {
 public:
+    // Constructor with specified port
     UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
-                     std::shared_ptr<std::atomic<bool>> stopFlag, int port_incr);
+                     std::shared_ptr<std::atomic<bool>> stopFlag, int port);
+
+    // Constructor no specified port
+    UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+                     std::shared_ptr<std::atomic<bool>> stopFlag);
 
     // Setup action receiving UDP packets
     // Note: Both of these need to be called again in order to maintain the loop goig

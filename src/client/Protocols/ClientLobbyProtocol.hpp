@@ -33,6 +33,10 @@ public:
 
     UUIDM getUUID();
 
+    int getServerPort();
+
+    asio::ip::address getServerIp();
+
 private:
     UUIDM _serverUUID;
     UUIDM _clientUUID;
@@ -45,6 +49,9 @@ private:
 
     asio::ip::address _serverIP;
     asio::ip::port_type _serverPort = 0;
+
+    // udp server port
+    int port;
 
     bool _connected = false;
     bool _authenticated = false;

@@ -38,9 +38,9 @@ std::vector<Connection> LobbyProtocol::getConnections() {
     return this->_connMan.getConnections();
 }
 
-bool LobbyProtocol::handleCommands() {
+int LobbyProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
-    bool gameShouldStart = false;
+    int port = 0;
 
     while ((msg = this->_incomingMQ->pop())) {
         // Get peer info
@@ -97,23 +97,28 @@ bool LobbyProtocol::handleCommands() {
         if (cmd == "START") {
 
             // Set boolean that game should start
-            gameShouldStart = true;
-            this->startGame();
+            port = UDP_PORT;
+
+            // Find an available port
+            while (!Utilities::isPortAvailable(port))
+                port++;
+
+            this->startGame(port);
             continue;
         }
     }
 
-    return gameShouldStart;
+    return port;
 }
 
 // Server Commands
-void LobbyProtocol::startGame() {
+void LobbyProtocol::startGame(int port) {
     // Get Connections
     auto connections = this->_connMan.getConnections();
 
     // Form message body
     std::stringstream msgBody;
-    msgBody << START_GAME << SP << this->_connMan.getServerUUID() << SP << EMPTY_ARGS << END;
+    msgBody << START_GAME << SP << this->_connMan.getServerUUID() << ";" << port << SP << END;
 
     // Send START_GAME command to all connected clients
     for (auto conn : connections) {

@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include <asio.hpp>
 #include <string>
 #include <vector>
 
@@ -39,4 +40,6 @@ public:
      * Generate fixed order of comppools, better alternative would be using a map instead
      * */
     static void createCompPoolIndexes();
+
+    static bool isPortAvailable(int port);
 };

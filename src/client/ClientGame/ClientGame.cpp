@@ -12,16 +12,17 @@
 #include "ClientGame.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame(UUIDM uuid)
+ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
     : _uuid(uuid),
       _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _entManager(std::make_shared<ECSManager>()),
-      _protocol(_incomingMQ, _outgoingMQ, _entManager, asio::ip::address::from_string("127.0.0.1"), asio::ip::port_type(3502), _uuid) {
+      _protocol(_incomingMQ, _outgoingMQ, _entManager, addr, asio::ip::port_type(port), _uuid) {
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, 1);
+    this->_udpComThread =
+        new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1); // Bind to available port
 
     this->_entManager = std::make_shared<ECSManager>();
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);

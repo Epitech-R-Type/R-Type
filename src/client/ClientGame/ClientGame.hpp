@@ -24,7 +24,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(UUIDM uuid);
+    ClientGame(UUIDM uuid, asio::ip::address addr, int port);
     ~ClientGame();
 
     void init();

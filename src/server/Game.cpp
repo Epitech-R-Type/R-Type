@@ -12,7 +12,7 @@
 #include "../shared/ECS/Serialization.hpp"
 #include "Systems/Factory.hpp"
 
-Game::Game(std::vector<Connection> connections)
+Game::Game(std::vector<Connection> connections, int port)
     : _isRunning(true),
       _entManager(std::make_shared<ECSManager>()),
       _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
@@ -24,7 +24,7 @@ Game::Game(std::vector<Connection> connections)
 
     // Init com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, 2);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, port);
 
     this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
     this->_armamentSystem = std::make_unique<ArmamentSystem>(this->_entManager);

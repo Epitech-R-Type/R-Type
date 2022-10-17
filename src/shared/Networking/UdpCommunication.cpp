@@ -9,29 +9,49 @@
 
 // Function passed to communication thread on creation
 void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
-                            int port_incr) {
-    UdpCommunication com(incoming, outgoing, stopFlag, port_incr);
+                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag, int port) {
+    if (port < 1) { // bind to available port
+        UdpCommunication com(incoming, outgoing, stopFlag);
 
-    // Setup incoming udp packet handler and outgoing packets handler in asio
-    com.setup_incoming_handler();
-    com.setup_outgoing_handler();
-    com.stop_signal_handler();
+        // Setup incoming udp packet handler and outgoing packets handler in asio
+        com.setup_incoming_handler();
+        com.setup_outgoing_handler();
+        com.stop_signal_handler();
 
-    // Run asio context
-    com.run();
+        // Run asio context
+        com.run();
+    } else { // Bind to specific port
+        UdpCommunication com(incoming, outgoing, stopFlag, port);
+
+        // Setup incoming udp packet handler and outgoing packets handler in asio
+        com.setup_incoming_handler();
+        com.setup_outgoing_handler();
+        com.stop_signal_handler();
+
+        // Run asio context
+        com.run();
+    }
 }
 
+// For use in the server only
 UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                    std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
-                                   int port_incr)
-    : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), UDP_PORT + port_incr)),
+                                   int port)
+    : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), port)),
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
+
+// For use in the client only
+UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
+                                   std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag)
+    : _sock(_ctxt, asio::ip::udp::v6()),
+      _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
+      _stopFlag(stopFlag),
+      _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {}
 
 // Handler Method
 void UdpCommunication::setup_incoming_handler() {

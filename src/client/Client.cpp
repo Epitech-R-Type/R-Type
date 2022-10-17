@@ -27,7 +27,7 @@ int Client::launchGame() {
     }
 
     // Note: For performance reasons we could free the lobby ecs before launching the game
-    this->_game = new ClientGame(this->_protocol->getUUID());
+    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort());
     this->_game->init();
     this->_game->mainLoop();
     delete this->_game;
