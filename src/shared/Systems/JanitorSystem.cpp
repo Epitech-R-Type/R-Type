@@ -18,7 +18,6 @@ void JanitorSystem::apply() {
 
         const Position::Component* position = this->_ECS->getComponent<Position::Component>(*beg);
         if (position->x < -400 || position->x > INVISIBLE_BOX || position->y < -400 || position->y > INVISIBLE_BOX) {
-            ERROR("X: " << position->x << " Y: " << position->y);
             this->_ECS->pushModified(*beg);
             this->_ECS->deleteEntity(*beg);
             continue;

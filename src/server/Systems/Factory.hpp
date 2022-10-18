@@ -15,7 +15,7 @@ namespace Factory {
         EntityID makeEnemy(std::shared_ptr<ECSManager> ECS);
     } // namespace Enemy
     namespace Weapon {
-        EntityID makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source);
+        void makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source);
 
         void makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source);
     } // namespace Weapon

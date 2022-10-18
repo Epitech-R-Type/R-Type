@@ -8,7 +8,7 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
     EntityID player = ECS->newEntity();
 
     Position::Component* position = ECS->addComp<Position::Component>(player, {0, 0});
-    Animation::Component* animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Vortex, 2});
+    Animation::Component* animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Spaceship, 2});
     ECS->addComp<Health::Component>(player, {50, 50, true});
     ECS->addComp<Player::Component>(player, {true, uniqueID});
     ECS->addComp<Armament::Component>(player, {Armament::Type::Laser, 150, -1});
@@ -57,7 +57,7 @@ EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
 
     Position::Component* position = ECS->addComp<Position::Component>(enemy, {x : startX, y : startY});
     Animation::Component* animation = ECS->addComp<Animation::Component>(enemy, {Animation::AnimationID::Orb, 3});
-    ERROR("X: " << startX << " Y: " << startY);
+
     ECS->addComp<Velocity::Component>(enemy, {-10, 0});
     ECS->addComp<Health::Component>(enemy, {20, 20, true});
     ECS->addComp<Damage::Component>(enemy, {20});
@@ -115,7 +115,7 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
     return bullet;
 }
 
-EntityID Factory::Weapon::makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source) {
+void Factory::Weapon::makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source) {
     bullet(ECS, source, 40, 0, 0);
 }
 

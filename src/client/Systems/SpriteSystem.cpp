@@ -66,7 +66,7 @@ void SpriteSystem::nextFrame(Animation::Component* animation) {
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - animation->timer;
 
-    if (elapsed_seconds.count() > 0.1) {
+    if (elapsed_seconds.count() > Animation::Sheets[animation->animationID].interval) {
         animation->index = animation->index + 1;
         animation->timer = now;
         if (animation->index >= this->_animations[animation->animationID].size())

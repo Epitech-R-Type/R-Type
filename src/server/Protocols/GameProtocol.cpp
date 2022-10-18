@@ -113,7 +113,6 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     std::chrono::duration<double> elapsed_seconds = now - velocity->timer;
 
     if (elapsed_seconds.count() > velocity->tickrate) {
-        DEBUG("Before X:" << position->x << " Y: " << position->y);
         // Note: Prints are placeholder and should be replaced by call to adequate system
         if (direction == "UP")
             position->y -= velocity->y;
@@ -123,8 +122,6 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
             position->x -= velocity->x;
         if (direction == "RIGHT")
             position->x += velocity->x;
-
-        DEBUG("AFTER X:" << position->x << " Y: " << position->y);
 
         this->_entityManager->pushModified(entityID);
         velocity->timer = getNow();
@@ -223,7 +220,7 @@ void GameProtocol::sendEntity(EntityID id) const {
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
     LOG("Sending to Clients: ENTITY " << entitySerialization);
     for (auto conn : this->_connectedClients) {
-        LOG("Send to " << conn.addr << " " << conn.port << std::endl);
+        DEBUG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
     }
 }
@@ -235,8 +232,9 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
         ERROR("Entity ID is invalid: " << id);
         return;
     }
+
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-    LOG("Sending to Client: ENTITY " << entitySerialization);
+    DEBUG("Sending to Client: ENTITY " << entitySerialization);
     this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
 }
 
@@ -245,7 +243,7 @@ void GameProtocol::sendDelEntity(EntityID id) const {
     ss << id;
     LOG("Sending to Clients: DEL_ENT " << ss.str());
     for (auto conn : this->_connectedClients) {
-        LOG("Send to " << conn.addr << " " << conn.port << std::endl);
+        DEBUG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_ENT", ss.str(), conn.addr, conn.port));
     }
 }
