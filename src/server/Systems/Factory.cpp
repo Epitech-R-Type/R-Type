@@ -8,7 +8,26 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
     EntityID player = ECS->newEntity();
 
     Position::Component* position = ECS->addComp<Position::Component>(player, {0, 0});
-    Animation::Component* animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::Spaceship, 2});
+    Animation::Component* animation;
+    switch (uniqueID) {
+        case 0:
+            animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipLightblue, 2});
+            break;
+        case 1:
+            animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipPink, 2});
+            break;
+        case 2:
+            animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipGreen, 2});
+            break;
+        case 3:
+            animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipRed, 2});
+            break;
+        case 4:
+            animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipDarkblue, 2});
+            break;
+        default:
+            animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipRGB, 2});
+    }
     ECS->addComp<Health::Component>(player, {50, 50, true});
     ECS->addComp<Player::Component>(player, {true, uniqueID});
     ECS->addComp<Armament::Component>(player, {Armament::Type::Laser, 150, -1});

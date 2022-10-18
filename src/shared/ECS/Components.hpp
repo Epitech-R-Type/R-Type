@@ -70,8 +70,14 @@ namespace Animation {
         Cluster,
         Laser,
         Lost,
-        Spaceship,
+        SpaceshipLightblue,
+        SpaceshipPink,
+        SpaceshipGreen,
+        SpaceshipRed,
+        SpaceshipDarkblue,
+        SpaceshipRGB,
         Background,
+        Death,
     };
     struct Component {
         AnimationID animationID;
@@ -104,8 +110,14 @@ namespace Animation {
         {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
         {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
         {Animation::AnimationID::Lost, {"resources/lost.png", 0, 0, 639, 513, 8, 1, 1, 0, 0}},
-        {Animation::AnimationID::Spaceship, {"resources/r-typesheet42.png", 1, 3, 32, 16, 5, 1, 0, 0, 1, 0.2}},
+        {Animation::AnimationID::SpaceshipLightblue, {"resources/r-typesheet42.png", 1, 3, 32, 16, 5, 1, 0, 0, 1, 0.2}},
+        {Animation::AnimationID::SpaceshipPink, {"resources/r-typesheet42.png", 1, 3 + 17 * 1, 32, 16, 5, 1, 0, 0, 1, 0.2}},
+        {Animation::AnimationID::SpaceshipGreen, {"resources/r-typesheet42.png", 1, 3 + 17 * 2, 32, 16, 5, 1, 0, 0, 1, 0.2}},
+        {Animation::AnimationID::SpaceshipRed, {"resources/r-typesheet42.png", 1, 3 + 17 * 3, 32, 16, 5, 1, 0, 0, 1, 0.2}},
+        {Animation::AnimationID::SpaceshipDarkblue, {"resources/r-typesheet42.png", 1, 3 + 17 * 4, 32, 16, 5, 1, 0, 0, 1, 0.2}},
+        {Animation::AnimationID::SpaceshipRGB, {"resources/r-typesheet42.png", 1, 3, 32, 16, 1, 5, 0, 1, 0, 0.2}},
         {Animation::AnimationID::Background, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
+        {Animation::AnimationID::Death, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
     };
 
     std::string toString(Animation::Component component);
