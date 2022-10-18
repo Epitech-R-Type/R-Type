@@ -74,7 +74,7 @@ void ECSManager::deleteEntity(EntityID id) {
     this->_unusedEntities.push_back(i);
 }
 
-bool ECSManager::entityIsActive(EntityID id) {
+bool ECSManager::entityIsActive(Index id) {
     return (std::find(this->_unusedEntities.begin(), this->_unusedEntities.end(), id) == this->_unusedEntities.end());
 }
 

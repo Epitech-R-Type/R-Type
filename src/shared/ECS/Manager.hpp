@@ -32,7 +32,7 @@ public:
     // Delete entity
     void deleteEntity(EntityID id);
 
-    bool entityIsActive(EntityID id);
+    bool entityIsActive(Index id);
 
     // Get component for given entity
     template <class T>

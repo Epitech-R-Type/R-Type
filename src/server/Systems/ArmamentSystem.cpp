@@ -23,7 +23,7 @@ void ArmamentSystem::makeWeapon(EntityID entityID, std::shared_ptr<ECSManager> E
 
     switch (armament->type) {
         case Armament::Type::Laser:
-            ECS->pushModified(Factory::Weapon::makeLaser(ECS, entityID));
+            Factory::Weapon::makeLaser(ECS, entityID);
             break;
         case Armament::Type::Buckshot:
             Factory::Weapon::makeBuckshot(ECS, entityID);

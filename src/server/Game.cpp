@@ -47,14 +47,14 @@ void Game::init() {
     std::vector<Connection> connections = this->_protocol.getConnectedClients();
 
     for (int i = 0; i < connections.size(); i++)
-        this->_entManager->pushModified(Factory::Ally::makePlayer(this->_entManager, i));
+        Factory::Ally::makePlayer(this->_entManager, i);
 }
 
 void Game::sendModified() {
     std::optional<EntityID> entityID;
 
     while ((entityID = this->_entManager->getModified())) {
-        if (this->_entManager->entityIsActive(entityID.value() && this->_entManager->entityExists(entityID.value())))
+        if (this->_entManager->entityIsActive(getIndex(entityID.value())) && this->_entManager->entityExists(entityID.value()))
             this->_protocol.sendEntity(entityID.value());
         else
             this->_protocol.sendDelEntity(entityID.value());
@@ -69,18 +69,18 @@ int Game::mainLoop() {
     while (this->_isRunning) {
         this->_protocol.handleCommands();
         this->_velocitySystem->apply();
-        this->_armamentSystem->apply();
+        // this->_armamentSystem->apply();
         this->_hitboxSystem->apply();
 
         // Always last
-        // this->_janitorSystem->apply();
+        this->_janitorSystem->apply();
 
         const auto now = getNow();
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
         if (elapsed_seconds.count() > 4) {
-            this->_entManager->pushModified(Factory::Enemy::makeEnemy(this->_entManager));
+            Factory::Enemy::makeEnemy(this->_entManager);
             timer = getNow();
         }
 

@@ -155,7 +155,7 @@ public:
     template <class T>
     static std::string componentToString(EntityID entityId, std::shared_ptr<ECSManager> manager) {
         if (!manager->hasComponent<T>(entityId)) {
-            WARNING("Missing component.");
+            WARNING("Missing component: " << getID<T>());
             return "";
         }
 

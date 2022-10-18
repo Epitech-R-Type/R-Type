@@ -254,5 +254,5 @@ void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shar
         immunityFrame->timer = getNow();
     }
 
-    healthC->health = healthC->health - (damageC->damage - (armor != nullptr ? armor->armor : 0));
+    healthC->health = healthC->health - damageC->damage;
 }

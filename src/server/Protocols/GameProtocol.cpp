@@ -135,7 +135,7 @@ void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::
     int playerUID = this->getPlayer(addr, port);
 
     // Error handling
-    if (0 > playerUID || cmd.args.size()) {
+    if (0 > playerUID) {
         ERROR("Command is invalid.");
         return;
     }
@@ -156,8 +156,6 @@ void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::
     }
 
     ArmamentSystem::makeWeapon(entityID, this->_entityManager);
-
-    LOG("Player " << playerUID << " has fired their weapon.");
 }
 
 void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
@@ -193,14 +191,15 @@ void GameProtocol::handleCommands() {
         }
 
         switch (parsed->cmd) {
-            case GetEntity:
+            case Command::GetEntity:
                 this->handleGetEnt(*parsed, msg->getAddr(), msg->getPort());
                 break;
-            case ActShoot:
+            case Command::ActShoot:
                 this->handleShoot(*parsed, msg->getAddr(), msg->getPort());
                 break;
-            case ActMove:
+            case Command::ActMove:
                 this->handleMove(*parsed, msg->getAddr(), msg->getPort());
+                break;
             default:
                 WARNING("Unhandled Command: " << parsed->cmd);
         }
