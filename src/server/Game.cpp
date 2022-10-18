@@ -64,7 +64,9 @@ void Game::sendModified() {
 int Game::mainLoop() {
     LOG("Starting Game");
 
-    std::chrono::time_point<std::chrono::system_clock> timer;
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    std::chrono::time_point<std::chrono::system_clock> timer = getNow();
 
     while (this->_isRunning) {
         this->_protocol.handleCommands();
