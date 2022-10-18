@@ -125,6 +125,7 @@ cmrc_add_resource_library(
     resources/r-typesheet43.png
     resources/r-typesheet44.png
     resources/lost.png
+    resources/background.png
 )
 
 target_link_libraries(Client client::rc)

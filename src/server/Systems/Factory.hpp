@@ -19,4 +19,8 @@ namespace Factory {
 
         void makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source);
     } // namespace Weapon
+
+    namespace Misc {
+        void makeBackground(std::shared_ptr<ECSManager> ECS);
+    }
 } // namespace Factory

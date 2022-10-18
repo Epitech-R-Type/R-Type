@@ -71,6 +71,7 @@ namespace Animation {
         Laser,
         Lost,
         Spaceship,
+        Background,
     };
     struct Component {
         AnimationID animationID;
@@ -94,6 +95,7 @@ namespace Animation {
         // adds the same frames in reverse to the animation
         bool reverse;
         double interval = 0.1;
+        bool tile = false;
     };
 
     static std::map<Animation::AnimationID, Animation::Sheet> Sheets = {
@@ -103,6 +105,7 @@ namespace Animation {
         {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
         {Animation::AnimationID::Lost, {"resources/lost.png", 0, 0, 639, 513, 8, 1, 1, 0, 0}},
         {Animation::AnimationID::Spaceship, {"resources/r-typesheet42.png", 1, 3, 32, 16, 5, 1, 0, 0, 1, 0.2}},
+        {Animation::AnimationID::Background, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
     };
 
     std::string toString(Animation::Component component);

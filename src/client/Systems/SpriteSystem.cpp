@@ -96,7 +96,16 @@ void SpriteSystem::apply() {
 
             Texture2D frame = this->_animations[animation->animationID][animation->index];
             Vector2 posVec{position->x, position->y};
-            DrawTextureEx(frame, posVec, animation->rotation, animation->scale, WHITE);
+
+            if (Animation::Sheets[animation->animationID].tile)
+                DrawTextureTiled(frame,
+                                 Rectangle{position->x, position->y, Animation::Sheets[animation->animationID].frameWidth,
+                                           Animation::Sheets[animation->animationID].frameHeight},
+                                 Rectangle{position->x, position->y, WINDOW_WIDTH, WINDOW_HEIGHT}, posVec, animation->rotation, animation->scale,
+                                 WHITE);
+            else
+                DrawTextureEx(frame, posVec, animation->rotation, animation->scale, WHITE);
+
             this->nextFrame(animation);
         }
     }
