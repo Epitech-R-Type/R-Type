@@ -73,7 +73,7 @@ int Game::mainLoop() {
     while (this->_isRunning) {
         this->_protocol.handleCommands();
         this->_velocitySystem->apply();
-        // this->_armamentSystem->apply();
+        this->_armamentSystem->apply();
         this->_hitboxSystem->apply();
 
         // Always last
