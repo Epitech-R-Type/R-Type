@@ -38,11 +38,10 @@ void ArmamentSystem::makeWeapon(EntityID entityID, std::shared_ptr<ECSManager> E
 
 void ArmamentSystem::apply() {
 #ifndef NO_HOSTILITY
-    this->_ECS->setExcluded<Player::Component>();
     for (auto beg = this->_ECS->begin<Armament::Component>(); beg != this->_ECS->end<Armament::Component>(); ++beg) {
+        if (this->_ECS->hasComponent<Player::Component>(*beg))
+            continue;
         ArmamentSystem::makeWeapon(*beg, this->_ECS);
     }
-    this->_ECS->resetExcluded();
-
 #endif
 }

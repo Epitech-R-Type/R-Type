@@ -30,6 +30,8 @@ void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
     if (cmd.args.size() < 1)
         return;
 
+    LOG("Creating Entity " << id);
+
     std::vector<std::string> res = Utilities::splitStr(raw, " ");
     Serialization::stringToEntity(res[1], this->_entityManager);
 }
@@ -49,7 +51,6 @@ void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
         return;
     }
 
-    LOG("Deleting Entity " << id);
     this->_entityManager->deleteEntity(id);
 }
 
