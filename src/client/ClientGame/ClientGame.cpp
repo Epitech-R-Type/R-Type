@@ -24,7 +24,6 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
         new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1); // Bind to available port
 
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
-    this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
 }
 
@@ -55,7 +54,6 @@ void ClientGame::mainLoop() {
 
         this->_protocol.handleCommands();
         this->_spriteSystem->apply();
-        this->_velocitySystem->apply();
         this->_healthSystem->apply();
         this->handlePlayerInput();
 

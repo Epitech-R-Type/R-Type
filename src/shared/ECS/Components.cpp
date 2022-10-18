@@ -255,4 +255,5 @@ void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shar
     }
 
     healthC->health = healthC->health - damageC->damage;
+    ECS->pushModified(defender);
 }

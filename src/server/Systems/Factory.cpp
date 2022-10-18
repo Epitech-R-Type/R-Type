@@ -104,7 +104,7 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
 
     ECS->addComp<Velocity::Component>(bullet, velocity);
     ECS->addComp<Health::Component>(bullet, {1});
-    ECS->addComp<Damage::Component>(bullet, {1});
+    ECS->addComp<Damage::Component>(bullet, {10});
     Animation::Component* animation = ECS->addComp<Animation::Component>(bullet, {Animation::AnimationID::Laser, 1, rotation, 1.5});
     Position::Component* position = ECS->addComp<Position::Component>(bullet, positionPre);
     ECS->addComp<Team::Component>(bullet, *ECS->getComponent<Team::Component>(source));

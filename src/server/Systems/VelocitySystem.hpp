@@ -1,8 +1,8 @@
 
 #pragma once
 
-#include "../ECS/ECS.hpp"
-#include "ISystem.hpp"
+#include "../../shared/ECS/ECS.hpp"
+#include "../../shared/Systems/ISystem.hpp"
 #include <chrono>
 
 class VelocitySystem : public System {

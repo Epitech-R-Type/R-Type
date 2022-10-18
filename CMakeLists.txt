@@ -34,6 +34,7 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/LobbyProtocol.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/Connections.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Protocols/GameProtocol.cpp"
+    "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/server/Server.cpp"
 
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
@@ -44,7 +45,6 @@ add_executable(Server
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Systems/HitboxSystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Systems/JanitorSystem.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Timer.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Utilities.cpp"
@@ -65,7 +65,6 @@ add_executable(Client
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
-    "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Systems/VelocitySystem.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Utilities.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/ClientGameProtocol.cpp"

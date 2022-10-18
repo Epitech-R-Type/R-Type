@@ -1,7 +1,7 @@
 
 #include "VelocitySystem.hpp"
-#include "../ECS/Components.hpp"
-#include "../ECS/Manager.hpp"
+#include "../../shared/ECS/Components.hpp"
+#include "../../shared/ECS/Manager.hpp"
 
 VelocitySystem::VelocitySystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
@@ -31,6 +31,8 @@ void VelocitySystem::apply() {
                 position->x += velocity->x;
                 position->y += velocity->y;
             }
+
+            this->_ECS->pushModified(*beg);
         }
         this->_timer = now;
     }
