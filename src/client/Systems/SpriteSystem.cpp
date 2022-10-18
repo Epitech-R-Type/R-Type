@@ -81,9 +81,11 @@ void SpriteSystem::apply() {
     for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
         Animation::Component* anim = this->_ECS->getComponent<Animation::Component>(*beg);
         if (!anim) {
-            ERROR("Animation Component is null for " << *beg);
+            // TO FIX should not happen
+            ERROR("NO ANIM");
             continue;
         }
+
         if (std::find(layers.begin(), layers.end(), anim->layer) == layers.end())
             layers.push_back(anim->layer);
         animationLayers[anim->layer].push_back(*beg);

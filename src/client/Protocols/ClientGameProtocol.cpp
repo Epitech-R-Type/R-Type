@@ -27,8 +27,10 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
 //
 
 void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
-    if (cmd.args.size() < 1)
+    if (cmd.args.size() < 1) {
+        ERROR("Command " << cmd.cmd << " has no args.");
         return;
+    }
 
     std::vector<std::string> res = Utilities::splitStr(raw, " ");
     Serialization::stringToEntity(res[1], this->_entityManager);

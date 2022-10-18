@@ -9,7 +9,4 @@
 class System {
 public:
     virtual void apply() = 0;
-
-private:
-    std::shared_ptr<ECSManager> _ECS;
 };

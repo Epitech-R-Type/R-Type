@@ -91,17 +91,14 @@ public:
         return stream.str();
     }
 
-    static void stringToEntity(const std::string entity, std::shared_ptr<ECSManager> manager) {
+    static EntityID stringToEntity(const std::string entity, std::shared_ptr<ECSManager> manager) {
 
         std::vector<std::string> components = Utilities::splitStr(entity, ";");
 
         EntityID entityID = std::stoll(components[0]);
 
-        // CHECK IF ENTITY EXISTS
         if (!manager->entityExists(entityID))
             manager->newEntity(entityID);
-
-        DEBUG("Treating entity " << entityID);
 
         for (auto beg = components.begin() + 1; beg != components.end() && (*beg)[(*beg).size() - 1] != '\n'; beg++) {
             const std::string component = *beg;
@@ -150,6 +147,8 @@ public:
                     ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
             }
         }
+
+        return entityID;
     }
 
     template <class T>

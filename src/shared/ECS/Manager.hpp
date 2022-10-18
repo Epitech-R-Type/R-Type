@@ -204,7 +204,7 @@ public:
             std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
             std::bitset<MAX_COMPONENTS> concombre = (this->_wanted & this->_man->_entities[this->_currIndex].components);
 
-            return !this->_wanted.any() || this->_wanted == concombre && this->_man->isValidID(this->_man->_entities[this->_currIndex].id);
+            return (!this->_wanted.any() || this->_wanted == concombre) && this->_man->isValidID(this->_man->_entities[this->_currIndex].id);
         }
 
         Iterator<Comps...>& operator++() {
@@ -247,9 +247,9 @@ public:
     void pushModified(EntityID);
 
 private:
+    std::vector<Entity> _entities;
     std::vector<EntityID> _modifiedEntities;
 
-    std::vector<Entity> _entities;
     std::vector<Index> _unusedEntities;
     std::vector<std::unique_ptr<CompPool>> _compPools;
 

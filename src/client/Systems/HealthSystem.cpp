@@ -39,6 +39,9 @@ void HealthSystem::apply() {
 
         Animation::Component* anim = this->_ECS->getComponent<Animation::Component>(id);
 
+        if (!anim || !position || !health)
+            continue;
+
         const float centerX = position->x + (float)Animation::Sheets[anim->animationID].frameWidth * anim->scale / 2.0;
         const float centerY = position->y + (float)Animation::Sheets[anim->animationID].frameHeight * anim->scale / 2.0;
 

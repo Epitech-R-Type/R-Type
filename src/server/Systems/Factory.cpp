@@ -148,6 +148,6 @@ void Factory::Misc::makeBackground(std::shared_ptr<ECSManager> ECS) {
 
     ECS->addComp<Position::Component>(background, {0, 0});
     ECS->addComp<Animation::Component>(background, {Animation::AnimationID::Background, 0});
-    ECS->addComp<Velocity::Component>(background, {2, 0});
+    // ECS->addComp<Velocity::Component>(background, {0, 0});
     ECS->pushModified(background);
 };

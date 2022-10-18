@@ -44,12 +44,12 @@ void Game::init() {
     srand(time(0));
     this->_protocol.waitForClients();
 
+    Factory::Misc::makeBackground(this->_entManager);
+
     std::vector<Connection> connections = this->_protocol.getConnectedClients();
 
     for (int i = 0; i < connections.size(); i++)
         Factory::Ally::makePlayer(this->_entManager, i);
-
-    Factory::Misc::makeBackground(this->_entManager);
 }
 
 void Game::sendModified() {
