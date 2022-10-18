@@ -14,6 +14,7 @@
 #include <iostream>
 #include <iterator>
 #include <memory>
+#include <optional>
 #include <vector>
 
 struct Entity {
@@ -31,7 +32,7 @@ public:
     // Delete entity
     void deleteEntity(EntityID id);
 
-    bool entityIsActive(EntityID id);
+    bool entityIsActive(Index id);
 
     // Get component for given entity
     template <class T>
@@ -131,7 +132,7 @@ public:
     // Set components to exclude in view
     template <class... Excluded>
     void setExcluded() {
-        int excludedIds[] = {getID<Excluded...>()};
+        Index excludedIds[] = {getID<Excluded...>()};
         this->_excludedInView.reset();
 
         for (auto excluded : excludedIds)
@@ -203,7 +204,7 @@ public:
             std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
             std::bitset<MAX_COMPONENTS> concombre = (this->_wanted & this->_man->_entities[this->_currIndex].components);
 
-            return !this->_wanted.any() || this->_wanted == concombre;
+            return (!this->_wanted.any() || this->_wanted == concombre) && this->_man->isValidID(this->_man->_entities[this->_currIndex].id);
         }
 
         Iterator<Comps...>& operator++() {
@@ -241,8 +242,14 @@ public:
 
     void flush();
 
+    std::optional<EntityID> getModified();
+
+    void pushModified(EntityID);
+
 private:
     std::vector<Entity> _entities;
+    std::vector<EntityID> _modifiedEntities;
+
     std::vector<Index> _unusedEntities;
     std::vector<std::unique_ptr<CompPool>> _compPools;
 

@@ -6,6 +6,7 @@
 */
 
 #include "Manager.hpp"
+#include "../Utilities/Utilities.hpp"
 #include <algorithm>
 
 EntityID ECSManager::newEntity() {
@@ -70,7 +71,7 @@ void ECSManager::deleteEntity(EntityID id) {
     this->_unusedEntities.push_back(i);
 }
 
-bool ECSManager::entityIsActive(EntityID id) {
+bool ECSManager::entityIsActive(Index id) {
     return (std::find(this->_unusedEntities.begin(), this->_unusedEntities.end(), id) == this->_unusedEntities.end());
 }
 
@@ -84,4 +85,18 @@ void ECSManager::flush() {
 
     this->_compPools = std::vector<std::unique_ptr<CompPool>>{};
     this->_excludedInView.reset();
+};
+
+std::optional<EntityID> ECSManager::getModified() {
+    if (this->_modifiedEntities.empty())
+        return {};
+    std::optional<EntityID> modified = this->_modifiedEntities.back();
+    this->_modifiedEntities.pop_back();
+    return modified;
+};
+
+void ECSManager::pushModified(EntityID entityID) {
+    if (std::find(this->_modifiedEntities.begin(), this->_modifiedEntities.end(), entityID) != this->_modifiedEntities.end())
+        return;
+    this->_modifiedEntities.push_back(entityID);
 };

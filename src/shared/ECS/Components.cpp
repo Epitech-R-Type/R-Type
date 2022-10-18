@@ -20,29 +20,33 @@ void Armor::applyUpdate(std::vector<std::string> args, EntityID entityID, std::s
 std::string Health::toString(Health::Component component) {
     std::stringstream ss;
 
-    ss << component.health << ";";
+    ss << component.health << ",";
+    ss << component.maxHealth << ",";
+    ss << component.visible << ";";
     return ss.str();
 }
 
 void Health::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
-    if (manager->hasComponent<Health::Component>(entityID)) {
-        Health::Component* component = manager->getComponent<Health::Component>(entityID);
-        component->health = stoi(args[1]);
-    } else {
-        manager->addComp<Health::Component>(entityID, {stoi(args[1])});
-    }
+    Health::Component* component;
+    if (manager->hasComponent<Health::Component>(entityID))
+        component = manager->getComponent<Health::Component>(entityID);
+    else
+        component = manager->addComp<Health::Component>(entityID, {stoi(args[1])});
+    component->health = stoi(args[1]);
+    component->maxHealth = stoi(args[2]);
+    component->visible = stoi(args[3]);
 }
 
 std::string Position::toString(Position::Component component) {
     std::stringstream ss;
 
-    ss << component.x << "," << component.y << ";";
+    ss << component.x << ",";
+    ss << component.y << ";";
     return ss.str();
 }
 
 void Position::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
     Position::Component* component;
-
     if (manager->hasComponent<Position::Component>(entityID))
         component = manager->getComponent<Position::Component>(entityID);
     else
@@ -241,6 +245,9 @@ void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shar
     Armor::Component* armor = ECS->getComponent<Armor::Component>(defender);
     Damage::Component* damageC = ECS->getComponent<Damage::Component>(attacker);
 
+    if (healthC == nullptr || damageC == nullptr || armor == nullptr)
+        return;
+
     if (immunityFrame != nullptr) {
         const auto now = getNow();
         std::chrono::duration<double> elapsed_seconds = now - immunityFrame->timer;
@@ -250,5 +257,6 @@ void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shar
         immunityFrame->timer = getNow();
     }
 
-    healthC->health = healthC->health - (damageC->damage - (armor != nullptr ? armor->armor : 0));
+    healthC->health = healthC->health - damageC->damage;
+    ECS->pushModified(defender);
 }

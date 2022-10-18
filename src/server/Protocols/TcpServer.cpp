@@ -65,7 +65,7 @@ void TcpServer::setup_outgoing_handler() {
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            std::cout << "Error is : " << err.message() << std::endl;
+            ERROR(err.message());
             this->setup_outgoing_handler();
             return;
         }
@@ -82,11 +82,11 @@ void TcpServer::setup_outgoing_handler() {
 
             auto peer = this->findPeer(msg->getAddr(), msg->getPort());
             if (!peer) {
-                std::cout << "Peer: " << msg->getAddr() << ":" << msg->getPort() << " didn't stay around to receive their message" << std::endl;
+                WARNING("Peer: " << msg->getAddr() << ":" << msg->getPort() << " didn't stay around to receive their message");
                 break;
             }
 
-            std::cout << "Sending: " << buffer << " to: " << msg->getAddr() << ":" << msg->getPort() << std::endl;
+            LOG("Sending: " << buffer << " to: " << msg->getAddr() << ":" << msg->getPort());
 
             peer->send(asio::buffer(buffer));
         }
@@ -106,7 +106,7 @@ void TcpServer::setup_acceptor_handler() {
             auto port = newPeer->remote_endpoint().port();
 
             this->push_out_message(Message<std::string>("CONNECTED\r\n", addr, port));
-            std::cout << "Tcp Client info is :" << newPeer->local_endpoint().port() << std::endl;
+            LOG("TCP Client is open on port: " << newPeer->local_endpoint().port());
             this->setup_incoming_handler(newPeer);
         }
         this->setup_acceptor_handler();

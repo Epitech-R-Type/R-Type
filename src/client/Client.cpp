@@ -22,7 +22,7 @@ Client::Client() {
 
 int Client::launchGame() {
     if (!this->_connected) {
-        std::cout << "You are not connected to a server" << std::endl;
+        ERROR("You are not connected to a server");
         return 84;
     }
 

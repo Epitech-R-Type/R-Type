@@ -66,7 +66,7 @@ void SpriteSystem::nextFrame(Animation::Component* animation) {
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - animation->timer;
 
-    if (elapsed_seconds.count() > 0.1) {
+    if (elapsed_seconds.count() > Animation::Sheets[animation->animationID].interval) {
         animation->index = animation->index + 1;
         animation->timer = now;
         if (animation->index >= this->_animations[animation->animationID].size())
@@ -80,7 +80,14 @@ void SpriteSystem::apply() {
 
     for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
         Animation::Component* anim = this->_ECS->getComponent<Animation::Component>(*beg);
-        layers.push_back(anim->layer);
+        if (!anim) {
+            // TO FIX should not happen
+            ERROR("NO ANIM");
+            continue;
+        }
+
+        if (std::find(layers.begin(), layers.end(), anim->layer) == layers.end())
+            layers.push_back(anim->layer);
         animationLayers[anim->layer].push_back(*beg);
     }
 
@@ -96,7 +103,16 @@ void SpriteSystem::apply() {
 
             Texture2D frame = this->_animations[animation->animationID][animation->index];
             Vector2 posVec{position->x, position->y};
-            DrawTextureEx(frame, posVec, animation->rotation, animation->scale, WHITE);
+
+            if (Animation::Sheets[animation->animationID].tile)
+                DrawTextureTiled(frame,
+                                 Rectangle{position->x, position->y, Animation::Sheets[animation->animationID].frameWidth,
+                                           Animation::Sheets[animation->animationID].frameHeight},
+                                 Rectangle{position->x, position->y, WINDOW_WIDTH, WINDOW_HEIGHT}, posVec, animation->rotation, animation->scale,
+                                 WHITE);
+            else
+                DrawTextureEx(frame, posVec, animation->rotation, animation->scale, WHITE);
+
             this->nextFrame(animation);
         }
     }

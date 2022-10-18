@@ -37,7 +37,7 @@ public:
                     continue;
 
                 if (Serialization::hiddenComponents[componentTypeID]) {
-                    std::cout << "Ooy ya cheeky wanker, ya'r not tryin to have a peak at hidden components are ya?" << std::endl;
+                    WARNING("Ooy ya cheeky wanker, ya'r not tryin to have a peak at hidden components are ya?");
                     continue;
                 }
 
@@ -79,7 +79,7 @@ public:
                         stream << Serialization::componentToString<CollisionEffect::Component>(entityID, manager);
                         break;
                     default:
-                        std::cout << "[entityToString] Unhandled Component: " << componentTypeID << "." << std::endl;
+                        ERROR("[entityToString] Unhandled Component: " << componentTypeID << ".");
                 }
             }
         } else {
@@ -91,21 +91,17 @@ public:
         return stream.str();
     }
 
-    static void stringToEntity(const std::string entity, std::shared_ptr<ECSManager> manager) {
+    static EntityID stringToEntity(const std::string entity, std::shared_ptr<ECSManager> manager) {
 
         std::vector<std::string> components = Utilities::splitStr(entity, ";");
 
         EntityID entityID = std::stoll(components[0]);
 
-        // CHECK IF ENTITY EXISTS
         if (!manager->entityExists(entityID))
             manager->newEntity(entityID);
 
-        LOG("Treating entity " << entityID);
-
         for (auto beg = components.begin() + 1; beg != components.end() && (*beg)[(*beg).size() - 1] != '\n'; beg++) {
             const std::string component = *beg;
-            std::cout << "Component: " << component << std::endl;
             std::vector<std::string> args = Utilities::splitStr(component, ",");
 
             ComponentType componentTypeID = ComponentType(atoi(args[0].c_str()));
@@ -148,15 +144,17 @@ public:
                     CollisionEffect::applyUpdate(args, entityID, manager);
                     break;
                 default:
-                    std::cout << "[stringToEntity] Unhandled Component: " << componentTypeID << "." << std::endl;
+                    ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
             }
         }
+
+        return entityID;
     }
 
     template <class T>
     static std::string componentToString(EntityID entityId, std::shared_ptr<ECSManager> manager) {
         if (!manager->hasComponent<T>(entityId)) {
-            WARNING("Missing component.");
+            WARNING("Missing component: " << getID<T>());
             return "";
         }
 
@@ -190,7 +188,7 @@ public:
             case ComponentType::COLLISIONEFFECT:
                 return std::to_string(getID<T>()) + "," + CollisionEffect::toString(*(CollisionEffect::Component*)component);
             default:
-                std::cout << "[stringToEntity] Unhandled Component: " << componentTypeID << "." << std::endl;
+                ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
                 return "";
         }
     }

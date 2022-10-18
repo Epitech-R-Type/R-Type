@@ -44,19 +44,36 @@ void Game::init() {
     srand(time(0));
     this->_protocol.waitForClients();
 
+    Factory::Misc::makeBackground(this->_entManager);
+
     std::vector<Connection> connections = this->_protocol.getConnectedClients();
 
-    for (int i = 0; i < connections.size(); i++) {
-        this->_protocol.sendEntity(Factory::Ally::makePlayer(this->_entManager, i));
-    }
+    for (int i = 0; i < connections.size(); i++)
+        Factory::Ally::makePlayer(this->_entManager, i);
 }
 
-int Game::mainLoop() {
-    std::cout << "Entering main loop()" << std::endl;
+void Game::sendModified() {
+    std::optional<EntityID> entityID;
 
-    std::chrono::time_point<std::chrono::system_clock> timer;
+    while ((entityID = this->_entManager->getModified())) {
+        if (this->_entManager->entityIsActive(getIndex(entityID.value())) && this->_entManager->entityExists(entityID.value()))
+            this->_protocol.sendEntity(entityID.value());
+        else
+            this->_protocol.sendDelEntity(entityID.value());
+    }
+};
+
+int Game::mainLoop() {
+    LOG("Starting Game");
+
+    std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    std::chrono::time_point<std::chrono::system_clock> timer = getNow();
+    std::chrono::time_point<std::chrono::system_clock> bosstimer = getNow();
+    bool bossSpawned = false;
 
     while (this->_isRunning) {
+        this->_protocol.handleCommands();
         this->_velocitySystem->apply();
         this->_armamentSystem->apply();
         this->_hitboxSystem->apply();
@@ -68,10 +85,19 @@ int Game::mainLoop() {
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 0.2) {
-            this->_protocol.sendEntity(Factory::Enemy::makeEnemy(this->_entManager));
+        if (elapsed_seconds.count() > 2) {
+            Factory::Enemy::makeEnemy(this->_entManager);
             timer = getNow();
         }
+
+        std::chrono::duration<double> elapsed_boss_seconds = now - bosstimer;
+
+        if (elapsed_boss_seconds.count() > 20 && !bossSpawned) {
+            Factory::Enemy::makeEndboss(this->_entManager);
+            bossSpawned = true;
+        }
+
+        this->sendModified();
     }
 
     return 0;

@@ -1,7 +1,7 @@
 
 #include "VelocitySystem.hpp"
-#include "../ECS/Components.hpp"
-#include "../ECS/Manager.hpp"
+#include "../../shared/ECS/Components.hpp"
+#include "../../shared/ECS/Manager.hpp"
 
 VelocitySystem::VelocitySystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
@@ -11,9 +11,9 @@ void VelocitySystem::apply() {
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - this->_timer;
     if (elapsed_seconds.count() > MOVEMENT_TIMER) {
+        this->_ECS->setExcluded<Player::Component>();
         for (auto beg = this->_ECS->begin<Position::Component, Velocity::Component>();
              beg != this->_ECS->end<Position::Component, Velocity::Component>(); ++beg) {
-
             EntityID id = *beg;
 
             if (this->_ECS->hasComponent<Player::Component>(id))
@@ -31,7 +31,10 @@ void VelocitySystem::apply() {
                 position->x += velocity->x;
                 position->y += velocity->y;
             }
+
+            this->_ECS->pushModified(*beg);
         }
         this->_timer = now;
     }
+    this->_ECS->resetExcluded();
 };

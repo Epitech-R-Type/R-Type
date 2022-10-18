@@ -27,8 +27,10 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
 //
 
 void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
-    if (cmd.args.size() < 1)
+    if (cmd.args.size() < 1) {
+        ERROR("Command " << cmd.cmd << " has no args.");
         return;
+    }
 
     std::vector<std::string> res = Utilities::splitStr(raw, " ");
     Serialization::stringToEntity(res[1], this->_entityManager);
@@ -49,7 +51,6 @@ void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
         return;
     }
 
-    LOG("Deleting Entity " << id);
     this->_entityManager->deleteEntity(id);
 }
 
@@ -78,26 +79,26 @@ bool ClientGameProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
 
     while ((msg = this->_incomingMQ->pop())) {
-        LOG("Handling command: " << msg.value());
         auto parsed = ProtocolUtils::parseCommand(*msg);
 
         if (!parsed)
             continue;
 
         switch (parsed->cmd) {
-            case Entity:
-                this->handleEntity(*parsed, msg->getMsg());
+            case Entityd:
+                this->handleEntity(parsed.value(), msg->getMsg());
                 break;
             case DeleteEntity:
-                this->handleDeleteEntity(*parsed);
+                this->handleDeleteEntity(parsed.value());
                 break;
             case DeleteComponent:
-                this->handleDeleteComponent(*parsed);
+                this->handleDeleteComponent(parsed.value());
                 break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
         }
     }
+    return true;
 }
 
 //
@@ -111,35 +112,35 @@ void ClientGameProtocol::sendActMove(Move direction) {
 
     switch (direction) {
         case UP:
-            "UP";
+            body = "UP";
             break;
         case DOWN:
-            "DOWN";
+            body = "DOWN";
             break;
         case LEFT:
-            "LEFT";
+            body = "LEFT";
             break;
         case RIGHT:
-            "RIGHT";
+            body = "RIGHT";
             break;
     }
 
     auto msg = ProtocolUtils::createMessage("ACT_MOVE", body, this->_addr, this->_port);
 
-    LOG("Sending to Server: " << msg.getMsg());
+    // LOG("Sending to Server: " << msg.getMsg());
 
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendActFire() {
-    auto msg = ProtocolUtils::createMessage("FIRE", "", this->_addr, this->_port);
-    LOG("Sending to Server: " << msg.getMsg());
+    auto msg = ProtocolUtils::createMessage("ACT_SHOOT", "", this->_addr, this->_port);
+    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendHere() {
     auto msg = ProtocolUtils::createMessage("HERE", this->_uuid.toString(), this->_addr, this->_port);
-    LOG("Sending to Server: " << msg.getMsg());
+    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
@@ -148,6 +149,6 @@ void ClientGameProtocol::sendGetEnt(EntityID id) {
     ss << id;
 
     auto msg = ProtocolUtils::createMessage("GET_ENT", ss.str(), this->_addr, this->_port);
-    LOG("Sending to Server: " << msg.getMsg());
+    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
