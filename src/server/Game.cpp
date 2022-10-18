@@ -69,6 +69,8 @@ int Game::mainLoop() {
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
     std::chrono::time_point<std::chrono::system_clock> timer = getNow();
+    std::chrono::time_point<std::chrono::system_clock> bosstimer = getNow();
+    bool bossSpawned = false;
 
     while (this->_isRunning) {
         this->_protocol.handleCommands();
@@ -83,9 +85,15 @@ int Game::mainLoop() {
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 10) {
+        if (elapsed_seconds.count() > 2) {
             Factory::Enemy::makeEnemy(this->_entManager);
             timer = getNow();
+        }
+
+        if (elapsed_seconds.count() > 20 && !bossSpawned) {
+            Factory::Enemy::makeEndboss(this->_entManager);
+            bosstimer = getNow();
+            bossSpawned = true;
         }
 
         this->sendModified();

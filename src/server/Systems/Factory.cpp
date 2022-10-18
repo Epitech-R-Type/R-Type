@@ -59,6 +59,7 @@ EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
     ECS->addComp<Health::Component>(endboss, {300 * players, 300 * players, false});
     ECS->addComp<Hitbox::Component>(endboss, HitboxSystem::buildHitbox(animation, position));
     ECS->addComp<Team::Component>(endboss, Team::Enemy);
+    ECS->addComp<Armament::Component>(endboss, {Armament::Type::Buckshot, 1000, 50});
     ECS->addComp<CollisionEffect::Component>(endboss, &CollisionEffect::dealDamage);
     ECS->pushModified(endboss);
     return endboss;
