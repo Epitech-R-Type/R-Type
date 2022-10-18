@@ -49,7 +49,7 @@ void Game::init() {
     for (int i = 0; i < connections.size(); i++)
         Factory::Ally::makePlayer(this->_entManager, i);
 
-    Factory::Misc::makeBackground(this->_entManager);
+    // Factory::Misc::makeBackground(this->_entManager);
 }
 
 void Game::sendModified() {
