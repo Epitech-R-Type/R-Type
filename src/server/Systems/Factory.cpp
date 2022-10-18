@@ -27,6 +27,7 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
             break;
         default:
             animation = ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipRGB, 2});
+            break;
     }
     ECS->addComp<Health::Component>(player, {50, 50, true});
     ECS->addComp<Player::Component>(player, {true, uniqueID});
