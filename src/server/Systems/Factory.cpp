@@ -7,29 +7,20 @@
 EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID) {
     EntityID player = ECS->newEntity();
 
-    Position::Component* position = ECS->addComp<Position::Component>(player, {0, 0});
+    Position::Component* position = ECS->addComp<Position::Component>(player, {0, WINDOW_HEIGHT / 2});
 
-    // switch (uniqueID) {
-    //     case 0:
-    //         ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipLightblue, 2});
-    //         break;
-    //     case 1:
-    //         ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipPink, 2});
-    //         break;
-    //     case 2:
-    //         ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipGreen, 2});
-    //         break;
-    //     case 3:
-    //         ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipRed, 2});
-    //         break;
-    //     case 4:
-    //         ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipDarkblue, 2});
-    //         break;
-    //     default:
-    //         ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipRGB, 2});
-    //         break;
-    // }
-    ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipRGB, 2});
+    if (uniqueID == 0)
+        ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipLightblue, 1, 0, 3});
+    else if (uniqueID == 1)
+        ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipPink, 1, 0, 3});
+    else if (uniqueID == 2)
+        ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipGreen, 1, 0, 3});
+    else if (uniqueID == 3)
+        ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipRed, 1, 0, 3});
+    else if (uniqueID == 4)
+        ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipDarkblue, 1, 0, 3});
+    else
+        ECS->addComp<Animation::Component>(player, {Animation::AnimationID::SpaceshipRGB, 1, 0, 3});
 
     Animation::Component* animation = ECS->getComponent<Animation::Component>(player);
     ECS->addComp<Health::Component>(player, {50, 50, true});
@@ -41,6 +32,7 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
     ECS->addComp<ImmunityFrame::Component>(player, {1});
     ECS->addComp<Damage::Component>(player, {20});
     ECS->addComp<CollisionEffect::Component>(player, &CollisionEffect::dealDamage);
+
     ECS->pushModified(player);
 
     return player;
