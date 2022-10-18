@@ -34,8 +34,7 @@ Table of Contents
     2. TCP Protocol ...................................................X
         2.1. Command Syntax ...........................................X
         2.2. Command Response .........................................X
-            2.2.1. Response Syntax ....................................X
-            2.2.2. Response Codes and Meaning .........................X
+            2.2.1. Response Codes and Meaning .........................X
         2.3. Server Commands ..........................................X
         2.4. Client Commands ..........................................X
     3. UDP Protocol ...................................................X
@@ -75,7 +74,7 @@ Table of Contents
 
         TCP commands follow the following syntax :
 
-                <CMD> <SP> <HEADER> <SP> <ARGS> <CRLF>
+                <CMD> <SP> <HEADER>;<ARGS> <CRLF>
 
         Here is a definition of each part :
 
@@ -104,9 +103,44 @@ Table of Contents
 
                 <CODE> <SP> <HEADER> <SP> <BODY> <CRLF>
 
+        In this format, the HEADER is the server's UUID, that the client
+        can use in order to make sure he is interacting with the correct
+        server.
+
         The response format is similar to the command synthaxe, except
         that the cmd is replaced by a three digit response code that
         mimics that of the HTTP protocol.
+    
+        2.2.1. Response Codes and Meanings
+
+            The following is a list of all possible response code. This
+            list of response codes is strongly inspired by the response
+            codes of the HTTP protocol.
+
+                - 500 -> Wrong Request
+                - 401 -> Forbidden
+                - 200 -> OK
+
+    2.3. Server Commands
+
+        The only server command that currently needs any handling by the
+        client is the START command.
+
+        The START command will provide one argument, which is the port
+        that the client should send his first UDP message to.
+    
+    2.4. Client Commands
+
+        The following is a list of Client Commands :
+
+            - CONNECT -> Only command with no header. This command
+                         allows the client to retrieve his user assigned
+                         uuid.
+
+            - START   -> This command allows the user to signal to the
+                         server that the game should start.
+
+
 
 3. UDP Protocol
 
