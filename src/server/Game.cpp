@@ -49,7 +49,7 @@ void Game::init() {
     for (int i = 0; i < connections.size(); i++)
         Factory::Ally::makePlayer(this->_entManager, i);
 
-    // Factory::Misc::makeBackground(this->_entManager);
+    Factory::Misc::makeBackground(this->_entManager);
 }
 
 void Game::sendModified() {
@@ -83,8 +83,8 @@ int Game::mainLoop() {
         std::chrono::duration<double> elapsed_seconds = now - timer;
 
         // Convert to milliseconds
-        if (elapsed_seconds.count() > 4) {
-            // Factory::Enemy::makeEnemy(this->_entManager);
+        if (elapsed_seconds.count() > 10) {
+            Factory::Enemy::makeEnemy(this->_entManager);
             timer = getNow();
         }
 
