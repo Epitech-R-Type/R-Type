@@ -84,7 +84,7 @@ int Game::mainLoop() {
 
         // Convert to milliseconds
         if (elapsed_seconds.count() > 4) {
-            Factory::Enemy::makeEnemy(this->_entManager);
+            // Factory::Enemy::makeEnemy(this->_entManager);
             timer = getNow();
         }
 

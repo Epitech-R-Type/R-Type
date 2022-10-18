@@ -83,7 +83,6 @@ void SpriteSystem::apply() {
         if (std::find(layers.begin(), layers.end(), anim->layer) == layers.end())
             layers.push_back(anim->layer);
         animationLayers[anim->layer].push_back(*beg);
-        std::cout << *beg << std::endl;
     }
 
     std::sort(layers.begin(), layers.end());
