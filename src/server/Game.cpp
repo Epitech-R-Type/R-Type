@@ -90,9 +90,10 @@ int Game::mainLoop() {
             timer = getNow();
         }
 
-        if (elapsed_seconds.count() > 20 && !bossSpawned) {
+        std::chrono::duration<double> elapsed_boss_seconds = now - bosstimer;
+
+        if (elapsed_boss_seconds.count() > 20 && !bossSpawned) {
             Factory::Enemy::makeEndboss(this->_entManager);
-            bosstimer = getNow();
             bossSpawned = true;
         }
 

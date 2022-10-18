@@ -204,7 +204,7 @@ public:
             std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
             std::bitset<MAX_COMPONENTS> concombre = (this->_wanted & this->_man->_entities[this->_currIndex].components);
 
-            return !this->_wanted.any() || this->_wanted == concombre;
+            return !this->_wanted.any() || this->_wanted == concombre && this->_man->isValidID(this->_man->_entities[this->_currIndex].id);
         }
 
         Iterator<Comps...>& operator++() {
