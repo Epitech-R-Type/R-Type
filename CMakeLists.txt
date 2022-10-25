@@ -9,16 +9,21 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 if (MSVC)
+    set (CMAKE_GENERATOR "Visual Studio 17" CACHE INTERNAL "" FORCE)
     add_compile_definitions(WIN32_LEAN_AND_MEAN)
 else()
+    set (CMAKE_GENERATOR "Unix Makefiles" CACHE INTERNAL "" FORCE)
     add_compile_options(-g3)
 endif()
+
+
+message("hey")
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
 conan_basic_setup()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/bin)
 
 file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMakeRC.cmake"
 "${CMAKE_BINARY_DIR}/CMakeRC.cmake")
