@@ -3,8 +3,6 @@ project(R-Type)
 
 set(CMAKE_CXX_STANDARD 17)
 
-set(CMAKE_C_COMPILER "gcc")
-set(CMAKE_CXX_COMPILER "g++")
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -22,7 +20,7 @@ include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
 conan_basic_setup()
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/build/bin)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 
 file(DOWNLOAD "https://raw.githubusercontent.com/vector-of-bool/cmrc/master/CMakeRC.cmake"
 "${CMAKE_BINARY_DIR}/CMakeRC.cmake")
@@ -143,6 +141,24 @@ endfunction()
 
 
 function(build_tests)
+    include(FetchContent)
+    FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip)
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+    FetchContent_MakeAvailable(googletest)
+    enable_testing()
+
+    add_executable(
+        Tests
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp"
+    )
+
+    target_link_libraries(Tests GTest::gtest_main)
+    target_link_libraries(Tests ${CONAN_LIBS})
+
+
+    include(GoogleTest)
+
+    gtest_discover_tests(Tests)
 endfunction()
 
 if(TESTMODE EQUAL 1)
