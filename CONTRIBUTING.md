@@ -1,3 +1,5 @@
+[Return to Readme](README.md)
+
 # <p id="commitizen-header"> [Commitizen](https://commitizen-tools.github.io/commitizen/)
 
 ### Installation:

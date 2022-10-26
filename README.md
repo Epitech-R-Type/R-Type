@@ -10,26 +10,33 @@ It will include network based multiplayer.
 ```
 $ pip install conan
 $ conan profile new default --detect
-```
-
-Under Linux add the following to ~/.conan/profiles/default if not present.
-
-```
-[conf]
-tools.system.package_manager:sudo=True
-tools.system.package_manager:mode=install
+$ conan profile update conf.tools.system.package_manager:mode=install default;
+$ conan profile update conf.tools.system.package_manager:sudo=True default;
 ```
 
 # How to Build
 
 ## Automatic build for Linux and Windows
 
-For this to work on Windows you need to have access to a Unix shell, such as Git Bash or WSL.
+For this to work on Windows you need to have access to a Unix shell, such as Git Bash or WSL as well as access to the make command.
 
-Make `build.sh` executable if needed, then execute it.
+In order to build both the client and the server, you can make the "all" rule:
 
 ```
-$ ./build.sh
+$ make
+```
+
+In order to build the tests, make the "test" rule:
+
+```
+$ make test
+```
+
+Binaries can be found at:
+```
+./bin/Server
+./bin/Client
+./bin/Tests
 ```
 
 ## Manual Build
