@@ -24,12 +24,25 @@ tools.system.package_manager:mode=install
 
 ## Automatic build for Linux and Windows
 
-For this to work on Windows you need to have access to a Unix shell, such as Git Bash or WSL.
+For this to work on Windows you need to have access to a Unix shell, such as Git Bash or WSL as well as access to the make command.
 
-Make `build.sh` executable if needed, then execute it.
+In order to build both the client and the server, you can make the "all" rule:
 
 ```
-$ ./build.sh
+$ make
+```
+
+In order to build the tests, make the "test" rule:
+
+```
+$ make test
+```
+
+Binaries can be found at:
+```
+./build/bin/Server
+./build/bin/Client
+./build/bin/Tests
 ```
 
 ## Manual Build
