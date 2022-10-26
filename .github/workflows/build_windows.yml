@@ -29,10 +29,10 @@ jobs:
           conan profile update conf.tools.system.package_manager:mode=install default;
           conan profile update conf.tools.system.package_manager:sudo=True default;
           mkdir build;
-          make all;
+          make build;
 
       - name: verify-files
         shell: bash
         run: >
-          rm ./build/bin/Client;
-          rm ./build/bin/Server;
+          rm ./bin/Client;
+          rm ./bin/Server;
