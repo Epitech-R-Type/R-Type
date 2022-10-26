@@ -34,9 +34,9 @@ $ make test
 
 Binaries can be found at:
 ```
-./build/bin/Server
-./build/bin/Client
-./build/bin/Tests
+./bin/Server
+./bin/Client
+./bin/Tests
 ```
 
 ## Manual Build
