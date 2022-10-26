@@ -1,0 +1,42 @@
+name: Unit Test
+
+on: push
+jobs:
+  cmake-build:
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout repo
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+
+      # Setup cmake
+      - uses: lukka/get-cmake@latest
+
+      - name: install-conan
+        shell: bash
+        run: pip install conan
+
+      - name: create-conan-profile
+        shell: bash
+        # Generates default profile detecting GCC and sets old ABI
+        run: conan profile new default --detect;
+
+      # Build project
+      - name: build
+        shell: bash
+        run: >
+          conan profile update conf.tools.system.package_manager:mode=install default;
+          conan profile update conf.tools.system.package_manager:sudo=True default;
+          mkdir build;
+          make test;
+
+      - name: verify-files
+        shell: bash
+        run: >
+          find ./bin/Tests;
+      
+      - name: run-tests
+        shell: bash
+        run: >
+          ./bin/Tests;
