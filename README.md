@@ -1,3 +1,7 @@
+<img src="https://cdn.dribbble.com/users/664697/screenshots/6458763/r-logo.png" alt="drawing" width="200" align="center"/>
+
+![example workflow](https://github.com/Epitech-R-Type/R-Type/actions/workflows/build_linux.yml/badge.svg?branch=main) ![example workflow](https://github.com/Epitech-R-Type/R-Type/actions/workflows/build_windows.yml/badge.svg?branch=main) ![example workflow](https://github.com/Epitech-R-Type/R-Type/actions/workflows/linter.yml/badge.svg?branch=main)
+
 [Contributing Guide](CONTRIBUTING.md)
 
 # R-Type
