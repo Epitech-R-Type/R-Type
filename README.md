@@ -10,14 +10,8 @@ It will include network based multiplayer.
 ```
 $ pip install conan
 $ conan profile new default --detect
-```
-
-Under Linux add the following to ~/.conan/profiles/default if not present.
-
-```
-[conf]
-tools.system.package_manager:sudo=True
-tools.system.package_manager:mode=install
+$ conan profile update conf.tools.system.package_manager:mode=install default;
+$ conan profile update conf.tools.system.package_manager:sudo=True default;
 ```
 
 # How to Build
