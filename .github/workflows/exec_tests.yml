@@ -1,4 +1,4 @@
-name: Google Test
+name: Unit Test
 
 on: push
 jobs:
