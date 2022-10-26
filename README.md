@@ -1,6 +1,17 @@
-<img src="https://cdn.dribbble.com/users/664697/screenshots/6458763/r-logo.png" alt="drawing" width="200" align="center"/>
-
-![example workflow](https://github.com/Epitech-R-Type/R-Type/actions/workflows/build_linux.yml/badge.svg?branch=main) ![example workflow](https://github.com/Epitech-R-Type/R-Type/actions/workflows/build_windows.yml/badge.svg?branch=main) ![example workflow](https://github.com/Epitech-R-Type/R-Type/actions/workflows/linter.yml/badge.svg?branch=main)
+<p align="center">
+    <img src="https://cdn.dribbble.com/users/664697/screenshots/6458763/r-logo.png" alt="drawing" width="200">
+    <p align="center">
+        <img src="https://badgen.net/github/stars/Epitech-R-Type/R-Type">
+        <img src="https://badgen.net/github/contributors/micromatch/micromatch">
+        <img src="https://badgen.net/github/branches/Epitech-R-Type/R-Type">
+        <img src="https://badgen.net/github/commits/Epitech-R-Type/R-Type/main">
+    </p>
+    <p align="center">
+        <img src="https://github.com/Epitech-R-Type/R-Type/actions/workflows/build_linux.yml/badge.svg?branch=main">
+        <img src="https://github.com/Epitech-R-Type/R-Type/actions/workflows/build_windows.yml/badge.svg?branch=main">
+        <img src="https://github.com/Epitech-R-Type/R-Type/actions/workflows/linter.yml/badge.svg?branch=main">
+    </p>
+</p>
 
 [Contributing Guide](CONTRIBUTING.md)
 
