@@ -72,7 +72,7 @@ public:
         Index i = getIndex(id);
 
         // Make sure entity is valid
-        if (0 > getIndex(this->_entities[i].id))
+        if (!this->isValidEntity(id))
             return nullptr;
 
         // Get unique id for component type

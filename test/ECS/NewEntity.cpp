@@ -9,11 +9,17 @@
 #include <gtest/gtest.h>
 #include <vector>
 
+// Init g_idCounter
+Index g_idCounter = 0;
+
 // ─── New Entity Tests ────────────────────────────────────────────────────────────────────────────
 
 // Test creation of single entity
 TEST_F(EcsFixture, NewSingleEntity) {
-    EXPECT_GT(_man->newEntity(), -1);
+    EntityID newEnt = _man->newEntity();
+
+    EXPECT_GT(newEnt, -1);
+    EXPECT_EQ(getVersion(newEnt), 0);
 }
 
 // Test creation of multiple entities
@@ -22,6 +28,7 @@ TEST_F(EcsFixture, NewMaxEntities) {
     for (int i = 0; i < MAX_ENTITIES; i++) {
         EntityID newEnt = _man->newEntity();
         EXPECT_GT(newEnt, -1);
+        ASSERT_EQ(getVersion(newEnt), 0);
         EXPECT_TRUE(_man->isValidEntity(newEnt));
     }
 }
@@ -37,9 +44,19 @@ TEST_F(EcsFixture, NewTooManyEntities) {
 // Test reuse of entity
 TEST_F(EcsFixture, ReuseOldEntity) {
     EntityID id = _man->newEntity();
+    Index oldIndex = getIndex(id);
+    Version oldVersion = getVersion(id);
 
     _man->deleteEntity(id);
     id = _man->newEntity();
+
+    Index newIndex = getIndex(id);
+    Version newVersion = getVersion(id);
+
+    EXPECT_EQ(oldIndex, newIndex);
+
+    EXPECT_NE(oldVersion, newVersion);
+    EXPECT_EQ(newVersion, 1);
 
     EXPECT_TRUE(_man->isValidEntity(id));
 }

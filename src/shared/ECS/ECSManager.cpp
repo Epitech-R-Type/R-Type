@@ -13,7 +13,7 @@
 
 EntityID ECSManager::newEntity() {
     // If previously free'd entities available use those in preference
-    if (!this->_unusedEntities.empty() && false) { // Pop last index from unusedEntities vector
+    if (!this->_unusedEntities.empty()) { // Pop last index from unusedEntities vector
         Index i = this->_unusedEntities.back();
         this->_unusedEntities.pop_back();
 
@@ -112,10 +112,11 @@ bool ECSManager::entityHasComp(EntityID id, Index i) {
 
 bool ECSManager::isValidEntity(EntityID id) {
     Index i = getIndex(id);
+    Version v = getVersion(id);
 
     if (i >= this->_entities.size() || i >= MAX_ENTITIES || i == INVALID_INDEX)
         return false;
-    if (getIndex(this->_entities[i].id) == INVALID_INDEX)
+    if (getIndex(this->_entities[i].id) == INVALID_INDEX || getVersion(this->_entities[i].id) != v)
         return false;
     return true;
 }
