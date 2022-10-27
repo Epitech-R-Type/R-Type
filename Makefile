@@ -31,5 +31,5 @@ clean:
 rebuild: cleanbuild
 	make build;
 
-retest: testdir
+retest: testdir cleantest
 	make test;

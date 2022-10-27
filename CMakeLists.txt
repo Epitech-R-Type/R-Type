@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.17)
 project(R-Type)
 
 set(CMAKE_CXX_STANDARD 17)
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -144,6 +143,7 @@ function(build_tests)
     include(FetchContent)
     FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
     FetchContent_MakeAvailable(googletest)
     enable_testing()
 
@@ -158,6 +158,7 @@ function(build_tests)
 
     target_link_libraries(Tests GTest::gtest_main)
     target_link_libraries(Tests ${CONAN_LIBS})
+    target_link_libraries(Tests gcov)
 
 
     include(GoogleTest)
@@ -167,6 +168,9 @@ endfunction()
 
 if(TESTMODE EQUAL 1)
     message("=== Unit Tests ===")
+    set(CMAKE_CXX_FLAGS "--coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "--coverage")
+
     build_tests()
 else()
     message("==== Programs ====")
