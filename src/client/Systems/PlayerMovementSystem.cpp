@@ -7,7 +7,7 @@
 #include "../../WindowsGuard.hpp"
 
 #include "../../shared/ECS/Components.hpp"
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "PlayerMovementSystem.hpp"
 #include "raylib.h"
 

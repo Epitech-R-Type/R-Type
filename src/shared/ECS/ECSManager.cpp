@@ -5,7 +5,7 @@
 ** .
 */
 
-#include "Manager.hpp"
+#include "ECSManager.hpp"
 #include "../Utilities/Utilities.hpp"
 #include <algorithm>
 

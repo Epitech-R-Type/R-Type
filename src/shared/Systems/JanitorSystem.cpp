@@ -1,6 +1,6 @@
 #include "JanitorSystem.hpp"
 #include "../ECS/Components.hpp"
-#include "../ECS/Manager.hpp"
+#include "../ECS/ECSManager.hpp"
 
 #define INVISIBLE_BOX 2500
 

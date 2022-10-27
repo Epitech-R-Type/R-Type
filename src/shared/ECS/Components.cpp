@@ -1,5 +1,5 @@
 #include "Components.hpp"
-#include "Manager.hpp"
+#include "ECSManager.hpp"
 
 std::string Armor::toString(Armor::Component component) {
     std::stringstream ss;

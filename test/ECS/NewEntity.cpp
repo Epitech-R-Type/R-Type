@@ -9,7 +9,7 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-// ─── New Entity Tests ────────────────────────────────────────────────────────
+// ─── New Entity Tests ────────────────────────────────────────────────────────────────────────────
 
 // Test creation of single entity
 TEST_F(EcsFixture, NewSingleEntity) {
@@ -22,7 +22,7 @@ TEST_F(EcsFixture, NewMaxEntities) {
     for (int i = 0; i < MAX_ENTITIES; i++) {
         EntityID newEnt = _man->newEntity();
         EXPECT_GT(newEnt, -1);
-        EXPECT_TRUE(_man->entityExists(newEnt));
+        EXPECT_TRUE(_man->isValidEntity(newEnt));
     }
 }
 
@@ -41,18 +41,17 @@ TEST_F(EcsFixture, ReuseOldEntity) {
     _man->deleteEntity(id);
     id = _man->newEntity();
 
-    EXPECT_TRUE(_man->entityExists(id));
+    EXPECT_TRUE(_man->isValidEntity(id));
 }
 
-// ─── Delete Entity Tests ─────────────────────────────────────────────────────
+// ─── Delete Entity Tests ─────────────────────────────────────────────────────────────────────────
 
 // Test deletion of single entity
 TEST_F(EcsFixture, DelSingleEntity) {
     EntityID id = _man->newEntity();
 
     _man->deleteEntity(id);
-    // EXPECT_TRUE(_man->entityIsActive(id));
-    EXPECT_FALSE(_man->entityExists(id));
+    EXPECT_FALSE(_man->isValidEntity(id));
 }
 
 // Test double deletion of entity
@@ -61,6 +60,5 @@ TEST_F(EcsFixture, DoubleDelSingleEntity) {
 
     _man->deleteEntity(id);
     _man->deleteEntity(id);
-    // EXPECT_TRUE(_man->entityIsActive(id));
-    EXPECT_FALSE(_man->entityExists(id));
+    EXPECT_FALSE(_man->isValidEntity(id));
 }

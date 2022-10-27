@@ -7,7 +7,7 @@
 
 #include "../../WindowsGuard.hpp"
 
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "SpriteSystem.hpp"
 #include <algorithm>
 

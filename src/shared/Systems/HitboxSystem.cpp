@@ -1,7 +1,7 @@
 
 #include "HitboxSystem.hpp"
 #include "../ECS/Components.hpp"
-#include "../ECS/Manager.hpp"
+#include "../ECS/ECSManager.hpp"
 #include "../Utilities/Utilities.hpp"
 #include <cmath>
 #include <iostream>

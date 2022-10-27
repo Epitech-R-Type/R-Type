@@ -1,5 +1,5 @@
 #include "HealthSystem.hpp"
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 #include "SpriteSystem.hpp"
 #include "Systems.hpp"

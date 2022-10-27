@@ -9,7 +9,7 @@
 
 #include "../ECS/Components.hpp"
 #include "../ECS/ECS.hpp"
-#include "../ECS/Manager.hpp"
+#include "../ECS/ECSManager.hpp"
 #include "../Utilities/Utilities.hpp"
 #include <cstring>
 #include <iostream>

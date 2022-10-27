@@ -10,7 +10,7 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-#include "../../src/shared/ECS/Manager.hpp"
+#include "../../src/shared/ECS/ECSManager.hpp"
 
 class EcsFixture : public ::testing::Test {
 public:

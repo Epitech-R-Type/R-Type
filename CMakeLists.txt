@@ -44,7 +44,7 @@ function(build_server)
 
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Serialization.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
@@ -71,7 +71,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/HealthSystem.cpp"
 
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
@@ -153,7 +153,7 @@ function(build_tests)
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/NewEntity.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsFixture.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
     )
 
     target_link_libraries(Tests GTest::gtest_main)
