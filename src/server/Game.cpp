@@ -56,7 +56,7 @@ void Game::sendModified() {
     std::optional<EntityID> entityID;
 
     while ((entityID = this->_entManager->getModified())) {
-        if (this->_entManager->entityIsActive(getIndex(entityID.value())) && this->_entManager->entityExists(entityID.value()))
+        if (this->_entManager->entityIsActive(getIndex(entityID.value())) && this->_entManager->isValidEntity(entityID.value()))
             this->_protocol.sendEntity(entityID.value());
         else
             this->_protocol.sendDelEntity(entityID.value());

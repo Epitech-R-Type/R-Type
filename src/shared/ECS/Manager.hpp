@@ -120,17 +120,24 @@ public:
 
     // ─── Utility Methods ─────────────────────────────────────────────────────────────────────
 
+    // MOST LIKELY TO DELETE
+    // ASK NICHOLAS
     bool entityIsActive(Index id);
-
-    // Checks if entity id is valid
-    // ie: can be used as reference in _entities vector
-    bool isValidID(EntityID id);
 
     // Checks if entity has component
     // (also checks validity of id, if index is < g_idCounter and is valid)
     bool entityHasComp(EntityID id, Index i);
 
-    bool entityExists(EntityID id);
+    // Check if given id references valid entity
+    bool isValidEntity(EntityID id);
+
+    // Deletes all entities and resets ECSManager
+    void flush();
+
+    // ─── Modified Entities Handling ──────────────────────────────────────────────────────────
+
+    std::optional<EntityID> getModified();
+    void pushModified(EntityID);
 
     // ─── Iterator Implementation ─────────────────────────────────────────────────────────────
 
@@ -145,9 +152,7 @@ public:
     }
 
     // Reset components to exclude in view
-    void resetExcluded() {
-        this->_excludedInView.reset();
-    }
+    void resetExcluded();
 
     template <class... Comps>
     class Iterator {
@@ -178,7 +183,7 @@ public:
             std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
             std::bitset<MAX_COMPONENTS> concombre = (this->_wanted & this->_man->_entities[this->_currIndex].components);
 
-            return (!this->_wanted.any() || this->_wanted == concombre) && this->_man->isValidID(this->_man->_entities[this->_currIndex].id);
+            return (!this->_wanted.any() || this->_wanted == concombre) && this->_man->isValidEntity(this->_man->_entities[this->_currIndex].id);
         }
 
         Iterator<Comps...>& operator++() {
@@ -213,10 +218,6 @@ public:
     const Iterator<Comp...> end() {
         return Iterator<Comp...>(this->_entities.size(), this);
     }
-
-    void flush();
-    std::optional<EntityID> getModified();
-    void pushModified(EntityID);
 
 private:
     std::vector<Entity> _entities;

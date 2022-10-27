@@ -98,16 +98,8 @@ bool ECSManager::entityIsActive(Index id) {
     return (std::find(this->_unusedEntities.begin(), this->_unusedEntities.end(), id) == this->_unusedEntities.end());
 }
 
-bool ECSManager::isValidID(EntityID id) {
-    Index i = getIndex(id);
-
-    if (i == INVALID_INDEX || i >= this->_entities.size())
-        return false;
-    return true;
-}
-
 bool ECSManager::entityHasComp(EntityID id, Index i) {
-    if (!this->isValidID(id))
+    if (!this->isValidEntity(id))
         return false;
     if (i >= MAX_COMPONENTS || i >= g_idCounter)
         return false;
@@ -118,10 +110,10 @@ bool ECSManager::entityHasComp(EntityID id, Index i) {
     return true;
 }
 
-bool ECSManager::entityExists(EntityID id) {
+bool ECSManager::isValidEntity(EntityID id) {
     Index i = getIndex(id);
 
-    if (i >= this->_entities.size() || i >= MAX_ENTITIES)
+    if (i >= this->_entities.size() || i >= MAX_ENTITIES || i == INVALID_INDEX)
         return false;
     if (getIndex(this->_entities[i].id) == INVALID_INDEX)
         return false;
@@ -140,6 +132,8 @@ void ECSManager::flush() {
     this->_excludedInView.reset();
 };
 
+// ─── Modified Entities Handling ──────────────────────────────────────────────────────────────────
+
 std::optional<EntityID> ECSManager::getModified() {
     if (this->_modifiedEntities.empty())
         return {};
@@ -153,3 +147,9 @@ void ECSManager::pushModified(EntityID entityID) {
         return;
     this->_modifiedEntities.push_back(entityID);
 };
+
+// ─── Iterator Implementation ─────────────────────────────────────────────────────────────────────
+
+void ECSManager::resetExcluded() {
+    this->_excludedInView.reset();
+}
