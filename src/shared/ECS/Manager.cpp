@@ -9,6 +9,8 @@
 #include "../Utilities/Utilities.hpp"
 #include <algorithm>
 
+// ─── Entity Creation And Deletion ────────────────────────────────────────────────────────────────
+
 EntityID ECSManager::newEntity() {
     // If previously free'd entities available use those in preference
     if (!this->_unusedEntities.empty() && false) { // Pop last index from unusedEntities vector
@@ -71,8 +73,59 @@ void ECSManager::deleteEntity(EntityID id) {
     this->_unusedEntities.push_back(i);
 }
 
+// ─── Component Interaction Methods ───────────────────────────────────────────────────────────────
+
+const std::bitset<MAX_COMPONENTS> ECSManager::getSetComponents(EntityID entity) const {
+    Index i = getIndex(entity);
+    // Make sure entity is valid
+    if (0 > getIndex(this->_entities[i].id))
+        return {};
+    return this->_entities[i].components;
+}
+
+void ECSManager::removeComp(EntityID id, Index compId) {
+    if (!this->entityHasComp(id, compId))
+        return;
+
+    Index i = getIndex(id);
+
+    this->_entities[i].components[compId] = 0;
+}
+
+// ─── Utility Methods ─────────────────────────────────────────────────────────────────────────────
+
 bool ECSManager::entityIsActive(Index id) {
     return (std::find(this->_unusedEntities.begin(), this->_unusedEntities.end(), id) == this->_unusedEntities.end());
+}
+
+bool ECSManager::isValidID(EntityID id) {
+    Index i = getIndex(id);
+
+    if (i == INVALID_INDEX || i >= this->_entities.size())
+        return false;
+    return true;
+}
+
+bool ECSManager::entityHasComp(EntityID id, Index i) {
+    if (!this->isValidID(id))
+        return false;
+    if (i >= MAX_COMPONENTS || i >= g_idCounter)
+        return false;
+
+    Index entityIndex = getIndex(id);
+    if (!this->_entities[entityIndex].components[i])
+        return false;
+    return true;
+}
+
+bool ECSManager::entityExists(EntityID id) {
+    Index i = getIndex(id);
+
+    if (i >= this->_entities.size() || i >= MAX_ENTITIES)
+        return false;
+    if (getIndex(this->_entities[i].id) == INVALID_INDEX)
+        return false;
+    return true;
 }
 
 void ECSManager::flush() {

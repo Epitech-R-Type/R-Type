@@ -24,15 +24,14 @@ struct Entity {
 
 class ECSManager {
 public:
-    // Create entity
-    EntityID newEntity();
+    // ─── Entity Creation And Deletion ────────────────────────────────────────────────────────
 
+    EntityID newEntity();
     EntityID newEntity(EntityID id);
 
-    // Delete entity
     void deleteEntity(EntityID id);
 
-    bool entityIsActive(Index id);
+    // ─── Component Interaction Methods ───────────────────────────────────────────────────────
 
     // Get component for given entity
     template <class T>
@@ -47,6 +46,7 @@ public:
         return static_cast<T*>(this->_compPools[compId]->getComp(i));
     }
 
+    // Check if entity has component
     template <class T>
     bool hasComponent(EntityID id) const {
         Index i = getIndex(id);
@@ -63,15 +63,10 @@ public:
         return true;
     }
 
-    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity) const {
-        Index i = getIndex(entity);
-        // Make sure entity is valid
-        if (0 > getIndex(this->_entities[i].id))
-            return {};
-        return this->_entities[i].components;
-    };
+    // Get bitset of set components
+    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity) const;
 
-    // Add comp
+    // Add component
     template <class T>
     T* addComp(EntityID id, T comp) {
         Index i = getIndex(id);
@@ -106,7 +101,7 @@ public:
         return (T*)component;
     }
 
-    // Remove comp
+    // Remove component with component TYPE
     template <class T>
     void removeComp(EntityID id) {
         Index compIndex = getID<T>();
@@ -120,14 +115,24 @@ public:
         this->_entities[i].components[compIndex] = 0;
     }
 
-    void removeComp(EntityID id, Index compId) {
-        if (!this->isValidComp(id, compId))
-            return;
+    // Remove component with component ID
+    void removeComp(EntityID id, Index compId);
 
-        Index i = getIndex(id);
+    // ─── Utility Methods ─────────────────────────────────────────────────────────────────────
 
-        this->_entities[i].components[compId] = 0;
-    }
+    bool entityIsActive(Index id);
+
+    // Checks if entity id is valid
+    // ie: can be used as reference in _entities vector
+    bool isValidID(EntityID id);
+
+    // Checks if entity has component
+    // (also checks validity of id, if index is < g_idCounter and is valid)
+    bool entityHasComp(EntityID id, Index i);
+
+    bool entityExists(EntityID id);
+
+    // ─── Iterator Implementation ─────────────────────────────────────────────────────────────
 
     // Set components to exclude in view
     template <class... Excluded>
@@ -144,37 +149,6 @@ public:
         this->_excludedInView.reset();
     }
 
-    bool isValidID(EntityID id) {
-        Index i = getIndex(id);
-
-        if (i == INVALID_INDEX || i >= this->_entities.size())
-            return false;
-        return true;
-    }
-
-    bool isValidComp(EntityID id, Index i) {
-        if (!this->isValidID(id))
-            return false;
-        if (i >= MAX_COMPONENTS || i >= g_idCounter)
-            return false;
-
-        Index entityIndex = getIndex(id);
-        if (!this->_entities[entityIndex].components[i])
-            return false;
-        return true;
-    }
-
-    bool entityExists(EntityID id) {
-        Index i = getIndex(id);
-
-        if (i >= this->_entities.size() || i >= MAX_ENTITIES)
-            return false;
-        if (getIndex(this->_entities[i].id) == INVALID_INDEX)
-            return false;
-        return true;
-    }
-
-    // ITERATOR IMPLEMENTATION
     template <class... Comps>
     class Iterator {
     public:
@@ -241,9 +215,7 @@ public:
     }
 
     void flush();
-
     std::optional<EntityID> getModified();
-
     void pushModified(EntityID);
 
 private:
