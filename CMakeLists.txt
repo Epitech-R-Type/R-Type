@@ -150,6 +150,10 @@ function(build_tests)
     add_executable(
         Tests
         "${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/NewEntity.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsFixture.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
     )
 
     target_link_libraries(Tests GTest::gtest_main)
