@@ -96,6 +96,7 @@ TEST_F(EcsFixture, DoubleDelSingleEntity) {
     EntityID id = _man->newEntity();
 
     _man->deleteEntity(id);
+    EXPECT_FALSE(_man->isValidEntity(id));
     _man->deleteEntity(id);
     EXPECT_FALSE(_man->isValidEntity(id));
 }

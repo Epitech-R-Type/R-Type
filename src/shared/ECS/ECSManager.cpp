@@ -18,10 +18,10 @@ EntityID ECSManager::newEntity() {
         this->_unusedEntities.pop_back();
 
         // Increment previous entities version for use in createId
-        Version updatedVersion = getVersion(this->_entities[i].id) + 1;
+        Version v = getVersion(this->_entities[i].id);
 
         // Create new id and push to entities
-        EntityID id = createId(i, updatedVersion);
+        EntityID id = createId(i, v);
         this->_entities[i].id = id;
         return id;
     } else {
