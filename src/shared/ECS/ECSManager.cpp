@@ -59,7 +59,7 @@ void ECSManager::deleteEntity(EntityID id) {
     Index i = getIndex(id);
 
     // Check entity is valid
-    if (0 > getIndex(this->_entities[i].id))
+    if (!this->isValidEntity(id))
         return;
 
     // Create Id with invalid index
@@ -75,10 +75,11 @@ void ECSManager::deleteEntity(EntityID id) {
 
 // ─── Component Interaction Methods ───────────────────────────────────────────────────────────────
 
-const std::bitset<MAX_COMPONENTS> ECSManager::getSetComponents(EntityID entity) const {
+const std::bitset<MAX_COMPONENTS> ECSManager::getSetComponents(EntityID entity) {
     Index i = getIndex(entity);
+
     // Make sure entity is valid
-    if (0 > getIndex(this->_entities[i].id))
+    if (!this->isValidEntity(entity))
         return {};
     return this->_entities[i].components;
 }

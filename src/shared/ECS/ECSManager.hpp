@@ -64,7 +64,7 @@ public:
     }
 
     // Get bitset of set components
-    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity) const;
+    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity);
 
     // Add component
     template <class T>
