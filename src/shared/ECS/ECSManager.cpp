@@ -111,7 +111,7 @@ bool ECSManager::entityHasComp(EntityID id, Index i) {
     return true;
 }
 
-bool ECSManager::isValidEntity(EntityID id) {
+bool ECSManager::isValidEntity(EntityID id) const {
     Index i = getIndex(id);
     Version v = getVersion(id);
 

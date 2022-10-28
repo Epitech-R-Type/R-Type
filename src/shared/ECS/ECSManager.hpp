@@ -33,39 +33,6 @@ public:
 
     // ─── Component Interaction Methods ───────────────────────────────────────────────────────
 
-    // Get component for given entity
-    template <class T>
-    T* getComponent(EntityID id) {
-        Index i = getIndex(id);
-        Index compId = getID<T>();
-
-        // If entity doesn't have component return null
-        if (!this->_entities[i].components[compId])
-            return nullptr;
-
-        return static_cast<T*>(this->_compPools[compId]->getComp(i));
-    }
-
-    // Check if entity has component
-    template <class T>
-    bool hasComponent(EntityID id) const {
-        Index i = getIndex(id);
-        Index compId = getID<T>();
-
-        // Make sure entity is valid
-        if (0 > getIndex(this->_entities[i].id))
-            return false;
-
-        // If entity doesn't have component return null
-        if (!this->_entities[i].components[compId])
-            return false;
-
-        return true;
-    }
-
-    // Get bitset of set components
-    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity);
-
     // Add component
     template <class T>
     T* addComp(EntityID id, T comp) {
@@ -118,6 +85,39 @@ public:
     // Remove component with component ID
     void removeComp(EntityID id, Index compId);
 
+    // Get component for given entity
+    template <class T>
+    T* getComponent(EntityID id) {
+        Index i = getIndex(id);
+        Index compId = getID<T>();
+
+        // If entity doesn't have component return null
+        if (!this->_entities[i].components[compId])
+            return nullptr;
+
+        return static_cast<T*>(this->_compPools[compId]->getComp(i));
+    }
+
+    // Check if entity has component
+    template <class T>
+    bool hasComponent(EntityID id) const {
+        Index i = getIndex(id);
+        Index compId = getID<T>();
+
+        // Make sure entity is valid
+        if (!this->isValidEntity(id))
+            return false;
+
+        // If entity doesn't have component return null
+        if (!this->_entities[i].components[compId])
+            return false;
+
+        return true;
+    }
+
+    // Get bitset of set components
+    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity);
+
     // ─── Utility Methods ─────────────────────────────────────────────────────────────────────
 
     // MOST LIKELY TO DELETE
@@ -129,7 +129,7 @@ public:
     bool entityHasComp(EntityID id, Index i);
 
     // Check if given id references valid entity
-    bool isValidEntity(EntityID id);
+    bool isValidEntity(EntityID id) const;
 
     // Deletes all entities and resets ECSManager
     void flush();

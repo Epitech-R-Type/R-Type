@@ -81,6 +81,45 @@ TEST_F(EcsFixture, ReuseOldEntity) {
     EXPECT_TRUE(_man->isValidEntity(id));
 }
 
+// Test entity creation with given id
+TEST_F(EcsFixture, NewEntityWithID) {
+    EntityID sourceID = createId(25, 35);
+
+    EntityID id = _man->newEntity(sourceID);
+
+    // Check valid entity
+    EXPECT_GT(id, -1);
+    EXPECT_TRUE(_man->isValidEntity(id));
+
+    // Check correct info
+    EXPECT_EQ(getVersion(id), 35);
+    EXPECT_EQ(getIndex(id), 25);
+}
+
+// Test given id creation with assign id creation
+// Also test more than maxEnt
+TEST_F(EcsFixture, NewEntityBothWays) {
+    _man->newEntity(createId(1, 2));
+    ASSERT_GT(_man->newEntity(), -1);
+
+    EntityID id1 = _man->newEntity(createId(345, 1));
+    ASSERT_GT(id1, -1);
+    ASSERT_EQ(getVersion(id1), 1);
+    ASSERT_EQ(getIndex(id1), 345);
+
+    // Test assignation on same spot
+    id1 = _man->newEntity(createId(345, 1));
+    ASSERT_GT(id1, -1);
+    ASSERT_EQ(getVersion(id1), 1);
+    ASSERT_EQ(getIndex(id1), 345);
+
+    for (int i = 0; i < MAX_ENTITIES - 4; i++)
+        _man->newEntity();
+
+    EntityID id2 = _man->newEntity();
+    ASSERT_EQ(id2, -1);
+}
+
 // ─── Delete Entity Tests ─────────────────────────────────────────────────────────────────────────
 
 // Test deletion of single entity
@@ -106,4 +145,45 @@ TEST_F(EcsFixture, DelInvalidEntity) {
     _man->deleteEntity(12342345345);
 
     SUCCEED();
+}
+
+// ─── Component Interaction Tests ─────────────────────────────────────────────────────────────────
+
+// Test hasComponent()
+// Invalid entity
+TEST_F(EcsFixture, HasComponentInvalidEntity) {
+    EXPECT_FALSE(_man->hasComponent<int>(1234234));
+}
+
+TEST_F(EcsFixture, HasComponentValidEntity) {
+    EntityID id = _man->newEntity();
+
+    _man->addComp<int>(id, 5);
+    EXPECT_TRUE(_man->hasComponent<int>(id));
+}
+
+// Test true
+TEST_F(EcsFixture, HasComponentTrue) {
+    EntityID id = _man->newEntity();
+
+    _man->addComp<int>(id, 5);
+    EXPECT_TRUE(_man->hasComponent<int>(id));
+}
+
+// Test false
+TEST_F(EcsFixture, HasComponentFalse) {
+    EntityID id = _man->newEntity();
+
+    EXPECT_FALSE(_man->hasComponent<int>(id));
+}
+
+// Test adding single component
+TEST_F(EcsFixture, AddSingleComponent) {
+    EntityID id = _man->newEntity();
+
+    int* ptr = _man->addComp<int>(id, 5);
+    EXPECT_TRUE(_man->hasComponent<int>(id));
+    EXPECT_TRUE(ptr);
+
+    EXPECT_EQ(*ptr, 5);
 }
