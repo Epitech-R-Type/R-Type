@@ -100,3 +100,10 @@ TEST_F(EcsFixture, DoubleDelSingleEntity) {
     _man->deleteEntity(id);
     EXPECT_FALSE(_man->isValidEntity(id));
 }
+
+// Test deletion of invalid entity number
+TEST_F(EcsFixture, DelInvalidEntity) {
+    _man->deleteEntity(12342345345);
+
+    SUCCEED();
+}
