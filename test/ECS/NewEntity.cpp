@@ -12,6 +12,26 @@
 // Init g_idCounter
 Index g_idCounter = 0;
 
+// ─── Ecs Utility Function Tests ──────────────────────────────────────────────────────────────────
+
+TEST(EcsUtilities, IdUtilities) {
+    EntityID id = createId(25, 98); // Arbitrary values
+
+    EXPECT_EQ(getIndex(id), 25);
+    EXPECT_EQ(getVersion(id), 98);
+    EXPECT_TRUE(isValid(id));
+}
+
+TEST(EcsUtilities, GetId) {
+    Index i1 = getID<int>();
+    Index i2 = getID<long>();
+    Index i3 = getID<int>();
+
+    EXPECT_EQ(i1, 0);
+    EXPECT_EQ(i2, 1);
+    EXPECT_EQ(i3, 0);
+}
+
 // ─── New Entity Tests ────────────────────────────────────────────────────────────────────────────
 
 // Test creation of single entity
