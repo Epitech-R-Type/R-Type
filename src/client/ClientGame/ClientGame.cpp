@@ -26,7 +26,7 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
 
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
-    this->_musicSystem = std::make_unique<MusicSystem>();
+    this->_musicSystem = std::make_unique<MusicSystem>(0);
 }
 
 ClientGame::~ClientGame() {

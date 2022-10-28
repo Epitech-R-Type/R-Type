@@ -18,12 +18,13 @@ struct Song {
 };
 
 static std::vector<Song> Songs {
-    {"resources/menu.mp3"}
+    {"resources/song0.mp3"},
+    {"resources/song1.mp3"}
 };
 
 class MusicSystem : public System {
     public:
-        MusicSystem();
+        MusicSystem(int ID);
         ~MusicSystem();
         void apply();
         void changeSong(int ID);

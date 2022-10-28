@@ -7,9 +7,9 @@
 
 #include "MusicSystem.hpp"
 
-MusicSystem::MusicSystem()
+MusicSystem::MusicSystem(int ID)
 {
-    const cmrc::file menuMusic = this->_fs.open("resources/menu.mp3");
+    const cmrc::file menuMusic = this->_fs.open(Songs[ID].path);
     unsigned char* musicBuffer = (unsigned char*)(menuMusic.begin());
 
     InitAudioDevice();
