@@ -6,3 +6,9 @@ vgcore.*
 .vscode/settings.json
 .vscode/launch.json
 bin
+**/*.gcno
+**/*.gcda
+**/*.gcov
+**/*.html
+**/*.css
+report.html
