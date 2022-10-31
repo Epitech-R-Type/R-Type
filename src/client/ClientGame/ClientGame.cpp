@@ -65,15 +65,24 @@ void ClientGame::mainLoop() {
 }
 
 void ClientGame::handlePlayerInput() {
+    std::string directions = "";
 
     if (IsKeyDown(KEY_A))
-        this->_protocol.sendActMove(Move::LEFT);
+        directions += "LEFT,";
+        // this->_protocol.sendActMove(Move::LEFT);
     if (IsKeyDown(KEY_D))
-        this->_protocol.sendActMove(Move::RIGHT);
+        directions += "RIGHT,";
+        // this->_protocol.sendActMove(Move::RIGHT);
     if (IsKeyDown(KEY_W))
-        this->_protocol.sendActMove(Move::UP);
+        directions += "UP,";
+        // this->_protocol.sendActMove(Move::UP);
     if (IsKeyDown(KEY_S))
-        this->_protocol.sendActMove(Move::DOWN);
+        directions += "DOWN,";
+        // this->_protocol.sendActMove(Move::DOWN);
+    if (directions != "") {
+        directions.pop_back();
+        this->_protocol.sendActMove(directions);
+    }
     if (IsKeyDown(KEY_SPACE))
         this->_protocol.sendActFire();
 }

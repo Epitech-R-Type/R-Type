@@ -37,7 +37,7 @@ public:
     bool handleCommands();
 
     // COMMAND SENDING
-    void sendActMove(Move direction);
+    void sendActMove(std::string direction);
     void sendActFire();
     void sendHere();
     void sendGetEnt(EntityID id);

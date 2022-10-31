@@ -107,25 +107,25 @@ bool ClientGameProtocol::handleCommands() {
 //
 //
 
-void ClientGameProtocol::sendActMove(Move direction) {
+void ClientGameProtocol::sendActMove(std::string directions) {
     std::string body;
 
-    switch (direction) {
-        case UP:
-            body = "UP";
-            break;
-        case DOWN:
-            body = "DOWN";
-            break;
-        case LEFT:
-            body = "LEFT";
-            break;
-        case RIGHT:
-            body = "RIGHT";
-            break;
-    }
+    // switch (directions) {
+    //     case UP:
+    //         body = "UP";
+    //         break;
+    //     case DOWN:
+    //         body = "DOWN";
+    //         break;
+    //     case LEFT:
+    //         body = "LEFT";
+    //         break;
+    //     case RIGHT:
+    //         body = "RIGHT";
+    //         break;
+    // }
 
-    auto msg = ProtocolUtils::createMessage("ACT_MOVE", body, this->_addr, this->_port);
+    auto msg = ProtocolUtils::createMessage("ACT_MOVE", directions, this->_addr, this->_port);
 
     // LOG("Sending to Server: " << msg.getMsg());
 
