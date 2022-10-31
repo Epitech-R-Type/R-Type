@@ -19,15 +19,6 @@ void HitboxSystem::apply() {
 
         Hitbox::Component* hitbox = this->updateHitbox(*beg);
 
-#ifdef DRAW_HITBOX
-        DrawLine(hitbox->topLeft.x, hitbox->topLeft.y, hitbox->topRight.x, hitbox->topRight.y, RED);
-        DrawLine(hitbox->topLeft.x, hitbox->topLeft.y, hitbox->botLeft.x, hitbox->botLeft.y, RED);
-        DrawLine(hitbox->botLeft.x, hitbox->botLeft.y, hitbox->botRight.x, hitbox->botRight.y, RED);
-        DrawLine(hitbox->botRight.x, hitbox->botRight.y, hitbox->topRight.x, hitbox->topRight.y, RED);
-
-        DrawCircle(position->x, position->y, 2, BLUE);
-#endif
-
         HitboxSystem::checkCollision(*beg);
     }
 }

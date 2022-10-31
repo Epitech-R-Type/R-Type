@@ -101,26 +101,22 @@ bool ClientGameProtocol::handleCommands() {
     return true;
 }
 
-//
-//
 // COMMAND SENDING
-//
-//
 
 void ClientGameProtocol::sendActMove(Move direction) {
     std::string body;
 
     switch (direction) {
-        case UP:
+        case Move::UP:
             body = "UP";
             break;
-        case DOWN:
+        case Move::DOWN:
             body = "DOWN";
             break;
-        case LEFT:
+        case Move::LEFT:
             body = "LEFT";
             break;
-        case RIGHT:
+        case Move::RIGHT:
             body = "RIGHT";
             break;
     }

@@ -245,7 +245,7 @@ void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shar
     Armor::Component* armor = ECS->getComponent<Armor::Component>(defender);
     Damage::Component* damageC = ECS->getComponent<Damage::Component>(attacker);
 
-    if (healthC == nullptr || damageC == nullptr || armor == nullptr)
+    if (healthC == nullptr || damageC == nullptr)
         return;
 
     if (immunityFrame != nullptr) {
