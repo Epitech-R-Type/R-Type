@@ -21,8 +21,6 @@
 #include "../../shared/Utilities/UUID.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
-enum Move { UP, DOWN, LEFT, RIGHT };
-
 class ClientGameProtocol {
 public:
     ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,

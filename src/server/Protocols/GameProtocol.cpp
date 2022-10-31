@@ -80,16 +80,15 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     int playerUID = this->getPlayer(addr, port);
 
     // Error handling
-    // if (0 > playerUID || cmd.args.size() != 1 || cmd.args[0].size() != 1) {
-    //     ERROR("Command is invalid.");
-    //     return;
-    // }
+    if (0 > playerUID || cmd.args.size() != 1 || cmd.args[0].size() != 1) {
+        ERROR("Command is invalid.");
+        return;
+    }
 
     ERROR("PLAYER " << playerUID << "is moving.");
     // In system if player is dead, send del Ent again ? or say something at least
     // This in case client has missed message that his character is dead
-    std::vector<std::string> direction = cmd.args[0];
-    // std::vector<std::string> direction = Utilities::splitStr(cmd.args[0], ",");
+    int direction = std::stoi(cmd.args[0][0]);
 
     EntityID entityID = INVALID_INDEX;
     for (auto beg = this->_entityManager->begin<Player::Component>(); beg != this->_entityManager->end<Player::Component>(); ++beg) {
@@ -106,7 +105,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
         return;
     }
 
-    // DEBUG("Player " << playerUID << " is moving " << direction << ".");
+    DEBUG("Player " << playerUID << " is moving " << direction << ".");
 
     Position::Component* position = this->_entityManager->getComponent<Position::Component>(entityID);
     Velocity::Component* velocity = this->_entityManager->getComponent<Velocity::Component>(entityID);
@@ -115,16 +114,32 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     std::chrono::duration<double> elapsed_seconds = now - velocity->timer;
 
     if (elapsed_seconds.count() > velocity->tickrate) {
-        for (int i = 0; i < direction.size(); i++) {
         // Note: Prints are placeholder and should be replaced by call to adequate system
-            if (direction[i] == "UP")
-                position->y -= velocity->y;
-            if (direction[i] == "DOWN")
-                position->y += velocity->y;
-            if (direction[i] == "LEFT")
-                position->x -= velocity->x;
-            if (direction[i] == "RIGHT")
-                position->x += velocity->x;
+        if (direction == Move::DOWN + Move::LEFT + Move::RIGHT + Move::UP)
+            return;
+        if (direction == Move::UP || direction == Move::UP + Move::LEFT + Move::RIGHT)
+            position->y -= velocity->y;
+        if (direction == Move::DOWN || direction == Move::DOWN + Move::LEFT + Move::RIGHT)
+            position->y += velocity->y;
+        if (direction == Move::LEFT || direction == Move::LEFT + Move::UP + Move::DOWN)
+            position->x -= velocity->x;
+        if (direction == Move::RIGHT || direction == Move::RIGHT + Move::UP + Move::DOWN)
+            position->x += velocity->x;
+        if (direction == Move::UP + Move::RIGHT) {
+            position->x += (velocity->x + velocity->y) / 2 * (7 / 10);
+            position->y -= (velocity->x + velocity->y) / 2 * (7 / 10);
+        }
+        if (direction == Move::UP + Move::LEFT) {
+            position->x -= (velocity->x + velocity->y) / 2 * (7 / 10);
+            position->y -= (velocity->x + velocity->y) / 2 * (7 / 10);
+        }
+        if (direction == Move::DOWN + Move::RIGHT) {
+            position->x += (velocity->x + velocity->y) / 2 * (7 / 10);
+            position->y += (velocity->x + velocity->y) / 2 * (7 / 10);
+        }
+        if (direction == Move::DOWN + Move::LEFT) {
+            position->x -= (velocity->x + velocity->y) / 2 * (7 / 10);
+            position->y += (velocity->x + velocity->y) / 2 * (7 / 10);
         }
 
         this->_entityManager->pushModified(entityID);
