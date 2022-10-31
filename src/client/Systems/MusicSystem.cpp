@@ -26,8 +26,6 @@ MusicSystem::~MusicSystem()
 
 void MusicSystem::apply()
 {
-    // std::cout << "pass" << std::endl;
-
     UpdateMusicStream(this->_music);
     if (IsKeyPressed(KEY_P)) {
         if (IsMusicStreamPlaying(this->_music))
