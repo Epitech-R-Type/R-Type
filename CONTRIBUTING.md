@@ -37,6 +37,12 @@ Once a feature is implemented and doesn't break the program a merge request is t
 If you want to update your **feature branch** to the newest version of **develop**, create a copy of **develop** and merge your \
 **feature branch** into it. The **develop** copy turns into the new **feature branch**. This is to keep the git log cleaner.
 
+# Bugs and feature requests
+
+When submitting a bug or feature request use the GitHub [Issues feature](https://github.com/Epitech-R-Type/R-Type/issues). Make sure to add labels fitting your topic\
+ and as a developer to create a branch using the generated branch name tied to this issue.
+
+
 # Coding Style
 
 We use clang-format to lint our code, please follow the configuration set by `.clang-format`. Please fix the issues pointed out by the automatic comments added to changed files during a MR/PR.

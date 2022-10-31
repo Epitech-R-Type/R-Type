@@ -20,7 +20,7 @@ int main(int argc, char** argv) {
     Client client;
 
     if (!isFlagSet(argv, argv + argc, "-v")) {
-        SetTraceLogLevel(TraceLogType::LOG_NONE);
+        SetTraceLogLevel(7);
     }
 
     if (isFlagSet(argv, argv + argc, "-ip")) {

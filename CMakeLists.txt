@@ -69,6 +69,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/TcpClient.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/SpriteSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/HealthSystem.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/MusicSystem.cpp"
 
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
@@ -132,6 +133,8 @@ function(build_client)
         resources/r-typesheet44.png
         resources/lost.png
         resources/background.png
+        resources/song0.mp3
+        resources/song1.mp3
     )
 
     target_link_libraries(Client client::rc)

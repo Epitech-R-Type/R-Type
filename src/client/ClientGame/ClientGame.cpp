@@ -13,7 +13,8 @@
 #include "raylib.h"
 
 ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
-    : _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+    : _isRunning(true),
+      _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _entManager(std::make_shared<ECSManager>()),
       _protocol(this->_incomingMQ, this->_outgoingMQ, this->_entManager, addr, asio::ip::port_type(port), uuid) {
@@ -25,6 +26,7 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
 
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
+    this->_musicSystem = std::make_unique<MusicSystem>(0);
 }
 
 ClientGame::~ClientGame() {
@@ -55,6 +57,7 @@ void ClientGame::mainLoop() {
         this->_protocol.handleCommands();
         this->_spriteSystem->apply();
         this->_healthSystem->apply();
+        this->_musicSystem->apply();
         this->handlePlayerInput();
 
         EndDrawing();
