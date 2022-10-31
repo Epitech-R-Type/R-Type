@@ -134,7 +134,8 @@ function(build_client)
         resources/r-typesheet44.png
         resources/lost.png
         resources/background.png
-        resources/menu.mp3
+        resources/song0.mp3
+        resources/song1.mp3
     )
 
     target_link_libraries(Client client::rc)
