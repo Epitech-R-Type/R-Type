@@ -7,6 +7,7 @@
 
 #include "GameProtocol.hpp"
 #include "../Systems/ArmamentSystem.hpp"
+#include <iostream>
 
 GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
                            std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager)
@@ -115,33 +116,40 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
     if (elapsed_seconds.count() > velocity->tickrate) {
         // Note: Prints are placeholder and should be replaced by call to adequate system
-        if (direction == Move::DOWN + Move::LEFT + Move::RIGHT + Move::UP)
-            return;
-        if (direction == Move::UP || direction == Move::UP + Move::LEFT + Move::RIGHT)
-            position->y -= velocity->y;
-        if (direction == Move::DOWN || direction == Move::DOWN + Move::LEFT + Move::RIGHT)
-            position->y += velocity->y;
-        if (direction == Move::LEFT || direction == Move::LEFT + Move::UP + Move::DOWN)
-            position->x -= velocity->x;
-        if (direction == Move::RIGHT || direction == Move::RIGHT + Move::UP + Move::DOWN)
-            position->x += velocity->x;
-        if (direction == Move::UP + Move::RIGHT) {
-            position->x += (velocity->x + velocity->y) / 2 * (7 / 10);
-            position->y -= (velocity->x + velocity->y) / 2 * (7 / 10);
-        }
-        if (direction == Move::UP + Move::LEFT) {
-            position->x -= (velocity->x + velocity->y) / 2 * (7 / 10);
-            position->y -= (velocity->x + velocity->y) / 2 * (7 / 10);
-        }
-        if (direction == Move::DOWN + Move::RIGHT) {
-            position->x += (velocity->x + velocity->y) / 2 * (7 / 10);
-            position->y += (velocity->x + velocity->y) / 2 * (7 / 10);
-        }
-        if (direction == Move::DOWN + Move::LEFT) {
-            position->x -= (velocity->x + velocity->y) / 2 * (7 / 10);
-            position->y += (velocity->x + velocity->y) / 2 * (7 / 10);
-        }
-
+        switch(direction) {
+            case Move::UP_DOWN:
+                position->y -= velocity->y;
+                break;
+            case -(Move::UP_DOWN):
+                position->y += velocity->y;
+                break;
+            case -(Move::LEFT_RIGHT):
+                position->x -= velocity->x;
+                break;
+            case Move::LEFT_RIGHT:
+                position->x += velocity->x;
+                break;
+            case (Move::UP_DOWN + Move::LEFT_RIGHT):
+                std::cout << "direction: " << direction << std::endl;
+                position->x += (velocity->x + velocity->y) / 3;
+                position->y -= (velocity->x + velocity->y) / 3;
+                break;
+            case Move::UP_DOWN - Move::LEFT_RIGHT:
+                std::cout << "direction: " << direction << std::endl;
+                position->x -= (velocity->x + velocity->y) / 3;
+                position->y -= (velocity->x + velocity->y) / 3;
+                break;
+            case -Move::UP_DOWN + Move::LEFT_RIGHT:
+                std::cout << "direction: " << direction << std::endl;
+                position->x += (velocity->x + velocity->y) / 3;
+                position->y += (velocity->x + velocity->y) / 3;
+                break;
+            case -Move::UP_DOWN - Move::LEFT_RIGHT:
+                std::cout << "direction: " << direction << std::endl;
+                position->x -= (velocity->x + velocity->y) / 3;
+                position->y += (velocity->x + velocity->y) / 3;
+                break;
+        };
         this->_entityManager->pushModified(entityID);
         velocity->timer = getNow();
     }
