@@ -117,35 +117,31 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     if (elapsed_seconds.count() > velocity->tickrate) {
         // Note: Prints are placeholder and should be replaced by call to adequate system
         switch(direction) {
-            case Move::UP_DOWN:
+            case Move::UP:
                 position->y -= velocity->y;
                 break;
-            case -(Move::UP_DOWN):
+            case Move::DOWN:
                 position->y += velocity->y;
                 break;
-            case -(Move::LEFT_RIGHT):
+            case Move::LEFT:
                 position->x -= velocity->x;
                 break;
-            case Move::LEFT_RIGHT:
+            case Move::RIGHT:
                 position->x += velocity->x;
                 break;
-            case (Move::UP_DOWN + Move::LEFT_RIGHT):
-                std::cout << "direction: " << direction << std::endl;
+            case Move::UP + Move::RIGHT:
                 position->x += (velocity->x + velocity->y) / 3;
                 position->y -= (velocity->x + velocity->y) / 3;
                 break;
-            case Move::UP_DOWN - Move::LEFT_RIGHT:
-                std::cout << "direction: " << direction << std::endl;
+            case Move::UP + Move::LEFT:
                 position->x -= (velocity->x + velocity->y) / 3;
                 position->y -= (velocity->x + velocity->y) / 3;
                 break;
-            case -Move::UP_DOWN + Move::LEFT_RIGHT:
-                std::cout << "direction: " << direction << std::endl;
+            case Move::DOWN + Move::RIGHT:
                 position->x += (velocity->x + velocity->y) / 3;
                 position->y += (velocity->x + velocity->y) / 3;
                 break;
-            case -Move::UP_DOWN - Move::LEFT_RIGHT:
-                std::cout << "direction: " << direction << std::endl;
+            case Move::DOWN + Move::LEFT:
                 position->x -= (velocity->x + velocity->y) / 3;
                 position->y += (velocity->x + velocity->y) / 3;
                 break;

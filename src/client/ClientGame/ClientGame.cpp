@@ -67,13 +67,13 @@ void ClientGame::mainLoop() {
 void ClientGame::handlePlayerInput() {
     int directions = 0;
     if (IsKeyDown(KEY_A))
-        directions -= Move::LEFT_RIGHT;
+        directions += Move::LEFT;
     if (IsKeyDown(KEY_D))
-        directions += Move::LEFT_RIGHT;
+        directions += Move::RIGHT;
     if (IsKeyDown(KEY_W))
-        directions += Move::UP_DOWN;
+        directions += Move::UP;
     if (IsKeyDown(KEY_S))
-        directions -= Move::UP_DOWN;
+        directions += Move::DOWN;
     if (directions != 0)
         this->_protocol.sendActMove(std::to_string(directions));
     if (IsKeyDown(KEY_SPACE))
