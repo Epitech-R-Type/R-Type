@@ -1,7 +1,7 @@
 
 #include "VelocitySystem.hpp"
 #include "../../shared/ECS/Components.hpp"
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 
 VelocitySystem::VelocitySystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;

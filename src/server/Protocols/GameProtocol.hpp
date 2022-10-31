@@ -16,7 +16,7 @@
 #include <sstream>
 #include <vector>
 
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/ProtocolUtils.hpp"

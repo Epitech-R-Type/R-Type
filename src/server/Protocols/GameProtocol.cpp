@@ -213,7 +213,7 @@ void GameProtocol::handleCommands() {
 // Sends to all connected clients
 template <class... T>
 void GameProtocol::sendEntity(EntityID id) const {
-    if (!this->_entityManager->isValidID(id)) {
+    if (!this->_entityManager->isValidEntity(id)) {
         ERROR("Entity ID is invalid: " << id);
         return;
     }
@@ -229,7 +229,7 @@ void GameProtocol::sendEntity(EntityID id) const {
 // Sends to only one client
 template <class... T>
 void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const {
-    if (!this->_entityManager->isValidID(id)) {
+    if (!this->_entityManager->isValidEntity(id)) {
         ERROR("Entity ID is invalid: " << id);
         return;
     }

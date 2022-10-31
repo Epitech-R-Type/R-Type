@@ -1,6 +1,6 @@
 #include "Factory.hpp"
 #include "../../shared/ECS/Components.hpp"
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/Systems/HitboxSystem.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
