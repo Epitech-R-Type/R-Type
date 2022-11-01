@@ -116,7 +116,7 @@ TEST_F(EcsFixture, NewEntityBothWays) {
     for (int i = 0; i < MAX_ENTITIES - 4; i++)
         _man->newEntity();
 
-    EntityID id2 = _man->newEntity();
+    EntityID id2 = _man->newEntity(createId(2, 5));
     ASSERT_EQ(id2, -1);
 }
 
@@ -149,20 +149,12 @@ TEST_F(EcsFixture, DelInvalidEntity) {
 
 // ─── Component Interaction Tests ─────────────────────────────────────────────────────────────────
 
-// Test hasComponent()
-// Invalid entity
+// Test hasComponent Invalid entity
 TEST_F(EcsFixture, HasComponentInvalidEntity) {
     EXPECT_FALSE(_man->hasComponent<int>(1234234));
 }
 
-TEST_F(EcsFixture, HasComponentValidEntity) {
-    EntityID id = _man->newEntity();
-
-    _man->addComp<int>(id, 5);
-    EXPECT_TRUE(_man->hasComponent<int>(id));
-}
-
-// Test true
+// Test hasComponent true
 TEST_F(EcsFixture, HasComponentTrue) {
     EntityID id = _man->newEntity();
 
@@ -170,11 +162,53 @@ TEST_F(EcsFixture, HasComponentTrue) {
     EXPECT_TRUE(_man->hasComponent<int>(id));
 }
 
-// Test false
+// Test hasComponent false
 TEST_F(EcsFixture, HasComponentFalse) {
     EntityID id = _man->newEntity();
 
     EXPECT_FALSE(_man->hasComponent<int>(id));
+}
+
+// Test getSetComponents
+TEST_F(EcsFixture, GetSetComponents) {
+    EntityID id1 = _man->newEntity();
+    EntityID id2 = _man->newEntity();
+
+    std::bitset<MAX_COMPONENTS> empty;
+    std::bitset<MAX_COMPONENTS> notEmpty;
+    notEmpty[getID<int>()] = 1;
+
+    _man->addComp<int>(id2, 1);
+
+    ASSERT_EQ(empty, _man->getSetComponents(id1));
+    ASSERT_EQ(notEmpty, _man->getSetComponents(id2));
+    ASSERT_EQ(empty, _man->getSetComponents(-1));
+}
+
+// Test removeComponent on valid entity and comp
+TEST_F(EcsFixture, RemoveValidComponent) {
+    EntityID id = _man->newEntity();
+
+    _man->addComp<int>(id, 1);
+    _man->removeComp<int>(id);
+
+    ASSERT_FALSE(_man->hasComponent<int>(id));
+}
+
+// Test remove component on incalid component
+TEST_F(EcsFixture, RemoveInvalidComponent) {
+    EntityID id = _man->newEntity();
+
+    // Test for no crash
+    _man->removeComp<int>(id);
+    ASSERT_FALSE(_man->hasComponent<int>(id)); // dunno why
+}
+
+TEST_F(EcsFixture, RemoveComponentInvalidEntity) {
+    EntityID id = _man->newEntity();
+    _man->deleteEntity(id);
+
+    _man->removeComp<int>(id);
 }
 
 // Test adding single component

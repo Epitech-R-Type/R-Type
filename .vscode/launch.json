@@ -8,7 +8,7 @@
             "name": "(gdb) Launch Server",
             "type": "cppdbg",
             "request": "launch",
-            "program": "${cwd}/build/bin/Server",
+            "program": "${cwd}/bin/Server",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${cwd}",
