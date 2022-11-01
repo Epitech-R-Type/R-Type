@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.17)
 project(R-Type)
 
 set(CMAKE_CXX_STANDARD 17)
-
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
@@ -45,7 +44,7 @@ function(build_server)
 
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Serialization.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
@@ -73,7 +72,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/MusicSystem.cpp"
 
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Manager.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Networking/UdpCommunication.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
@@ -147,16 +146,22 @@ function(build_tests)
     include(FetchContent)
     FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip)
     set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
     FetchContent_MakeAvailable(googletest)
     enable_testing()
 
     add_executable(
         Tests
         "${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/NewEntity.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsFixture.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
     )
 
     target_link_libraries(Tests GTest::gtest_main)
     target_link_libraries(Tests ${CONAN_LIBS})
+    target_link_libraries(Tests gcov)
 
 
     include(GoogleTest)
@@ -166,6 +171,9 @@ endfunction()
 
 if(TESTMODE EQUAL 1)
     message("=== Unit Tests ===")
+    set(CMAKE_CXX_FLAGS "--coverage")
+    set(CMAKE_EXE_LINKER_FLAGS "--coverage")
+
     build_tests()
 else()
     message("==== Programs ====")

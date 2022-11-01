@@ -1,6 +1,6 @@
 
 #include "ArmamentSystem.hpp"
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "Factory.hpp"
 #include <chrono>
 

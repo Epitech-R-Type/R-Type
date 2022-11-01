@@ -10,7 +10,7 @@
 #include <memory>
 #include <thread>
 
-#include "../shared/ECS/Manager.hpp"
+#include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Networking/UdpCommunication.hpp"
 #include "Protocols/GameProtocol.hpp"

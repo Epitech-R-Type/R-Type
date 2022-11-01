@@ -6,7 +6,7 @@
 */
 
 #include "Client.hpp"
-#include "../shared/ECS/Manager.hpp"
+#include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "raylib.h"
 

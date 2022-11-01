@@ -1,5 +1,5 @@
 #include "Components.hpp"
-#include "Manager.hpp"
+#include "ECSManager.hpp"
 
 std::string Armor::toString(Armor::Component component) {
     std::stringstream ss;
@@ -245,7 +245,7 @@ void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shar
     Armor::Component* armor = ECS->getComponent<Armor::Component>(defender);
     Damage::Component* damageC = ECS->getComponent<Damage::Component>(attacker);
 
-    if (healthC == nullptr || damageC == nullptr || armor == nullptr)
+    if (healthC == nullptr || damageC == nullptr)
         return;
 
     if (immunityFrame != nullptr) {

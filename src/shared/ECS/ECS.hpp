@@ -28,8 +28,8 @@ typedef long long EntityID;
 
 // Readability typedefs
 // Each of these sit in 4B of memory
-typedef long Index;
-typedef long Version;
+typedef int Index;
+typedef int Version;
 
 // GLOBALS
 extern Index g_idCounter; // Used by getID function

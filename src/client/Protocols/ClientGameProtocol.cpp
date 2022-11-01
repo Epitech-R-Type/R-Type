@@ -101,17 +101,10 @@ bool ClientGameProtocol::handleCommands() {
     return true;
 }
 
-//
-//
 // COMMAND SENDING
-//
-//
 
 void ClientGameProtocol::sendActMove(std::string directions) {
     auto msg = ProtocolUtils::createMessage("ACT_MOVE", directions, this->_addr, this->_port);
-
-    // LOG("Sending to Server: " << msg.getMsg());
-
     this->_outgoingMQ->push(msg);
 }
 
