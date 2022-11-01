@@ -54,6 +54,7 @@ private:
     // Entity manager
     std::shared_ptr<ECSManager> _entityManager;
 
+    // Systems
     std::shared_ptr<MusicSystem> _musicSystem;
 
     // Client UUID
