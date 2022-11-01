@@ -10,11 +10,11 @@
 #include "../../WindowsGuard.hpp"
 
 #include "../../shared/Systems/ISystem.hpp"
-#include "../Protocols/ClientGameProtocol.hpp"
+class ClientGameProtocol;
 
 class PlayerMovementSystem : public System {
 public:
-    PlayerMovementSystem(std::shared_ptr<ClientGameProtocol> ECS);
+    PlayerMovementSystem(std::shared_ptr<ClientGameProtocol> protocol);
 
     void apply();
 

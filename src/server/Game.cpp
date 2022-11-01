@@ -50,6 +50,9 @@ void Game::init() {
 
     for (int i = 0; i < connections.size(); i++)
         Factory::Ally::makePlayer(this->_entManager, i);
+
+    // starts the music ingame
+    this->_protocol.sendChangeMusic(1);
 }
 
 void Game::sendModified() {
@@ -95,6 +98,8 @@ int Game::mainLoop() {
         if (elapsed_boss_seconds.count() > 20 && !bossSpawned) {
             Factory::Enemy::makeEndboss(this->_entManager);
             bossSpawned = true;
+            // Changes the music to gamer-music because the boss spawned
+            this->_protocol.sendChangeMusic(0);
         }
 
         this->sendModified();

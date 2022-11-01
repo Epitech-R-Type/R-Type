@@ -195,6 +195,7 @@ Table of Contents
                                         component args.
                     DEL_ENT       ->    Delete entity
                     DEL_COMP      ->    Delete component
+                    CHANGE_MUSIC  ->    Change Song
 
         3.2.2. Server Command Arguments
 
@@ -207,6 +208,7 @@ Table of Contents
                 (entity id, (component id, component args...)...)
             DEL_ENT -> (entity id)
             DEL_COMP -> (entity id, component id)
+            MUSIC -> (song id)
 
     3.3. Client Commands
 
