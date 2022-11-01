@@ -30,8 +30,6 @@ void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
 
     this->_serverUUID = serverUUID;
     this->_clientUUID = clientUUID;
-
-    LOG("Client authenticated! ServerUUID: " << this->_serverUUID << "; ClientUUID: " << this->_clientUUID);
 }
 
 void ClientLobbyProtocol::sendStart() {
@@ -66,8 +64,6 @@ void ClientLobbyProtocol::handleIncMessages() {
 
         const std::string msg = message.getMsg();
 
-        LOG("Received from Server: " << msg);
-
         const std::vector<std::string> msgBits = Utilities::splitStr(msg, " ");
 
         if (msgBits[0] == "200" && !this->_authenticated) {
@@ -95,7 +91,6 @@ void ClientLobbyProtocol::handleUserCommands(std::string command) {
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
     Message<std::string> message(msgContent, this->_serverIP, this->_serverPort);
-    LOG("Sending to Server: " << msgContent);
     this->_outgoingMQ->push(message);
 }
 

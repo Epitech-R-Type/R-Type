@@ -17,9 +17,7 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
       _musicSystem(musicSystem),
       _addr(addr),
       _port(port),
-      _uuid(uuid) {
-    LOG("UDP Sending to port : " << port);
-}
+      _uuid(uuid) {}
 
 //
 //
@@ -78,7 +76,7 @@ void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
     Index compId;
 
     if (cmd.args.size() != 2) {
-        ERROR("Command " << cmd.cmd << " has not exactly two args.");
+        ERROR("Command " << cmd.cmd << " doesn't have two args.");
         return;
     }
 
@@ -90,7 +88,6 @@ void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
         return;
     }
 
-    LOG("Deleting Component " << compId << " of entity " << id);
     this->_entityManager->removeComp(id, compId);
 }
 
@@ -104,17 +101,18 @@ bool ClientGameProtocol::handleCommands() {
             continue;
 
         switch (parsed->cmd) {
-            case Entityd:
+            case Command::Entityd:
                 this->handleEntity(parsed.value(), msg->getMsg());
                 break;
-            case DeleteEntity:
+            case Command::DeleteEntity:
                 this->handleDeleteEntity(parsed.value());
                 break;
-            case DeleteComponent:
+            case Command::DeleteComponent:
                 this->handleDeleteComponent(parsed.value());
                 break;
-            case ChangeMusic:
+            case Command::ChangeMusic:
                 this->handleMusic(parsed.value());
+                break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
         }
@@ -131,13 +129,11 @@ void ClientGameProtocol::sendActMove(std::string directions) {
 
 void ClientGameProtocol::sendActFire() {
     auto msg = ProtocolUtils::createMessage("ACT_SHOOT", "", this->_addr, this->_port);
-    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendHere() {
     auto msg = ProtocolUtils::createMessage("HERE", this->_uuid.toString(), this->_addr, this->_port);
-    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
@@ -146,6 +142,5 @@ void ClientGameProtocol::sendGetEnt(EntityID id) {
     ss << id;
 
     auto msg = ProtocolUtils::createMessage("GET_ENT", ss.str(), this->_addr, this->_port);
-    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }

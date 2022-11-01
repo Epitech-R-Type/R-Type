@@ -65,7 +65,7 @@ void TcpServer::setup_outgoing_handler() {
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            ERROR(err.message());
+            ERROR("Error TcpServer handler " << err.message());
             this->setup_outgoing_handler();
             return;
         }
@@ -86,8 +86,6 @@ void TcpServer::setup_outgoing_handler() {
                 break;
             }
 
-            LOG("Sending: " << buffer << " to: " << msg->getAddr() << ":" << msg->getPort());
-
             peer->send(asio::buffer(buffer));
         }
         this->setup_outgoing_handler();
@@ -106,7 +104,6 @@ void TcpServer::setup_acceptor_handler() {
             auto port = newPeer->remote_endpoint().port();
 
             this->push_out_message(Message<std::string>("CONNECTED\r\n", addr, port));
-            LOG("TCP Client is open on port: " << newPeer->local_endpoint().port());
             this->setup_incoming_handler(newPeer);
         }
         this->setup_acceptor_handler();

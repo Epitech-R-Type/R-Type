@@ -127,6 +127,4 @@ void LobbyProtocol::startGame(int port) {
 
         this->_outgoingMQ->push(msg);
     }
-
-    LOG("Done sending start game command.");
 }

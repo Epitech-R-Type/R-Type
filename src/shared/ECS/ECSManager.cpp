@@ -42,8 +42,11 @@ EntityID ECSManager::newEntity() {
 }
 
 EntityID ECSManager::newEntity(EntityID entityID) {
-    if (this->_entities.size() >= MAX_ENTITIES)
+    if (this->_entities.size() >= MAX_ENTITIES) {
+        ERROR("Creating entity with specified ID");
         return -1;
+    }
+
     // Create new id and entity
 
     Index i = getIndex(entityID);

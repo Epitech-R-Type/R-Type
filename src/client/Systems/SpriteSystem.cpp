@@ -46,8 +46,6 @@ void SpriteSystem::loadAnimation(Animation::AnimationID id) {
 
     const Animation::Sheet animationSheet = Animation::Sheets[id];
 
-    LOG("Loading animation from " << animationSheet.path);
-
     for (int y = 0; y < animationSheet.animHeight; y++) {
         for (int x = 0; x < animationSheet.animWidth; x++) {
             const float xPos = animationSheet.startX + (animationSheet.frameWidth * x) + (animationSheet.separationX * x);
@@ -83,8 +81,7 @@ void SpriteSystem::apply() {
     for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
         Animation::Component* anim = this->_ECS->getComponent<Animation::Component>(*beg);
         if (!anim) {
-            // TO FIX should not happen
-            ERROR("NO ANIM");
+            ERROR("No animations are currently available. (This should not happen)");
             continue;
         }
 
