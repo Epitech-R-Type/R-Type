@@ -100,10 +100,6 @@ void ECSManager::removeComp(EntityID id, Index compId) {
 
 // ─── Utility Methods ─────────────────────────────────────────────────────────────────────────────
 
-bool ECSManager::entityIsActive(Index id) {
-    return (std::find(this->_unusedEntities.begin(), this->_unusedEntities.end(), id) == this->_unusedEntities.end());
-}
-
 bool ECSManager::entityHasComp(EntityID id, Index i) {
     if (!this->isValidEntity(id))
         return false;
