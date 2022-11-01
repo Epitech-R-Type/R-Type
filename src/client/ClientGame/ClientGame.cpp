@@ -13,9 +13,9 @@
 #include "raylib.h"
 
 ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
-    // Init com thread
     this->_isRunning = true;
 
+    // Init com thread
     this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_entManager = std::make_shared<ECSManager>();

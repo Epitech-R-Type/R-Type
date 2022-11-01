@@ -289,6 +289,16 @@ void GameProtocol::sendDelComponent(EntityID id, Connection client) const {
     this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), client.addr, client.port));
 }
 
+void GameProtocol::sendChangeMusic(int songId) const {
+    std::stringstream ss;
+    ss << songId;
+    LOG("Sending to Clients: CHANGE_MUSIC " << ss.str());
+    for (auto conn : this->_connectedClients) {
+        DEBUG("Send to " << conn.addr << " " << conn.port << std::endl);
+        this->_outgoingMQ->push(ProtocolUtils::createMessage("CHANGE_MUSIC", ss.str(), conn.addr, conn.port));
+    }
+}
+
 //
 //
 // UTILITIES
