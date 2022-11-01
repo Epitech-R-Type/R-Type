@@ -46,11 +46,13 @@ EntityID ECSManager::newEntity(EntityID entityID) {
         return -1;
     // Create new id and entity
 
-    if (this->_entities.size() < getIndex(entityID))
-        this->_entities.resize(getIndex(entityID) + 1);
+    Index i = getIndex(entityID);
+
+    if (this->_entities.size() <= i)
+        this->_entities.resize(i + 1);
 
     // Push to entities
-    this->_entities.emplace(this->_entities.begin() + getIndex(entityID), Entity{entityID, 0});
+    this->_entities[i] = Entity{entityID, 0};
 
     return entityID;
 }

@@ -5,7 +5,7 @@ build
 vgcore.*
 .vscode/settings.json
 .vscode/launch.json
-bin
+bin/*
 **/*.gcno
 **/*.gcda
 **/*.gcov
