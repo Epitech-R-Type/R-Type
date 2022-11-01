@@ -221,3 +221,28 @@ TEST_F(EcsFixture, AddSingleComponent) {
 
     EXPECT_EQ(*ptr, 5);
 }
+
+// ─── Ecsmanager Utility Tests ────────────────────────────────────────────────────────────────────
+
+TEST_F(EcsFixture, FlushEcs) {
+    EntityID id1 = _man->newEntity();
+    EntityID id2 = _man->newEntity();
+
+    _man->deleteEntity(id2);
+
+    _man->addComp<int>(id1, 5);
+    _man->addComp<float>(id1, 5.5);
+
+    _man->pushModified(id1);
+    _man->pushModified(id2);
+
+    for (int i = 0; i < MAX_ENTITIES - 2; i++)
+        _man->newEntity();
+
+    _man->flush();
+
+    EXPECT_EQ(0, _man->getAllModified().size());
+    EXPECT_EQ(0, _man->getUnusedEntities().size());
+    EXPECT_EQ(0, _man->getEntities().size());
+    EXPECT_EQ(0, _man->getCompPools().size());
+}

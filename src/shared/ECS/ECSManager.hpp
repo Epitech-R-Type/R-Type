@@ -215,6 +215,15 @@ public:
         return Iterator<Comp...>(this->_entities.size(), this);
     }
 
+    // ─── Getters For Testing ─────────────────────────────────────────────────────────────────────────
+
+#ifdef GTEST
+    std::vector<Entity> getEntities() const;
+    std::vector<EntityID> getAllModified() const;
+    std::vector<Index> getUnusedEntities() const;
+    std::vector<std::unique_ptr<CompPool>>& getCompPools();
+#endif
+
 private:
     std::vector<Entity> _entities;
     std::vector<EntityID> _modifiedEntities;

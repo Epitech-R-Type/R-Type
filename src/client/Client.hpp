@@ -12,6 +12,7 @@
 #include "Protocols/ClientLobbyProtocol.hpp"
 #include "Protocols/TcpClient.hpp"
 #include "Systems/SpriteSystem.hpp"
+#include "Systems/MusicSystem.hpp"
 #include <thread>
 
 // This class implementls the main loop for lobby handling of the client

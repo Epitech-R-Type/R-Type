@@ -125,6 +125,7 @@ void ECSManager::flush() {
 
     this->_entities = {};
     this->_unusedEntities = {};
+    this->_modifiedEntities = {};
 
     this->_compPools = std::vector<std::unique_ptr<CompPool>>{};
     this->_excludedInView.reset();
@@ -151,3 +152,23 @@ void ECSManager::pushModified(EntityID entityID) {
 void ECSManager::resetExcluded() {
     this->_excludedInView.reset();
 }
+
+// ─── Getters For Testing ─────────────────────────────────────────────────────────────────────────
+
+#ifdef GTEST
+std::vector<Entity> ECSManager::getEntities() const {
+    return this->_entities;
+}
+
+std::vector<EntityID> ECSManager::getAllModified() const {
+    return this->_modifiedEntities;
+}
+
+std::vector<Index> ECSManager::getUnusedEntities() const {
+    return this->_unusedEntities;
+}
+
+std::vector<std::unique_ptr<CompPool>>& ECSManager::getCompPools() {
+    return this->_compPools;
+}
+#endif

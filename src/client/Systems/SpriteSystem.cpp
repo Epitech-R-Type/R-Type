@@ -22,7 +22,7 @@ Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, con
     LOG("Loading image " << sheet.path);
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
 
-    Image sprite = LoadImageFromMemory("png", imageBuffer, image.size());
+    Image sprite = LoadImageFromMemory(".png", imageBuffer, image.size());
 
     const Rectangle crop{xpos, ypos, sheet.frameWidth, sheet.frameHeight};
 
