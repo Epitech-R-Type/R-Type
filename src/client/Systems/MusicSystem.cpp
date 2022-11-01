@@ -20,6 +20,7 @@ MusicSystem::MusicSystem(int ID)
 
 MusicSystem::~MusicSystem()
 {
+    StopSoundMulti();
     UnloadMusicStream(this->_music);
     CloseAudioDevice();
 }
@@ -40,16 +41,26 @@ void MusicSystem::apply()
     SetMasterVolume(this->_volume);
 }
 
+void MusicSystem::playSFX(int ID)
+{
+    if (SoundEffects.size() - 1 < ID || ID < 0)
+        return;
+    const cmrc::file soundFile = this->_fs.open(SoundEffects[ID].path);
+    unsigned char* soundBuffer = (unsigned char*)(soundFile.begin());
+    Wave soundWave = LoadWaveFromMemory(".wav", soundBuffer, soundFile.size());
+    Sound soundObject = LoadSoundFromWave(soundWave);
+    // SetSoundVolume(soundObject, 0.5);
+    PlaySoundMulti(soundObject);
+    UnloadSound(soundObject);
+}
+
 void MusicSystem::changeSong(int ID)
 {
-    if (Songs.size() < ID || ID < 0)
+    if (Songs.size() - 1 < ID || ID < 0)
         return;
     const cmrc::file changedMusic = this->_fs.open(Songs[ID].path);
     unsigned char* musicBuffer = (unsigned char*)(changedMusic.begin());
     UnloadMusicStream(this->_music);
-    CloseAudioDevice();
-    InitAudioDevice();
     this->_music = LoadMusicStreamFromMemory(".mp3", musicBuffer, changedMusic.size());
     PlayMusicStream(this->_music);
-    SetMasterVolume(this->_volume);
 }

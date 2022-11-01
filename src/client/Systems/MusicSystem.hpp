@@ -17,9 +17,19 @@ struct Song {
     const std::string path;
 };
 
+struct SFX {
+    const std::string path;
+};
+
 static std::vector<Song> Songs {
     {"resources/song0.mp3"},
     {"resources/song1.mp3"}
+};
+
+static std::vector<SFX> SoundEffects {
+    {"resources/gunShot1.mp3"},
+    {"resources/gunShot2.mp3"},
+    {"resources/gunShot3.mp3"}
 };
 
 class MusicSystem : public System {
@@ -28,6 +38,7 @@ class MusicSystem : public System {
         ~MusicSystem();
         void apply();
         void changeSong(int ID);
+        void playSFX(int ID);
 
     private:
         Music _music;
