@@ -15,7 +15,6 @@ MusicSystem::MusicSystem(int ID)
 
     InitAudioDevice();
     this->_music = LoadMusicStreamFromMemory(".mp3", musicBuffer, menuMusic.size());
-    PlayMusicStream(this->_music);
     SetMasterVolume(this->_volume);
 }
 
