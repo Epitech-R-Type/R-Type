@@ -80,7 +80,7 @@ EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
 
     ECS->addComp<Hitbox::Component>(enemy, HitboxSystem::buildHitbox(animation, position));
     ECS->addComp<Team::Component>(enemy, Team::Enemy);
-    // ECS->addComp<Armament::Component>(enemy, {Armament::Type::Laser, 1000, 50});
+    ECS->addComp<Armament::Component>(enemy, {Armament::Type::Laser, 1000, 50});
     ECS->addComp<CollisionEffect::Component>(enemy, &CollisionEffect::dealDamage);
 
     ECS->pushModified(enemy);

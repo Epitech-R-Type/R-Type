@@ -70,7 +70,7 @@ void ClientGameProtocol::handleMusic(ParsedCmd cmd) {
         return;
     }
 
-    this->_musicSystem->changeSong(songId);
+    this->_musicSystem->changeSong(SongID(songId));
 }
 
 void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {

@@ -21,15 +21,15 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
     this->_entManager = std::make_shared<ECSManager>();
 
     this->_uuid = uuid;
-    this->_protocol =
-        std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, addr, asio::ip::port_type(port), this->_uuid);
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread =
-        new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1); // Bind to available port
+    this->_musicSystem = std::make_unique<MusicSystem>();
 
+    this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
+                                                           asio::ip::port_type(port), this->_uuid);
+    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
+
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
-    this->_musicSystem = std::make_unique<MusicSystem>(0);
     this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
 }
 
