@@ -44,7 +44,7 @@ void Game::init() {
     srand(time(0));
     this->_protocol.waitForClients();
 
-    // Factory::Misc::makeBackground(this->_entManager);
+    Factory::Misc::makeBackground(this->_entManager);
 
     std::vector<Connection> connections = this->_protocol.getConnectedClients();
 
