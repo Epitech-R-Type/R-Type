@@ -18,7 +18,7 @@
 #include <vector>
 
 struct Entity {
-    EntityID id;
+    EntityID id = createId(-1, 0);
     std::bitset<MAX_COMPONENTS> components;
 };
 

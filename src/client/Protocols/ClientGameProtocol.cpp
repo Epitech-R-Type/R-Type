@@ -101,17 +101,18 @@ bool ClientGameProtocol::handleCommands() {
             continue;
 
         switch (parsed->cmd) {
-            case Entityd:
+            case Command::Entityd:
                 this->handleEntity(parsed.value(), msg->getMsg());
                 break;
-            case DeleteEntity:
+            case Command::DeleteEntity:
                 this->handleDeleteEntity(parsed.value());
                 break;
-            case DeleteComponent:
+            case Command::DeleteComponent:
                 this->handleDeleteComponent(parsed.value());
                 break;
-            case ChangeMusic:
+            case Command::ChangeMusic:
                 this->handleMusic(parsed.value());
+                break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
         }

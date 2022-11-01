@@ -96,9 +96,8 @@ public:
 
         EntityID entityID = std::stoll(components[0]);
 
-        if (!manager->isValidEntity(entityID)) {
+        if (!manager->isValidEntity(entityID))
             manager->newEntity(entityID);
-        }
 
         for (auto beg = components.begin() + 1; beg != components.end() && (*beg)[(*beg).size() - 1] != '\n'; beg++) {
             const std::string component = *beg;
