@@ -28,6 +28,8 @@
 #include <string>
 #include <vector>
 
+enum Move { UP = 1, DOWN = -1, LEFT = 3, RIGHT = -3 };
+
 struct Point {
     double x;
     double y;

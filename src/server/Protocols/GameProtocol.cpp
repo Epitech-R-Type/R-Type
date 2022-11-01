@@ -7,6 +7,7 @@
 
 #include "GameProtocol.hpp"
 #include "../Systems/ArmamentSystem.hpp"
+#include <iostream>
 
 GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
                            std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager)
@@ -88,7 +89,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     ERROR("PLAYER " << playerUID << "is moving.");
     // In system if player is dead, send del Ent again ? or say something at least
     // This in case client has missed message that his character is dead
-    std::string direction = cmd.args[0][0];
+    int direction = std::stoi(cmd.args[0][0]);
 
     EntityID entityID = INVALID_INDEX;
     for (auto beg = this->_entityManager->begin<Player::Component>(); beg != this->_entityManager->end<Player::Component>(); ++beg) {
@@ -115,15 +116,36 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
     if (elapsed_seconds.count() > velocity->tickrate) {
         // Note: Prints are placeholder and should be replaced by call to adequate system
-        if (direction == "UP")
-            position->y -= velocity->y;
-        if (direction == "DOWN")
-            position->y += velocity->y;
-        if (direction == "LEFT")
-            position->x -= velocity->x;
-        if (direction == "RIGHT")
-            position->x += velocity->x;
-
+        switch(direction) {
+            case Move::UP:
+                position->y -= velocity->y;
+                break;
+            case Move::DOWN:
+                position->y += velocity->y;
+                break;
+            case Move::LEFT:
+                position->x -= velocity->x;
+                break;
+            case Move::RIGHT:
+                position->x += velocity->x;
+                break;
+            case Move::UP + Move::RIGHT:
+                position->x += (velocity->x + velocity->y) / 3;
+                position->y -= (velocity->x + velocity->y) / 3;
+                break;
+            case Move::UP + Move::LEFT:
+                position->x -= (velocity->x + velocity->y) / 3;
+                position->y -= (velocity->x + velocity->y) / 3;
+                break;
+            case Move::DOWN + Move::RIGHT:
+                position->x += (velocity->x + velocity->y) / 3;
+                position->y += (velocity->x + velocity->y) / 3;
+                break;
+            case Move::DOWN + Move::LEFT:
+                position->x -= (velocity->x + velocity->y) / 3;
+                position->y += (velocity->x + velocity->y) / 3;
+                break;
+        };
         this->_entityManager->pushModified(entityID);
         velocity->timer = getNow();
     }
