@@ -17,7 +17,8 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
       _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _entManager(std::make_shared<ECSManager>()),
-      _protocol(this->_incomingMQ, this->_outgoingMQ, this->_entManager, addr, asio::ip::port_type(port), uuid) {
+      _musicSystem(std::make_shared<MusicSystem>(1)),
+      _protocol(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr, asio::ip::port_type(port), uuid) {
     // Init com thread
     this->_uuid = uuid;
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
@@ -26,7 +27,6 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port)
 
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
-    this->_musicSystem = std::make_unique<MusicSystem>(0);
 }
 
 ClientGame::~ClientGame() {

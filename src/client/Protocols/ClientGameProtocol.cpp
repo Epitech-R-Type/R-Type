@@ -10,10 +10,11 @@
 
 ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                        std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<ECSManager> entManager,
-                                       asio::ip::address addr, asio::ip::port_type port, UUIDM uuid)
+                                       std::shared_ptr<MusicSystem> musicSystem, asio::ip::address addr, asio::ip::port_type port, UUIDM uuid)
     : _incomingMQ(incoming),
       _outgoingMQ(outgoing),
       _entityManager(entManager),
+      _musicSystem(musicSystem),
       _addr(addr),
       _port(port),
       _uuid(uuid) {
@@ -52,6 +53,24 @@ void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
     }
 
     this->_entityManager->deleteEntity(id);
+}
+
+void ClientGameProtocol::handleMusic(ParsedCmd cmd) {
+    int songId;
+
+    if (cmd.args.size() != 1) {
+        ERROR("Command " << cmd.cmd << " has not exactly one arg.");
+        return;
+    }
+
+    try {
+        songId = std::stoi(cmd.args[0][0]);
+    } catch (...) {
+        ERROR("Unable to convert argument to int.");
+        return;
+    }
+
+    this->_musicSystem->changeSong(songId);
 }
 
 void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
@@ -94,6 +113,8 @@ bool ClientGameProtocol::handleCommands() {
             case DeleteComponent:
                 this->handleDeleteComponent(parsed.value());
                 break;
+            case ChangeMusic:
+                this->handleMusic(parsed.value());
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
         }
