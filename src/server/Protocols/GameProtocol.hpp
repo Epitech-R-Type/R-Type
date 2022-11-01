@@ -61,6 +61,8 @@ public:
     template <class T>
     void sendDelComponent(EntityID id, Connection client) const;
 
+
+    void sendChangeMusic(int songId) const;
     // UILITIES
     int getPlayer(asio::ip::address addr, asio::ip::port_type port);
 

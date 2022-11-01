@@ -39,7 +39,7 @@ private:
     std::shared_ptr<ECSManager> _entManager;
     std::unique_ptr<SpriteSystem> _spriteSystem;
     std::unique_ptr<HealthSystem> _healthSystem;
-    std::unique_ptr<MusicSystem> _musicSystem;
+    std::shared_ptr<MusicSystem> _musicSystem;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class

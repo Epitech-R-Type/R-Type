@@ -6,6 +6,7 @@
 */
 
 #include "MusicSystem.hpp"
+#include <iostream>
 
 MusicSystem::MusicSystem(int ID)
 {
@@ -46,6 +47,10 @@ void MusicSystem::changeSong(int ID)
         return;
     const cmrc::file changedMusic = this->_fs.open(Songs[ID].path);
     unsigned char* musicBuffer = (unsigned char*)(changedMusic.begin());
+    UnloadMusicStream(this->_music);
+    CloseAudioDevice();
+    InitAudioDevice();
     this->_music = LoadMusicStreamFromMemory(".mp3", musicBuffer, changedMusic.size());
-    UpdateMusicStream(this->_music);
+    PlayMusicStream(this->_music);
+    SetMasterVolume(this->_volume);
 }

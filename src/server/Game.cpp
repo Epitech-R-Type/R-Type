@@ -95,6 +95,7 @@ int Game::mainLoop() {
         if (elapsed_boss_seconds.count() > 20 && !bossSpawned) {
             Factory::Enemy::makeEndboss(this->_entManager);
             bossSpawned = true;
+            this->_protocol.sendChangeMusic(0);
         }
 
         this->sendModified();
