@@ -19,7 +19,7 @@ SpriteSystem::SpriteSystem(std::shared_ptr<ECSManager> ECS) {
 
 Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, const float ypos) {
     const cmrc::file image = this->_fs.open(sheet.path);
-    LOG("Loading image " << sheet.path);
+
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
 
     Image sprite = LoadImageFromMemory(".png", imageBuffer, image.size());
@@ -45,6 +45,8 @@ void SpriteSystem::loadAnimation(Animation::AnimationID id) {
         throw "Now Animation Sheet defined for enum " + id;
 
     const Animation::Sheet animationSheet = Animation::Sheets[id];
+
+    LOG("Loading animation from " << animationSheet.path);
 
     for (int y = 0; y < animationSheet.animHeight; y++) {
         for (int x = 0; x < animationSheet.animWidth; x++) {

@@ -86,7 +86,6 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
         return;
     }
 
-    ERROR("PLAYER " << playerUID << "is moving.");
     // In system if player is dead, send del Ent again ? or say something at least
     // This in case client has missed message that his character is dead
     int direction = std::stoi(cmd.args[0][0]);
@@ -116,7 +115,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
     if (elapsed_seconds.count() > velocity->tickrate) {
         // Note: Prints are placeholder and should be replaced by call to adequate system
-        switch(direction) {
+        switch (direction) {
             case Move::UP:
                 position->y -= velocity->y;
                 break;
@@ -241,9 +240,8 @@ void GameProtocol::sendEntity(EntityID id) const {
     }
 
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-    LOG("Sending to Clients: ENTITY " << entitySerialization);
+    DEBUG("Sending to Clients: ENTITY " << entitySerialization);
     for (auto conn : this->_connectedClients) {
-        DEBUG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
     }
 }
@@ -264,9 +262,8 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
 void GameProtocol::sendDelEntity(EntityID id) const {
     std::stringstream ss;
     ss << id;
-    LOG("Sending to Clients: DEL_ENT " << ss.str());
+    DEBUG("Sending to Clients: DEL_ENT " << ss.str());
     for (auto conn : this->_connectedClients) {
-        DEBUG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_ENT", ss.str(), conn.addr, conn.port));
     }
 }
@@ -295,9 +292,9 @@ void GameProtocol::sendDelComponent(EntityID id, Connection client) const {
 void GameProtocol::sendChangeMusic(int songId) const {
     std::stringstream ss;
     ss << songId;
-    LOG("Sending to Clients: CHANGE_MUSIC " << ss.str());
+    DEBUG("Sending to Clients: CHANGE_MUSIC " << ss.str());
+
     for (auto conn : this->_connectedClients) {
-        DEBUG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("CHANGE_MUSIC", ss.str(), conn.addr, conn.port));
     }
 }
