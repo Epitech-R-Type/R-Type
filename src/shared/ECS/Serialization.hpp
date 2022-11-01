@@ -79,7 +79,7 @@ public:
                         stream << Serialization::componentToString<CollisionEffect::Component>(entityID, manager);
                         break;
                     default:
-                        ERROR("[entityToString] Unhandled Component: " << componentTypeID << ".");
+                        ERROR("Unhandled Component: " << componentTypeID << ".");
                 }
             }
         } else {
@@ -144,7 +144,7 @@ public:
                     CollisionEffect::applyUpdate(args, entityID, manager);
                     break;
                 default:
-                    ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
+                    ERROR("Unhandled Component: " << componentTypeID << ".");
             }
         }
 
@@ -188,7 +188,7 @@ public:
             case ComponentType::COLLISIONEFFECT:
                 return std::to_string(getID<T>()) + "," + CollisionEffect::toString(*(CollisionEffect::Component*)component);
             default:
-                ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
+                ERROR("Unhandled Component: " << componentTypeID << ".");
                 return "";
         }
     }

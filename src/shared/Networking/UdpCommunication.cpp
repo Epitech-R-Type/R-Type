@@ -22,7 +22,7 @@ void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> 
         // Run asio context
         com.run();
     } else { // Bind to specific port
-        LOG("Binding to port : " << port);
+        LOG("Binding to specified port : " << port);
         UdpCommunication com(incoming, outgoing, stopFlag, port);
 
         // Setup incoming udp packet handler and outgoing packets handler in asio
@@ -43,7 +43,6 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
-    LOG("UDP Local port : " << this->_sock.local_endpoint().port());
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
@@ -55,7 +54,6 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
-    LOG("UDP Local port : " << this->_sock.local_endpoint().port());
     this->_incomingMessages = incoming;
     this->_outgoingMessages = outgoing;
 }
@@ -92,7 +90,7 @@ void UdpCommunication::setup_outgoing_handler() {
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            ERROR(err.message());
+            ERROR("Error UdpCommunication: " << err.message());
             this->setup_outgoing_handler();
             return;
         }

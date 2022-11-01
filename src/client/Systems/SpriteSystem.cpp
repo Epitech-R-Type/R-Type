@@ -19,7 +19,6 @@ SpriteSystem::SpriteSystem(std::shared_ptr<ECSManager> ECS) {
 
 Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, const float ypos) {
     const cmrc::file image = this->_fs.open(sheet.path);
-    LOG("Loading image " << sheet.path);
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
 
     Image sprite = LoadImageFromMemory(".png", imageBuffer, image.size());
@@ -81,8 +80,7 @@ void SpriteSystem::apply() {
     for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
         Animation::Component* anim = this->_ECS->getComponent<Animation::Component>(*beg);
         if (!anim) {
-            // TO FIX should not happen
-            ERROR("NO ANIM");
+            ERROR("No animations are currently available. (This should not happen)");
             continue;
         }
 

@@ -20,11 +20,8 @@ bool GameProtocol::waitForClients() {
     Timer timeout(CONNECTION_DELAY);
     std::optional<Message<std::string>> msg;
 
-    LOG("Waiting for clients.");
-
     while (this->_connectedClients.size() < targetClientCount && !timeout.isExpired()) {
         while ((msg = this->_incomingMQ->pop())) {
-            LOG("Received new message.");
             // Parse command
             auto parsedCmd = ProtocolUtils::parseCommand(*msg);
 
@@ -64,13 +61,11 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
     UUIDM candidate(cmd.args[0][0]);
 
-    for (auto conn : this->_expectedClients) {
-        LOG("Connection: " << conn.uuid << " Candiate " << candidate);
+    for (auto conn : this->_expectedClients)
         if (conn.uuid == candidate) {
             this->_connectedClients.push_back({addr, port, candidate});
             break;
         }
-    }
 
     LOG("New Client is here!");
     return true;
@@ -85,7 +80,6 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
         return;
     }
 
-    ERROR("PLAYER " << playerUID << "is moving.");
     // In system if player is dead, send del Ent again ? or say something at least
     // This in case client has missed message that his character is dead
     std::string direction = cmd.args[0][0];
@@ -101,7 +95,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     }
 
     if (entityID == INVALID_INDEX) {
-        ERROR("Unable to find Entity attached to player " << playerUID << ".");
+        ERROR("Unable to find Entity attached to player with the following playerUID: " << playerUID);
         return;
     }
 
@@ -199,7 +193,7 @@ void GameProtocol::handleCommands() {
                 this->handleMove(*parsed, msg->getAddr(), msg->getPort());
                 break;
             default:
-                WARNING("Unhandled Command: " << parsed->cmd);
+                WARNING("Unhandled GameProtocol Command: " << parsed->cmd);
         }
     }
 }
@@ -219,11 +213,8 @@ void GameProtocol::sendEntity(EntityID id) const {
     }
 
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-    LOG("Sending to Clients: ENTITY " << entitySerialization);
-    for (auto conn : this->_connectedClients) {
-        DEBUG("Send to " << conn.addr << " " << conn.port << std::endl);
+    for (auto conn : this->_connectedClients)
         this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
-    }
 }
 
 // Sends to only one client
@@ -235,16 +226,13 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
     }
 
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-    DEBUG("Sending to Client: ENTITY " << entitySerialization);
     this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
 }
 
 void GameProtocol::sendDelEntity(EntityID id) const {
     std::stringstream ss;
     ss << id;
-    LOG("Sending to Clients: DEL_ENT " << ss.str());
     for (auto conn : this->_connectedClients) {
-        DEBUG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_ENT", ss.str(), conn.addr, conn.port));
     }
 }
@@ -254,9 +242,7 @@ void GameProtocol::sendDelComponent(EntityID id) const {
     std::stringstream ss;
     ss << id << ";" << getID<T>();
 
-    LOG("Sending to Clients: DEL_COMP " << ss.str());
     for (auto conn : this->_connectedClients) {
-        LOG("Send to " << conn.addr << " " << conn.port << std::endl);
         this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), conn.addr, conn.port));
     }
 }
@@ -266,7 +252,6 @@ void GameProtocol::sendDelComponent(EntityID id, Connection client) const {
     std::stringstream ss;
     ss << id << ";" << getID<T>();
 
-    LOG("Sending to Clients: DEL_COMP " << ss.str());
     this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), client.addr, client.port));
 }
 
