@@ -92,13 +92,11 @@ public:
     }
 
     static EntityID stringToEntity(const std::string entity, std::shared_ptr<ECSManager> manager) {
-        static int i = 0;
         std::vector<std::string> components = Utilities::splitStr(entity, ";");
 
         EntityID entityID = std::stoll(components[0]);
 
         if (!manager->isValidEntity(entityID)) {
-            LOG("New Entity Created." << i++);
             manager->newEntity(entityID);
         }
 

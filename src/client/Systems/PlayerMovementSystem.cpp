@@ -6,8 +6,8 @@
 */
 #include "../../WindowsGuard.hpp"
 
-#include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/ECSManager.hpp"
+#include "../Protocols/ClientGameProtocol.hpp"
 #include "PlayerMovementSystem.hpp"
 #include "raylib.h"
 
@@ -16,15 +16,17 @@ PlayerMovementSystem::PlayerMovementSystem(std::shared_ptr<ClientGameProtocol> p
 }
 
 void PlayerMovementSystem::apply() {
-
+    int directions = 0;
     if (IsKeyDown(KEY_A))
-        this->_protocol->sendActMove(Move::LEFT);
+        directions += Move::LEFT;
     if (IsKeyDown(KEY_D))
-        this->_protocol->sendActMove(Move::RIGHT);
+        directions += Move::RIGHT;
     if (IsKeyDown(KEY_W))
-        this->_protocol->sendActMove(Move::UP);
+        directions += Move::UP;
     if (IsKeyDown(KEY_S))
-        this->_protocol->sendActMove(Move::DOWN);
+        directions += Move::DOWN;
+    if (directions != 0)
+        this->_protocol->sendActMove(std::to_string(directions));
     if (IsKeyDown(KEY_SPACE))
         this->_protocol->sendActFire();
 }
