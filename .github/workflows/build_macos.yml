@@ -16,8 +16,8 @@ jobs:
       - name: install-conan
         shell: bash
         run: >
-          pip3 install conan;
-          PATH=$PATH:/usr/local/bin;
+          pip3 install conan --user runner;
+          source ~/.profile
 
       - name: create-conan-profile
         shell: bash
