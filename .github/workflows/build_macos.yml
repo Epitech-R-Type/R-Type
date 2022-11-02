@@ -16,8 +16,8 @@ jobs:
       - name: install-conan
         shell: bash
         run: >
-          pip3 install conan --user runner;
-          source ~/.profile
+          brew update;
+          brew install conan;
 
       - name: create-conan-profile
         shell: bash
