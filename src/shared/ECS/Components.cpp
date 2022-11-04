@@ -1,7 +1,7 @@
 #include "Components.hpp"
 #include "ECSManager.hpp"
 
-std::string Armor::toString(Armor::Component component) {
+std::string toString(Armor::Component component) {
     std::stringstream ss;
 
     ss << component.armor << ";";
@@ -17,7 +17,7 @@ void Armor::applyUpdate(std::vector<std::string> args, EntityID entityID, std::s
     }
 }
 
-std::string Health::toString(Health::Component component) {
+std::string toString(Health::Component component) {
     std::stringstream ss;
 
     ss << component.health << ",";
@@ -37,7 +37,7 @@ void Health::applyUpdate(std::vector<std::string> args, EntityID entityID, std::
     component->visible = stoi(args[3]);
 }
 
-std::string Position::toString(Position::Component component) {
+std::string toString(Position::Component component) {
     std::stringstream ss;
 
     ss << component.x << ",";
@@ -55,7 +55,7 @@ void Position::applyUpdate(std::vector<std::string> args, EntityID entityID, std
     component->y = strtof(args[2].c_str(), nullptr);
 }
 
-std::string Animation::toString(Animation::Component component) {
+std::string toString(Animation::Component component) {
     std::stringstream ss;
 
     ss << component.animationID << ",";
@@ -79,7 +79,7 @@ void Animation::applyUpdate(std::vector<std::string> args, EntityID entityID, st
     component->scale = std::stod(args[4].c_str(), nullptr);
 }
 
-std::string Velocity::toString(Velocity::Component component) {
+std::string toString(Velocity::Component component) {
     std::stringstream ss;
 
     ss << component.x << ",";
@@ -99,7 +99,7 @@ void Velocity::applyUpdate(std::vector<std::string> args, EntityID entityID, std
     }
 }
 
-std::string Player::toString(Player::Component component) {
+std::string toString(Player::Component component) {
     std::stringstream ss;
 
     ss << component.score << ";";
@@ -116,7 +116,7 @@ void Player::applyUpdate(std::vector<std::string> args, EntityID entityID, std::
     }
 };
 
-std::string Damage::toString(Damage::Component component) {
+std::string toString(Damage::Component component) {
     std::stringstream ss;
 
     ss << component.damage << ";";
@@ -133,7 +133,7 @@ void Damage::applyUpdate(std::vector<std::string> args, EntityID entityID, std::
     }
 };
 
-std::string Armament::toString(Armament::Component component) {
+std::string toString(Armament::Component component) {
     std::stringstream ss;
 
     ss << component.type << ",";
@@ -155,7 +155,7 @@ void Armament::applyUpdate(std::vector<std::string> args, EntityID entityID, std
     }
 };
 
-std::string Hitbox::toString(Hitbox::Component component) {
+std::string toString(Hitbox::Component component) {
     std::stringstream ss;
 
     ss << component.topLeft.x << ",";
@@ -186,7 +186,7 @@ void Hitbox::applyUpdate(std::vector<std::string> args, EntityID entityID, std::
     component->botRight.y = std::strtof(args[0].c_str(), nullptr);
 };
 
-std::string Team::toString(Team::Component component) {
+std::string toString(Team::Component component) {
     std::stringstream ss;
 
     ss << component << ";";
@@ -203,7 +203,7 @@ void Team::applyUpdate(std::vector<std::string> args, EntityID entityID, std::sh
     *component = Team::Component(std::stoi(args[0].c_str(), nullptr));
 };
 
-std::string ImmunityFrame::toString(ImmunityFrame::Component component) {
+std::string toString(ImmunityFrame::Component component) {
     std::stringstream ss;
 
     ss << component.duration << ";";
@@ -220,7 +220,7 @@ void ImmunityFrame::applyUpdate(std::vector<std::string> args, EntityID entityID
     component->duration = std::strtod(args[0].c_str(), nullptr);
 };
 
-std::string CollisionEffect::toString(CollisionEffect::Component component) {
+std::string toString(CollisionEffect::Component component) {
     std::stringstream ss;
 
     ss << ";";
@@ -261,7 +261,7 @@ void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shar
     ECS->pushModified(defender);
 }
 
-std::string SoundCreation::toString(SoundCreation::Component component) {
+std::string toString(SoundCreation::Component component) {
     std::stringstream ss;
 
     ss << component.ID << ";";
@@ -274,12 +274,11 @@ void SoundCreation::applyUpdate(std::vector<std::string> args, EntityID entityID
         SoundCreation::Component* component = manager->getComponent<SoundCreation::Component>(entityID);
         component->ID = SFXID::INVALID;
     } else {
-        std::cout << "add comp to " << entityID << std::endl;
         manager->addComp<SoundCreation::Component>(entityID, {(SFXID)stoi(args[1])});
     }
 }
 
-std::string SoundDestruction::toString(SoundDestruction::Component component) {
+std::string toString(SoundDestruction::Component component) {
     std::stringstream ss;
 
     ss << component.ID << ";";
@@ -292,11 +291,12 @@ void SoundDestruction::applyUpdate(std::vector<std::string> args, EntityID entit
         SoundDestruction::Component* component = manager->getComponent<SoundDestruction::Component>(entityID);
         component->ID = (SFXID)stoi(args[1]);
     } else {
+        std::cout << "created" << std::endl;
         manager->addComp<SoundDestruction::Component>(entityID, {(SFXID)stoi(args[1])});
     }
 }
 
-std::string SoundDamage::toString(SoundDamage::Component component) {
+std::string toString(SoundDamage::Component component) {
     std::stringstream ss;
 
     ss << component.ID << ";";

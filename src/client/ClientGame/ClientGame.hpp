@@ -39,6 +39,7 @@ private:
     std::shared_ptr<ECSManager> _entManager;
     std::unique_ptr<SpriteSystem> _spriteSystem;
     std::unique_ptr<HealthSystem> _healthSystem;
+    std::unique_ptr<PlayerMovementSystem> _inputSystem;
     std::shared_ptr<MusicSystem> _musicSystem;
 
     // Messaging queues for protocol
@@ -46,7 +47,7 @@ private:
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
 
-    ClientGameProtocol _protocol;
+    std::shared_ptr<ClientGameProtocol> _protocol;
 
     UUIDM _uuid;
 

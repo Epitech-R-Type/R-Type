@@ -7,12 +7,12 @@
 
 #pragma once
 
+#include "../../shared/Utilities/Utilities.hpp"
+#include "../../shared/Systems/ISystem.hpp"
 #include <raylib.h>
 #include <cmrc/cmrc.hpp>
 #include <queue>
-
-#include "../../shared/Utilities/Utilities.hpp"
-#include "../../shared/Systems/ISystem.hpp"
+#include <map>
 
 CMRC_DECLARE(client);
 
@@ -24,9 +24,14 @@ struct SFX {
     const std::string path;
 };
 
-static std::vector<Song> Songs {
-    {"resources/song0.mp3"},
-    {"resources/song1.mp3"}
+enum SongID {
+    NORMAL,
+    BOSS,
+};
+
+static std::map<SongID, Song> Songs {
+    {SongID::NORMAL, {"resources/song0.mp3"}},
+    {SongID::BOSS, {"resources/song1.mp3"}},
 };
 
 static std::vector<SFX> SoundEffects {
@@ -39,10 +44,10 @@ class MusicSystem : public System {
     public:
         static std::queue<SFXID> SFXQueue;
 
-        MusicSystem(int ID);
+        MusicSystem();
         ~MusicSystem();
         void apply();
-        void changeSong(int ID);
+        void changeSong(SongID id);
         void playSFX(int ID);
 
     private:
@@ -51,4 +56,3 @@ class MusicSystem : public System {
         cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
         std::map<SFXID, Sound> SFXobjects;
 };
-

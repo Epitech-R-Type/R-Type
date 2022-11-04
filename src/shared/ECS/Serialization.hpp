@@ -88,7 +88,7 @@ public:
                         stream << Serialization::componentToString<SoundDamage::Component>(entityID, manager);
                         break;
                     default:
-                        ERROR("[entityToString] Unhandled Component: " << componentTypeID << ".");
+                        ERROR("Unhandled Component: " << componentTypeID << ".");
                 }
             }
         } else {
@@ -101,7 +101,6 @@ public:
     }
 
     static EntityID stringToEntity(const std::string entity, std::shared_ptr<ECSManager> manager) {
-
         std::vector<std::string> components = Utilities::splitStr(entity, ";");
 
         EntityID entityID = std::stoll(components[0]);
@@ -113,7 +112,7 @@ public:
             const std::string component = *beg;
             std::vector<std::string> args = Utilities::splitStr(component, ",");
 
-            ComponentType componentTypeID = ComponentType(atoi(args[0].c_str()));
+            ComponentType componentTypeID = ComponentType(std::stol(args[0]));
 
             switch (componentTypeID) {
                 case ComponentType::ARMOR:
@@ -162,7 +161,7 @@ public:
                     SoundDamage::applyUpdate(args, entityID, manager);
                     break;
                 default:
-                    ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
+                    ERROR("Unhandled Component: " << componentTypeID << ".");
             }
         }
 
@@ -172,48 +171,12 @@ public:
     template <class T>
     static std::string componentToString(EntityID entityId, std::shared_ptr<ECSManager> manager) {
         if (!manager->hasComponent<T>(entityId)) {
-            WARNING("Missing component: " << getID<T>());
+            ERROR("Missing component: " << getID<T>());
             return "";
         }
 
         T* component = manager->getComponent<T>(entityId);
 
-        const Index componentTypeID = getID<T>();
-
-        switch (componentTypeID) {
-            case ComponentType::ARMOR:
-                return std::to_string(getID<T>()) + "," + Armor::toString(*(Armor::Component*)component);
-            case ComponentType::HEALTH:
-                return std::to_string(getID<T>()) + "," + Health::toString(*(Health::Component*)component);
-            case ComponentType::POSITION:
-                return std::to_string(getID<T>()) + "," + Position::toString(*(Position::Component*)component);
-            case ComponentType::ANIMATION:
-                return std::to_string(getID<T>()) + "," + Animation::toString(*(Animation::Component*)component);
-            case ComponentType::VELOCITY:
-                return std::to_string(getID<T>()) + "," + Velocity::toString(*(Velocity::Component*)component);
-            case ComponentType::PLAYER:
-                return std::to_string(getID<T>()) + "," + Player::toString(*(Player::Component*)component);
-            case ComponentType::DAMAGE:
-                return std::to_string(getID<T>()) + "," + Damage::toString(*(Damage::Component*)component);
-            case ComponentType::ARMAMENT:
-                return std::to_string(getID<T>()) + "," + Armament::toString(*(Armament::Component*)component);
-            case ComponentType::HITBOX:
-                return std::to_string(getID<T>()) + "," + Hitbox::toString(*(Hitbox::Component*)component);
-            case ComponentType::TEAM:
-                return std::to_string(getID<T>()) + "," + Team::toString(*(Team::Component*)component);
-            case ComponentType::IMMUNITY_FRAME:
-                return std::to_string(getID<T>()) + "," + ImmunityFrame::toString(*(ImmunityFrame::Component*)component);
-            case ComponentType::COLLISIONEFFECT:
-                return std::to_string(getID<T>()) + "," + CollisionEffect::toString(*(CollisionEffect::Component*)component);
-            case ComponentType::SOUND_CREATION:
-                return std::to_string(getID<T>()) + "," + SoundCreation::toString(*(SoundCreation::Component*)component);
-            case ComponentType::SOUND_DESTRUCTION:
-                return std::to_string(getID<T>()) + "," + SoundDestruction::toString(*(SoundDestruction::Component*)component);
-            case ComponentType::SOUND_DAMAGE:
-                return std::to_string(getID<T>()) + "," + SoundDamage::toString(*(SoundDamage::Component*)component);
-            default:
-                ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
-                return "";
-        }
+        return std::to_string(getID<T>()) + "," + toString(*component);
     }
 };

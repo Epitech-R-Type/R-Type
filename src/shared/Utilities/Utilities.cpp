@@ -10,6 +10,7 @@ void Utilities::createCompPoolIndexes() {
     getID<Animation::Component>();
     getID<Velocity::Component>();
     getID<Player::Component>();
+    getID<Damage::Component>();
     getID<Armament::Component>();
     getID<Hitbox::Component>();
     getID<Team::Component>();

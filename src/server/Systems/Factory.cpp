@@ -109,7 +109,7 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
         positionPre.y = center.y;
         velocity.x = velocityX;
         velocity.y = velocityY;
-        ECS->addComp<SoundCreation::Component>(bullet, {(SFXID)2});
+        ECS->addComp<SoundCreation::Component>(bullet, {SFXID::GUN_SHOT3});
     }
 
     if (team == Team::Component::Enemy) {
@@ -117,6 +117,8 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
         positionPre.y = center.y;
         velocity.x = -velocityX;
         velocity.y = -velocityY;
+        ECS->addComp<SoundDestruction::Component>(bullet, {SFXID::GUN_SHOT2});
+        std::cout << "enemy bullet" << std::endl;
     }
 
     ECS->addComp<Velocity::Component>(bullet, velocity);

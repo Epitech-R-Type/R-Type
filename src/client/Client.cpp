@@ -21,10 +21,8 @@ Client::Client() {
 }
 
 int Client::launchGame() {
-    if (!this->_connected) {
-        ERROR("You are not connected to a server");
+    if (!this->_connected)
         return 84;
-    }
 
     // Note: For performance reasons we could free the lobby ecs before launching the game
     this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort());

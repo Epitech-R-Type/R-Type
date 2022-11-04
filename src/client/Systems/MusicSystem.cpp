@@ -10,25 +10,18 @@
 
 std::queue<SFXID> MusicSystem::SFXQueue;
 
-MusicSystem::MusicSystem(int ID)
-{
-    const cmrc::file menuMusic = this->_fs.open(Songs[ID].path);
-    unsigned char* musicBuffer = (unsigned char*)(menuMusic.begin());
-
+MusicSystem::MusicSystem() {
     InitAudioDevice();
-    this->_music = LoadMusicStreamFromMemory(".mp3", musicBuffer, menuMusic.size());
     SetMasterVolume(this->_volume);
 }
 
-MusicSystem::~MusicSystem()
-{
+MusicSystem::~MusicSystem() {
     StopSoundMulti();
     UnloadMusicStream(this->_music);
     CloseAudioDevice();
 }
 
-void MusicSystem::apply()
-{
+void MusicSystem::apply() {
     UpdateMusicStream(this->_music);
     for (int i = MusicSystem::SFXQueue.size(); i != 0; i--) {
         this->playSFX(MusicSystem::SFXQueue.front());
@@ -47,8 +40,7 @@ void MusicSystem::apply()
     SetMasterVolume(this->_volume);
 }
 
-void MusicSystem::playSFX(int ID)
-{
+void MusicSystem::playSFX(int ID) {
     if (SoundEffects.size() - 1 < ID || ID < 0)
         return;
     if (!HAS_KEY(this->SFXobjects, (SFXID)ID)) {
@@ -63,13 +55,13 @@ void MusicSystem::playSFX(int ID)
         PlaySoundMulti(this->SFXobjects[(SFXID)ID]);
 }
 
-void MusicSystem::changeSong(int ID)
-{
-    if (Songs.size() - 1 < ID || ID < 0)
-        return;
-    const cmrc::file changedMusic = this->_fs.open(Songs[ID].path);
+void MusicSystem::changeSong(SongID id) {
+    const cmrc::file changedMusic = this->_fs.open(Songs[id].path);
+
     unsigned char* musicBuffer = (unsigned char*)(changedMusic.begin());
-    UnloadMusicStream(this->_music);
+    if (IsMusicStreamPlaying(this->_music))
+        UnloadMusicStream(this->_music);
     this->_music = LoadMusicStreamFromMemory(".mp3", musicBuffer, changedMusic.size());
+
     PlayMusicStream(this->_music);
 }

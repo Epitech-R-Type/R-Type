@@ -70,6 +70,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/SpriteSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/HealthSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/MusicSystem.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/PlayerMovementSystem.cpp"
 
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
@@ -156,7 +157,7 @@ function(build_tests)
     add_executable(
         Tests
         "${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/NewEntity.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsTests.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsFixture.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
@@ -176,6 +177,7 @@ if(TESTMODE EQUAL 1)
     message("=== Unit Tests ===")
     set(CMAKE_CXX_FLAGS "--coverage")
     set(CMAKE_EXE_LINKER_FLAGS "--coverage")
+    add_compile_definitions(GTEST)
 
     build_tests()
 else()
