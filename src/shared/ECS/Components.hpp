@@ -28,6 +28,9 @@ enum ComponentType {
     TEAM,
     IMMUNITY_FRAME,
     COLLISIONEFFECT,
+    SOUND_CREATION,
+    SOUND_DESTRUCTION,
+    SOUND_DAMAGE
 };
 
 namespace Armor {
@@ -231,3 +234,30 @@ namespace CollisionEffect {
     // should not need serialization or update since logic happens serverside
     // if we do need to just use a map and enum
 } // namespace CollisionEffect
+
+namespace SoundCreation {
+    struct Component {
+        SFXID ID;
+    };
+
+    std::string toString(SoundCreation::Component component);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+} // namespace SoundCreation
+
+namespace SoundDestruction {
+    struct Component {
+        SFXID ID;
+    };
+
+    std::string toString(SoundDestruction::Component component);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+} // namespace SoundCreation
+
+namespace SoundDamage {
+    struct Component {
+        SFXID ID;
+    };
+
+    std::string toString(SoundDamage::Component component);
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+} // namespace SoundCreation

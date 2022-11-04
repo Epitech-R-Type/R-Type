@@ -9,6 +9,9 @@
 
 #include <raylib.h>
 #include <cmrc/cmrc.hpp>
+#include <queue>
+
+#include "../../shared/Utilities/Utilities.hpp"
 #include "../../shared/Systems/ISystem.hpp"
 
 CMRC_DECLARE(client);
@@ -27,13 +30,15 @@ static std::vector<Song> Songs {
 };
 
 static std::vector<SFX> SoundEffects {
-    {"resources/gunShot1.mp3"},
-    {"resources/gunShot2.mp3"},
-    {"resources/gunShot3.mp3"}
+    {"resources/gunShot1.wav"},
+    {"resources/gunShot2.wav"},
+    {"resources/gunShot3.wav"}
 };
 
 class MusicSystem : public System {
     public:
+        static std::queue<SFXID> SFXQueue;
+
         MusicSystem(int ID);
         ~MusicSystem();
         void apply();
@@ -44,5 +49,6 @@ class MusicSystem : public System {
         Music _music;
         float _volume = 0.5;
         cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
+        std::map<SFXID, Sound> SFXobjects;
 };
 

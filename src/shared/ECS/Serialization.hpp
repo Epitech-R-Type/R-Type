@@ -78,6 +78,15 @@ public:
                     case ComponentType::COLLISIONEFFECT:
                         stream << Serialization::componentToString<CollisionEffect::Component>(entityID, manager);
                         break;
+                    case ComponentType::SOUND_CREATION:
+                        stream << Serialization::componentToString<SoundCreation::Component>(entityID, manager);
+                        break;
+                    case ComponentType::SOUND_DESTRUCTION:
+                        stream << Serialization::componentToString<SoundDestruction::Component>(entityID, manager);
+                        break;
+                    case ComponentType::SOUND_DAMAGE:
+                        stream << Serialization::componentToString<SoundDamage::Component>(entityID, manager);
+                        break;
                     default:
                         ERROR("[entityToString] Unhandled Component: " << componentTypeID << ".");
                 }
@@ -143,6 +152,15 @@ public:
                 case ComponentType::COLLISIONEFFECT:
                     CollisionEffect::applyUpdate(args, entityID, manager);
                     break;
+                case ComponentType::SOUND_CREATION:
+                    SoundCreation::applyUpdate(args, entityID, manager);
+                    break;
+                case ComponentType::SOUND_DESTRUCTION:
+                    SoundDestruction::applyUpdate(args, entityID, manager);
+                    break;
+                case ComponentType::SOUND_DAMAGE:
+                    SoundDamage::applyUpdate(args, entityID, manager);
+                    break;
                 default:
                     ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
             }
@@ -187,6 +205,12 @@ public:
                 return std::to_string(getID<T>()) + "," + ImmunityFrame::toString(*(ImmunityFrame::Component*)component);
             case ComponentType::COLLISIONEFFECT:
                 return std::to_string(getID<T>()) + "," + CollisionEffect::toString(*(CollisionEffect::Component*)component);
+            case ComponentType::SOUND_CREATION:
+                return std::to_string(getID<T>()) + "," + SoundCreation::toString(*(SoundCreation::Component*)component);
+            case ComponentType::SOUND_DESTRUCTION:
+                return std::to_string(getID<T>()) + "," + SoundDestruction::toString(*(SoundDestruction::Component*)component);
+            case ComponentType::SOUND_DAMAGE:
+                return std::to_string(getID<T>()) + "," + SoundDamage::toString(*(SoundDamage::Component*)component);
             default:
                 ERROR("[stringToEntity] Unhandled Component: " << componentTypeID << ".");
                 return "";

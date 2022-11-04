@@ -15,6 +15,10 @@ void Utilities::createCompPoolIndexes() {
     getID<Team::Component>();
     getID<ImmunityFrame::Component>();
     getID<CollisionEffect::Component>();
+    getID<Damage::Component>();
+    getID<SoundCreation::Component>();
+    getID<SoundDamage::Component>();
+    getID<SoundDestruction::Component>();
 }
 
 bool Utilities::isPortAvailable(int port) {

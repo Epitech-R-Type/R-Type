@@ -8,6 +8,8 @@
 #include "MusicSystem.hpp"
 #include <iostream>
 
+std::queue<SFXID> MusicSystem::SFXQueue;
+
 MusicSystem::MusicSystem(int ID)
 {
     const cmrc::file menuMusic = this->_fs.open(Songs[ID].path);
@@ -28,6 +30,10 @@ MusicSystem::~MusicSystem()
 void MusicSystem::apply()
 {
     UpdateMusicStream(this->_music);
+    for (int i = MusicSystem::SFXQueue.size(); i != 0; i--) {
+        this->playSFX(MusicSystem::SFXQueue.front());
+        MusicSystem::SFXQueue.pop();
+    }
     if (IsKeyPressed(KEY_P)) {
         if (IsMusicStreamPlaying(this->_music))
             PauseMusicStream(this->_music);
@@ -45,13 +51,16 @@ void MusicSystem::playSFX(int ID)
 {
     if (SoundEffects.size() - 1 < ID || ID < 0)
         return;
-    const cmrc::file soundFile = this->_fs.open(SoundEffects[ID].path);
-    unsigned char* soundBuffer = (unsigned char*)(soundFile.begin());
-    Wave soundWave = LoadWaveFromMemory(".wav", soundBuffer, soundFile.size());
-    Sound soundObject = LoadSoundFromWave(soundWave);
-    // SetSoundVolume(soundObject, 0.5);
-    PlaySoundMulti(soundObject);
-    UnloadSound(soundObject);
+    if (!HAS_KEY(this->SFXobjects, (SFXID)ID)) {
+        const cmrc::file soundFile = this->_fs.open(SoundEffects[ID].path);
+        unsigned char* soundBuffer = (unsigned char*)(soundFile.begin());
+        Wave soundWave = LoadWaveFromMemory(".wav", soundBuffer, soundFile.size());
+        Sound soundObject = LoadSoundFromWave(soundWave);
+        SetSoundVolume(soundObject, 0.5);
+        PlaySoundMulti(soundObject);
+        this->SFXobjects[(SFXID)ID] = soundObject;
+    } else
+        PlaySoundMulti(this->SFXobjects[(SFXID)ID]);
 }
 
 void MusicSystem::changeSong(int ID)

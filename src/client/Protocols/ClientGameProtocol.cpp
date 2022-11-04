@@ -28,13 +28,20 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
 //
 
 void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
+    static int count = 0;
     if (cmd.args.size() < 1) {
         ERROR("Command " << cmd.cmd << " has no args.");
         return;
     }
 
     std::vector<std::string> res = Utilities::splitStr(raw, " ");
-    Serialization::stringToEntity(res[1], this->_entityManager);
+    EntityID newEntity = Serialization::stringToEntity(res[1], this->_entityManager);
+    if (this->_entityManager->hasComponent<SoundCreation::Component>(newEntity)) {
+        if (this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID != SFXID::INVALID) {
+            std::cout << "pushed to q " << this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID << std::endl;
+            MusicSystem::SFXQueue.push(this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID);
+        }
+    }
 }
 
 void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
