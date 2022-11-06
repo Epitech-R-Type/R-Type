@@ -27,11 +27,11 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
                                                            asio::ip::port_type(port), this->_uuid);
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
 
-    int port = UDP_PORT;
-    while (!Utilities::isPortAvailable(port))
-        port++;
+    int porto = UDP_PORT;
+    while (Utilities::isPortAvailable(porto))
+        porto++;
 
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, port);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, porto);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
     this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
