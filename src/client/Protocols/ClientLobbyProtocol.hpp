@@ -17,7 +17,7 @@ public:
 
     // ─── Message Handling ────────────────────────────────────────────────────────────────────
 
-    void handleIncMessages();
+    int handleIncMessages();
     void handleUserCommands(std::string command);
 
     // ─── Message Sending ─────────────────────────────────────────────────────────────────────

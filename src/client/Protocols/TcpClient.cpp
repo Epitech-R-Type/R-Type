@@ -54,9 +54,12 @@ void TcpClient::setupIncomingHandler() {
             // Reset buffer
             memset(this->_buffer, 0, 1024);
 
-            // // Handle server disconnection
-            // if (err.value() == asio::error::eof)
-            //     this->remove_peer(server);
+            // Handle server disconnection
+            if (err.value() == asio::error::eof) {
+                this->stop();
+                LOG("Connection closed by peer, exiting now...");
+                this->push_message(Message(std::string("CONN_CLOSED"), asio::ip::address(), asio::ip::port_type()));
+            }
 
             // Reset incoming handler
             this->setupIncomingHandler();

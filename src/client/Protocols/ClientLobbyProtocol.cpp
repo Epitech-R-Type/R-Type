@@ -31,7 +31,7 @@ asio::ip::address ClientLobbyProtocol::getServerIp() {
 
 // ─── Message Handling ────────────────────────────────────────────────────────────────────────────
 
-void ClientLobbyProtocol::handleIncMessages() {
+int ClientLobbyProtocol::handleIncMessages() {
     std::optional<Message<std::string>> potMsg;
     while ((potMsg = this->_incomingMQ->pop())) {
         auto message = potMsg.value();
@@ -40,6 +40,9 @@ void ClientLobbyProtocol::handleIncMessages() {
             this->_serverIP = message.getAddr();
             this->_serverPort = message.getPort();
         }
+
+        if (message.getMsg() == "CONN_CLOSED")
+            return 1;
 
         const std::string msg = message.getMsg();
 
@@ -60,6 +63,7 @@ void ClientLobbyProtocol::handleIncMessages() {
             this->_startGame = true;
         }
     }
+    return 0;
 }
 
 void ClientLobbyProtocol::handleUserCommands(std::string command) {

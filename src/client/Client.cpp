@@ -61,7 +61,8 @@ int Client::mainLoop() {
     this->_userInputThread = new std::thread(userInput, this->_userCommands);
 
     while (this->_lobbyRunning) {
-        this->_protocol->handleIncMessages();
+        if (this->_protocol->handleIncMessages())
+            return 0;
 
         this->handleUserCommands();
 
