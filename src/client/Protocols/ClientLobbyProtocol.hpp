@@ -6,7 +6,7 @@
 
 class ClientLobbyProtocol {
 public:
-    ClientLobbyProtocol();
+    ClientLobbyProtocol(std::shared_ptr<std::atomic<bool>> stopFlag);
 
     /**
      * Connects the client to the TCP socket of the server

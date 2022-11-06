@@ -44,6 +44,8 @@ private:
     std::shared_ptr<MessageQueue<std::string>> _userCommands = std::make_shared<MessageQueue<std::string>>();
     std::thread* _userInputThread;
 
+    std::shared_ptr<std::atomic<bool>> _stopFlag;
+
     ClientGame* _game;
     ClientLobbyProtocol* _protocol;
 };

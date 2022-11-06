@@ -11,7 +11,8 @@
 #include "raylib.h"
 
 Client::Client() {
-    this->_protocol = new ClientLobbyProtocol();
+    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_protocol = new ClientLobbyProtocol(this->_stopFlag);
 
     this->_lobbyRunning = true;
     this->_connected = false;
@@ -25,7 +26,7 @@ int Client::launchGame() {
         return 84;
 
     // Note: For performance reasons we could free the lobby ecs before launching the game
-    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort());
+    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort(), this->_stopFlag);
     this->_game->init();
     this->_game->mainLoop();
     delete this->_game;

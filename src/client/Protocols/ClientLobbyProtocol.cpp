@@ -3,14 +3,15 @@
 #include "../../shared/Utilities/Utilities.hpp"
 #include "TcpClient.hpp"
 
-ClientLobbyProtocol::ClientLobbyProtocol() {}
+ClientLobbyProtocol::ClientLobbyProtocol(std::shared_ptr<std::atomic<bool>> stopFlag) {
+    this->_stopFlag = stopFlag;
+}
 
 int ClientLobbyProtocol::connect(std::string serverIP, int port) {
     this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init tcp com thread
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
 
     // Wait to find out if connection succeeded or not

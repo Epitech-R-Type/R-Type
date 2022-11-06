@@ -12,7 +12,7 @@
 #include "ClientGame.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
+ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port, std::shared_ptr<std::atomic<bool>> stopFlag) {
     this->_isRunning = true;
 
     // Init com thread
@@ -25,7 +25,7 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
 
     this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
                                                            asio::ip::port_type(port), this->_uuid);
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_stopFlag = stopFlag;
 
     this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
@@ -36,7 +36,7 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
 ClientGame::~ClientGame() {
     // Signal thread to stop and join thread
     this->_stopFlag->store(true);
-    // this->_udpComThread->join();
+    this->_udpComThread->join();
 
     // Delete com thread
     delete this->_udpComThread;
@@ -52,7 +52,7 @@ void ClientGame::init() {
 }
 
 void ClientGame::mainLoop() {
-    while (this->_isRunning) // Detect window close button or ESC key
+    while (this->_isRunning && !*(this->_stopFlag)) // Detect window close button or ESC key
     {
         BeginDrawing();
 

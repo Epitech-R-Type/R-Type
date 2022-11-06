@@ -137,6 +137,7 @@ void TcpClient::run() {
 
 void TcpClient::stop() {
     // Stop context
+    this->_stopFlag->store(true);
     this->_ctxt.stop();
 }
 
