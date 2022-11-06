@@ -34,9 +34,10 @@ TcpServer::TcpServer(std::shared_ptr<MessageQueue<Message<std::string>>> incomin
 // Incoming Handler
 void TcpServer::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> peer) {
     peer->async_receive(asio::buffer(this->_buffer), [this, peer](const asio::error_code& err, std::size_t bytesTransfered) {
+        auto addr = peer->remote_endpoint().address();
+        auto port = peer->remote_endpoint().port();
+
         if (!err) {
-            auto addr = peer->remote_endpoint().address();
-            auto port = peer->remote_endpoint().port();
 
             this->push_message(Message(std::string(this->_buffer), addr, port));
 
@@ -50,8 +51,10 @@ void TcpServer::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> pe
             memset(this->_buffer, 0, 1024);
 
             // Handle client disconnection
-            if (err.value() == asio::error::eof)
+            if (err.value() == asio::error::eof) {
                 this->remove_peer(peer);
+                this->push_message(Message(std::string("CONN_CLOSED"), addr, port));
+            }
 
             // Reset incoming handler
             this->setup_incoming_handler(peer);

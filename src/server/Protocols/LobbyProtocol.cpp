@@ -45,6 +45,12 @@ int LobbyProtocol::handleCommands() {
         auto port = msg->getPort();
         auto msgBody = msg->getMsg();
 
+        // Handle client disconnection
+        if (msgBody == "CONN_CLOSED") {
+            this->_connMan.removeConnection(addr, port);
+            continue;
+        }
+
         // Parse msg
         auto splitBody = Utilities::splitStr(msgBody, " ");
 
