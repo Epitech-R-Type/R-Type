@@ -21,7 +21,7 @@ normdir:
 	$(eval BUILD="build")
 
 conan:
-	conan install conanfile.txt -if $(BUILD) --build=missing;
+	conan install conanfile.txt -if $(BUILD) --build=missing
 
 cleanbuild: normdir clean
 
