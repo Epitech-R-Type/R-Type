@@ -17,40 +17,11 @@ void ClientLobbyProtocol::connect(std::string serverIP, int port) {
     this->_connected = true;
 }
 
-void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
-    std::vector<std::string> splitstr = Utilities::splitStr(uuids, ";");
-
-    UUIDM serverUUID = UUIDM(splitstr[0]);
-    UUIDM clientUUID = UUIDM(splitstr[1]);
-
-    if (!this->_serverUUID.isValid() || !this->_clientUUID.isValid()) {
-        ERROR("Unable to get auhtentication from message.");
-        return;
-    }
-
-    this->_serverUUID = serverUUID;
-    this->_clientUUID = clientUUID;
-}
-
-void ClientLobbyProtocol::sendStart() {
-    std::stringstream ss;
-
-    ss << "START " << this->_clientUUID;
-
-    this->sendMessage(ss.str());
-}
-
-UUIDM ClientLobbyProtocol::getUUID() {
-    return this->_clientUUID;
-}
-
-int ClientLobbyProtocol::getServerPort() {
-    return this->port;
-}
-
 asio::ip::address ClientLobbyProtocol::getServerIp() {
     return this->_serverIP;
 }
+
+// ─── Message Handling ────────────────────────────────────────────────────────────────────────────
 
 void ClientLobbyProtocol::handleIncMessages() {
     std::optional<Message<std::string>> potMsg;
@@ -89,9 +60,35 @@ void ClientLobbyProtocol::handleUserCommands(std::string command) {
         this->sendMessage("START\r\n");
 }
 
+// ─── Message Sending ─────────────────────────────────────────────────────────────────────────────
+
+void ClientLobbyProtocol::sendStart() {
+    std::stringstream ss;
+
+    ss << "START " << this->_clientUUID;
+
+    this->sendMessage(ss.str());
+}
+
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
     Message<std::string> message(msgContent, this->_serverIP, this->_serverPort);
     this->_outgoingMQ->push(message);
+}
+
+// ─── Utility Functions ───────────────────────────────────────────────────────────────────────────
+void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
+    std::vector<std::string> splitstr = Utilities::splitStr(uuids, ";");
+
+    UUIDM serverUUID = UUIDM(splitstr[0]);
+    UUIDM clientUUID = UUIDM(splitstr[1]);
+
+    if (!this->_serverUUID.isValid() || !this->_clientUUID.isValid()) {
+        ERROR("Unable to get auhtentication from message.");
+        return;
+    }
+
+    this->_serverUUID = serverUUID;
+    this->_clientUUID = clientUUID;
 }
 
 bool ClientLobbyProtocol::isConnected() {
@@ -101,3 +98,11 @@ bool ClientLobbyProtocol::isConnected() {
 bool ClientLobbyProtocol::shouldGameStart() {
     return this->_startGame;
 };
+
+int ClientLobbyProtocol::getServerPort() {
+    return this->port;
+}
+
+UUIDM ClientLobbyProtocol::getUUID() {
+    return this->_clientUUID;
+}

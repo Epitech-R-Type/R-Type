@@ -15,26 +15,24 @@ public:
 
     void startGame();
 
-    bool isAuthenticated();
+    // ─── Message Handling ────────────────────────────────────────────────────────────────────
 
     void handleIncMessages();
-
     void handleUserCommands(std::string command);
 
-    void sendMessage(std::string msgContent);
-
-    bool isConnected();
-
-    bool shouldGameStart();
-
-    void saveAuthentication(std::string uuids);
+    // ─── Message Sending ─────────────────────────────────────────────────────────────────────
 
     void sendStart();
+    void sendMessage(std::string msgContent);
 
-    UUIDM getUUID();
+    // ─── Utility Functions ───────────────────────────────────────────────────────────────────
+
+    void saveAuthentication(std::string uuids);
+    bool isConnected();
+    bool shouldGameStart();
 
     int getServerPort();
-
+    UUIDM getUUID();
     asio::ip::address getServerIp();
 
 private:
