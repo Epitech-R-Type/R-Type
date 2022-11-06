@@ -21,18 +21,18 @@ jobs:
         shell: powershell
         # Generates default profile detecting GCC and sets old ABI
         run: >
-          conan profile new default --detect
-          conan profile update conf.tools.system.package_manager:mode=install default
-          conan profile update conf.tools.system.package_manager:sudo=True default
+          conan profile new default --detect;
+          conan profile update conf.tools.system.package_manager:mode=install default;
+          conan profile update conf.tools.system.package_manager:sudo=True default;
 
 
       # Build project
       - name: build
         shell: powershell
         run: >
-          conan install conanfile.txt -if build --build=missing
-          cmake -S . -B build
-          cmake --build build
+          conan install conanfile.txt -if build --build=missing;
+          cmake -S . -B build;
+          cmake --build build;
 
       - name: verify-files
         shell: bash
