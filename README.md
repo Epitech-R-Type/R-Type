@@ -1,10 +1,10 @@
 <p align="center">
     <img src="https://cdn.dribbble.com/users/664697/screenshots/6458763/r-logo.png" alt="drawing" width="200">
     <p align="center">
-        <img src="https://badgen.net/github/stars/Epitech-R-Type/R-Type">
-        <img src="https://badgen.net/github/contributors/micromatch/micromatch">
-        <img src="https://badgen.net/github/branches/Epitech-R-Type/R-Type">
-        <img src="https://badgen.net/github/commits/Epitech-R-Type/R-Type/main">
+        <img src="https://badgen.net/github/stars/Epitech-R-Type/R-Type?color=purple">
+        <img src="https://badgen.net/github/contributors/Epitech-R-Type/R-Type?color=green">
+        <img src="https://badgen.net/github/branches/Epitech-R-Type/R-Type?color=pink">
+        <img src="https://badgen.net/github/commits/Epitech-R-Type/R-Type/main?color=orange">
     </p>
     <p align="center">
         <img src="https://github.com/Epitech-R-Type/R-Type/actions/workflows/build_linux.yml/badge.svg?branch=main">
@@ -13,6 +13,9 @@
     </p>
 </p>
 
+# Table of contents
+[Installation](#installation)
+
 [Contributing Guide](CONTRIBUTING.md)
 
 # R-Type
@@ -20,6 +23,7 @@
 This project aims to implement the classic game [R-Type](https://wikiless.sethforprivacy.com/wiki/R-Type?lang=en).\
 It will include network based multiplayer.
 
+<a name="installation">
 # Install Conan
 
 ```
