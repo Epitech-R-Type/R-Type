@@ -24,7 +24,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(UUIDM uuid, asio::ip::address addr, int port);
+    ClientGame(Utilities::UUID uuid, asio::ip::address addr, int port);
     ~ClientGame();
 
     void init();
@@ -49,7 +49,7 @@ private:
 
     std::shared_ptr<ClientGameProtocol> _protocol;
 
-    UUIDM _uuid;
+    Utilities::UUID _uuid;
 
     bool _isRunning;
     std::thread* _udpComThread;
