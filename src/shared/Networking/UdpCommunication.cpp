@@ -78,7 +78,7 @@ void UdpCommunication::setup_incoming_handler() {
             // Reset buffer
             memset(this->_buffer, 0, 1024);
 
-            std::cerr << "Error performing async_receive_from()" << std::endl;
+            std::cerr << "Error performing async_receive_from()" << err << std::endl;
             this->setup_incoming_handler();
         }
     });

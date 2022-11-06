@@ -5,6 +5,9 @@
 ** .
 */
 
+
+#include "../../WindowsGuard.hpp"
+
 #include "ClientGameProtocol.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
