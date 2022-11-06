@@ -33,8 +33,8 @@ int Client::launchGame() {
     return 0;
 }
 
-void Client::connect(std::string serverIP, int port) {
-    this->_protocol->connect(serverIP, port);
+int Client::connect(std::string serverIP, int port) {
+    return this->_protocol->connect(serverIP, port);
 }
 
 void Client::handleUserCommands() {

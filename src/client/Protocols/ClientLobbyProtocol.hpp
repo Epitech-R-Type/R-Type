@@ -11,7 +11,7 @@ public:
     /**
      * Connects the client to the TCP socket of the server
      * */
-    void connect(std::string serverIP, int port = TCP_PORT);
+    int connect(std::string serverIP, int port = TCP_PORT);
 
     void startGame();
 

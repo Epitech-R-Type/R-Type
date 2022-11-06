@@ -14,7 +14,11 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> 
     TcpClient com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
-    com.connect(serverIP, port);
+    if (com.connect(serverIP, port)) {
+        incoming->push(Message(std::string("CONN_FAILED"), asio::ip::address(), asio::ip::port_type()));
+        return;
+    } else
+        incoming->push(Message(std::string("CONN_SUCCESS"), asio::ip::address(), asio::ip::port_type()));
     com.setupOutgoingHandler();
     com.stopSignalHandler();
     // Run asio context
@@ -107,13 +111,19 @@ void TcpClient::stopSignalHandler() {
     });
 }
 
-void TcpClient::connect(std::string serverIP, int port) {
+int TcpClient::connect(std::string serverIP, int port) {
     // socket creation
     this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(this->_ctxt));
-    // connection
-    this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
+
+    try {
+        this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
+    } catch (std::system_error const& e) {
+        ERROR("Connection to server refused, exiting now...");
+        return 1;
+    }
 
     this->setupIncomingHandler();
+    return 0;
 }
 
 // Context runtime functions

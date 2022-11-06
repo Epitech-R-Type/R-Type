@@ -5,7 +5,7 @@
 
 ClientLobbyProtocol::ClientLobbyProtocol() {}
 
-void ClientLobbyProtocol::connect(std::string serverIP, int port) {
+int ClientLobbyProtocol::connect(std::string serverIP, int port) {
     this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
@@ -13,8 +13,16 @@ void ClientLobbyProtocol::connect(std::string serverIP, int port) {
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
 
+    // Wait to find out if connection succeeded or not
+    std::optional<Message<std::string>> msg;
+    while (!(msg = this->_incomingMQ->pop()))
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    if (msg->getMsg() == "CONN_FAILED")
+        return 1;
+
     this->sendMessage("CONNECT\r\n");
     this->_connected = true;
+    return 0;
 }
 
 asio::ip::address ClientLobbyProtocol::getServerIp() {
