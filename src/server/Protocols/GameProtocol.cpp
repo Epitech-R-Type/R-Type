@@ -40,14 +40,11 @@ bool GameProtocol::waitForClients() {
         }
     }
     LOG("Done waiting for clients");
+
     return true;
 }
 
-//
-//
-// COMMAND HANDLING
-//
-//
+// ─── Command Handling ────────────────────────────────────────────────────────────────────────────
 
 bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     // Error handling
@@ -203,6 +200,7 @@ void GameProtocol::handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     }
 
     this->_connMan.resetTimeout(addr, port);
+    LOG("Resetting timeout...");
 }
 
 void GameProtocol::handleCommands() {
@@ -235,11 +233,7 @@ void GameProtocol::handleCommands() {
     }
 }
 
-//
-//
-// COMMAND SENDING
-//
-//
+// ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
 // Sends to all connected clients
 template <class... T>
@@ -302,11 +296,7 @@ void GameProtocol::sendChangeMusic(int songId) {
     }
 }
 
-//
-//
-// UTILITIES
-//
-//
+// ─── Utilities ───────────────────────────────────────────────────────────────────────────────────
 
 int GameProtocol::getPlayer(asio::ip::address addr, asio::ip::port_type port) {
     int i;
@@ -326,7 +316,7 @@ void GameProtocol::handleDisconnectedClients() {
     auto connections = this->_connMan.getConnections();
 
     // Loop and check if connection is timed out
-    for (auto conn : connections)
+    for (auto conn : connections) {
         if (conn.timeoutTimer.isExpired()) {
             // If connection is timed out, remove entity associated to player
             for (auto beg = this->_entityManager->begin<Player::Component>(); beg != this->_entityManager->end<Player::Component>(); ++beg) {
@@ -340,7 +330,12 @@ void GameProtocol::handleDisconnectedClients() {
                 }
             }
         }
+    }
 
     // Flush disconnected clients from connMan
     this->_connMan.removeDisconnected();
+}
+
+void GameProtocol::resetAllTimeouts() {
+    this->_connMan.resetTimeoutAll();
 }

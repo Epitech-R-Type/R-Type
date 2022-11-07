@@ -70,6 +70,9 @@ int Game::mainLoop() {
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
+    // Reset ALL client timeout timers
+    this->_protocol.resetAllTimeouts();
+
     // ─── Timers ──────────────────────────────────────────────────────────────────────────────
 
     std::chrono::time_point<std::chrono::system_clock> timer = getNow();
@@ -82,8 +85,8 @@ int Game::mainLoop() {
         // ─── Protocol Stuff ──────────────────────────────────────────────────────────────
 
         // Handle timedout clients
-        this->_protocol.handleDisconnectedClients();
         this->_protocol.handleCommands();
+        this->_protocol.handleDisconnectedClients();
 
         // ─── System Application ──────────────────────────────────────────────────────────
 

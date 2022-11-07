@@ -38,7 +38,8 @@ public:
     // Returns true if not enough clients have joined
     bool waitForClients();
 
-    // COMMAND HANDLING
+    // ─── Command Handling ────────────────────────────────────────────────────────────────────
+
     bool handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
     void handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
     void handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
@@ -48,7 +49,8 @@ public:
 
     void handleCommands();
 
-    // COMMAND SENDING
+    // ─── Command Sending ─────────────────────────────────────────────────────────────────────
+
     // By default, commands do nothing if invalid
     template <class... T>
     void sendEntity(EntityID id);
@@ -64,10 +66,13 @@ public:
 
     void sendChangeMusic(int songId);
 
-    // UILITIES
+    // ─── Uilities ────────────────────────────────────────────────────────────────────────────
+
     int getPlayer(asio::ip::address addr, asio::ip::port_type port);
     std::vector<Connection> getConnectedClients();
     void handleDisconnectedClients();
+
+    void resetAllTimeouts();
 
 private:
     // Udp messaging queues

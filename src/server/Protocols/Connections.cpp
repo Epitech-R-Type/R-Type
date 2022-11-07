@@ -83,10 +83,9 @@ void ConnectionManager::removeConnection(std::string uuid) {
 }
 
 void ConnectionManager::resetTimeout(asio::ip::address addr, asio::ip::port_type port) {
-    std::optional<Connection> client;
-
-    if ((client = this->getConnection(addr, port)))
-        client->timeoutTimer.resetTimer();
+    for (auto conn : this->_connections)
+        if (conn.addr == addr && conn.port == port)
+            conn.timeoutTimer.resetTimer();
 }
 
 void ConnectionManager::resetTimeoutAll() {

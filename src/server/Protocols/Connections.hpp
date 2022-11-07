@@ -28,7 +28,7 @@ struct Connection {
 class ConnectionManager {
 public:
     // If serverUUID already generated, can be set in constructor
-    ConnectionManager(UUIDM serverUUID, int clientTimeout = 3);
+    ConnectionManager(UUIDM serverUUID, int clientTimeout = 4);
 
     // Add new connection to vector and generates UUID for connection
     // If connection already exists, returns existing UUID for conn
