@@ -96,3 +96,14 @@ struct ImmunityFrame {
 In order for the client to display the information received by the server, only one system needs to be implemented. This system is the animation drawing system that should allow it to draw static and animated sprites.
 
 All sprite sheets required by the game to run will be provided in a directory named 'ressources'.
+
+### Player controls
+
+To communicate the direction a player wants to move the following enum is used:
+
+enum Move { UP = 1, DOWN = -1, LEFT = 3, RIGHT = -3 }
+
+The integer coresponding to the desired direction can be calculated by adding the integers in the enum that have an influence on the final direction.
+
+e.g.:
+Down right = DOWN + RIGHT = -1 - 3 = -4

@@ -35,8 +35,6 @@ namespace Armor {
         int armor = 0;
     };
 
-    std::string toString(Armor::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Armor
 
@@ -47,8 +45,6 @@ namespace Health {
         bool visible = false;
     };
 
-    std::string toString(Health::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Health
 
@@ -57,8 +53,6 @@ namespace Position {
         float x = 0;
         float y = 0;
     };
-
-    std::string toString(Position::Component component);
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Position
@@ -122,8 +116,6 @@ namespace Animation {
         {Animation::AnimationID::Death, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
     };
 
-    std::string toString(Animation::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Animation
 
@@ -136,8 +128,6 @@ namespace Velocity {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    std::string toString(Velocity::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Velocity
 
@@ -149,8 +139,6 @@ namespace Player {
         int uniqueID;
     };
 
-    std::string toString(Player::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Player
 
@@ -158,8 +146,6 @@ namespace Damage {
     struct Component {
         int damage = 0;
     };
-
-    std::string toString(Damage::Component component);
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Damage
@@ -178,8 +164,6 @@ namespace Armament {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    std::string toString(Armament::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Armament
 
@@ -191,8 +175,6 @@ namespace Hitbox {
         Point botRight;
     };
 
-    std::string toString(Hitbox::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Hitbox
 
@@ -201,8 +183,6 @@ namespace Team {
         Ally,
         Enemy,
     };
-
-    std::string toString(Team::Component component);
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 
@@ -214,8 +194,6 @@ namespace ImmunityFrame {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    std::string toString(ImmunityFrame::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 
 } // namespace ImmunityFrame
@@ -223,11 +201,22 @@ namespace ImmunityFrame {
 namespace CollisionEffect {
     typedef void (*Component)(EntityID defender, EntityID attacker, std::shared_ptr<ECSManager> ECS);
 
-    std::string toString(CollisionEffect::Component component);
-
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 
     void dealDamage(EntityID attacker, EntityID defender, std::shared_ptr<ECSManager> ECS);
     // should not need serialization or update since logic happens serverside
     // if we do need to just use a map and enum
 } // namespace CollisionEffect
+
+std::string toString(Armor::Component component);
+std::string toString(Health::Component component);
+std::string toString(Position::Component component);
+std::string toString(Animation::Component component);
+std::string toString(Velocity::Component component);
+std::string toString(Player::Component component);
+std::string toString(Damage::Component component);
+std::string toString(Armament::Component component);
+std::string toString(Hitbox::Component component);
+std::string toString(Team::Component component);
+std::string toString(ImmunityFrame::Component component);
+std::string toString(CollisionEffect::Component component);

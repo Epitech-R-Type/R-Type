@@ -10,15 +10,14 @@
 
 ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                        std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<ECSManager> entManager,
-                                       asio::ip::address addr, asio::ip::port_type port, UUIDM uuid)
+                                       std::shared_ptr<MusicSystem> musicSystem, asio::ip::address addr, asio::ip::port_type port, UUIDM uuid)
     : _incomingMQ(incoming),
       _outgoingMQ(outgoing),
       _entityManager(entManager),
+      _musicSystem(musicSystem),
       _addr(addr),
       _port(port),
-      _uuid(uuid) {
-    LOG("UDP Sending to port : " << port);
-}
+      _uuid(uuid) {}
 
 //
 //
@@ -54,12 +53,30 @@ void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
     this->_entityManager->deleteEntity(id);
 }
 
+void ClientGameProtocol::handleMusic(ParsedCmd cmd) {
+    int songId;
+
+    if (cmd.args.size() != 1) {
+        ERROR("Command " << cmd.cmd << " has not exactly one arg.");
+        return;
+    }
+
+    try {
+        songId = std::stoi(cmd.args[0][0]);
+    } catch (...) {
+        ERROR("Unable to convert argument to int.");
+        return;
+    }
+
+    this->_musicSystem->changeSong(SongID(songId));
+}
+
 void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
     EntityID id;
     Index compId;
 
     if (cmd.args.size() != 2) {
-        ERROR("Command " << cmd.cmd << " has not exactly two args.");
+        ERROR("Command " << cmd.cmd << " doesn't have two args.");
         return;
     }
 
@@ -71,7 +88,6 @@ void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
         return;
     }
 
-    LOG("Deleting Component " << compId << " of entity " << id);
     this->_entityManager->removeComp(id, compId);
 }
 
@@ -85,14 +101,17 @@ bool ClientGameProtocol::handleCommands() {
             continue;
 
         switch (parsed->cmd) {
-            case Entityd:
+            case Command::Entityd:
                 this->handleEntity(parsed.value(), msg->getMsg());
                 break;
-            case DeleteEntity:
+            case Command::DeleteEntity:
                 this->handleDeleteEntity(parsed.value());
                 break;
-            case DeleteComponent:
+            case Command::DeleteComponent:
                 this->handleDeleteComponent(parsed.value());
+                break;
+            case Command::ChangeMusic:
+                this->handleMusic(parsed.value());
                 break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
@@ -103,40 +122,18 @@ bool ClientGameProtocol::handleCommands() {
 
 // COMMAND SENDING
 
-void ClientGameProtocol::sendActMove(Move direction) {
-    std::string body;
-
-    switch (direction) {
-        case Move::UP:
-            body = "UP";
-            break;
-        case Move::DOWN:
-            body = "DOWN";
-            break;
-        case Move::LEFT:
-            body = "LEFT";
-            break;
-        case Move::RIGHT:
-            body = "RIGHT";
-            break;
-    }
-
-    auto msg = ProtocolUtils::createMessage("ACT_MOVE", body, this->_addr, this->_port);
-
-    // LOG("Sending to Server: " << msg.getMsg());
-
+void ClientGameProtocol::sendActMove(std::string directions) {
+    auto msg = ProtocolUtils::createMessage("ACT_MOVE", directions, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendActFire() {
     auto msg = ProtocolUtils::createMessage("ACT_SHOOT", "", this->_addr, this->_port);
-    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendHere() {
     auto msg = ProtocolUtils::createMessage("HERE", this->_uuid.toString(), this->_addr, this->_port);
-    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }
 
@@ -145,6 +142,5 @@ void ClientGameProtocol::sendGetEnt(EntityID id) {
     ss << id;
 
     auto msg = ProtocolUtils::createMessage("GET_ENT", ss.str(), this->_addr, this->_port);
-    // LOG("Sending to Server: " << msg.getMsg());
     this->_outgoingMQ->push(msg);
 }

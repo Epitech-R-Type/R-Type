@@ -7,31 +7,35 @@
 
 #pragma once
 
-#include <raylib.h>
-#include <cmrc/cmrc.hpp>
 #include "../../shared/Systems/ISystem.hpp"
-
+#include <cmrc/cmrc.hpp>
+#include <map>
+#include <raylib.h>
 CMRC_DECLARE(client);
 
 struct Song {
     const std::string path;
 };
 
-static std::vector<Song> Songs {
-    {"resources/song0.mp3"},
-    {"resources/song1.mp3"}
+enum SongID {
+    NORMAL,
+    BOSS,
+};
+
+static std::map<SongID, Song> Songs{
+    {SongID::NORMAL, {"resources/song0.mp3"}},
+    {SongID::BOSS, {"resources/song1.mp3"}},
 };
 
 class MusicSystem : public System {
-    public:
-        MusicSystem(int ID);
-        ~MusicSystem();
-        void apply();
-        void changeSong(int ID);
+public:
+    MusicSystem();
+    ~MusicSystem();
+    void apply();
+    void changeSong(SongID id);
 
-    private:
-        Music _music;
-        float _volume = 0.5;
-        cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
+private:
+    Music _music;
+    float _volume = 0.5;
+    cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
 };
-

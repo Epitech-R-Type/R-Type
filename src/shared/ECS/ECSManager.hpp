@@ -18,7 +18,7 @@
 #include <vector>
 
 struct Entity {
-    EntityID id;
+    EntityID id = createId(-1, 0);
     std::bitset<MAX_COMPONENTS> components;
 };
 
@@ -75,7 +75,7 @@ public:
         Index i = getIndex(id);
 
         // Check against invalid entity
-        if (0 > getIndex(this->_entities[i].id))
+        if (!this->isValidEntity(id))
             return;
 
         // Reset corresponding bit in component bitset
@@ -108,7 +108,7 @@ public:
         if (!this->isValidEntity(id))
             return false;
 
-        // If entity doesn't have component return null
+        // If entity doesn't have component
         if (!this->_entities[i].components[compId])
             return false;
 
@@ -119,10 +119,6 @@ public:
     const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity);
 
     // ─── Utility Methods ─────────────────────────────────────────────────────────────────────
-
-    // MOST LIKELY TO DELETE
-    // ASK NICHOLAS
-    bool entityIsActive(Index id);
 
     // Checks if entity has component
     // (also checks validity of id, if index is < g_idCounter and is valid)
@@ -218,6 +214,15 @@ public:
     const Iterator<Comp...> end() {
         return Iterator<Comp...>(this->_entities.size(), this);
     }
+
+    // ─── Getters For Testing ─────────────────────────────────────────────────────────────────────────
+
+#ifdef GTEST
+    std::vector<Entity> getEntities() const;
+    std::vector<EntityID> getAllModified() const;
+    std::vector<Index> getUnusedEntities() const;
+    std::vector<std::unique_ptr<CompPool>>& getCompPools();
+#endif
 
 private:
     std::vector<Entity> _entities;

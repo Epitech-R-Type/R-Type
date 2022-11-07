@@ -21,6 +21,7 @@
 #define DELETE_ENTITY "DEL_ENT"
 #define ACTION_MOVE "ACT_MOVE"
 #define ACTION_SHOOT "ACT_SHOOT"
+#define CHANGE_MUSIC "CHANGE_MUSIC"
 #define HERE "HERE"
 // Command enum
 enum Command {
@@ -31,6 +32,7 @@ enum Command {
     Entityd, // Client commands start here
     DeleteEntity,
     DeleteComponent,
+    ChangeMusic
 };
 
 // Parsed command structure$
@@ -69,6 +71,8 @@ public:
             output->cmd = Command::ActMove;
         else if (splitMsg[0] == DELETE_ENTITY)
             output->cmd = Command::DeleteEntity;
+        else if (splitMsg[0] == CHANGE_MUSIC)
+            output->cmd = Command::ChangeMusic;
         else {
             ERROR("Unhandled Command: " << splitMsg[0]);
             return {};
