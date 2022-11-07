@@ -60,7 +60,7 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
         return false;
     }
 
-    UUIDM candidate(cmd.args[0][0]);
+    Utilities::UUID candidate(cmd.args[0][0]);
 
     for (auto conn : this->_expectedClients)
         if (conn.uuid == candidate) {

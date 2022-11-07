@@ -31,15 +31,15 @@ public:
 
     void sendStart();
 
-    UUIDM getUUID();
+    Utilities::UUID getUUID();
 
     int getServerPort();
 
     asio::ip::address getServerIp();
 
 private:
-    UUIDM _serverUUID;
-    UUIDM _clientUUID;
+    Utilities::UUID _serverUUID;
+    Utilities::UUID _clientUUID;
     // Tcp com thread stuff
     std::thread* _comThread;
     std::shared_ptr<std::atomic<bool>> _stopFlag;

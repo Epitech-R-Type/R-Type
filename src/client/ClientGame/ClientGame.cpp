@@ -12,7 +12,7 @@
 #include "ClientGame.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
+ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address addr, int port) {
     this->_isRunning = true;
 
     // Init com thread

@@ -25,7 +25,8 @@
 class ClientGameProtocol {
 public:
     ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
-                       std::shared_ptr<ECSManager> entManager, std::shared_ptr<MusicSystem> musicSystem, asio::ip::address addr, asio::ip::port_type port, UUIDM uuid);
+                       std::shared_ptr<ECSManager> entManager, std::shared_ptr<MusicSystem> musicSystem, asio::ip::address addr,
+                       asio::ip::port_type port, Utilities::UUID uuid);
 
     // COMMAND HANDLING
     void handleEntity(ParsedCmd cmd, std::string raw);
@@ -58,5 +59,5 @@ private:
     std::shared_ptr<MusicSystem> _musicSystem;
 
     // Client UUID
-    UUIDM _uuid;
+    Utilities::UUID _uuid;
 };

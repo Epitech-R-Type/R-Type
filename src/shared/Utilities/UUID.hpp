@@ -7,45 +7,47 @@
 #include <sstream>
 #include <string>
 
-class UUIDM {
-public:
-    /**
-     * Generate a new UUID
-     * */
-    UUIDM();
+namespace Utilities {
+    class UUID {
+    public:
+        /**
+         * Generate a new UUID
+         * */
+        UUID();
 
-    /**
-     * Extract the first UUID of a string
-     * */
-    UUIDM(std::string uuidStr);
+        /**
+         * Extract the first UUID of a string
+         * */
+        UUID(std::string uuidStr);
 
-    /**
-     * Cast UUID to string, to send it over network or similar
-     * */
-    std::string toString();
+        /**
+         * Cast UUID to string, to send it over network or similar
+         * */
+        std::string toString();
 
-    bool isValid();
+        bool isValid();
 
-    bool operator==(const UUIDM& uuid);
+        bool operator==(const Utilities::UUID& uuid);
 
-    bool operator!=(const UUIDM& uuid);
+        bool operator!=(const Utilities::UUID& uuid);
 
-    friend std::ostream& operator<<(std::ostream& os, const UUIDM& uuid) {
-        return os << uuid._uuid;
+        friend std::ostream& operator<<(std::ostream& os, const Utilities::UUID& uuid) {
+            return os << uuid._uuid;
+        };
+
+        friend std::string& operator<<(std::string& str, const Utilities::UUID& uuid) {
+            std::stringstream ss;
+
+            ss << str << uuid;
+            str = ss.str();
+            return str;
+        }
+
+        std::string operator+(std::string str);
+
+        std::string operator+(char* str);
+
+    private:
+        uuids::uuid _uuid;
     };
-
-    friend std::string& operator<<(std::string& str, const UUIDM& uuid) {
-        std::stringstream ss;
-
-        ss << str << uuid;
-        str = ss.str();
-        return str;
-    }
-
-    std::string operator+(std::string str);
-
-    std::string operator+(char* str);
-
-private:
-    uuids::uuid _uuid;
-};
+} // namespace Utilities
