@@ -18,8 +18,8 @@ void Utilities::createCompPoolIndexes() {
     getID<CollisionEffect::Component>();
     getID<Damage::Component>();
     getID<SoundCreation::Component>();
-    getID<SoundDamage::Component>();
     getID<SoundDestruction::Component>();
+    getID<SoundDamage::Component>();
 }
 
 bool Utilities::isPortAvailable(int port) {

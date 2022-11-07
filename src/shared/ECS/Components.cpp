@@ -291,7 +291,6 @@ void SoundDestruction::applyUpdate(std::vector<std::string> args, EntityID entit
         SoundDestruction::Component* component = manager->getComponent<SoundDestruction::Component>(entityID);
         component->ID = (SFXID)stoi(args[1]);
     } else {
-        std::cout << "created" << std::endl;
         manager->addComp<SoundDestruction::Component>(entityID, {(SFXID)stoi(args[1])});
     }
 }

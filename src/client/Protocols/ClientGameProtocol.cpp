@@ -52,10 +52,7 @@ void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
         ERROR("Unable to convert argument to long long.");
         return;
     }
-    if (this->_entityManager->hasComponent<Position::Component>(id) && this->_entityManager->hasComponent<SoundDestruction::Component>(id))
-        std::cout << "destroyed" << std::endl;
-
-    if (this->_entityManager->hasComponent<SoundDestruction::Component>(id) && this->_entityManager->hasComponent<Position::Component>(id) && !this->_entityManager->getComponent<Position::Component>(id)->x < 0 && !this->_entityManager->getComponent<Position::Component>(id)->y < 0 && !this->_entityManager->getComponent<Position::Component>(id)->x > GetScreenWidth() && !this->_entityManager->getComponent<Position::Component>(id)->y > GetScreenHeight())
+    if (this->_entityManager->hasComponent<SoundDestruction::Component>(id) && this->_entityManager->hasComponent<Position::Component>(id) && this->_entityManager->getComponent<Position::Component>(id)->x > 0 && this->_entityManager->getComponent<Position::Component>(id)->y > 0 && this->_entityManager->getComponent<Position::Component>(id)->x < GetScreenWidth() && this->_entityManager->getComponent<Position::Component>(id)->y < GetScreenHeight())
         MusicSystem::SFXQueue.push(this->_entityManager->getComponent<SoundDestruction::Component>(id)->ID);
     this->_entityManager->deleteEntity(id);
 }

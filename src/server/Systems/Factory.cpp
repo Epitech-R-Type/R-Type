@@ -117,8 +117,7 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
         positionPre.y = center.y;
         velocity.x = -velocityX;
         velocity.y = -velocityY;
-        ECS->addComp<SoundDestruction::Component>(bullet, {SFXID::GUN_SHOT2});
-        std::cout << "enemy bullet" << std::endl;
+        ECS->addComp<SoundDestruction::Component>(bullet, {SFXID::GUN_SHOT1});
     }
 
     ECS->addComp<Velocity::Component>(bullet, velocity);

@@ -48,7 +48,7 @@ void MusicSystem::playSFX(int ID) {
         unsigned char* soundBuffer = (unsigned char*)(soundFile.begin());
         Wave soundWave = LoadWaveFromMemory(".wav", soundBuffer, soundFile.size());
         Sound soundObject = LoadSoundFromWave(soundWave);
-        SetSoundVolume(soundObject, 0.5);
+        SetSoundVolume(soundObject, 0.7);
         PlaySoundMulti(soundObject);
         this->SFXobjects[(SFXID)ID] = soundObject;
     } else
