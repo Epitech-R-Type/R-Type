@@ -20,22 +20,17 @@
         },
         {
             "name": "(gdb) Launch Client",
-            "type": "cppdbg",
+            "type": "cppvsdbg",
             "request": "launch",
-            "program": "${cwd}/bin/Client",
+            "program": "${cwd}/build/bin/Client",
             "args": [
                 "-ip",
                 "127.0.0.1",
-                "-port",
-                "3501"
             ],
             "stopAtEntry": false,
             "cwd": "${cwd}",
             "environment": [],
-            "externalConsole": false,
-            "MIMode": "gdb",
-            "setupCommands": [],
-            "miDebuggerPath": "/usr/bin/gdb"
+            "externalConsole": true,
         },
         {
             "name": "(gdb) Launch Tests",

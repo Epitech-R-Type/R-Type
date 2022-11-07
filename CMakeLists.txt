@@ -14,8 +14,6 @@ else()
     add_compile_options(-g3)
 endif()
 
-
-
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
 conan_basic_setup()

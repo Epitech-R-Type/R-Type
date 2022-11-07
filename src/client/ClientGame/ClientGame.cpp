@@ -23,13 +23,15 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
     this->_uuid = uuid;
     this->_musicSystem = std::make_unique<MusicSystem>();
 
-    this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
-                                                           asio::ip::port_type(port), this->_uuid);
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-
     int porto = UDP_PORT;
     while (Utilities::isPortAvailable(porto))
         porto++;
+
+    this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
+                                                           asio::ip::port_type(porto), this->_uuid);
+    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
+
+  
 
     this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, porto);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
@@ -48,7 +50,8 @@ ClientGame::~ClientGame() {
 
 void ClientGame::init() {
     InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
-
+    while(!IsWindowReady()) {}
+    
     // Send here command
     this->_protocol->sendHere();
 
