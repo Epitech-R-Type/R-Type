@@ -10,7 +10,7 @@
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/Utilities/ray.hpp"
 
-ClientGame::ClientGame(UUIDM uuid, asio::ip::address serverAddr, int serverUdpPort) {
+ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int serverUdpPort) {
     this->_isRunning = true;
 
     // Init com thread
