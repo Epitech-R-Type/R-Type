@@ -99,7 +99,8 @@ int LobbyProtocol::handleCommands() {
             outputPort = UDP_PORT;
 
             // Find an available port
-            while (!Utilities::isPortAvailable(outputPort))
+            // TOFIX
+            while (Utilities::isPortAvailable(outputPort))
                 outputPort++;
 
             LOG("Using port: " << outputPort);

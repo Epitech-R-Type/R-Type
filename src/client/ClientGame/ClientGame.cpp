@@ -19,13 +19,14 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address serverAddr, int serverUdpPo
     this->_entManager = std::make_shared<ECSManager>();
 
     this->_uuid = uuid;
+#ifndef WIN32_LEAN_AND_MEAN
     this->_musicSystem = std::make_unique<MusicSystem>();
-
+#endif
     int clientUdpPort = UDP_PORT;
     while (!Utilities::isPortAvailable(clientUdpPort))
         clientUdpPort++;
 
-    this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
+    this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, serverAddr,
                                                            asio::ip::port_type(serverUdpPort), this->_uuid);
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
 
@@ -66,7 +67,11 @@ void ClientGame::mainLoop() {
         this->_protocol->handleCommands();
         this->_spriteSystem->apply();
         this->_healthSystem->apply();
+
+#ifndef WIN32_LEAN_AND_MEAN
         this->_musicSystem->apply();
+#endif
+
         this->_inputSystem->apply();
 
         Ray::EndDrawing();

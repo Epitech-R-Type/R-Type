@@ -111,7 +111,9 @@ bool ClientGameProtocol::handleCommands() {
                 this->handleDeleteComponent(parsed.value());
                 break;
             case Command::ChangeMusic:
+#ifndef WIN32_LEAN_AND_MEAN
                 this->handleMusic(parsed.value());
+#endif
                 break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
