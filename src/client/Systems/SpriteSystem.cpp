@@ -5,10 +5,8 @@
 ** .
 */
 
-#include "../../WindowsGuard.hpp"
-
-#include "../../shared/ECS/ECSManager.hpp"
 #include "SpriteSystem.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include <algorithm>
 
 #define HAS_KEY(map, key) (map.find(key) != map.end())
@@ -17,20 +15,20 @@ SpriteSystem::SpriteSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 
-Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, const float ypos) {
+Ray::Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, const float ypos) {
     const cmrc::file image = this->_fs.open(sheet.path);
 
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
 
-    Image sprite = LoadImageFromMemory(".png", imageBuffer, image.size());
+    Ray::Image sprite = Ray::LoadImageFromMemory(".png", imageBuffer, image.size());
 
-    const Rectangle crop{xpos, ypos, sheet.frameWidth, sheet.frameHeight};
+    const Ray::Rectangle crop{xpos, ypos, sheet.frameWidth, sheet.frameHeight};
 
-    ImageCrop(&sprite, crop);
+    Ray::ImageCrop(&sprite, crop);
 
-    Texture2D texture = LoadTextureFromImage(sprite);
+    Ray::Texture2D texture = Ray::LoadTextureFromImage(sprite);
 
-    UnloadImage(sprite);
+    Ray::UnloadImage(sprite);
 
     return texture;
 }
@@ -50,7 +48,7 @@ void SpriteSystem::loadAnimation(Animation::AnimationID id) {
         for (int x = 0; x < animationSheet.animWidth; x++) {
             const float xPos = animationSheet.startX + (animationSheet.frameWidth * x) + (animationSheet.separationX * x);
             const float yPos = animationSheet.startY + (animationSheet.frameHeight * y) + (animationSheet.separationY * y);
-            Texture2D sprite = this->loadSprite(animationSheet, xPos, yPos);
+            Ray::Texture2D sprite = this->loadSprite(animationSheet, xPos, yPos);
             this->_animations[id].push_back(sprite);
         }
     }
@@ -100,17 +98,17 @@ void SpriteSystem::apply() {
             if (!HAS_KEY(this->_animations, animation->animationID))
                 this->loadAnimation(animation->animationID);
 
-            Texture2D frame = this->_animations[animation->animationID][animation->index];
-            Vector2 posVec{position->x, position->y};
+            Ray::Texture2D frame = this->_animations[animation->animationID][animation->index];
+            Ray::Vector2 posVec{position->x, position->y};
 
             if (Animation::Sheets[animation->animationID].tile)
-                DrawTextureTiled(frame,
-                                 Rectangle{position->x, position->y, Animation::Sheets[animation->animationID].frameWidth,
-                                           Animation::Sheets[animation->animationID].frameHeight},
-                                 Rectangle{position->x, position->y, WINDOW_WIDTH, WINDOW_HEIGHT}, posVec, animation->rotation, animation->scale,
-                                 WHITE);
+                Ray::DrawTextureTiled(frame,
+                                      Ray::Rectangle{position->x, position->y, Animation::Sheets[animation->animationID].frameWidth,
+                                                     Animation::Sheets[animation->animationID].frameHeight},
+                                      Ray::Rectangle{position->x, position->y, WINDOW_WIDTH, WINDOW_HEIGHT}, posVec, animation->rotation,
+                                      animation->scale, Ray::WHITE);
             else
-                DrawTextureEx(frame, posVec, animation->rotation, animation->scale, WHITE);
+                Ray::DrawTextureEx(frame, posVec, animation->rotation, animation->scale, Ray::WHITE);
 
             this->nextFrame(animation);
         }
@@ -123,6 +121,6 @@ void SpriteSystem::drawImage(Animation::AnimationID id) {
         this->loadAnimation(id);
     }
 
-    Texture2D frame = this->_animations[id][0];
-    DrawTextureEx(frame, {0, 0}, 0, 1.0 + 639.0 / GetScreenHeight(), WHITE);
+    Ray::Texture2D frame = this->_animations[id][0];
+    Ray::DrawTextureEx(frame, {0, 0}, 0, 1.0 + 639.0 / Ray::GetScreenHeight(), Ray::WHITE);
 };

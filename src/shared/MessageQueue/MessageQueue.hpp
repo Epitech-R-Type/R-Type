@@ -6,7 +6,6 @@
 */
 
 #pragma once
-#include "../../WindowsGuard.hpp"
 
 #include <asio.hpp>
 #include <iostream>

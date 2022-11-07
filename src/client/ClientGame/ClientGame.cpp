@@ -5,12 +5,11 @@
 ** .*
 */
 
-#include "../../WindowsGuard.hpp"
-
+#include "ClientGame.hpp"
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/Serialization.hpp"
-#include "ClientGame.hpp"
-#include "raylib.h"
+#include "../../shared/Utilities/ray.hpp"
+//#include "../../shared/Utilities/ray.hpp"
 
 ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
     this->_isRunning = true;
@@ -31,8 +30,6 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port) {
                                                            asio::ip::port_type(porto), this->_uuid);
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
 
-  
-
     this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, porto);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
@@ -49,9 +46,11 @@ ClientGame::~ClientGame() {
 }
 
 void ClientGame::init() {
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
-    while(!IsWindowReady()) {}
-    
+    Ray::InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
+    while (!Ray::IsWindowReady()) {
+        //
+    }
+
     // Send here command
     this->_protocol->sendHere();
 
@@ -61,9 +60,9 @@ void ClientGame::init() {
 void ClientGame::mainLoop() {
     while (this->_isRunning) // Detect window close button or ESC key
     {
-        BeginDrawing();
+        Ray::BeginDrawing();
 
-        ClearBackground(BLACK);
+        Ray::ClearBackground(Ray::BLACK);
 
         this->_protocol->handleCommands();
         this->_spriteSystem->apply();
@@ -71,6 +70,6 @@ void ClientGame::mainLoop() {
         this->_musicSystem->apply();
         this->_inputSystem->apply();
 
-        EndDrawing();
+        Ray::EndDrawing();
     }
 }

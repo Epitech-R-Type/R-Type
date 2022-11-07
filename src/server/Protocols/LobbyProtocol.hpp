@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
 #include <asio.hpp>
 #include <memory>
 #include <sstream>

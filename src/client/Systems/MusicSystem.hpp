@@ -8,9 +8,9 @@
 #pragma once
 
 #include "../../shared/Systems/ISystem.hpp"
+#include "../../shared/Utilities/ray.hpp"
 #include <cmrc/cmrc.hpp>
 #include <map>
-#include <raylib.h>
 CMRC_DECLARE(client);
 
 struct Song {
@@ -35,7 +35,7 @@ public:
     void changeSong(SongID id);
 
 private:
-    Music _music;
+    Ray::Music _music;
     float _volume = 0.5;
     cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
 };
