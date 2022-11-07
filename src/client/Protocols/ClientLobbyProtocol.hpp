@@ -51,7 +51,7 @@ private:
     asio::ip::port_type _serverPort = 0;
 
     // udp server port
-    int port;
+    int serverUdpPort;
 
     bool _connected = false;
     bool _authenticated = false;

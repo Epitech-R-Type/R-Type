@@ -45,7 +45,7 @@ UUIDM ClientLobbyProtocol::getUUID() {
 }
 
 int ClientLobbyProtocol::getServerPort() {
-    return this->port;
+    return this->serverUdpPort;
 }
 
 asio::ip::address ClientLobbyProtocol::getServerIp() {
@@ -77,7 +77,7 @@ void ClientLobbyProtocol::handleIncMessages() {
         }
 
         if (msgBits[0] == "START") {
-            this->port = std::stoi(Utilities::splitStr(msgBits[1], ";")[1]); // get port
+            this->serverUdpPort = std::stoi(Utilities::splitStr(msgBits[1], ";")[1]); // get port
             this->_startGame = true;
         }
     }

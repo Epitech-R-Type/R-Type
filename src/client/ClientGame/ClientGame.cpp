@@ -10,7 +10,7 @@
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/Utilities/ray.hpp"
 
-ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int serverPort) {
+ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int serverUdpPort) {
     this->_isRunning = true;
 
     // Init com thread
@@ -21,15 +21,15 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int serverPort) {
     this->_uuid = uuid;
     this->_musicSystem = std::make_unique<MusicSystem>();
 
-    int udpPort = UDP_PORT;
-    while (Utilities::isPortAvailable(udpPort))
-        udpPort++;
+    int clientUdpPort = UDP_PORT;
+    while (Utilities::isPortAvailable(clientUdpPort))
+        clientUdpPort++;
 
     this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
-                                                           asio::ip::port_type(serverPort), this->_uuid);
+                                                           asio::ip::port_type(serverUdpPort), this->_uuid);
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
 
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, udpPort);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, clientUdpPort);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
     this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
