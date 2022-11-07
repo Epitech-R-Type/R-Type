@@ -47,7 +47,7 @@ private:
 
     std::shared_ptr<ClientGameProtocol> _protocol;
 
-    UUIDM _uuid;
+    Utilities::UUID _uuid;
 
     bool _isRunning;
     std::thread* _udpComThread;
