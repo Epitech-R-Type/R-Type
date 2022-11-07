@@ -19,7 +19,7 @@
 #endif
 #endif
 
-#define ERROR(msg) std::cout << REDL << "[ERROR]   " << __FUNCTION_NAME__ << ": " << msg << NC << std::endl
+#define ERRORLOG(msg) std::cout << REDL << "[ERROR]   " << __FUNCTION_NAME__ << ": " << msg << NC << std::endl
 #define WARNING(msg) std::cout << "[WARNING] " << __FUNCTION_NAME__ << ": " << msg << std::endl
 #define LOG(msg) std::cout << "[LOG]     " << __FUNCTION_NAME__ << ": " << msg << std::endl
 #define DEBUG(msg) // std::cout << "[DEBUG]   " << __FUNCTION_NAME__ << ": " << msg << std::endl

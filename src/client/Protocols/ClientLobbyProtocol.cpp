@@ -24,7 +24,7 @@ void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
     UUIDM clientUUID = UUIDM(splitstr[1]);
 
     if (!this->_serverUUID.isValid() || !this->_clientUUID.isValid()) {
-        ERROR("Unable to get auhtentication from message.");
+        ERRORLOG("Unable to get auhtentication from message.");
         return;
     }
 
@@ -72,7 +72,7 @@ void ClientLobbyProtocol::handleIncMessages() {
         }
 
         if (UUIDM(msg) != this->_serverUUID) {
-            ERROR("Couldn't authenticate Server.");
+            ERRORLOG("Couldn't authenticate Server.");
             continue;
         }
 

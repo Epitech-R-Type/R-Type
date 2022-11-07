@@ -79,7 +79,7 @@ void SpriteSystem::apply() {
     for (auto beg = this->_ECS->begin<Animation::Component>(); beg != this->_ECS->end<Animation::Component>(); ++beg) {
         Animation::Component* anim = this->_ECS->getComponent<Animation::Component>(*beg);
         if (!anim) {
-            ERROR("No animations are currently available. (This should not happen)");
+            ERRORLOG("No animations are currently available. (This should not happen)");
             continue;
         }
 

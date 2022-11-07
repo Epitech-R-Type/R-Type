@@ -90,7 +90,7 @@ void UdpCommunication::setup_outgoing_handler() {
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            ERROR("Error UdpCommunication: " << err.message());
+            ERRORLOG("Error UdpCommunication: " << err.message());
             this->setup_outgoing_handler();
             return;
         }

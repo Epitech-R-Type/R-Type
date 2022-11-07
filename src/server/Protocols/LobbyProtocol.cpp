@@ -53,7 +53,7 @@ int LobbyProtocol::handleCommands() {
 
         // If invalid size error 500
         if (splitBody.size() < 1) {
-            ERROR("Wrong message: " << msgBody);
+            ERRORLOG("Wrong message: " << msgBody);
             Message<std::string> msg("500 Wrong request\r\n", addr, port);
             this->_outgoingMQ->push(msg);
             continue;
