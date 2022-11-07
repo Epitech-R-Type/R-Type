@@ -39,7 +39,7 @@ void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> 
 UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                    std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
                                    int port)
-    : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v6(), port)),
+    : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {
@@ -50,7 +50,7 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
 // For use in the client only
 UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                    std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag)
-    : _sock(_ctxt, asio::ip::udp::v6()),
+    : _sock(_ctxt, asio::ip::udp::v4()),
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
       _stopTimer(_ctxt, asio::chrono::seconds(STOP_CHECK_INTERVAL)) {

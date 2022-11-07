@@ -10,7 +10,7 @@
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/Utilities/ray.hpp"
 
-ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int serverUdpPort) {
+ClientGame::ClientGame(UUIDM uuid, asio::ip::address serverAddr, int serverUdpPort) {
     this->_isRunning = true;
 
     // Init com thread
@@ -22,7 +22,7 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int serverUdpPort) {
     this->_musicSystem = std::make_unique<MusicSystem>();
 
     int clientUdpPort = UDP_PORT;
-    while (Utilities::isPortAvailable(clientUdpPort))
+    while (!Utilities::isPortAvailable(clientUdpPort))
         clientUdpPort++;
 
     this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
