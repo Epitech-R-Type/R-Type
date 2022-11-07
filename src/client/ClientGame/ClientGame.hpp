@@ -38,9 +38,7 @@ private:
     std::unique_ptr<SpriteSystem> _spriteSystem;
     std::unique_ptr<HealthSystem> _healthSystem;
     std::unique_ptr<PlayerMovementSystem> _inputSystem;
-#ifndef WIN32_LEAN_AND_MEAN
     std::shared_ptr<MusicSystem> _musicSystem;
-#endif
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class
