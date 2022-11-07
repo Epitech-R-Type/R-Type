@@ -8,13 +8,14 @@
 #include "Server.hpp"
 
 Server::Server()
-    : _lobbyRunning(true) {
+    : _lobbyRunning(true),
+      _serverUUID() {
     // Construct messaging queues
     this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // For some reason initializer list initialization wasn't working
-    this->_protocol = new LobbyProtocol(this->_incomingMQ, this->_outgoingMQ);
+    this->_protocol = new LobbyProtocol(this->_incomingMQ, this->_outgoingMQ, this->_serverUUID);
 
     // Init tcp com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
@@ -55,7 +56,7 @@ int Server::mainLoop() {
 }
 
 int Server::launchGame(int port) {
-    this->_game = new Game(this->_protocol->getConnections(), port);
+    this->_game = new Game(this->_protocol->getConnections(), port, this->_serverUUID);
 
     this->_game->init();
     this->_game->mainLoop();

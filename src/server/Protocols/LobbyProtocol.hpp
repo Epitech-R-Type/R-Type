@@ -28,7 +28,8 @@
 
 class LobbyProtocol {
 public:
-    LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing);
+    LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+                  UUIDM serverUUID);
 
     // Server Commands
     // Sends start game command to every connected client

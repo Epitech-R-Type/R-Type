@@ -9,6 +9,7 @@
 
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/Serialization.hpp"
+#include "../../shared/Utilities/Timer.hpp"
 #include "ClientGame.hpp"
 #include "raylib.h"
 
@@ -52,8 +53,16 @@ void ClientGame::init() {
 }
 
 void ClientGame::mainLoop() {
+    Timer pingTimer(1);
+
     while (this->_isRunning && !*(this->_stopFlag)) // Detect window close button or ESC key
     {
+        // Send PING command every second
+        if (pingTimer.isExpired()) {
+            pingTimer.resetTimer();
+            this->_protocol->sendPing();
+        }
+
         BeginDrawing();
 
         ClearBackground(BLACK);

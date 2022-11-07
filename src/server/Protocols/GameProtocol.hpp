@@ -31,7 +31,7 @@ class GameProtocol {
 public:
     // Constructor
     GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
-                 std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager);
+                 std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager, UUIDM serverUUID);
 
     // Blocks in this method until all clients have joined or timeout has been reached
     // Returns false if enough clients have joined in order to start game
@@ -44,31 +44,30 @@ public:
     void handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
     void handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
     void handleGetComp(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    void handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
 
     void handleCommands();
 
     // COMMAND SENDING
     // By default, commands do nothing if invalid
     template <class... T>
-    void sendEntity(EntityID id) const;
+    void sendEntity(EntityID id);
     template <class... T>
     void sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const;
 
-    void sendDelEntity(EntityID id) const;
+    void sendDelEntity(EntityID id);
 
     template <class T>
-    void sendDelComponent(EntityID id) const;
+    void sendDelComponent(EntityID id);
     template <class T>
     void sendDelComponent(EntityID id, Connection client) const;
 
-    void sendChangeMusic(int songId) const;
+    void sendChangeMusic(int songId);
 
     // UILITIES
     int getPlayer(asio::ip::address addr, asio::ip::port_type port);
-
-    std::vector<Connection> getConnectedClients() {
-        return this->_connectedClients;
-    };
+    std::vector<Connection> getConnectedClients();
+    void handleDisconnectedClients();
 
 private:
     // Udp messaging queues
@@ -79,7 +78,6 @@ private:
     std::shared_ptr<ECSManager> _entityManager;
 
     // Client tracking
-    std::vector<Connection> _connectedClients; // Addr info is udp here
     std::vector<Connection> _expectedClients;  // Note: the addr info in this vector are for tcp, NOT udp
-    std::vector<int> _players;                 // Each player has distinct int id, index of conn in _connectedClients = index in _players
+    ConnectionManager _connMan;
 };

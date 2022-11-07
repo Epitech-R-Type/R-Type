@@ -23,6 +23,7 @@
 #define ACTION_SHOOT "ACT_SHOOT"
 #define CHANGE_MUSIC "CHANGE_MUSIC"
 #define HERE "HERE"
+#define PING "PING"
 // Command enum
 enum Command {
     Here, // Server commands start here
@@ -32,7 +33,8 @@ enum Command {
     Entityd, // Client commands start here
     DeleteEntity,
     DeleteComponent,
-    ChangeMusic
+    ChangeMusic,
+    Ping
 };
 
 // Parsed command structure$
@@ -73,6 +75,8 @@ public:
             output->cmd = Command::DeleteEntity;
         else if (splitMsg[0] == CHANGE_MUSIC)
             output->cmd = Command::ChangeMusic;
+        else if (splitMsg[0] == PING)
+            output->cmd = Command::Ping;
         else {
             ERROR("Unhandled Command: " << splitMsg[0]);
             return {};

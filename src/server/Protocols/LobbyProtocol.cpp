@@ -8,8 +8,8 @@
 #include "LobbyProtocol.hpp"
 
 LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing)
-    : _connMan(UUIDM()) {
+                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, UUIDM serverUUID)
+    : _connMan(serverUUID) {
     // Set Messaging queues
     this->_incomingMQ = incoming;
     this->_outgoingMQ = outgoing;

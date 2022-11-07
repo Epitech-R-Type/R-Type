@@ -19,11 +19,7 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
       _port(port),
       _uuid(uuid) {}
 
-//
-//
-// COMMAND HANDLING
-//
-//
+// ─── Command Handling ────────────────────────────────────────────────────────────────────────────
 
 void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
     if (cmd.args.size() < 1) {
@@ -113,6 +109,9 @@ bool ClientGameProtocol::handleCommands() {
             case Command::ChangeMusic:
                 this->handleMusic(parsed.value());
                 break;
+            case Command::Ping:
+
+                break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
         }
@@ -120,7 +119,7 @@ bool ClientGameProtocol::handleCommands() {
     return true;
 }
 
-// COMMAND SENDING
+// ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
 void ClientGameProtocol::sendActMove(std::string directions) {
     auto msg = ProtocolUtils::createMessage("ACT_MOVE", directions, this->_addr, this->_port);
@@ -142,5 +141,10 @@ void ClientGameProtocol::sendGetEnt(EntityID id) {
     ss << id;
 
     auto msg = ProtocolUtils::createMessage("GET_ENT", ss.str(), this->_addr, this->_port);
+    this->_outgoingMQ->push(msg);
+}
+
+void ClientGameProtocol::sendPing() {
+    auto msg = ProtocolUtils::createMessage("PING", "", this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
