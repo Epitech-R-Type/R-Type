@@ -2,7 +2,7 @@ name: Windows Build Test
 
 on: push
 jobs:
-  cmake-build:
+  windows-build:
     runs-on: windows-latest
     steps:
       # Checkout repo
@@ -24,7 +24,6 @@ jobs:
           conan profile new default --detect;
           conan profile update conf.tools.system.package_manager:mode=install default;
           conan profile update conf.tools.system.package_manager:sudo=True default;
-
 
       # Build project
       - name: build
