@@ -16,7 +16,6 @@ void Utilities::createCompPoolIndexes() {
     getID<Team::Component>();
     getID<ImmunityFrame::Component>();
     getID<CollisionEffect::Component>();
-    getID<Damage::Component>();
     getID<SoundCreation::Component>();
     getID<SoundDestruction::Component>();
     getID<SoundDamage::Component>();
