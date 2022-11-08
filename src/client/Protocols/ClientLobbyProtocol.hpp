@@ -31,15 +31,15 @@ public:
 
     void sendStart();
 
-    UUIDM getUUID();
+    Utilities::UUID getUUID();
 
     int getServerPort();
 
     asio::ip::address getServerIp();
 
 private:
-    UUIDM _serverUUID;
-    UUIDM _clientUUID;
+    Utilities::UUID _serverUUID;
+    Utilities::UUID _clientUUID;
     // Tcp com thread stuff
     std::thread* _comThread;
     std::shared_ptr<std::atomic<bool>> _stopFlag;
@@ -51,7 +51,7 @@ private:
     asio::ip::port_type _serverPort = 0;
 
     // udp server port
-    int port;
+    int serverUdpPort;
 
     bool _connected = false;
     bool _authenticated = false;

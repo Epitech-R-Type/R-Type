@@ -5,12 +5,16 @@
 ** .
 */
 
+
+#include "../../WindowsGuard.hpp"
+
 #include "ClientGameProtocol.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
 ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                        std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<ECSManager> entManager,
-                                       std::shared_ptr<MusicSystem> musicSystem, asio::ip::address addr, asio::ip::port_type port, UUIDM uuid)
+                                       std::shared_ptr<MusicSystem> musicSystem, asio::ip::address addr, asio::ip::port_type port,
+                                       Utilities::UUID uuid)
     : _incomingMQ(incoming),
       _outgoingMQ(outgoing),
       _entityManager(entManager),
@@ -27,7 +31,7 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
 
 void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
     if (cmd.args.size() < 1) {
-        ERROR("Command " << cmd.cmd << " has no args.");
+        ERRORLOG("Command " << cmd.cmd << " has no args.");
         return;
     }
 
@@ -39,14 +43,14 @@ void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
     EntityID id;
 
     if (cmd.args.size() != 1) {
-        ERROR("Command " << cmd.cmd << " has not exactly one arg.");
+        ERRORLOG("Command " << cmd.cmd << " has not exactly one arg.");
         return;
     }
 
     try {
         id = std::stoll(cmd.args[0][0]);
     } catch (...) {
-        ERROR("Unable to convert argument to long long.");
+        ERRORLOG("Unable to convert argument to long long.");
         return;
     }
 
@@ -57,14 +61,14 @@ void ClientGameProtocol::handleMusic(ParsedCmd cmd) {
     int songId;
 
     if (cmd.args.size() != 1) {
-        ERROR("Command " << cmd.cmd << " has not exactly one arg.");
+        ERRORLOG("Command " << cmd.cmd << " has not exactly one arg.");
         return;
     }
 
     try {
         songId = std::stoi(cmd.args[0][0]);
     } catch (...) {
-        ERROR("Unable to convert argument to int.");
+        ERRORLOG("Unable to convert argument to int.");
         return;
     }
 
@@ -76,7 +80,7 @@ void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
     Index compId;
 
     if (cmd.args.size() != 2) {
-        ERROR("Command " << cmd.cmd << " doesn't have two args.");
+        ERRORLOG("Command " << cmd.cmd << " doesn't have two args.");
         return;
     }
 
@@ -84,7 +88,7 @@ void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
         id = std::stoll(cmd.args[0][0]);
         compId = std::stol(cmd.args[1][0]);
     } catch (...) {
-        ERROR("Unable to convert arguments.");
+        ERRORLOG("Unable to convert arguments.");
         return;
     }
 
@@ -111,7 +115,9 @@ bool ClientGameProtocol::handleCommands() {
                 this->handleDeleteComponent(parsed.value());
                 break;
             case Command::ChangeMusic:
+#ifndef WIN32_LEAN_AND_MEAN
                 this->handleMusic(parsed.value());
+#endif
                 break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");

@@ -8,12 +8,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 if (MSVC)
     set (CMAKE_GENERATOR "Visual Studio 17" CACHE INTERNAL "" FORCE)
     add_compile_definitions(WIN32_LEAN_AND_MEAN)
+    add_compile_definitions(_WIN32_WINNT=0x0601)
 else()
     set (CMAKE_GENERATOR "Unix Makefiles" CACHE INTERNAL "" FORCE)
     add_compile_options(-g3)
 endif()
-
-
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 

@@ -1,9 +1,9 @@
-name: Linux Build Test
+name: MacOS Build Test
 
 on: push
 jobs:
-  linux-build:
-    runs-on: ubuntu-latest
+  macos-build:
+    runs-on: macos-latest
     steps:
       # Checkout repo
       - uses: actions/checkout@v2
@@ -15,7 +15,8 @@ jobs:
 
       - name: install-conan
         shell: bash
-        run: pip install conan
+        run: >
+          brew install conan;
 
       - name: create-conan-profile
         shell: bash

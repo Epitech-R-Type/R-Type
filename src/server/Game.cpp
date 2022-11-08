@@ -6,7 +6,6 @@
 */
 
 #include "Game.hpp"
-#include "../WindowsGuard.hpp"
 
 #include "../shared/ECS/Components.hpp"
 #include "../shared/ECS/Serialization.hpp"

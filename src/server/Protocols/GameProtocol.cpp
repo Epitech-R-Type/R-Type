@@ -28,7 +28,7 @@ bool GameProtocol::waitForClients() {
 
             // if command invalid continue
             if (!parsedCmd) {
-                ERROR("Invalid command: " << msg.value());
+                ERRORLOG("Invalid command: " << msg.value());
                 continue;
             }
 
@@ -52,15 +52,15 @@ bool GameProtocol::waitForClients() {
 bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     // Error handling
     if (cmd.args.size() != 1) {
-        ERROR("Argument length is not 1.");
+        ERRORLOG("Argument length is not 1.");
         return false;
     }
     if (cmd.args[0].size() != 1) {
-        ERROR("Argument[0] length is not 1.");
+        ERRORLOG("Argument[0] length is not 1.");
         return false;
     }
 
-    UUIDM candidate(cmd.args[0][0]);
+    Utilities::UUID candidate(cmd.args[0][0]);
 
     for (auto conn : this->_expectedClients)
         if (conn.uuid == candidate) {
@@ -77,7 +77,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
     // Error handling
     if (0 > playerUID || cmd.args.size() != 1 || cmd.args[0].size() != 1) {
-        ERROR("Command is invalid.");
+        ERRORLOG("Command is invalid.");
         return;
     }
 
@@ -96,7 +96,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     }
 
     if (entityID == INVALID_INDEX) {
-        ERROR("Unable to find Entity attached to player with the following playerUID: " << playerUID);
+        ERRORLOG("Unable to find Entity attached to player with the following playerUID: " << playerUID);
         return;
     }
 
@@ -150,7 +150,7 @@ void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::
 
     // Error handling
     if (0 > playerUID) {
-        ERROR("Command is invalid.");
+        ERRORLOG("Command is invalid.");
         return;
     }
 
@@ -165,7 +165,7 @@ void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::
     }
 
     if (entityID == INVALID_INDEX) {
-        ERROR("Unable to find Entity attached to player " << playerUID << ".");
+        ERRORLOG("Unable to find Entity attached to player " << playerUID << ".");
         return;
     }
 
@@ -177,7 +177,7 @@ void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip:
 
     // Error handling
     if (cmd.args.size() != 1 || cmd.args[0].size() != 1) {
-        ERROR("Command is invalid.");
+        ERRORLOG("Command is invalid.");
         return;
     }
 
@@ -185,7 +185,7 @@ void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip:
     try {
         id = std::stoll(cmd.args[0][0]);
     } catch (...) {
-        ERROR("Failed to convert argument to EntityID.");
+        ERRORLOG("Failed to convert argument to EntityID.");
         return;
     }
 
@@ -200,7 +200,7 @@ void GameProtocol::handleCommands() {
         auto parsed = ProtocolUtils::parseCommand(*msg);
 
         if (!parsed) {
-            ERROR("Unable to parse message.");
+            ERRORLOG("Unable to parse message.");
             continue;
         }
 
@@ -230,7 +230,7 @@ void GameProtocol::handleCommands() {
 template <class... T>
 void GameProtocol::sendEntity(EntityID id) const {
     if (!this->_entityManager->isValidEntity(id)) {
-        ERROR("Entity ID is invalid: " << id);
+        ERRORLOG("Entity ID is invalid: " << id);
         return;
     }
 
@@ -243,7 +243,7 @@ void GameProtocol::sendEntity(EntityID id) const {
 template <class... T>
 void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const {
     if (!this->_entityManager->isValidEntity(id)) {
-        ERROR("Entity ID is invalid: " << id);
+        ERRORLOG("Entity ID is invalid: " << id);
         return;
     }
 

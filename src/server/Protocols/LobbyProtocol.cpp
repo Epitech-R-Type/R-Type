@@ -9,7 +9,7 @@
 
 LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                              std::shared_ptr<MessageQueue<Message<std::string>>> outgoing)
-    : _connMan(UUIDM()) {
+    : _connMan(Utilities::UUID()) {
     // Set Messaging queues
     this->_incomingMQ = incoming;
     this->_outgoingMQ = outgoing;
@@ -53,7 +53,7 @@ int LobbyProtocol::handleCommands() {
 
         // If invalid size error 500
         if (splitBody.size() < 1) {
-            ERROR("Wrong message: " << msgBody);
+            ERRORLOG("Wrong message: " << msgBody);
             Message<std::string> msg("500 Wrong request\r\n", addr, port);
             this->_outgoingMQ->push(msg);
             continue;
@@ -87,7 +87,7 @@ int LobbyProtocol::handleCommands() {
             continue;
         }
 
-        UUIDM uuid(splitBody[1]); // Potential failure here
+        Utilities::UUID uuid(splitBody[1]); // Potential failure here
 
         if (!this->_connMan.uuidValid(uuid)) {
             this->sendResponse("401", "Forbidden", addr, port);
@@ -99,7 +99,8 @@ int LobbyProtocol::handleCommands() {
             outputPort = UDP_PORT;
 
             // Find an available port
-            while (!Utilities::isPortAvailable(outputPort))
+            // TOFIX
+            while (Utilities::isPortAvailable(outputPort))
                 outputPort++;
 
             LOG("Using port: " << outputPort);
