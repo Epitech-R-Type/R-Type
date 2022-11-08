@@ -49,12 +49,12 @@ public:
 
         // Error handling
         if (splitMsg.size() != 2) {
-            ERROR("Message length not 2.");
+            ERRORLOG("Message length not 2.");
             return {};
         }
         // Check for CRLF
         if (splitMsg[1][splitMsg[1].size() - 1] != '\n' || splitMsg[1][splitMsg[1].size() - 2] != '\r') {
-            ERROR("Carriage Return Line Feed missing.");
+            ERRORLOG("Carriage Return Line Feed missing.");
             return {};
         }
 
@@ -74,7 +74,7 @@ public:
         else if (splitMsg[0] == CHANGE_MUSIC)
             output->cmd = Command::ChangeMusic;
         else {
-            ERROR("Unhandled Command: " << splitMsg[0]);
+            ERRORLOG("Unhandled Command: " << splitMsg[0]);
             return {};
         }
 

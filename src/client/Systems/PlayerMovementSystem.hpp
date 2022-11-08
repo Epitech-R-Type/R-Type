@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
 #include "../../shared/Systems/ISystem.hpp"
 class ClientGameProtocol;
 

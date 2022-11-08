@@ -20,11 +20,11 @@ void ClientLobbyProtocol::connect(std::string serverIP, int port) {
 void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
     std::vector<std::string> splitstr = Utilities::splitStr(uuids, ";");
 
-    UUIDM serverUUID = UUIDM(splitstr[0]);
-    UUIDM clientUUID = UUIDM(splitstr[1]);
+    Utilities::UUID serverUUID = Utilities::UUID(splitstr[0]);
+    Utilities::UUID clientUUID = Utilities::UUID(splitstr[1]);
 
     if (!this->_serverUUID.isValid() || !this->_clientUUID.isValid()) {
-        ERROR("Unable to get auhtentication from message.");
+        ERRORLOG("Unable to get auhtentication from message.");
         return;
     }
 
@@ -40,12 +40,12 @@ void ClientLobbyProtocol::sendStart() {
     this->sendMessage(ss.str());
 }
 
-UUIDM ClientLobbyProtocol::getUUID() {
+Utilities::UUID ClientLobbyProtocol::getUUID() {
     return this->_clientUUID;
 }
 
 int ClientLobbyProtocol::getServerPort() {
-    return this->port;
+    return this->serverUdpPort;
 }
 
 asio::ip::address ClientLobbyProtocol::getServerIp() {
@@ -71,13 +71,13 @@ void ClientLobbyProtocol::handleIncMessages() {
             this->_authenticated = true;
         }
 
-        if (UUIDM(msg) != this->_serverUUID) {
-            ERROR("Couldn't authenticate Server.");
+        if (Utilities::UUID(msg) != this->_serverUUID) {
+            ERRORLOG("Couldn't authenticate Server.");
             continue;
         }
 
         if (msgBits[0] == "START") {
-            this->port = std::stoi(Utilities::splitStr(msgBits[1], ";")[1]); // get port
+            this->serverUdpPort = std::stoi(Utilities::splitStr(msgBits[1], ";")[1]); // get port
             this->_startGame = true;
         }
     }

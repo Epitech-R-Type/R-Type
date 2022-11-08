@@ -9,7 +9,7 @@
 
 #include "../../shared/Utilities/Utilities.hpp"
 #include "../../shared/Systems/ISystem.hpp"
-#include <raylib.h>
+#include "../../shared/Utilities/ray.hpp"
 #include <cmrc/cmrc.hpp>
 #include <queue>
 #include <map>
@@ -41,18 +41,18 @@ static std::vector<SFX> SoundEffects {
 };
 
 class MusicSystem : public System {
-    public:
-        static std::queue<SFXID> SFXQueue;
+public:
+    static std::queue<SFXID> SFXQueue;
 
-        MusicSystem();
-        ~MusicSystem();
-        void apply();
-        void changeSong(SongID id);
-        void playSFX(int ID);
+    MusicSystem();
+    ~MusicSystem();
+    void apply();
+    void changeSong(SongID id);
+    void playSFX(int ID);
 
-    private:
-        Music _music;
-        float _volume = 0.5;
-        cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
-        std::map<SFXID, Sound> SFXobjects;
+private:
+    Ray::Music _music;
+    float _volume = 0.5;
+    cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
+    std::map<SFXID, Ray::Sound> SFXobjects;
 };

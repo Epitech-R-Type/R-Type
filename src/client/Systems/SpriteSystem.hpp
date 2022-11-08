@@ -7,22 +7,16 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
-#include <chrono>
-#include <cmrc/cmrc.hpp>
-#include <raylib.h>
-#include <vector>
-
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/ECS.hpp"
 #include "../../shared/Systems/ISystem.hpp"
+#include "../../shared/Utilities/ray.hpp"
+#include <cmrc/cmrc.hpp>
+#include <vector>
 
 CMRC_DECLARE(client);
 
-// std::chrono::time_point<std::chrono::system_clock> getNow();
-
-typedef std::vector<Texture2D> AnimationArr;
+typedef std::vector<Ray::Texture2D> AnimationArr;
 
 class SpriteSystem : public System {
 public:
@@ -39,7 +33,7 @@ private:
     /**
      * Load the part of an image file into a Texture2D object
      * */
-    Texture2D loadSprite(Animation::Sheet sheet, const float xpos, const float ypos);
+    Ray::Texture2D loadSprite(Animation::Sheet sheet, const float xpos, const float ypos);
 
     /**
      * Parses image file to extract all frames of an animation
