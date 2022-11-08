@@ -110,6 +110,10 @@ bool ClientLobbyProtocol::isConnected() {
 
 bool ClientLobbyProtocol::shouldGameStart() {
     return this->_startGame;
+}
+
+void ClientLobbyProtocol::resetStartGame() {
+    this->_startGame = false;
 };
 
 int ClientLobbyProtocol::getServerPort() {

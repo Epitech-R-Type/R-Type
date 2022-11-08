@@ -29,6 +29,7 @@ int Client::launchGame() {
     this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort(), this->_stopFlag);
     this->_game->init();
     this->_game->mainLoop();
+
     delete this->_game;
 
     return 0;
@@ -72,6 +73,7 @@ int Client::mainLoop() {
         if (this->_protocol->shouldGameStart()) {
             std::this_thread::sleep_for(std::chrono::seconds(2));
             this->launchGame();
+            this->_protocol->resetStartGame();
         }
     }
 

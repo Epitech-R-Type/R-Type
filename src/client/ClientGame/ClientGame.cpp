@@ -35,6 +35,9 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port, std::shared
 }
 
 ClientGame::~ClientGame() {
+    // Close raylib window
+    CloseWindow();
+
     // Signal thread to stop and join thread
     this->_stopFlag->store(true);
     this->_udpComThread->join();
@@ -67,7 +70,9 @@ void ClientGame::mainLoop() {
 
         ClearBackground(BLACK);
 
-        this->_protocol->handleCommands();
+        if (this->_protocol->handleCommands())
+            break;
+
         this->_spriteSystem->apply();
         this->_healthSystem->apply();
         this->_musicSystem->apply();
@@ -75,4 +80,6 @@ void ClientGame::mainLoop() {
 
         EndDrawing();
     }
+
+    LOG("Game has ended...");
 }

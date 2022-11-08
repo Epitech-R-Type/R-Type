@@ -129,5 +129,7 @@ int Game::mainLoop() {
     // Signal end of game to all clients
     this->_protocol.sendGameEnd();
 
+    LOG("GAME HAS ENDED");
+
     return 0;
 }

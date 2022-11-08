@@ -98,25 +98,25 @@ bool ClientGameProtocol::handleCommands() {
 
         switch (parsed->cmd) {
             case Command::Entityd:
-                this->handleEntity(parsed.value(), msg->getMsg());
+                this->handleEntity(*parsed, msg->getMsg());
                 break;
             case Command::DeleteEntity:
-                this->handleDeleteEntity(parsed.value());
+                this->handleDeleteEntity(*parsed);
                 break;
             case Command::DeleteComponent:
-                this->handleDeleteComponent(parsed.value());
+                this->handleDeleteComponent(*parsed);
                 break;
             case Command::ChangeMusic:
-                this->handleMusic(parsed.value());
+                this->handleMusic(*parsed);
                 break;
             case Command::GameEnd:
-                this->handleGameEnd();
+                return true;
                 break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
         }
     }
-    return true;
+    return false;
 }
 
 // ─── Command Sending ─────────────────────────────────────────────────────────────────────────────

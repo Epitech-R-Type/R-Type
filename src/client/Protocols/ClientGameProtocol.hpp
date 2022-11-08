@@ -32,7 +32,6 @@ public:
     void handleDeleteEntity(ParsedCmd cmd);
     void handleDeleteComponent(ParsedCmd cmd);
     void handleMusic(ParsedCmd cmd);
-    void handleGameEnd(ParsedCmd cmd);
 
     // Returns true if player died
     bool handleCommands();

@@ -29,7 +29,9 @@ public:
 
     void saveAuthentication(std::string uuids);
     bool isConnected();
+
     bool shouldGameStart();
+    void resetStartGame();
 
     int getServerPort();
     UUIDM getUUID();
