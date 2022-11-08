@@ -25,14 +25,6 @@
 //          - Udp communication handling
 //          - Ecs handling
 
-struct Enemy {
-    int health;
-    int damage;
-    Animation::AnimationID sprite;
-    int speed;
-    Armament::Type armament;
-};
-
 struct Wave {
     bool endless;
     int minSpawned;

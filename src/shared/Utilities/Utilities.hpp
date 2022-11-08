@@ -25,11 +25,12 @@
 #define DEBUG(msg) // std::cout << "[DEBUG]   " << __FUNCTION_NAME__ << ": " << msg << std::endl
 #define HAS_KEY(map, key) (map.find(key) != map.end())
 
-typedef std::chrono::time_point<std::chrono::system_clock> timePoint;
-
 #include <asio.hpp>
 #include <string>
 #include <vector>
+#include <chrono>
+
+typedef std::chrono::time_point<std::chrono::system_clock> timePoint;
 
 enum Move {
     UP = 1,
@@ -54,6 +55,15 @@ struct Point {
     double x;
     double y;
 };
+
+struct Enemy {
+    int health;
+    int damage;
+    int sprite;
+    int speed;
+    int armament;
+};
+
 namespace Utilities {
     /**
      * splits a string

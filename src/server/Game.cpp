@@ -70,6 +70,8 @@ void Game::loadLevel(int nb)
 {
     Level newLevel;
     std::fstream lvlFile(std::string("./levels/level").append(std::to_string(nb)), std::ios_base::in);
+    if (lvlFile.is_open())
+        LOG("is open");
     std::string line;
     Wave tmp;
     tmp.endless = false;
@@ -88,6 +90,7 @@ void Game::loadLevel(int nb)
         srand(time(NULL));
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
         newLevel.levelWaves.push_back(tmp);
+        LOG("new added");
     }
     lvlFile.close();
     newLevel.waveNb = 0;
@@ -102,9 +105,10 @@ void Game::refreshLevel()
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - this->_enemyTimer;
 
-    if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval && levelWaves[waveNb].spawned > 0) {
+    LOG("Still Running");
+    if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval && this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
         this->_enemyTimer = getNow();
-        levelWaves[waveNb].spawned--;
+        this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
         Factory::Enemy::makeEnemy(this->_entManager);
     }
     elapsed_seconds = now - this->_bossTimer;
