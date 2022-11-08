@@ -46,11 +46,6 @@ ClientGame::~ClientGame() {
 }
 
 void ClientGame::init() {
-    Ray::InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
-    while (!Ray::IsWindowReady()) {
-        //
-    }
-
     // Send here command
     this->_protocol->sendHere();
 
@@ -60,9 +55,9 @@ void ClientGame::init() {
 void ClientGame::mainLoop() {
     while (this->_isRunning) // Detect window close button or ESC key
     {
-        Ray::BeginDrawing();
+        BeginDrawing();
 
-        Ray::ClearBackground(Ray::BLACK);
+        ClearBackground(BLACK);
 
         this->_protocol->handleCommands();
         this->_spriteSystem->apply();
@@ -74,6 +69,6 @@ void ClientGame::mainLoop() {
 
         this->_inputSystem->apply();
 
-        Ray::EndDrawing();
+        EndDrawing();
     }
 }

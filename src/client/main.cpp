@@ -18,13 +18,13 @@ int main(int argc, char** argv) {
     Client client;
 
     if (!isFlagSet(argv, argv + argc, "-v")) {
-        Ray::SetTraceLogLevel(7);
+        SetTraceLogLevel(7);
     }
 
-    if (isFlagSet(argv, argv + argc, "-ip")) {
-        std::string ip = getFlagValue(argv, argv + argc, "-ip");
-        if (isFlagSet(argv, argv + argc, "-port"))
-            client.connect(ip, atoi(getFlagValue(argv, argv + argc, "-port")));
+    if (isFlagSet(argv, argv + argc, "--ip")) {
+        std::string ip = getFlagValue(argv, argv + argc, "--ip");
+        if (isFlagSet(argv, argv + argc, "--port"))
+            client.connect(ip, atoi(getFlagValue(argv, argv + argc, "--port")));
         else
             client.connect(ip);
     } else {

@@ -5,11 +5,10 @@
 ** .
 */
 
-
 #include "../../WindowsGuard.hpp"
 
-#include "ClientGameProtocol.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
+#include "ClientGameProtocol.hpp"
 
 ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                        std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<ECSManager> entManager,
@@ -38,7 +37,8 @@ void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
 
     std::vector<std::string> res = Utilities::splitStr(raw, " ");
     EntityID newEntity = Serialization::stringToEntity(res[1], this->_entityManager);
-    if (this->_entityManager->hasComponent<SoundCreation::Component>(newEntity) && this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID != SFXID::INVALID)
+    if (this->_entityManager->hasComponent<SoundCreation::Component>(newEntity) &&
+        this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID != SFXID::INVALID)
         MusicSystem::SFXQueue.push(this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID);
 }
 
@@ -56,7 +56,10 @@ void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
         ERRORLOG("Unable to convert argument to long long.");
         return;
     }
-    if (this->_entityManager->hasComponent<SoundDestruction::Component>(id) && this->_entityManager->hasComponent<Position::Component>(id) && this->_entityManager->getComponent<Position::Component>(id)->x > 0 && this->_entityManager->getComponent<Position::Component>(id)->y > 0 && this->_entityManager->getComponent<Position::Component>(id)->x < Ray::GetScreenWidth() && this->_entityManager->getComponent<Position::Component>(id)->y < Ray::GetScreenHeight())
+    if (this->_entityManager->hasComponent<SoundDestruction::Component>(id) && this->_entityManager->hasComponent<Position::Component>(id) &&
+        this->_entityManager->getComponent<Position::Component>(id)->x > 0 && this->_entityManager->getComponent<Position::Component>(id)->y > 0 &&
+        this->_entityManager->getComponent<Position::Component>(id)->x < GetScreenWidth() &&
+        this->_entityManager->getComponent<Position::Component>(id)->y < GetScreenHeight())
         MusicSystem::SFXQueue.push(this->_entityManager->getComponent<SoundDestruction::Component>(id)->ID);
     this->_entityManager->deleteEntity(id);
 }

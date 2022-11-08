@@ -9,6 +9,7 @@
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Utilities/ray.hpp"
+#include "GUI/TextBox.hpp"
 
 Client::Client() {
     this->_protocol = new ClientLobbyProtocol();
@@ -18,6 +19,11 @@ Client::Client() {
 
     // Gangster Workaround to insure same comptype order client
     Utilities::createCompPoolIndexes();
+
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
+    while (!IsWindowReady()) {
+        //
+    }
 }
 
 int Client::launchGame() {
@@ -59,6 +65,9 @@ void userInput(std::shared_ptr<MessageQueue<std::string>> userCommands) {
 
 int Client::mainLoop() {
     this->_userInputThread = new std::thread(userInput, this->_userCommands);
+    auto box = TextBox("Test", 20, 20, 100, 40);
+
+    box.getInput();
 
     while (this->_lobbyRunning) {
         this->_protocol->handleIncMessages();
@@ -66,6 +75,14 @@ int Client::mainLoop() {
         this->handleUserCommands();
 
         this->_connected = this->_protocol->isConnected();
+
+        BeginDrawing();
+
+        ClearBackground(BLACK);
+
+        box.draw();
+
+        EndDrawing();
 
         if (this->_protocol->shouldGameStart()) {
             std::this_thread::sleep_for(std::chrono::seconds(2));
