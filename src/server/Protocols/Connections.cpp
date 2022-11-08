@@ -64,7 +64,7 @@ std::optional<Connection> ConnectionManager::getConnection(UUIDM uuid) const {
 }
 
 std::optional<Connection> ConnectionManager::getConnection(asio::ip::address addr, asio::ip::port_type port) {
-    for (auto conn : this->_connections)
+    for (auto& conn : this->_connections)
         if (conn.addr == addr && conn.port == port)
             return std::optional(conn);
     return {};
@@ -83,7 +83,7 @@ void ConnectionManager::removeConnection(std::string uuid) {
 }
 
 void ConnectionManager::resetTimeout(asio::ip::address addr, asio::ip::port_type port) {
-    for (auto conn : this->_connections)
+    for (auto& conn : this->_connections)
         if (conn.addr == addr && conn.port == port)
             conn.timeoutTimer.resetTimer();
 }
