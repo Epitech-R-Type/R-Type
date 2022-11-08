@@ -67,6 +67,7 @@ typedef struct tagBITMAPINFOHEADER {
     DWORD biClrImportant;
 } BITMAPINFOHEADER, *PBITMAPINFOHEADER;
 
+
 #include <mmreg.h>
 #include <mmsystem.h>
 #include <objbase.h>

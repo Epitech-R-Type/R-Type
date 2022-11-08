@@ -71,7 +71,7 @@ EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
     const float startX = WINDOW_WIDTH;
     const float startY = rand() % (int)WINDOW_HEIGHT;
 
-    Position::Component* position = ECS->addComp<Position::Component>(enemy, {x : startX, y : startY});
+    Position::Component* position = ECS->addComp<Position::Component>(enemy, {startX, startY});
     Animation::Component* animation = ECS->addComp<Animation::Component>(enemy, {Animation::AnimationID::Orb, 3});
 
     ECS->addComp<Velocity::Component>(enemy, {-10, 0});
