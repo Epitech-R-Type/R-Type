@@ -43,16 +43,16 @@ void MusicSystem::apply() {
 void MusicSystem::playSFX(SFXID ID) {
     if (SoundEffects.size() - 1 < ID || ID < 0)
         return;
-    if (!HAS_KEY(this->SFXobjects, (SFXID)ID)) {
+    if (!HAS_KEY(this->SFXobjects, ID)) {
         const cmrc::file soundFile = this->_fs.open(SoundEffects[ID].path);
         unsigned char* soundBuffer = (unsigned char*)(soundFile.begin());
         Ray::Wave soundWave = Ray::LoadWaveFromMemory(".wav", soundBuffer, soundFile.size());
         Ray::Sound soundObject = LoadSoundFromWave(soundWave);
         Ray::SetSoundVolume(soundObject, 0.7);
         Ray::PlaySoundMulti(soundObject);
-        this->SFXobjects[(SFXID)ID] = soundObject;
+        this->SFXobjects[ID] = soundObject;
     } else
-        Ray::PlaySoundMulti(this->SFXobjects[(SFXID)ID]);
+        Ray::PlaySoundMulti(this->SFXobjects[ID]);
 }
 
 void MusicSystem::changeSong(SongID id) {
