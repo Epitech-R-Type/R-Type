@@ -89,6 +89,20 @@ struct ImmunityFrame {
     double duration = 0;
     std::chrono::time_point<std::chrono::system_clock> timer;
 };
+
+struct SoundCreation {
+    SFXID ID;
+};
+
+struct SoundDestruction {
+    SFXID ID;
+};
+
+struct SoundDamage {
+    SFXID ID;
+};
+
+//SFXID is an enum that the client can associate sound effects to
 ```
 
 ### Systems
