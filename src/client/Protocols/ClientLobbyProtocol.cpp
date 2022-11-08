@@ -114,6 +114,7 @@ bool ClientLobbyProtocol::shouldGameStart() {
 
 void ClientLobbyProtocol::resetStartGame() {
     this->_startGame = false;
+    this->port = -1;
 };
 
 int ClientLobbyProtocol::getServerPort() {
