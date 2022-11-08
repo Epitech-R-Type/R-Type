@@ -2,7 +2,7 @@ name: Linux Build Test
 
 on: push
 jobs:
-  cmake-build:
+  linux-build:
     runs-on: ubuntu-latest
     steps:
       # Checkout repo

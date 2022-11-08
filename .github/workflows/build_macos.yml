@@ -2,7 +2,7 @@ name: MacOS Build Test
 
 on: push
 jobs:
-  cmake-build:
+  macos-build:
     runs-on: macos-latest
     steps:
       # Checkout repo
@@ -16,7 +16,6 @@ jobs:
       - name: install-conan
         shell: bash
         run: >
-          brew update;
           brew install conan;
 
       - name: create-conan-profile
