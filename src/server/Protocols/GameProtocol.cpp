@@ -296,6 +296,11 @@ void GameProtocol::sendChangeMusic(int songId) {
     }
 }
 
+void GameProtocol::sendGameEnd() {
+    for (auto conn : this->_connMan.getConnections())
+        this->_outgoingMQ->push(ProtocolUtils::createMessage("GAME_END", "", conn.addr, conn.port));
+}
+
 // ─── Utilities ───────────────────────────────────────────────────────────────────────────────────
 
 int GameProtocol::getPlayer(asio::ip::address addr, asio::ip::port_type port) {

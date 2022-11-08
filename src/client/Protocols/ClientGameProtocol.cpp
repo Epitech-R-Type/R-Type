@@ -109,8 +109,8 @@ bool ClientGameProtocol::handleCommands() {
             case Command::ChangeMusic:
                 this->handleMusic(parsed.value());
                 break;
-            case Command::Ping:
-
+            case Command::GameEnd:
+                this->handleGameEnd();
                 break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");

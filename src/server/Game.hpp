@@ -34,6 +34,7 @@ public:
     int mainLoop();
 
     void sendModified();
+    int getPlayersAlive();
 
 private:
     // ECS and Systems

@@ -63,6 +63,15 @@ void Game::sendModified() {
         else
             this->_protocol.sendDelEntity(entityID.value());
     }
+}
+
+int Game::getPlayersAlive() {
+    int count = 0;
+
+    for (auto beg = this->_entManager->begin<Player::Component>(); beg != this->_entManager->end<Player::Component>(); ++beg)
+        count++;
+
+    return count;
 };
 
 int Game::mainLoop() {
@@ -81,10 +90,10 @@ int Game::mainLoop() {
     std::chrono::time_point<std::chrono::system_clock> bosstimer = getNow();
     bool bossSpawned = false;
 
-    while (this->_isRunning) {
+    while (this->_isRunning && this->getPlayersAlive()) {
         // ─── Protocol Stuff ──────────────────────────────────────────────────────────────
 
-        // Handle timedout clients
+        // Handle timed out clients
         this->_protocol.handleCommands();
         this->_protocol.handleDisconnectedClients();
 
@@ -116,6 +125,9 @@ int Game::mainLoop() {
 
         this->sendModified();
     }
+
+    // Signal end of game to all clients
+    this->_protocol.sendGameEnd();
 
     return 0;
 }

@@ -65,6 +65,7 @@ public:
     void sendDelComponent(EntityID id, Connection client) const;
 
     void sendChangeMusic(int songId);
+    void sendGameEnd();
 
     // ─── Uilities ────────────────────────────────────────────────────────────────────────────
 
