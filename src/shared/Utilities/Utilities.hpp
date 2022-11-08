@@ -29,9 +29,19 @@
 #include <string>
 #include <vector>
 
-enum Move { UP = 1, DOWN = -1, LEFT = 3, RIGHT = -3 };
+enum Move {
+    UP = 1,
+    DOWN = -1,
+    LEFT = 3,
+    RIGHT = -3,
+};
 
-enum SFXID { INVALID = -1, GUN_SHOT1 = 0, GUN_SHOT2 = 1, GUN_SHOT3 = 2 };
+enum SFXID {
+    INVALID = -1,
+    KNOCK = 0,
+    LIGHT_GUNSHOT = 1,
+    HEAVY_GUNSHOT = 2,
+};
 
 struct Point {
     double x;

@@ -7,12 +7,12 @@
 
 #pragma once
 
-#include "../../shared/Utilities/Utilities.hpp"
 #include "../../shared/Systems/ISystem.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 #include "../../shared/Utilities/ray.hpp"
 #include <cmrc/cmrc.hpp>
-#include <queue>
 #include <map>
+#include <queue>
 
 CMRC_DECLARE(client);
 
@@ -29,15 +29,15 @@ enum SongID {
     BOSS,
 };
 
-static std::map<SongID, Song> Songs {
+static std::map<SongID, Song> Songs{
     {SongID::NORMAL, {"resources/song0.mp3"}},
     {SongID::BOSS, {"resources/song1.mp3"}},
 };
 
-static std::vector<SFX> SoundEffects {
-    {"resources/gunShot1.wav"},
-    {"resources/gunShot2.wav"},
-    {"resources/gunShot3.wav"}
+static std::map<SFXID, SFX> SoundEffects{
+    {SFXID::KNOCK, {"resources/gunShot1.wav"}},
+    {SFXID::LIGHT_GUNSHOT, {"resources/gunShot2.wav"}},
+    {SFXID::HEAVY_GUNSHOT, {"resources/gunShot3.wav"}},
 };
 
 class MusicSystem : public System {
@@ -48,7 +48,7 @@ public:
     ~MusicSystem();
     void apply();
     void changeSong(SongID id);
-    void playSFX(int ID);
+    void playSFX(SFXID ID);
 
 private:
     Ray::Music _music;

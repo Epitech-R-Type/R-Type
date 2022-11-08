@@ -28,7 +28,7 @@ void MusicSystem::apply() {
         MusicSystem::SFXQueue.pop();
     }
     if (Ray::IsKeyPressed(Ray::KEY_P)) {
-        if (IsMusicStreamPlaying(this->_music))
+        if (Ray::IsMusicStreamPlaying(this->_music))
             Ray::PauseMusicStream(this->_music);
         else
             Ray::ResumeMusicStream(this->_music);
@@ -40,7 +40,7 @@ void MusicSystem::apply() {
     Ray::SetMasterVolume(this->_volume);
 }
 
-void MusicSystem::playSFX(int ID) {
+void MusicSystem::playSFX(SFXID ID) {
     if (SoundEffects.size() - 1 < ID || ID < 0)
         return;
     if (!HAS_KEY(this->SFXobjects, (SFXID)ID)) {
