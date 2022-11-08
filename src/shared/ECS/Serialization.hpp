@@ -78,6 +78,15 @@ public:
                     case ComponentType::COLLISIONEFFECT:
                         stream << Serialization::componentToString<CollisionEffect::Component>(entityID, manager);
                         break;
+                    case ComponentType::SOUND_CREATION:
+                        stream << Serialization::componentToString<SoundCreation::Component>(entityID, manager);
+                        break;
+                    case ComponentType::SOUND_DESTRUCTION:
+                        stream << Serialization::componentToString<SoundDestruction::Component>(entityID, manager);
+                        break;
+                    case ComponentType::SOUND_DAMAGE:
+                        stream << Serialization::componentToString<SoundDamage::Component>(entityID, manager);
+                        break;
                     default:
                         ERRORLOG("Unhandled Component: " << componentTypeID << ".");
                 }
@@ -141,6 +150,15 @@ public:
                     break;
                 case ComponentType::COLLISIONEFFECT:
                     CollisionEffect::applyUpdate(args, entityID, manager);
+                    break;
+                case ComponentType::SOUND_CREATION:
+                    SoundCreation::applyUpdate(args, entityID, manager);
+                    break;
+                case ComponentType::SOUND_DESTRUCTION:
+                    SoundDestruction::applyUpdate(args, entityID, manager);
+                    break;
+                case ComponentType::SOUND_DAMAGE:
+                    SoundDamage::applyUpdate(args, entityID, manager);
                     break;
                 default:
                     ERRORLOG("Unhandled Component: " << componentTypeID << ".");

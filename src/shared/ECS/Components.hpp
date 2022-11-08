@@ -28,6 +28,9 @@ enum ComponentType {
     TEAM,
     IMMUNITY_FRAME,
     COLLISIONEFFECT,
+    SOUND_CREATION,
+    SOUND_DESTRUCTION,
+    SOUND_DAMAGE
 };
 
 namespace Armor {
@@ -208,6 +211,29 @@ namespace CollisionEffect {
     // if we do need to just use a map and enum
 } // namespace CollisionEffect
 
+namespace SoundCreation {
+    struct Component {
+        SFXID ID;
+    };
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+} // namespace SoundCreation
+
+namespace SoundDestruction {
+    struct Component {
+        SFXID ID;
+    };
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+} // namespace SoundCreation
+
+namespace SoundDamage {
+    struct Component {
+        SFXID ID;
+    };
+
+    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+} // namespace SoundCreation
 std::string toString(Armor::Component component);
 std::string toString(Health::Component component);
 std::string toString(Position::Component component);
@@ -220,3 +246,6 @@ std::string toString(Hitbox::Component component);
 std::string toString(Team::Component component);
 std::string toString(ImmunityFrame::Component component);
 std::string toString(CollisionEffect::Component component);
+std::string toString(SoundCreation::Component component);
+std::string toString(SoundDestruction::Component component);
+std::string toString(SoundDamage::Component component);

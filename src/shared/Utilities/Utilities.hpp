@@ -23,12 +23,25 @@
 #define WARNING(msg) std::cout << "[WARNING] " << __FUNCTION_NAME__ << ": " << msg << std::endl
 #define LOG(msg) std::cout << "[LOG]     " << __FUNCTION_NAME__ << ": " << msg << std::endl
 #define DEBUG(msg) // std::cout << "[DEBUG]   " << __FUNCTION_NAME__ << ": " << msg << std::endl
+#define HAS_KEY(map, key) (map.find(key) != map.end())
 
 #include <asio.hpp>
 #include <string>
 #include <vector>
 
-enum Move { UP = 1, DOWN = -1, LEFT = 3, RIGHT = -3 };
+enum Move {
+    UP = 1,
+    DOWN = -1,
+    LEFT = 3,
+    RIGHT = -3,
+};
+
+enum SFXID {
+    INVALID = -1,
+    KNOCK = 0,
+    LIGHT_GUNSHOT = 1,
+    HEAVY_GUNSHOT = 2,
+};
 
 struct Point {
     double x;
