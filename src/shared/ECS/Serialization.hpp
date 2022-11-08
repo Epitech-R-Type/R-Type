@@ -79,7 +79,7 @@ public:
                         stream << Serialization::componentToString<CollisionEffect::Component>(entityID, manager);
                         break;
                     default:
-                        ERROR("Unhandled Component: " << componentTypeID << ".");
+                        ERRORLOG("Unhandled Component: " << componentTypeID << ".");
                 }
             }
         } else {
@@ -143,7 +143,7 @@ public:
                     CollisionEffect::applyUpdate(args, entityID, manager);
                     break;
                 default:
-                    ERROR("Unhandled Component: " << componentTypeID << ".");
+                    ERRORLOG("Unhandled Component: " << componentTypeID << ".");
             }
         }
 
@@ -153,7 +153,7 @@ public:
     template <class T>
     static std::string componentToString(EntityID entityId, std::shared_ptr<ECSManager> manager) {
         if (!manager->hasComponent<T>(entityId)) {
-            ERROR("Missing component: " << getID<T>());
+            ERRORLOG("Missing component: " << getID<T>());
             return "";
         }
 

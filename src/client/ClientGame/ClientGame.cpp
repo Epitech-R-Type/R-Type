@@ -5,14 +5,12 @@
 ** .*
 */
 
-#include "../../WindowsGuard.hpp"
-
+#include "ClientGame.hpp"
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/Serialization.hpp"
-#include "ClientGame.hpp"
-#include "raylib.h"
+#include "../../shared/Utilities/ray.hpp"
 
-ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address addr, int port) {
+ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int serverUdpPort) {
     this->_isRunning = true;
 
     // Init com thread
@@ -21,13 +19,18 @@ ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address addr, int port) {
     this->_entManager = std::make_shared<ECSManager>();
 
     this->_uuid = uuid;
+#ifndef WIN32_LEAN_AND_MEAN
     this->_musicSystem = std::make_unique<MusicSystem>();
+#endif
+    int clientUdpPort = UDP_PORT;
+    while (!Utilities::isPortAvailable(clientUdpPort))
+        clientUdpPort++;
 
-    this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
-                                                           asio::ip::port_type(port), this->_uuid);
+    this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, serverAddr,
+                                                           asio::ip::port_type(serverUdpPort), this->_uuid);
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
 
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, clientUdpPort);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
     this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
@@ -43,7 +46,10 @@ ClientGame::~ClientGame() {
 }
 
 void ClientGame::init() {
-    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
+    Ray::InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
+    while (!Ray::IsWindowReady()) {
+        //
+    }
 
     // Send here command
     this->_protocol->sendHere();
@@ -54,16 +60,20 @@ void ClientGame::init() {
 void ClientGame::mainLoop() {
     while (this->_isRunning) // Detect window close button or ESC key
     {
-        BeginDrawing();
+        Ray::BeginDrawing();
 
-        ClearBackground(BLACK);
+        Ray::ClearBackground(Ray::BLACK);
 
         this->_protocol->handleCommands();
         this->_spriteSystem->apply();
         this->_healthSystem->apply();
+
+#ifndef WIN32_LEAN_AND_MEAN
         this->_musicSystem->apply();
+#endif
+
         this->_inputSystem->apply();
 
-        EndDrawing();
+        Ray::EndDrawing();
     }
 }

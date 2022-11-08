@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
 #include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
@@ -24,7 +22,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(Utilities::UUID uuid, asio::ip::address addr, int port);
+    ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int serverUdpPort);
     ~ClientGame();
 
     void init();
