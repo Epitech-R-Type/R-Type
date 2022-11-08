@@ -7,7 +7,7 @@ TEST(Armor, ToString) {
         armor : 0,
     };
 
-    std::string strArmor = Armor::toString(armor);
+    std::string strArmor = toString(armor);
 
     EXPECT_STREQ("0;", strArmor.c_str());
 }
@@ -21,7 +21,7 @@ TEST(Armor, ToEntity) {
 
     EXPECT_EQ(manager->getComponent<Armor::Component>(id)->armor, 2);
 
-    std::vector<std::string> args{std::to_string(id), "0;"};
+    std::vector<std::string> args{std::to_string(ComponentType::ARMOR), "0"};
 
     Armor::applyUpdate(args, id, manager);
 
@@ -35,7 +35,7 @@ TEST(Health, ToString) {
         visible : false,
     };
 
-    std::string str = Health::toString(health);
+    std::string str = toString(health);
 
     EXPECT_STREQ("32,32,0;", str.c_str());
 }
@@ -55,7 +55,7 @@ TEST(Health, ToEntity) {
     EXPECT_EQ(manager->getComponent<Health::Component>(id)->maxHealth, 32);
     EXPECT_EQ(manager->getComponent<Health::Component>(id)->visible, false);
 
-    std::vector<std::string> args{std::to_string(id), "12,12,1;"};
+    std::vector<std::string> args{std::to_string(ComponentType::HEALTH), "12", "12", "1"};
 
     Health::applyUpdate(args, id, manager);
 
