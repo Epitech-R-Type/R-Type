@@ -10,10 +10,10 @@
 
 #include <chrono>
 #include <vector>
-#include <fstream>
 #include <iostream>
 #include <math.h>
 #include <random>
+#include <fstream>
 #include <filesystem>
 
 typedef std::chrono::time_point<std::chrono::system_clock, std::chrono::milliseconds> timePoint;

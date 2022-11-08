@@ -51,7 +51,8 @@ void Game::init() {
         Factory::Ally::makePlayer(this->_entManager, i);
 
     // starts the music ingame
-    this->_protocol.sendChangeMusic(1);
+    this->_protocol.sendChangeMusic(NORMAL);
+    this->loadLevel(1);
 }
 
 void Game::sendModified() {
@@ -65,14 +66,64 @@ void Game::sendModified() {
     }
 };
 
+void Game::loadLevel(int nb)
+{
+    Level newLevel;
+    std::fstream lvlFile(std::string("./levels/level").append(std::to_string(nb)), std::ios_base::in);
+    std::string line;
+    Wave tmp;
+    tmp.endless = false;
+
+    std::getline(lvlFile, line);
+    newLevel.mapId = std::atoi(line.c_str());
+    std::getline(lvlFile, line);
+    newLevel.bossCountdown = std::atoi(line.c_str());
+
+    while (std::getline(lvlFile, line)) {
+        tmp.minSpawned = std::atoi(line.c_str());
+        std::getline(lvlFile, line);
+        tmp.maxSpawned = std::atoi(line.c_str());
+        std::getline(lvlFile, line);
+        tmp.spawnInterval = std::atof(line.c_str());
+        srand(time(NULL));
+        tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
+        newLevel.levelWaves.push_back(tmp);
+    }
+    lvlFile.close();
+    newLevel.waveNb = 0;
+    this->_currentLevel = newLevel;
+    this->_level = nb;
+    this->_bossTimer = getNow();
+    this->_enemyTimer = getNow();
+}
+
+void Game::refreshLevel()
+{
+    const auto now = getNow();
+    std::chrono::duration<double> elapsed_seconds = now - this->_enemyTimer;
+
+    if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval && levelWaves[waveNb].spawned > 0) {
+        this->_enemyTimer = getNow();
+        levelWaves[waveNb].spawned--;
+        Factory::Enemy::makeEnemy(this->_entManager);
+    }
+    elapsed_seconds = now - this->_bossTimer;
+    if (elapsed_seconds.count() >= this->_currentLevel.bossCountdown && this->_bossSpawned == false) {
+        this->_bossTimer = getNow();
+        this->_bossSpawned = true;
+        Factory::Enemy::makeEndboss(this->_entManager);
+        this->_protocol.sendChangeMusic(BOSS);
+    }
+    // check all entite with team component and see if someone is an enemy; if all enemys are dead increase waveNB or call loadLevel
+}
+
 int Game::mainLoop() {
     LOG("Starting Game");
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    std::chrono::time_point<std::chrono::system_clock> timer = getNow();
-    std::chrono::time_point<std::chrono::system_clock> bosstimer = getNow();
-    bool bossSpawned = false;
+    this->_bossTimer = getNow();
+    this->_enemyTimer = getNow();
 
     while (this->_isRunning) {
         this->_protocol.handleCommands();
@@ -83,23 +134,7 @@ int Game::mainLoop() {
         // Always last
         this->_janitorSystem->apply();
 
-        const auto now = getNow();
-        std::chrono::duration<double> elapsed_seconds = now - timer;
-
-        // Convert to milliseconds
-        if (elapsed_seconds.count() > 2) {
-            Factory::Enemy::makeEnemy(this->_entManager);
-            timer = getNow();
-        }
-
-        std::chrono::duration<double> elapsed_boss_seconds = now - bosstimer;
-
-        if (elapsed_boss_seconds.count() > 20 && !bossSpawned) {
-            Factory::Enemy::makeEndboss(this->_entManager);
-            bossSpawned = true;
-            // Changes the music to gamer-music because the boss spawned
-            this->_protocol.sendChangeMusic(0);
-        }
+        this->refreshLevel();
 
         this->sendModified();
     }

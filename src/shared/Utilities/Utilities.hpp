@@ -25,6 +25,8 @@
 #define DEBUG(msg) // std::cout << "[DEBUG]   " << __FUNCTION_NAME__ << ": " << msg << std::endl
 #define HAS_KEY(map, key) (map.find(key) != map.end())
 
+typedef std::chrono::time_point<std::chrono::system_clock> timePoint;
+
 #include <asio.hpp>
 #include <string>
 #include <vector>
@@ -41,6 +43,11 @@ enum SFXID {
     KNOCK = 0,
     LIGHT_GUNSHOT = 1,
     HEAVY_GUNSHOT = 2,
+};
+
+enum SongID {
+    BOSS,
+    NORMAL,
 };
 
 struct Point {

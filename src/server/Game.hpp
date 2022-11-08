@@ -9,6 +9,8 @@
 
 #include <memory>
 #include <thread>
+#include <fstream>
+#include <filesystem>
 
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
@@ -22,6 +24,31 @@
 //          - The game logic
 //          - Udp communication handling
 //          - Ecs handling
+
+struct Enemy {
+    int health;
+    int damage;
+    Animation::AnimationID sprite;
+    int speed;
+    Armament::Type armament;
+};
+
+struct Wave {
+    bool endless;
+    int minSpawned;
+    int maxSpawned;
+    double spawnInterval;
+    int spawned;
+    Enemy enemy;
+};
+
+struct Level {
+    int waveNb;
+    int bossCountdown;
+    int mapId;
+    std::vector<Wave> levelWaves;
+};
+
 class Game {
 public:
     // All the game setup is done in here
@@ -47,6 +74,15 @@ private:
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
     GameProtocol _protocol;
+
+    // Game Logic
+    bool _bossSpawned = false;
+    timePoint _enemyTimer;
+    timePoint _bossTimer;
+    int _level;
+    Level _currentLevel;
+    void loadLevel(int nb);
+    void refreshLevel();
 
     // Multithreading
     bool _isRunning;
