@@ -67,12 +67,6 @@ int ClientLobbyProtocol::handleIncMessages() {
     return 0;
 }
 
-void ClientLobbyProtocol::handleUserCommands(std::string command) {
-
-    if (command == "Start")
-        this->sendMessage("START\r\n");
-}
-
 // ─── Message Sending ─────────────────────────────────────────────────────────────────────────────
 
 void ClientLobbyProtocol::sendStart() {
@@ -80,6 +74,7 @@ void ClientLobbyProtocol::sendStart() {
 
     ss << "START " << this->_clientUUID;
 
+    LOG("Sending START");
     this->sendMessage(ss.str());
 }
 

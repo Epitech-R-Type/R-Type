@@ -13,7 +13,7 @@
 #include "ClientGame.hpp"
 #include "raylib.h"
 
-ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port, std::shared_ptr<std::atomic<bool>> stopFlag) {
+ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port, std::shared_ptr<std::atomic<bool>> tcpStopFlag) {
     this->_isRunning = true;
 
     // Init com thread
@@ -26,9 +26,10 @@ ClientGame::ClientGame(UUIDM uuid, asio::ip::address addr, int port, std::shared
 
     this->_protocol = std::make_shared<ClientGameProtocol>(this->_incomingMQ, this->_outgoingMQ, this->_entManager, this->_musicSystem, addr,
                                                            asio::ip::port_type(port), this->_uuid);
-    this->_stopFlag = stopFlag;
+    this->_tcpStopFlag = tcpStopFlag;
+    this->_udpStopFlag = std::make_shared<std::atomic<bool>>(false);
 
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, -1);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_udpStopFlag, -1);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
     this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
@@ -39,7 +40,7 @@ ClientGame::~ClientGame() {
     CloseWindow();
 
     // Signal thread to stop and join thread
-    this->_stopFlag->store(true);
+    this->_udpStopFlag->store(true);
     this->_udpComThread->join();
 
     // Delete com thread
@@ -56,9 +57,9 @@ void ClientGame::init() {
 }
 
 void ClientGame::mainLoop() {
-    Timer pingTimer(1);
+    Timer pingTimer(1); // Frequency at which ping command is sent
 
-    while (this->_isRunning && !*(this->_stopFlag)) // Detect window close button or ESC key
+    while (this->_isRunning && !*(this->_tcpStopFlag)) // Detect window close button or ESC key
     {
         // Send PING command every second
         if (pingTimer.isExpired()) {

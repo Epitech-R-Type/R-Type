@@ -24,7 +24,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(UUIDM uuid, asio::ip::address addr, int port, std::shared_ptr<std::atomic<bool>> stopFlag);
+    ClientGame(UUIDM uuid, asio::ip::address addr, int port, std::shared_ptr<std::atomic<bool>> tcpStopFlag);
     ~ClientGame();
 
     void init();
@@ -53,5 +53,9 @@ private:
 
     bool _isRunning;
     std::thread* _udpComThread;
-    std::shared_ptr<std::atomic<bool>> _stopFlag;
+
+    // Set to true when tcp connection has closed, this signals to game to quit immediately
+    std::shared_ptr<std::atomic<bool>> _tcpStopFlag;
+    // Set to true when udp connection closed, used in destructor
+    std::shared_ptr<std::atomic<bool>> _udpStopFlag;
 };
