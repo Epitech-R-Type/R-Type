@@ -39,7 +39,6 @@ Game::~Game() {
 }
 
 void Game::init() {
-    LOG("Initializing game");
     srand(time(0));
     this->_protocol.waitForClients();
 
@@ -50,6 +49,7 @@ void Game::init() {
 
     // starts the music ingame
     this->_protocol.sendChangeMusic(NORMAL);
+    LOG("Initializing game");
     this->loadLevel(1);
 }
 
@@ -67,10 +67,10 @@ void Game::sendModified() {
 void Game::loadLevel(int nb)
 {
     Level newLevel;
-    const cmrc::file lvlFile = this->_fs.open(std::string("./levels/level").append(std::to_string(nb)));
+    const cmrc::file lvlFile = this->_fs.open(std::string("src/server/levels/level").append(std::to_string(nb)));
     std::string lvlStr = std::string(lvlFile.begin(), lvlFile.end());
-    if (lvlStr.size() != 0)
-        LOG("is open");
+    // if (lvlStr.size() != 0)
+    //     LOG("is open");
     std::string line;
     Wave tmp;
     tmp.endless = false;
@@ -90,8 +90,9 @@ void Game::loadLevel(int nb)
         tmp.spawnInterval = std::atof(line.c_str());
         srand(time(NULL));
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
+        tmp.enemy = {10, 10, Animation::AnimationID::Orb, 8.0, Armament::Type::Laser};
         newLevel.levelWaves.push_back(tmp);
-        LOG("new added");
+        // LOG("new added");
     }
     newLevel.waveNb = 0;
     this->_currentLevel = newLevel;
@@ -105,7 +106,7 @@ void Game::refreshLevel()
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - this->_enemyTimer;
 
-    LOG("Still Running");
+    // LOG("Still Running");
     if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval && this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
         this->_enemyTimer = getNow();
         this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
@@ -118,6 +119,13 @@ void Game::refreshLevel()
         Factory::Enemy::makeEndboss(this->_entManager);
         this->_protocol.sendChangeMusic(BOSS);
     }
+    for (auto beg = this->_ECS->begin<Team::Component>(); beg != this->_ECS->end<Team::Component>(); ++beg) {
+        Team::Component* ent = this->_ECS->getComponent<Team::Component>(*beg);
+        if (ent == Team::Enemy)
+            return;
+    }
+    if (this->_bossSpawned)
+        this->loadLevel(this->_level++);
     // check all entite with team component and see if someone is an enemy; if all enemys are dead increase waveNB or call loadLevel
 }
 
