@@ -119,9 +119,9 @@ void Game::refreshLevel()
         Factory::Enemy::makeEndboss(this->_entManager);
         this->_protocol.sendChangeMusic(BOSS);
     }
-    for (auto beg = this->_ECS->begin<Team::Component>(); beg != this->_ECS->end<Team::Component>(); ++beg) {
-        Team::Component* ent = this->_ECS->getComponent<Team::Component>(*beg);
-        if (ent == Team::Enemy)
+    for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
+        Team::Component *ent = this->_entManager->getComponent<Team::Component>(*beg);
+        if (*ent == Team::Enemy)
             return;
     }
     if (this->_bossSpawned)
