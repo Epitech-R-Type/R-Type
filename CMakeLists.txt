@@ -53,8 +53,21 @@ function(build_server)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Timer.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Utilities.cpp"
     )   
-
     target_compile_definitions(Server PUBLIC SERVER=1)
+
+
+    cmrc_add_resource_library(
+        server-resources
+
+        ALIAS server::rc
+        NAMESPACE server
+
+        src/server/levels/level1
+        src/server/levels/level2
+        src/server/levels/level3
+        )
+
+        target_link_libraries(Server server::rc)
     target_link_libraries(Server ${CONAN_LIBS})
 endfunction()
 
