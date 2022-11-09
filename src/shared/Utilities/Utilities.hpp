@@ -56,14 +56,6 @@ struct Point {
     double y;
 };
 
-struct Enemy {
-    int health;
-    int damage;
-    int sprite;
-    int speed;
-    int armament;
-};
-
 namespace Utilities {
     /**
      * splits a string

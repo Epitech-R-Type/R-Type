@@ -109,7 +109,7 @@ void Game::refreshLevel()
     if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval && this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
         this->_enemyTimer = getNow();
         this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
-        Factory::Enemy::makeEnemy(this->_entManager);
+        Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemy);
     }
     elapsed_seconds = now - this->_bossTimer;
     if (elapsed_seconds.count() >= this->_currentLevel.bossCountdown && this->_bossSpawned == false) {
