@@ -43,8 +43,6 @@ void Game::init() {
     srand(time(0));
     this->_protocol.waitForClients();
 
-    Factory::Misc::makeBackground(this->_entManager);
-
     std::vector<Connection> connections = this->_protocol.getConnectedClients();
 
     for (int i = 0; i < connections.size(); i++)
@@ -77,7 +75,7 @@ void Game::loadLevel(int nb)
     tmp.endless = false;
 
     std::getline(lvlFile, line);
-    newLevel.mapId = std::atoi(line.c_str());
+    Factory::Misc::makeBackground(this->_entManager, (Animation::AnimationID)std::atoi(line.c_str()));
     std::getline(lvlFile, line);
     newLevel.bossCountdown = std::atoi(line.c_str());
 

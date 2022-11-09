@@ -29,7 +29,7 @@ struct EnemyStats {
     int health;
     int damage;
     Animation::AnimationID sprite;
-    int speed;
+    float speed;
     Armament::Type armament;
 };
 
@@ -45,7 +45,6 @@ struct Wave {
 struct Level {
     int waveNb;
     int bossCountdown;
-    int mapId;
     std::vector<Wave> levelWaves;
 };
 

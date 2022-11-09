@@ -22,6 +22,6 @@ namespace Factory {
     } // namespace Weapon
 
     namespace Misc {
-        void makeBackground(std::shared_ptr<ECSManager> ECS);
+        void makeBackground(std::shared_ptr<ECSManager> ECS, Animation::AnimationID bgID);
     }
 } // namespace Factory

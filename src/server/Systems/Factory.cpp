@@ -145,11 +145,11 @@ void Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID sou
     bullet(ECS, source, 40, -10, -12);
 }
 
-void Factory::Misc::makeBackground(std::shared_ptr<ECSManager> ECS) {
+void Factory::Misc::makeBackground(std::shared_ptr<ECSManager> ECS, Animation::AnimationID bgID) {
     EntityID background = ECS->newEntity();
 
     ECS->addComp<Position::Component>(background, {0, 0});
-    ECS->addComp<Animation::Component>(background, {Animation::AnimationID::Background, 0});
+    ECS->addComp<Animation::Component>(background, {bgID, 0});
     ECS->addComp<Velocity::Component>(background, {2, 0});
     ECS->pushModified(background);
 };
