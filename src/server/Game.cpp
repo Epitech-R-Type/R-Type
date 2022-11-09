@@ -67,30 +67,32 @@ void Game::sendModified() {
 void Game::loadLevel(int nb)
 {
     Level newLevel;
-    std::fstream lvlFile(std::string("./levels/level").append(std::to_string(nb)), std::ios_base::in);
-    if (lvlFile.is_open())
+    const cmrc::file lvlFile = this->_fs.open(std::string("./levels/level").append(std::to_string(nb)));
+    std::string lvlStr = std::string(lvlFile.begin(), lvlFile.end());
+    if (lvlStr.size() != 0)
         LOG("is open");
     std::string line;
     Wave tmp;
     tmp.endless = false;
-
-    std::getline(lvlFile, line);
+    std::vector<std::string> lvlArr = Utilities::splitStr(std::string(lvlStr), std::string("\n"));
+    int i = 0;
+    line = lvlArr[i++];
     Factory::Misc::makeBackground(this->_entManager, (Animation::AnimationID)std::atoi(line.c_str()));
-    std::getline(lvlFile, line);
+    line = lvlArr[i++];
     newLevel.bossCountdown = std::atoi(line.c_str());
 
-    while (std::getline(lvlFile, line)) {
+    while (i < lvlArr.size()) {
+        line = lvlArr[i++];
         tmp.minSpawned = std::atoi(line.c_str());
-        std::getline(lvlFile, line);
+        line = lvlArr[i++];
         tmp.maxSpawned = std::atoi(line.c_str());
-        std::getline(lvlFile, line);
+        line = lvlArr[i++];
         tmp.spawnInterval = std::atof(line.c_str());
         srand(time(NULL));
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
         newLevel.levelWaves.push_back(tmp);
         LOG("new added");
     }
-    lvlFile.close();
     newLevel.waveNb = 0;
     this->_currentLevel = newLevel;
     this->_level = nb;

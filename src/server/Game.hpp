@@ -11,6 +11,7 @@
 #include <thread>
 #include <fstream>
 #include <filesystem>
+#include <cmrc/cmrc.hpp>
 
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
@@ -18,6 +19,8 @@
 #include "Protocols/GameProtocol.hpp"
 #include "Protocols/TcpServer.hpp"
 #include "Systems/Systems.hpp"
+
+CMRC_DECLARE(server);
 
 // This class embodies everything having to do with a single game
 // It will include:
@@ -82,6 +85,7 @@ private:
     Level _currentLevel;
     void loadLevel(int nb);
     void refreshLevel();
+    cmrc::embedded_filesystem _fs = cmrc::server::get_filesystem();
 
     // Multithreading
     bool _isRunning;
