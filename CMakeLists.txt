@@ -148,6 +148,7 @@ function(build_client)
         resources/background.png
         resources/song0.mp3
         resources/song1.mp3
+        resources/song2.mp3
         resources/gunShot1.wav
         resources/gunShot2.wav
         resources/gunShot3.wav
