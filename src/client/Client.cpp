@@ -8,7 +8,7 @@
 #include "Client.hpp"
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
-#include "raylib.h"
+#include "../shared/Utilities/ray.hpp"
 
 Client::Client() {
     this->_tcpStopFlag = std::make_shared<std::atomic<bool>>(false);

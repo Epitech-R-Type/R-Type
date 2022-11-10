@@ -78,8 +78,17 @@ public:
                     case ComponentType::COLLISIONEFFECT:
                         stream << Serialization::componentToString<CollisionEffect::Component>(entityID, manager);
                         break;
+                    case ComponentType::SOUND_CREATION:
+                        stream << Serialization::componentToString<SoundCreation::Component>(entityID, manager);
+                        break;
+                    case ComponentType::SOUND_DESTRUCTION:
+                        stream << Serialization::componentToString<SoundDestruction::Component>(entityID, manager);
+                        break;
+                    case ComponentType::SOUND_DAMAGE:
+                        stream << Serialization::componentToString<SoundDamage::Component>(entityID, manager);
+                        break;
                     default:
-                        ERROR("Unhandled Component: " << componentTypeID << ".");
+                        ERRORLOG("Unhandled Component: " << componentTypeID << ".");
                 }
             }
         } else {
@@ -142,8 +151,17 @@ public:
                 case ComponentType::COLLISIONEFFECT:
                     CollisionEffect::applyUpdate(args, entityID, manager);
                     break;
+                case ComponentType::SOUND_CREATION:
+                    SoundCreation::applyUpdate(args, entityID, manager);
+                    break;
+                case ComponentType::SOUND_DESTRUCTION:
+                    SoundDestruction::applyUpdate(args, entityID, manager);
+                    break;
+                case ComponentType::SOUND_DAMAGE:
+                    SoundDamage::applyUpdate(args, entityID, manager);
+                    break;
                 default:
-                    ERROR("Unhandled Component: " << componentTypeID << ".");
+                    ERRORLOG("Unhandled Component: " << componentTypeID << ".");
             }
         }
 
@@ -153,7 +171,7 @@ public:
     template <class T>
     static std::string componentToString(EntityID entityId, std::shared_ptr<ECSManager> manager) {
         if (!manager->hasComponent<T>(entityId)) {
-            ERROR("Missing component: " << getID<T>());
+            ERRORLOG("Missing component: " << getID<T>());
             return "";
         }
 

@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
 #include <atomic>
 #include <cstring>
 #include <functional>

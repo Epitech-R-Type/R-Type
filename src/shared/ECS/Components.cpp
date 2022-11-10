@@ -260,3 +260,54 @@ void CollisionEffect::dealDamage(EntityID attacker, EntityID defender, std::shar
     healthC->health = healthC->health - damageC->damage;
     ECS->pushModified(defender);
 }
+
+std::string toString(SoundCreation::Component component) {
+    std::stringstream ss;
+
+    ss << component.ID << ";";
+
+    return ss.str();
+}
+
+void SoundCreation::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
+    if (manager->hasComponent<SoundCreation::Component>(entityID)) {
+        SoundCreation::Component* component = manager->getComponent<SoundCreation::Component>(entityID);
+        component->ID = SFXID::INVALID;
+    } else {
+        manager->addComp<SoundCreation::Component>(entityID, {(SFXID)stoi(args[1])});
+    }
+}
+
+std::string toString(SoundDestruction::Component component) {
+    std::stringstream ss;
+
+    ss << component.ID << ";";
+
+    return ss.str();
+}
+
+void SoundDestruction::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
+    if (manager->hasComponent<SoundDestruction::Component>(entityID)) {
+        SoundDestruction::Component* component = manager->getComponent<SoundDestruction::Component>(entityID);
+        component->ID = (SFXID)stoi(args[1]);
+    } else {
+        manager->addComp<SoundDestruction::Component>(entityID, {(SFXID)stoi(args[1])});
+    }
+}
+
+std::string toString(SoundDamage::Component component) {
+    std::stringstream ss;
+
+    ss << component.ID << ";";
+
+    return ss.str();
+}
+
+void SoundDamage::applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager) {
+    if (manager->hasComponent<SoundDamage::Component>(entityID)) {
+        SoundDamage::Component* component = manager->getComponent<SoundDamage::Component>(entityID);
+        component->ID = (SFXID)stoi(args[1]);
+    } else {
+        manager->addComp<SoundDamage::Component>(entityID, {(SFXID)stoi(args[1])});
+    }
+}

@@ -49,7 +49,7 @@ void TcpClient::setupIncomingHandler() {
             // Reset incoming handler
             this->setupIncomingHandler();
         } else {
-            ERROR("Error TcpClient handler:" << err.message());
+            ERRORLOG("Error TcpClient handler:" << err.message());
 
             // Reset buffer
             memset(this->_buffer, 0, 1024);
@@ -73,7 +73,7 @@ void TcpClient::setupOutgoingHandler() {
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            ERROR("Error TcpClient handler:" << err.message());
+            ERRORLOG("Error TcpClient handler:" << err.message());
             this->setupOutgoingHandler();
             return;
         }
@@ -102,7 +102,7 @@ void TcpClient::stopSignalHandler() {
 
     this->_stopTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            ERROR("Error TcpClient handler:" << err.message());
+            ERRORLOG("Error TcpClient handler:" << err.message());
             this->stopSignalHandler();
             return;
         }
@@ -122,7 +122,7 @@ int TcpClient::connect(std::string serverIP, int port) {
     try {
         this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
     } catch (std::system_error const& e) {
-        ERROR("Connection to server refused, exiting now...");
+        ERRORLOG("Connection to server refused, exiting now...");
         return 1;
     }
 

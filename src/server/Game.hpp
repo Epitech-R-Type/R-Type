@@ -25,7 +25,7 @@
 class Game {
 public:
     // All the game setup is done in here
-    Game(std::vector<Connection> connections, int port, UUIDM serverUUID);
+    Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID);
 
     ~Game();
 

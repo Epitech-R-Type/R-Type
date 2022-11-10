@@ -63,15 +63,13 @@ $ cmake --build . --config Release
 Delete the build folder if present:
 
 ```
-$ Remove-Item 'build' -Recurse
+rmdir /s build
 ```
 
 Then build the binaries:
 
 ```
-$ New-item -itemtype directory build
-$ Set-Location build
-$ conan install . --build=missing
-$ cmake .. -G "Visual Studio 17"
-$ cmake --build . --config Release
+conan install conanfile.txt -if build --build=missing
+cmake -S . -B build
+cmake --build build
 ```

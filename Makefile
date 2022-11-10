@@ -4,7 +4,7 @@ BUILD = build
 
 build: normdir conan
 	cmake -S . -B $(BUILD);
-	cmake --build $(BUILD)
+	cmake --build $(BUILD);
 
 test: testdir conan
 	cmake -S . -B $(BUILD) -DTESTMODE=1;
@@ -21,7 +21,7 @@ normdir:
 	$(eval BUILD="build")
 
 conan:
-	conan install conanfile.txt -if $(BUILD) --build=missing;
+	conan install conanfile.txt -if $(BUILD) --build=missing
 
 cleanbuild: normdir clean
 

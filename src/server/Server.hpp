@@ -44,7 +44,7 @@ public:
         bool _lobbyRunning;
         Game* _game;
         LobbyProtocol* _protocol;
-        UUIDM _serverUUID;
+        Utilities::UUID _serverUUID;
 
         // Tcp com thread stuff
         std::thread* _comThread;

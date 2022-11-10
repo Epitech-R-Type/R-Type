@@ -1,4 +1,4 @@
-#include "../WindowsGuard.hpp"
+
 #include "Server.hpp"
 
 // Instantiation of global id counter

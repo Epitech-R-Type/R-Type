@@ -9,9 +9,6 @@
 #include <gtest/gtest.h>
 #include <vector>
 
-// Init g_idCounter
-Index g_idCounter = 0;
-
 // ─── Ecs Utility Function Tests ──────────────────────────────────────────────────────────────────
 
 TEST(EcsUtilities, IdUtilities) {

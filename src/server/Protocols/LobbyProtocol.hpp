@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
 #include <asio.hpp>
 #include <memory>
 #include <sstream>
@@ -29,7 +27,7 @@
 class LobbyProtocol {
 public:
     LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
-                  UUIDM serverUUID);
+                  Utilities::UUID serverUUID);
 
     // Server Commands
     // Sends start game command to every connected client

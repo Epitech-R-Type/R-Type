@@ -6,13 +6,12 @@
 */
 
 #include "Game.hpp"
-#include "../WindowsGuard.hpp"
 
 #include "../shared/ECS/Components.hpp"
 #include "../shared/ECS/Serialization.hpp"
 #include "Systems/Factory.hpp"
 
-Game::Game(std::vector<Connection> connections, int port, UUIDM serverUUID)
+Game::Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID)
     : _isRunning(true),
       _entManager(std::make_shared<ECSManager>()),
       _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),

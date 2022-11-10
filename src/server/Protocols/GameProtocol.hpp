@@ -7,8 +7,6 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
 #include <asio.hpp>
 #include <exception>
 #include <memory>
@@ -31,7 +29,7 @@ class GameProtocol {
 public:
     // Constructor
     GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
-                 std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager, UUIDM serverUUID);
+                 std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager, Utilities::UUID serverUUID);
 
     // Blocks in this method until all clients have joined or timeout has been reached
     // Returns false if enough clients have joined in order to start game

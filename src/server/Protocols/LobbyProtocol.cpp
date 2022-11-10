@@ -8,7 +8,7 @@
 #include "LobbyProtocol.hpp"
 
 LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, UUIDM serverUUID)
+                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, Utilities::UUID serverUUID)
     : _connMan(serverUUID) {
     // Set Messaging queues
     this->_incomingMQ = incoming;
@@ -76,7 +76,7 @@ int LobbyProtocol::handleCommands() {
             continue;
         }
 
-        UUIDM uuid(splitBody[1]); // Potential failure here
+        Utilities::UUID uuid(splitBody[1]); // Potential failure here
 
         if (!this->_connMan.uuidValid(uuid)) {
             this->handleForbidden(addr, port);
@@ -94,7 +94,6 @@ int LobbyProtocol::handleCommands() {
 }
 
 void LobbyProtocol::handleWrongRequest(std::string msgBody, asio::ip::address addr, asio::ip::port_type port) {
-    ERROR("Wrong message: " << msgBody);
     Message<std::string> msg("500 Wrong request\r\n", addr, port);
     this->_outgoingMQ->push(msg);
 }

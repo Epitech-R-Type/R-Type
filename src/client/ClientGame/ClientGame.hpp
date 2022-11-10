@@ -7,11 +7,10 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
 #include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
+#include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 #include "../Protocols/ClientGameProtocol.hpp"
 #include "../Systems/Systems.hpp"
@@ -24,7 +23,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(UUIDM uuid, asio::ip::address addr, int port, std::shared_ptr<std::atomic<bool>> tcpStopFlag);
+    ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int serverUdpPort, std::shared_ptr<std::atomic<bool>> tcpStopFlag);
     ~ClientGame();
 
     void init();
@@ -49,7 +48,7 @@ private:
 
     std::shared_ptr<ClientGameProtocol> _protocol;
 
-    UUIDM _uuid;
+    Utilities::UUID _uuid;
 
     bool _isRunning;
     std::thread* _udpComThread;

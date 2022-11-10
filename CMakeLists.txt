@@ -8,12 +8,11 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 if (MSVC)
     set (CMAKE_GENERATOR "Visual Studio 17" CACHE INTERNAL "" FORCE)
     add_compile_definitions(WIN32_LEAN_AND_MEAN)
+    add_compile_definitions(_WIN32_WINNT=0x0601)
 else()
     set (CMAKE_GENERATOR "Unix Makefiles" CACHE INTERNAL "" FORCE)
     add_compile_options(-g3)
 endif()
-
-
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 
@@ -137,6 +136,9 @@ function(build_client)
         resources/background.png
         resources/song0.mp3
         resources/song1.mp3
+        resources/gunShot1.wav
+        resources/gunShot2.wav
+        resources/gunShot3.wav
     )
 
     target_link_libraries(Client client::rc)
@@ -152,13 +154,24 @@ function(build_tests)
     FetchContent_MakeAvailable(googletest)
     enable_testing()
 
-    add_executable(
-        Tests
+    set(SOURCE_CODE
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Serialization.cpp"
+    )
+
+    set(TEST_CODE
         "${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsTests.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsFixture.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
+        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/Serialization.cpp"
+    )
+
+    add_executable(
+        Tests
+        "${SOURCE_CODE}"
+        "${TEST_CODE}"
     )
 
     target_link_libraries(Tests GTest::gtest_main)

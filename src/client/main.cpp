@@ -1,5 +1,3 @@
-#include "../WindowsGuard.hpp"
-
 #include "Client.hpp"
 
 Index g_idCounter = 0;
@@ -20,7 +18,7 @@ int main(int argc, char** argv) {
     Client client;
 
     if (!isFlagSet(argv, argv + argc, "-v")) {
-        SetTraceLogLevel(7);
+        Ray::SetTraceLogLevel(7);
     }
 
     if (isFlagSet(argv, argv + argc, "-ip")) {

@@ -7,18 +7,18 @@
 
 #include "Connections.hpp"
 
-ConnectionManager::ConnectionManager(UUIDM serverUUID, int clientTimeout)
+ConnectionManager::ConnectionManager(Utilities::UUID serverUUID, int clientTimeout)
     : _clientTimeout(clientTimeout) {
     this->_serverUUID = serverUUID;
 }
 
-UUIDM ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_type port) {
+Utilities::UUID ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_type port) {
     auto existingUUID = this->getUUID(addr, port);
 
     // If connection doesn't already exist
     if (!existingUUID) {
         // Generate new uuid
-        UUIDM newUUID;
+        Utilities::UUID newUUID;
 
         // Push new connection
         this->_connections.push_back({addr, port, newUUID, Timer(this->_clientTimeout), this->_playerCounter++});
@@ -28,7 +28,7 @@ UUIDM ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_ty
     }
 }
 
-UUIDM ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_type port, UUIDM uuid) {
+Utilities::UUID ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_type port, Utilities::UUID uuid) {
     auto existingUUID = this->getUUID(addr, port);
 
     // If connection doesn't already exist
@@ -41,7 +41,7 @@ UUIDM ConnectionManager::addConnection(asio::ip::address addr, asio::ip::port_ty
     }
 }
 
-std::optional<UUIDM> ConnectionManager::getUUID(asio::ip::address addr, asio::ip::port_type port) {
+std::optional<Utilities::UUID> ConnectionManager::getUUID(asio::ip::address addr, asio::ip::port_type port) {
     for (auto conn : this->_connections)
         if (conn.addr == addr && conn.port == port)
             return std::optional(conn.uuid);
@@ -49,14 +49,14 @@ std::optional<UUIDM> ConnectionManager::getUUID(asio::ip::address addr, asio::ip
     return {};
 }
 
-bool ConnectionManager::uuidValid(UUIDM uuid) const {
+bool ConnectionManager::uuidValid(Utilities::UUID uuid) const {
     for (auto conn : this->_connections)
         if (conn.uuid == uuid)
             return true;
     return false;
 }
 
-std::optional<Connection> ConnectionManager::getConnection(UUIDM uuid) const {
+std::optional<Connection> ConnectionManager::getConnection(Utilities::UUID uuid) const {
     for (auto conn : this->_connections)
         if (conn.uuid == uuid)
             return std::optional(conn);
@@ -99,11 +99,11 @@ void ConnectionManager::removeDisconnected() {
             this->_connections.erase(this->_connections.begin() + i);
 }
 
-void ConnectionManager::setServerUUID(UUIDM serverUUID) {
+void ConnectionManager::setServerUUID(Utilities::UUID serverUUID) {
     this->_serverUUID = serverUUID;
 }
 
-UUIDM ConnectionManager::getServerUUID() const {
+Utilities::UUID ConnectionManager::getServerUUID() const {
     return this->_serverUUID;
 }
 
