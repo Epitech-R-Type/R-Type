@@ -32,6 +32,9 @@ Server::~Server() {
     this->_tcpStopFlag->store(true);
     this->_tcpComThread->join();
 
+    // Stop all games
+    this->stopGames();
+
     // Delete tcp com thread
     delete this->_tcpComThread;
     // Delete protocol implementation
@@ -51,25 +54,54 @@ int Server::mainLoop() {
 
         // Launch new games
         this->handleNewGames();
+
+        // Handle finished games
+        this->handleFinishedGames();
     }
 
     return 0;
 }
 
-void Server::launchGame(int port) {
-    this->_game = new Game(this->_protocol->getConnections(), port, this->_serverUUID);
+void Server::launchGame(GameInfo info) {
+    // Create stop flag
+    std::shared_ptr<std::atomic<bool>> gameStopFlag = std::make_shared<std::atomic<bool>>(false);
+    // Create new thread for new game
+    std::unique_ptr<std::thread> newGameThread =
+        std::make_unique<std::thread>(game_main, this->_protocol->getConnections(), info.port, this->_serverUUID, gameStopFlag);
 
-    this->_game->init();
-    this->_game->mainLoop();
-
-    delete this->_game;
+    // Push back to vectors
+    this->_gameThreads.push_back(std::move(newGameThread));
+    this->_gameStopFlags.push_back(std::move(gameStopFlag));
 }
 
 // ─── Game Lobbies Handling ───────────────────────────────────────────────────────────────────────
 
 void Server::handleNewGames() {
     for (auto game : *this->_gamesToLaunch)
-        launchGame(game.port);
+        launchGame(game);
 
     this->_gamesToLaunch->clear();
+}
+
+void Server::handleFinishedGames() {
+    // Delete games whose game stop flag has been set
+    for (int i = 0; i < this->_gameThreads.size(); i++)
+        if (*this->_gameStopFlags[i]) {
+            // Join thread just in case
+            this->_gameThreads[i]->join();
+
+            // Cleanup
+            this->_gameThreads.erase(this->_gameThreads.begin() + i);
+            this->_gameStopFlags.erase(this->_gameStopFlags.begin() + i);
+        }
+}
+
+void Server::stopGames() {
+    // Exit main loops
+    for (auto& stopFlag : this->_gameStopFlags)
+        stopFlag->store(true);
+
+    // Join threads
+    for (auto& thread : this->_gameThreads)
+        thread->join();
 }

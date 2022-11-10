@@ -35,15 +35,20 @@ public:
         // Main Loop
         int mainLoop();
 
-        // Launches game
-        // Note: Execution will hang until game is over,
-        // in the future this can be done in a separate thread
-        void launchGame(int port);
+        // Launches game in separate thread
+        void launchGame(GameInfo info);
 
         // ─── Game Lobbies Handling ───────────────────────────────────────────────────────
 
         // Check if new games to launch and launch them
         void handleNewGames();
+
+        // Check if game has ended and cleanup
+        void handleFinishedGames();
+
+        // Quit all game threads
+        // Note: Exec hangs until all threads joined
+        void stopGames();
 
     private:
         Game* _game;

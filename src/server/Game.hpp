@@ -17,7 +17,7 @@
 #include "Protocols/TcpServer.hpp"
 #include "Systems/Systems.hpp"
 
-void game_main(int port);
+void game_main(std::vector<Connection> connections, int port, Utilities::UUID serverUUID, std::shared_ptr<std::atomic<bool>> gameStopFlag);
 
 // This class embodies everything having to do with a single game
 // It will include:
@@ -27,7 +27,7 @@ void game_main(int port);
 class Game {
 public:
     // All the game setup is done in here
-    Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID);
+    Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID, std::shared_ptr<std::atomic<bool>> gameStopFlag);
 
     ~Game();
 
@@ -54,5 +54,6 @@ private:
     // Multithreading
     bool _isRunning;
     std::thread* _udpComThread;
-    std::shared_ptr<std::atomic<bool>> _stopFlag;
+    std::shared_ptr<std::atomic<bool>> _udpStopFlag;
+    std::shared_ptr<std::atomic<bool>> _gameStopFlag;
 };
