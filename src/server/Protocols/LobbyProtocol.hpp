@@ -7,14 +7,13 @@
 
 #pragma once
 
-#include <asio.hpp>
-#include <memory>
-#include <sstream>
-
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/AsioConstants.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
+#include "../../shared/Utilities/secureAsio.hpp"
 #include "Connections.hpp"
+#include <memory>
+#include <sstream>
 
 // Generic protocol pieces
 #define SP " "

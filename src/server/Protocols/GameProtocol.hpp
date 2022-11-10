@@ -7,7 +7,7 @@
 
 #pragma once
 
-#include <asio.hpp>
+#include "../../shared/Utilities/secureAsio.hpp"
 #include <exception>
 #include <memory>
 #include <optional>

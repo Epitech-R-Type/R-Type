@@ -9,7 +9,7 @@
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Utilities/ray.hpp"
-#include "GUI/TextBox.hpp"
+#include "GUI/Menus/Connection.hpp"
 
 Client::Client() {
     this->_protocol = new ClientLobbyProtocol();
@@ -24,6 +24,7 @@ Client::Client() {
     while (!IsWindowReady()) {
         //
     }
+    SetTargetFPS(40);
 }
 
 int Client::launchGame() {
@@ -39,8 +40,10 @@ int Client::launchGame() {
     return 0;
 }
 
-void Client::connect(std::string serverIP, int port) {
+bool Client::connect(std::string serverIP, int port) {
     this->_protocol->connect(serverIP, port);
+
+    return this->_protocol->isConnected();
 }
 
 void Client::handleUserCommands() {
@@ -53,42 +56,39 @@ void Client::handleUserCommands() {
     }
 }
 
-void userInput(std::shared_ptr<MessageQueue<std::string>> userCommands) {
-    while (1) {
-        std::string command;
-
-        std::cin >> command;
-
-        userCommands->push(command);
-    }
-}
+enum Stages {
+    CONNECTION,
+    ROOMSELECTION,
+    ROOM,
+    GAME,
+};
 
 int Client::mainLoop() {
-    this->_userInputThread = new std::thread(userInput, this->_userCommands);
-    auto box = TextBox("Test", 20, 20, 100, 40);
+    Connection connection(this);
 
-    box.getInput();
+    int stage = 0;
+    bool sendStart = false;
 
-    while (this->_lobbyRunning) {
+    while (!connection.getDone()) {
         this->_protocol->handleIncMessages();
-
         this->handleUserCommands();
 
-        this->_connected = this->_protocol->isConnected();
+        connection.apply();
+        connection.draw();
+    }
 
-        BeginDrawing();
+    while (!(this->_connected = this->_protocol->isConnected())) {
+    }
 
-        ClearBackground(BLACK);
+    this->_protocol->startGame();
 
-        box.draw();
+    while (true) {
+        const bool startGame = this->_protocol->shouldGameStart();
 
-        EndDrawing();
-
-        if (this->_protocol->shouldGameStart()) {
+        if (startGame) {
             std::this_thread::sleep_for(std::chrono::seconds(2));
             this->launchGame();
         }
     }
-
     return 0;
 }

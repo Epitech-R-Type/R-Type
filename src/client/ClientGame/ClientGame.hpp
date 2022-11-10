@@ -49,7 +49,8 @@ private:
 
     Utilities::UUID _uuid;
 
-    bool _isRunning;
+    bool _isRunning = true;
+
     std::thread* _udpComThread;
     std::shared_ptr<std::atomic<bool>> _stopFlag;
 };

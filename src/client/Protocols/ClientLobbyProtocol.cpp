@@ -3,18 +3,17 @@
 #include "../../shared/Utilities/Utilities.hpp"
 #include "TcpClient.hpp"
 
-ClientLobbyProtocol::ClientLobbyProtocol() {}
-
-void ClientLobbyProtocol::connect(std::string serverIP, int port) {
+ClientLobbyProtocol::ClientLobbyProtocol() {
     this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
-
-    // Init tcp com thread
     this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
+}
+
+void ClientLobbyProtocol::connect(std::string serverIP, int port) {
+    // Init tcp com thread
     this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
 
     this->sendMessage("CONNECT\r\n");
-    this->_connected = true;
 }
 
 void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
@@ -56,6 +55,7 @@ void ClientLobbyProtocol::handleIncMessages() {
     std::optional<Message<std::string>> potMsg;
     while ((potMsg = this->_incomingMQ->pop())) {
         auto message = potMsg.value();
+        std::cout << message << std::endl;
 
         if (this->_serverIP.is_unspecified()) {
             this->_serverIP = message.getAddr();
@@ -86,7 +86,7 @@ void ClientLobbyProtocol::handleIncMessages() {
 void ClientLobbyProtocol::handleUserCommands(std::string command) {
 
     if (command == "Start")
-        this->sendMessage("START\r\n");
+        this->startGame();
 }
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
@@ -100,4 +100,8 @@ bool ClientLobbyProtocol::isConnected() {
 
 bool ClientLobbyProtocol::shouldGameStart() {
     return this->_startGame;
+};
+
+void ClientLobbyProtocol::startGame() {
+    this->sendMessage("START\r\n");
 };

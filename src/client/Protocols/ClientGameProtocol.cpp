@@ -5,10 +5,8 @@
 ** .
 */
 
-#include "../../WindowsGuard.hpp"
-
-#include "../../shared/Utilities/Utilities.hpp"
 #include "ClientGameProtocol.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 
 ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                                        std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<ECSManager> entManager,

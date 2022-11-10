@@ -11,8 +11,8 @@
 #include "ClientGame/ClientGame.hpp"
 #include "Protocols/ClientLobbyProtocol.hpp"
 #include "Protocols/TcpClient.hpp"
-#include "Systems/SpriteSystem.hpp"
 #include "Systems/MusicSystem.hpp"
+#include "Systems/SpriteSystem.hpp"
 #include <thread>
 
 // This class implementls the main loop for lobby handling of the client
@@ -33,7 +33,7 @@ public:
     // Return is 0 if success or 1 if failure
     int launchGame();
 
-    void connect(std::string serverIP, int port = TCP_PORT);
+    bool connect(std::string serverIP, int port = TCP_PORT);
 
     void handleUserCommands();
 
