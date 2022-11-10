@@ -49,6 +49,7 @@ enum SFXID {
 enum SongID {
     BOSS,
     NORMAL,
+    PIANO,
 };
 
 struct Point {

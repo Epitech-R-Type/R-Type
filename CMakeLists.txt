@@ -148,6 +148,7 @@ function(build_client)
         resources/background.png
         resources/song0.mp3
         resources/song1.mp3
+        resources/song2.mp3
         resources/gunShot1.wav
         resources/gunShot2.wav
         resources/gunShot3.wav
@@ -155,6 +156,17 @@ function(build_client)
 
     target_link_libraries(Client client::rc)
     target_link_libraries(Client ${CONAN_LIBS})
+endfunction()
+
+
+function(build_createFile)
+    add_executable(CreateFile
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/createLevelFile/main.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/createLevelFile/Level.cpp"
+    )
+    target_compile_definitions(CreateFile PUBLIC CREATE_FILE=1)
+
+    target_link_libraries(CreateFile ${CONAN_LIBS})
 endfunction()
 
 
@@ -207,4 +219,5 @@ else()
     message("==== Programs ====")
     build_client()
     build_server()
+    build_createFile()
 endif()
