@@ -83,7 +83,6 @@ void TcpClient::setupOutgoingHandler() {
         while ((msg = this->pop_message())) {
 
             std::string msgStr = msg->getMsg();
-            LOG("[TcpClient] Sending msg : " << msgStr);
 
             // Prepare buffer
             int len = msgStr.length();

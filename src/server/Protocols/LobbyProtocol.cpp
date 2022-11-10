@@ -40,7 +40,6 @@ int LobbyProtocol::handleCommands() {
     int outputPort = 0;
 
     while ((msg = this->_incomingMQ->pop())) {
-        LOG("Handling command in LobbyProtocol !!!!!");
         // Get peer info
         auto addr = msg->getAddr();
         auto port = msg->getPort();

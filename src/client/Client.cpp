@@ -44,8 +44,6 @@ void Client::handleUserCommands() {
     while ((potMsg = this->_userCommands->pop())) {
         std::string msg = potMsg.value();
 
-        LOG("Handling a user command");
-
         if (msg == "Start")
             this->_protocol->sendStart();
     }

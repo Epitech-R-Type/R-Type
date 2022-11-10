@@ -97,7 +97,6 @@ void ClientLobbyProtocol::sendStart() {
 
     ss << "START " << this->_clientUUID;
 
-    LOG("Sending START");
     this->sendMessage(ss.str());
 }
 

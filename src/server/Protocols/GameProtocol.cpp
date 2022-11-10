@@ -200,7 +200,6 @@ void GameProtocol::handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     }
 
     this->_connMan.resetTimeout(addr, port);
-    LOG("Resetting timeout...");
 }
 
 void GameProtocol::handleCommands() {
