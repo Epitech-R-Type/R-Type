@@ -14,10 +14,15 @@ BackgroundId (AnimationID)
 BaseMusic (SongID)
 
 MinSpawn (int)
+
 MaxSpawn (int)
+
 SpawnInterval (float)
+
 EnemyTypes (EnemyID, ...)
+
 BossType (BossID)
+
 BossSpawnTimer (int)
 
 
