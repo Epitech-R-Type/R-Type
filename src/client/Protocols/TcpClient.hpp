@@ -33,7 +33,7 @@ public:
     // Note: Needs to be called again in order to loop
     void stopSignalHandler();
 
-    void connect(std::string serverIP, int port);
+    int connect(std::string serverIP, int port);
 
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);

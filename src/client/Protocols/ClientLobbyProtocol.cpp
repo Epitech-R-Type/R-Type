@@ -3,18 +3,27 @@
 #include "../../shared/Utilities/Utilities.hpp"
 #include "TcpClient.hpp"
 
-ClientLobbyProtocol::ClientLobbyProtocol() {}
+ClientLobbyProtocol::ClientLobbyProtocol(std::shared_ptr<std::atomic<bool>> stopFlag) {
+    this->_stopFlag = stopFlag;
+}
 
-void ClientLobbyProtocol::connect(std::string serverIP, int port) {
+int ClientLobbyProtocol::connect(std::string serverIP, int port) {
     this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
     // Init tcp com thread
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
     this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, serverIP, port);
+
+    // Wait to find out if connection succeeded or not
+    std::optional<Message<std::string>> msg;
+    while (!(msg = this->_incomingMQ->pop()))
+        std::this_thread::sleep_for(std::chrono::milliseconds(10));
+    if (msg->getMsg() == "CONN_FAILED")
+        return 1;
 
     this->sendMessage("CONNECT\r\n");
     this->_connected = true;
+    return 0;
 }
 
 void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
@@ -32,14 +41,6 @@ void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
     this->_clientUUID = clientUUID;
 }
 
-void ClientLobbyProtocol::sendStart() {
-    std::stringstream ss;
-
-    ss << "START " << this->_clientUUID;
-
-    this->sendMessage(ss.str());
-}
-
 Utilities::UUID ClientLobbyProtocol::getUUID() {
     return this->_clientUUID;
 }
@@ -52,7 +53,9 @@ asio::ip::address ClientLobbyProtocol::getServerIp() {
     return this->_serverIP;
 }
 
-void ClientLobbyProtocol::handleIncMessages() {
+// ─── Message Handling ────────────────────────────────────────────────────────────────────────────
+
+int ClientLobbyProtocol::handleIncMessages() {
     std::optional<Message<std::string>> potMsg;
     while ((potMsg = this->_incomingMQ->pop())) {
         auto message = potMsg.value();
@@ -61,6 +64,9 @@ void ClientLobbyProtocol::handleIncMessages() {
             this->_serverIP = message.getAddr();
             this->_serverPort = message.getPort();
         }
+
+        if (message.getMsg() == "CONN_CLOSED")
+            return 1;
 
         const std::string msg = message.getMsg();
 
@@ -81,12 +87,17 @@ void ClientLobbyProtocol::handleIncMessages() {
             this->_startGame = true;
         }
     }
+    return 0;
 }
 
-void ClientLobbyProtocol::handleUserCommands(std::string command) {
+// ─── Message Sending ─────────────────────────────────────────────────────────────────────────────
 
-    if (command == "Start")
-        this->sendMessage("START\r\n");
+void ClientLobbyProtocol::sendStart() {
+    std::stringstream ss;
+
+    ss << "START " << this->_clientUUID;
+
+    this->sendMessage(ss.str());
 }
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
@@ -100,4 +111,9 @@ bool ClientLobbyProtocol::isConnected() {
 
 bool ClientLobbyProtocol::shouldGameStart() {
     return this->_startGame;
+}
+
+void ClientLobbyProtocol::resetStartGame() {
+    this->_startGame = false;
+    this->_serverPort = -1;
 };

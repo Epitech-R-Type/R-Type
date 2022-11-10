@@ -6,35 +6,33 @@
 
 class ClientLobbyProtocol {
 public:
-    ClientLobbyProtocol();
+    ClientLobbyProtocol(std::shared_ptr<std::atomic<bool>> stopFlag);
 
     /**
      * Connects the client to the TCP socket of the server
      * */
-    void connect(std::string serverIP, int port = TCP_PORT);
+    int connect(std::string serverIP, int port = TCP_PORT);
 
     void startGame();
 
-    bool isAuthenticated();
+    // ─── Message Handling ────────────────────────────────────────────────────────────────────
 
-    void handleIncMessages();
+    int handleIncMessages();
 
-    void handleUserCommands(std::string command);
-
-    void sendMessage(std::string msgContent);
-
-    bool isConnected();
-
-    bool shouldGameStart();
-
-    void saveAuthentication(std::string uuids);
+    // ─── Message Sending ─────────────────────────────────────────────────────────────────────
 
     void sendStart();
+    void sendMessage(std::string msgContent);
+
+    // ─── Utility Functions ───────────────────────────────────────────────────────────────────
+
+    void saveAuthentication(std::string uuids);
+    bool isConnected();
+    bool shouldGameStart();
+    void resetStartGame();
 
     Utilities::UUID getUUID();
-
     int getServerPort();
-
     asio::ip::address getServerIp();
 
 private:

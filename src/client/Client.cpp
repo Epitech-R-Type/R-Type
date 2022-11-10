@@ -11,7 +11,8 @@
 #include "../shared/Utilities/ray.hpp"
 
 Client::Client() {
-    this->_protocol = new ClientLobbyProtocol();
+    this->_tcpStopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_protocol = new ClientLobbyProtocol(this->_tcpStopFlag);
 
     this->_lobbyRunning = true;
     this->_connected = false;
@@ -25,16 +26,17 @@ int Client::launchGame() {
         return 84;
 
     // Note: For performance reasons we could free the lobby ecs before launching the game
-    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort());
+    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort(), this->_tcpStopFlag);
     this->_game->init();
     this->_game->mainLoop();
+
     delete this->_game;
 
     return 0;
 }
 
-void Client::connect(std::string serverIP, int port) {
-    this->_protocol->connect(serverIP, port);
+int Client::connect(std::string serverIP, int port) {
+    return this->_protocol->connect(serverIP, port);
 }
 
 void Client::handleUserCommands() {
@@ -61,7 +63,8 @@ int Client::mainLoop() {
     this->_userInputThread = new std::thread(userInput, this->_userCommands);
 
     while (this->_lobbyRunning) {
-        this->_protocol->handleIncMessages();
+        if (this->_protocol->handleIncMessages())
+            return 0;
 
         this->handleUserCommands();
 
@@ -70,6 +73,13 @@ int Client::mainLoop() {
         if (this->_protocol->shouldGameStart()) {
             std::this_thread::sleep_for(std::chrono::seconds(2));
             this->launchGame();
+
+            // Check if tcp connection still open
+            if (*this->_tcpStopFlag)
+                return 0;
+
+            // Prepare for next games
+            this->_protocol->resetStartGame();
         }
     }
 

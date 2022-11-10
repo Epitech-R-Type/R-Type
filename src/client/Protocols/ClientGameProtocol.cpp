@@ -23,11 +23,7 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
       _port(port),
       _uuid(uuid) {}
 
-//
-//
-// COMMAND HANDLING
-//
-//
+// ─── Command Handling ────────────────────────────────────────────────────────────────────────────
 
 void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
     static int count = 0;
@@ -110,27 +106,30 @@ bool ClientGameProtocol::handleCommands() {
 
         switch (parsed->cmd) {
             case Command::Entityd:
-                this->handleEntity(parsed.value(), msg->getMsg());
+                this->handleEntity(*parsed, msg->getMsg());
                 break;
             case Command::DeleteEntity:
-                this->handleDeleteEntity(parsed.value());
+                this->handleDeleteEntity(*parsed);
                 break;
             case Command::DeleteComponent:
-                this->handleDeleteComponent(parsed.value());
+                this->handleDeleteComponent(*parsed);
                 break;
             case Command::ChangeMusic:
 #ifndef WIN32_LEAN_AND_MEAN
-                this->handleMusic(parsed.value());
+                this->handleMusic(*parsed);
 #endif
+                break;
+            case Command::GameEnd:
+                return true;
                 break;
             default:
                 WARNING("Command " << parsed->cmd << " unhandled.");
         }
     }
-    return true;
+    return false;
 }
 
-// COMMAND SENDING
+// ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
 void ClientGameProtocol::sendActMove(std::string directions) {
     auto msg = ProtocolUtils::createMessage("ACT_MOVE", directions, this->_addr, this->_port);
@@ -152,5 +151,10 @@ void ClientGameProtocol::sendGetEnt(EntityID id) {
     ss << id;
 
     auto msg = ProtocolUtils::createMessage("GET_ENT", ss.str(), this->_addr, this->_port);
+    this->_outgoingMQ->push(msg);
+}
+
+void ClientGameProtocol::sendPing() {
+    auto msg = ProtocolUtils::createMessage("PING", "", this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
