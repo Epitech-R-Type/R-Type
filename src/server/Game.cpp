@@ -91,7 +91,7 @@ bool Game::loadLevel(int nb)
         tmp.spawnInterval = std::atof(line.c_str());
         srand(time(NULL));
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
-        tmp.enemy = {10, 10, Animation::AnimationID::Orb, 8.0, Armament::Type::Laser};
+        tmp.enemy = this->_enemys[0];
         newLevel.levelWaves.push_back(tmp);
     }
     newLevel.waveNb = 0;
@@ -117,7 +117,7 @@ void Game::refreshLevel()
     if (elapsed_seconds.count() >= this->_currentLevel.bossCountdown && this->_bossSpawned == false) {
         this->_bossTimer = getNow();
         this->_bossSpawned = true;
-        Factory::Enemy::makeEndboss(this->_entManager);
+        Factory::Enemy::makeEndboss(this->_entManager, this->_bosses[0]);
         this->_protocol.sendChangeMusic(BOSS);
     }
 

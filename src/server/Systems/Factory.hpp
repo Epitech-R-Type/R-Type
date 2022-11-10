@@ -11,7 +11,7 @@ namespace Factory {
         EntityID makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID);
     }
     namespace Enemy {
-        EntityID makeEndboss(std::shared_ptr<ECSManager> ECS);
+        EntityID makeEndboss(std::shared_ptr<ECSManager> ECS, BossStats stats);
 
         EntityID makeEnemy(std::shared_ptr<ECSManager> ECS, EnemyStats stats);
     } // namespace Enemy

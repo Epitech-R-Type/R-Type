@@ -38,14 +38,14 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
     return player;
 }
 
-EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
+EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS, BossStats stats) {
     EntityID endboss = ECS->newEntity();
     int players = 0;
     for (auto beg = ECS->begin<Player::Component>(); beg != ECS->end<Player::Component>(); ++beg) {
         players++;
     }
 
-    Animation::Component* animation = ECS->addComp<Animation::Component>(endboss, {Animation::AnimationID::Cluster, 1, -90.0});
+    Animation::Component* animation = ECS->addComp<Animation::Component>(endboss, {stats.sprite, 1, -90.0});
 
     float xOffset = Animation::Sheets[Animation::AnimationID::Cluster].frameHeight * 3;
     float yOffset = Animation::Sheets[Animation::AnimationID::Cluster].frameWidth / 2;
@@ -55,11 +55,11 @@ EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
 
     Position::Component* position = ECS->addComp<Position::Component>(endboss, {startX, startY});
 
-    ECS->addComp<Damage::Component>(endboss, {20});
-    ECS->addComp<Health::Component>(endboss, {300 * players, 300 * players, false});
+    ECS->addComp<Damage::Component>(endboss, {stats.damage});
+    ECS->addComp<Health::Component>(endboss, {stats.health * players, stats.health * players, false});
     ECS->addComp<Hitbox::Component>(endboss, HitboxSystem::buildHitbox(animation, position));
     ECS->addComp<Team::Component>(endboss, Team::Enemy);
-    ECS->addComp<Armament::Component>(endboss, {Armament::Type::Buckshot, 1000, 50});
+    ECS->addComp<Armament::Component>(endboss, {stats.armament, 1000, 50});
     ECS->addComp<CollisionEffect::Component>(endboss, &CollisionEffect::dealDamage);
     ECS->pushModified(endboss);
     return endboss;

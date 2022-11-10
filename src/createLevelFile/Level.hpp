@@ -27,7 +27,7 @@ class Level { // put into vector to use all levels
         std::vector<int> _backGrounds = {11};
         int _enemys = 3;
         int _songs = 2;
-        int _boss = 0;
+        int _boss = 1;
         std::fstream createFile();
         int countLvls();
         std::string getBackground();
