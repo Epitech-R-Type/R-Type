@@ -17,6 +17,8 @@
 #include "Protocols/TcpServer.hpp"
 #include "Systems/Systems.hpp"
 
+void game_main(int port);
+
 // This class embodies everything having to do with a single game
 // It will include:
 //          - The game logic

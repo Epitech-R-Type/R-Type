@@ -75,6 +75,7 @@ int ClientLobbyProtocol::handleIncMessages() {
         if (msgBits[0] == "200" && !this->_authenticated) {
             this->saveAuthentication(msg);
             this->_authenticated = true;
+            return 0;
         }
 
         if (Utilities::UUID(msg) != this->_serverUUID) {

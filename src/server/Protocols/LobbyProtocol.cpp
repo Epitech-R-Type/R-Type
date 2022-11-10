@@ -8,11 +8,13 @@
 #include "LobbyProtocol.hpp"
 
 LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, Utilities::UUID serverUUID)
+                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, Utilities::UUID serverUUID,
+                             std::shared_ptr<std::vector<GameInfo>> gamesToLaunch)
     : _connMan(serverUUID) {
     // Set Messaging queues
     this->_incomingMQ = incoming;
     this->_outgoingMQ = outgoing;
+    this->_gamesToLaunch = gamesToLaunch;
 }
 
 // Server Commands
@@ -35,9 +37,8 @@ void LobbyProtocol::startGame(int port) {
 
 // ─── Handle Commands And Respond ─────────────────────────────────────────────────────────────────
 
-int LobbyProtocol::handleCommands() {
+void LobbyProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
-    int outputPort = 0;
 
     while ((msg = this->_incomingMQ->pop())) {
         // Get peer info
@@ -84,12 +85,10 @@ int LobbyProtocol::handleCommands() {
 
         // START command
         if (cmd == "START") {
-            outputPort = this->handleStart();
+            this->handleStart();
             continue;
         }
     }
-
-    return outputPort;
 }
 
 void LobbyProtocol::handleWrongRequest(std::string msgBody, asio::ip::address addr, asio::ip::port_type port) {
@@ -117,16 +116,20 @@ void LobbyProtocol::handleConnect(asio::ip::address addr, asio::ip::port_type po
     this->_outgoingMQ->push(msg);
 }
 
-int LobbyProtocol::handleStart() {
-    int outputPort = UDP_PORT;
+void LobbyProtocol::handleStart() {
+    int port = UDP_PORT;
 
     // Find an available port
-    while (!Utilities::isPortAvailable(outputPort))
-        outputPort++;
+    while (!Utilities::isPortAvailable(port))
+        port++;
 
-    LOG("Using port: " << outputPort);
-    this->startGame(outputPort);
-    return outputPort;
+    LOG("Using port: " << port);
+
+    // Send start game
+    this->startGame(port);
+
+    // Add game info to gamesToStart
+    this->_gamesToLaunch->push_back({0, port});
 }
 
 // ─── Utility Functions ───────────────────────────────────────────────────────────────────────────

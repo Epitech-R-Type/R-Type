@@ -24,10 +24,15 @@
 // Server Commands
 #define START_GAME "START"
 
+struct GameInfo {
+    int lobbyId;
+    int port;
+};
+
 class LobbyProtocol {
 public:
     LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
-                  Utilities::UUID serverUUID);
+                  Utilities::UUID serverUUID, std::shared_ptr<std::vector<GameInfo>> gamesToLaunch);
 
     // Server Commands
     // Sends start game command to every connected client
@@ -36,13 +41,12 @@ public:
     // ─── Handle Commands And Responde ────────────────────────────────────────────────────────
 
     // Handle commands
-    // Returns true if game should start
-    int handleCommands();
+    void handleCommands();
 
     void handleWrongRequest(std::string msgBody, asio::ip::address addr, asio::ip::port_type port);
     void handleForbidden(asio::ip::address addr, asio::ip::port_type port);
     void handleConnect(asio::ip::address addr, asio::ip::port_type port);
-    int handleStart();
+    void handleStart();
 
     // ─── Utility Functions ───────────────────────────────────────────────────────────────────
 
@@ -62,4 +66,7 @@ private:
     // Messaging Queues
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+
+    // Games to launch reference
+    std::shared_ptr<std::vector<GameInfo>> _gamesToLaunch;
 };
