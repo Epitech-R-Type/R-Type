@@ -39,4 +39,6 @@ BossSpawnTimer is the amount seconds until the boss spawns.
 <!-- ## Implemented Enemys and Bosses -->
 
 ## Tool for creating a level file
-There is an executable called CreateFile. With this programm you can create your own level file more easily, it will ask you questions about the level you want to create and then create the coresponding level file in the right place. The name is "level" + the level number with the level number being the next after the currently biggest existing level number.
+There is an executable called CreateFile. With this programm you can create your own level file more easily, it will ask you questions about the level you want to create and then create the coresponding level file in the right place. The name is "level" + the next viable level number.
+It will ask you questions and you have to answer with a viable input.
+For BackgroundId, BaseMusic, EnemyTypes, BossType you have to put the enum value.A variable will be checked to confirm it exists.
