@@ -37,20 +37,20 @@ enum SongID {
 };
 
 enum AnimationID {
-        Orb,
-        Vortex,
-        Cluster,
-        Laser,
-        Lost,
-        SpaceshipLightblue,
-        SpaceshipPink,
-        SpaceshipGreen,
-        SpaceshipRed,
-        SpaceshipDarkblue,
-        SpaceshipRGB,
-        Background,
-        Death,
-    };
+    Orb,
+    Vortex,
+    Cluster,
+    Laser,
+    Lost,
+    SpaceshipLightblue,
+    SpaceshipPink,
+    SpaceshipGreen,
+    SpaceshipRed,
+    SpaceshipDarkblue,
+    SpaceshipRGB,
+    Background,
+    Death,
+};
 ```
 
     General variables:
