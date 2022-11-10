@@ -83,7 +83,7 @@ private:
     timePoint _bossTimer;
     int _level;
     Level _currentLevel;
-    void loadLevel(int nb);
+    bool loadLevel(int nb);
     void refreshLevel();
     cmrc::embedded_filesystem _fs = cmrc::server::get_filesystem();
 

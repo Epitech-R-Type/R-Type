@@ -44,7 +44,6 @@ int Server::mainLoop() {
 
     while (this->_lobbyRunning) {
         // DO STUFF
-
         // Handle messages and launch game if game should start
         if ((port = this->_protocol->handleCommands())) {
             this->launchGame(port);
@@ -60,6 +59,7 @@ int Server::launchGame(int port) {
     this->_game->init();
     this->_game->mainLoop();
 
+    this->_lobbyRunning = false; // just temporary, still need to send quit message to client
     delete this->_game;
 
     return 0;

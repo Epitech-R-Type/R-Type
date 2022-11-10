@@ -64,13 +64,14 @@ void Game::sendModified() {
     }
 };
 
-void Game::loadLevel(int nb)
+bool Game::loadLevel(int nb)
 {
+    if (this->_fs.is_file(std::string("src/server/levels/level").append(std::to_string(nb))) == false)
+        return false;
+
     Level newLevel;
     const cmrc::file lvlFile = this->_fs.open(std::string("src/server/levels/level").append(std::to_string(nb)));
     std::string lvlStr = std::string(lvlFile.begin(), lvlFile.end());
-    // if (lvlStr.size() != 0)
-    //     LOG("is open");
     std::string line;
     Wave tmp;
     tmp.endless = false;
@@ -92,13 +93,13 @@ void Game::loadLevel(int nb)
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
         tmp.enemy = {10, 10, Animation::AnimationID::Orb, 8.0, Armament::Type::Laser};
         newLevel.levelWaves.push_back(tmp);
-        // LOG("new added");
     }
     newLevel.waveNb = 0;
     this->_currentLevel = newLevel;
     this->_level = nb;
     this->_bossTimer = getNow();
     this->_enemyTimer = getNow();
+    return true;
 }
 
 void Game::refreshLevel()
@@ -119,13 +120,31 @@ void Game::refreshLevel()
         Factory::Enemy::makeEndboss(this->_entManager);
         this->_protocol.sendChangeMusic(BOSS);
     }
-    for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
-        Team::Component *ent = this->_entManager->getComponent<Team::Component>(*beg);
-        if (*ent == Team::Enemy)
-            return;
+
+    bool enemyFound = false;
+
+    if (this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned == 0) {
+
+        for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
+            Team::Component *ent = this->_entManager->getComponent<Team::Component>(*beg);
+            if (*ent == Team::Enemy) {
+                enemyFound = true;
+                break;
+            }
+        }
+
+        if (!enemyFound) {
+            this->_currentLevel.waveNb += 1;
+            LOG("next wave");
+        }
     }
-    if (this->_bossSpawned)
-        this->loadLevel(this->_level++);
+    if (this->_currentLevel.waveNb >= this->_currentLevel.levelWaves.size()) {
+        LOG("actually next level");
+        if (this->loadLevel(++this->_level) == false) {
+            LOG("game won");
+            this->_isRunning = false;
+        }
+    }
     // check all entite with team component and see if someone is an enemy; if all enemys are dead increase waveNB or call loadLevel
 }
 
@@ -143,13 +162,10 @@ int Game::mainLoop() {
         this->_armamentSystem->apply();
         this->_hitboxSystem->apply();
 
+        this->refreshLevel();
         // Always last
         this->_janitorSystem->apply();
-
-        this->refreshLevel();
-
         this->sendModified();
     }
-
     return 0;
 }
