@@ -47,8 +47,8 @@ class LevelClock {
 
 class Level { // put into vector to use all levels
     public:
-        Level();
-        ~Level();
+        Level() = default;
+        ~Level() = default;
         void loadLvlNb(int nb);
         bool nextLvl();
         void startLvl();

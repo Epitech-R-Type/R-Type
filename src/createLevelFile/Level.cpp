@@ -126,7 +126,7 @@ void Level::createLvl()
 
 std::fstream Level::createFile()
 {
-    std::string name("./levels/level");
+    std::string name("./src/server/levels/level");
     name.append(std::to_string(this->countLvls()));
     std::fstream LvlFile(name, std::fstream::out);
     return (LvlFile);
@@ -149,7 +149,7 @@ void Level::writeLvlToFile(std::fstream &lvlFile, Level &toWrite)
 
 int Level::countLvls()
 {
-    auto dirIter = std::filesystem::directory_iterator("./levels");
+    auto dirIter = std::filesystem::directory_iterator("./src/server/levels");
     int fileCount = 0;
 
     for (auto& entry : dirIter)

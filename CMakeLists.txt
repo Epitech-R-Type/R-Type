@@ -159,6 +159,17 @@ function(build_client)
 endfunction()
 
 
+function(build_createFile)
+    add_executable(CreateFile
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/createLevelFile/main.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/createLevelFile/Level.cpp"
+    )
+    target_compile_definitions(CreateFile PUBLIC CREATE_FILE=1)
+
+    target_link_libraries(CreateFile ${CONAN_LIBS})
+endfunction()
+
+
 function(build_tests)
     include(FetchContent)
     FetchContent_Declare(googletest URL https://github.com/google/googletest/archive/03597a01ee50ed33e9dfd640b249b4be3799d395.zip)
@@ -208,4 +219,5 @@ else()
     message("==== Programs ====")
     build_client()
     build_server()
+    build_createFile()
 endif()
