@@ -26,7 +26,6 @@ Every variable is seperated by a newline.
 |SpawnInterval|float
 |EnemyTypes|EnemyID, ...|
 |BossType|BossID|
-|BossSpawnTimer|int|
 
     The AnimationID, SongID, EnemyID and BossID enum:
 ```c++
