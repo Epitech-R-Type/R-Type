@@ -119,6 +119,10 @@ bool ClientGameProtocol::handleCommands() {
                 this->handleMusic(*parsed);
 #endif
                 break;
+            case Command::Death:
+                this->_isAlive = false;
+                LOG("Client is dead");
+                break;
             case Command::GameEnd:
                 return true;
                 break;
@@ -132,11 +136,17 @@ bool ClientGameProtocol::handleCommands() {
 // ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
 void ClientGameProtocol::sendActMove(std::string directions) {
+    if (!this->_isAlive)
+        return;
+
     auto msg = ProtocolUtils::createMessage("ACT_MOVE", directions, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendActFire() {
+    if (!this->_isAlive)
+        return;
+
     auto msg = ProtocolUtils::createMessage("ACT_SHOOT", "", this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }

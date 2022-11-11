@@ -61,4 +61,7 @@ private:
 
     // Client UUID
     Utilities::UUID _uuid;
+
+    // is client alive
+    bool _isAlive = true;
 };

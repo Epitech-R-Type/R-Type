@@ -296,6 +296,19 @@ void GameProtocol::sendGameEnd() {
         this->_outgoingMQ->push(ProtocolUtils::createMessage("GAME_END", "", conn.addr, conn.port));
 }
 
+void GameProtocol::sendDeath(asio::ip::address addr, asio::ip::port_type port) {
+    this->_outgoingMQ->push(ProtocolUtils::createMessage("DEATH", "", addr, port));
+}
+
+void GameProtocol::sendDeath(int clientId) {
+    auto conn = this->_connMan.getConnection(clientId);
+
+    if (!conn)
+        return;
+
+    this->_outgoingMQ->push(ProtocolUtils::createMessage("DEATH", "", conn->addr, conn->port));
+}
+
 // ─── Utilities ───────────────────────────────────────────────────────────────────────────────────
 
 int GameProtocol::getPlayer(asio::ip::address addr, asio::ip::port_type port) {
@@ -329,6 +342,9 @@ void GameProtocol::handleDisconnectedClients() {
                     break;
                 }
             }
+
+            // Inform to no longer send inputs
+            this->sendDeath(conn.addr, conn.port);
         }
     }
 

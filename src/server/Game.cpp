@@ -110,6 +110,11 @@ int Game::mainLoop() {
         this->_protocol.handleCommands();
         this->_protocol.handleDisconnectedClients();
 
+        // Handle death dispensing
+        for (auto victim : this->_janitorSystem->getKilledPlayers())
+            this->_protocol.sendDeath(victim);
+        this->_janitorSystem->resetKilledPlayers();
+
         // ─── System Application ──────────────────────────────────────────────────────────
 
         this->_velocitySystem->apply();

@@ -1,5 +1,7 @@
 
 #pragma once
+#include <vector>
+
 #include "../ECS/ECS.hpp"
 #include "ISystem.hpp"
 
@@ -15,8 +17,16 @@ public:
      * - Out of Bounds
      * - Dead
      * */
+    // Returns killed players
     void apply();
+
+    // ─── Killed Player Handling ──────────────────────────────────────────────────────────────
+
+    std::vector<int> getKilledPlayers() const;
+    void resetKilledPlayers();
 
 private:
     std::shared_ptr<ECSManager> _ECS;
+
+    std::vector<int> _killedPlayers;
 };

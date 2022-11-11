@@ -70,6 +70,13 @@ std::optional<Connection> ConnectionManager::getConnection(asio::ip::address add
     return {};
 }
 
+std::optional<Connection> ConnectionManager::getConnection(int clientId) {
+    for (auto conn : this->_connections)
+        if (conn.player = clientId)
+            return std::optional(conn);
+    return {};
+}
+
 void ConnectionManager::removeConnection(asio::ip::address addr, asio::ip::port_type port) {
     for (int i = 0; i < this->_connections.size(); i++)
         if (this->_connections[i].addr == addr && this->_connections[i].port == port)

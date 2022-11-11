@@ -25,6 +25,7 @@
 #define HERE "HERE"
 #define PING "PING"
 #define GAME_END "GAME_END"
+#define DEATH "DEATH"
 
 // Command enum
 enum Command {
@@ -33,6 +34,7 @@ enum Command {
     ActShoot,
     ActMove,
     GameEnd,
+    Death,
     Entityd, // Client commands start here
     DeleteEntity,
     DeleteComponent,
@@ -82,6 +84,8 @@ public:
             output->cmd = Command::Ping;
         else if (splitMsg[0] == GAME_END)
             output->cmd = Command::GameEnd;
+        else if (splitMsg[0] == DEATH)
+            output->cmd = Command::Death;
         else {
             ERRORLOG("Unhandled Command: " << splitMsg[0]);
             return {};

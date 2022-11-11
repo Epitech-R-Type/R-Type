@@ -133,15 +133,17 @@ Table of Contents
 
         The following is a list of Client Commands :
 
-            - CONNECT -> Only command with no header. This command
-                         allows the client to retrieve his user assigned
-                         uuid.
+            - CONNECT    -> Only command with no header. This command
+                         allows the client to retrieve his user
+                         assigned uuid.
 
-            - START   -> This command allows the user to signal to the
-                         server that the game should start.
+            - START      -> This command allows the user to signal
+                         to the server that the game should start.
 
             - JOIN_LOBBY -> This command allows the user to enter into
                             a given lobby.
+
+            - 
 
 
 
@@ -200,6 +202,7 @@ Table of Contents
                     DEL_COMP      ->    Delete component
                     CHANGE_MUSIC  ->    Change Song
                     GAME_END      ->    Signals end of game
+                    DEATH         ->    Signals player is dead
 
         3.2.2. Server Command Arguments
 
