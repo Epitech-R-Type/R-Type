@@ -92,10 +92,8 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
         }
     }
 
-    if (entityID == INVALID_INDEX) {
-        ERRORLOG("Unable to find Entity attached to player with the following playerUID: " << playerUID);
+    if (entityID == INVALID_INDEX)
         return;
-    }
 
     DEBUG("Player " << playerUID << " is moving " << direction << ".");
 
@@ -161,10 +159,8 @@ void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::
         }
     }
 
-    if (entityID == INVALID_INDEX) {
-        ERRORLOG("Unable to find Entity attached to player " << playerUID << ".");
+    if (entityID == INVALID_INDEX)
         return;
-    }
 
     ArmamentSystem::makeWeapon(entityID, this->_entityManager);
 }
