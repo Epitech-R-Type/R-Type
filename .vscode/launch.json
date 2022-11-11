@@ -39,7 +39,7 @@
             "name": "(cl) Launch Client",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${cwd}/build/bin/Client",
+            "program": "${cwd}/bin/Client",
             "args": [
                 "--ip",
                 "127.0.0.1",

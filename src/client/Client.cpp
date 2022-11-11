@@ -50,11 +50,30 @@ int Client::connect(std::string serverIP, int port) {
 
 void Client::handleUserCommands() {
     std::optional<std::string> potMsg;
+
     while ((potMsg = this->_userCommands->pop())) {
         std::string msg = potMsg.value();
+        auto splitMsg = Utilities::splitStr(msg, ";");
 
-        if (msg == "Start")
+        if (splitMsg[0] == "Start")
             this->_protocol->sendStart();
+        if (splitMsg[0] == "Join") {
+            if (splitMsg.size() != 2) {
+                ERRORLOG("Please specify lobby to join...");
+                continue;
+            }
+
+            try {
+                int lobby = std::stoi(splitMsg[1]);
+
+                if (lobby < 0)
+                    throw;
+
+                this->_protocol->sendJoinLobby(lobby);
+            } catch (...) {
+                ERRORLOG("Invalid lobby number...");
+            }
+        }
     }
 }
 
@@ -92,10 +111,7 @@ int Client::mainLoop() {
 
         currentMenu->apply();
 
-        const bool startGame = this->_protocol->shouldGameStart();
-
-        if (startGame) {
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+        if (this->_protocol->shouldGameStart()) {
             this->launchGame();
 
             // Check if tcp connection still open

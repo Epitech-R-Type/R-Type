@@ -14,6 +14,7 @@
 
 #include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/UUID.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 
 struct Connection {
     asio::ip::address addr;
@@ -21,6 +22,7 @@ struct Connection {
     Utilities::UUID uuid;
     Timer timeoutTimer;
     int player;
+    int lobby; // -1 is default and represents not in a lobby
 };
 
 class ConnectionManager {
@@ -50,6 +52,12 @@ public:
     void resetTimeoutAll();
     // Remove all connections that timed out
     void removeDisconnected();
+
+    // Lobby setting
+    void joinLobby(Utilities::UUID clientUUID, int lobbyID);
+
+    // Get vector of clients in lobby
+    std::vector<Connection> getLobbyConnections(int lobby);
 
     // Getters / Setters
     void setServerUUID(Utilities::UUID serverUUID);
