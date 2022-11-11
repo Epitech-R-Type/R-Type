@@ -91,7 +91,13 @@ bool Game::loadLevel(int nb)
         tmp.spawnInterval = std::atof(line.c_str());
         srand(time(NULL));
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
-        tmp.enemy = this->_enemys[0];
+        line = lvlArr[i++];
+        std::vector<std::string> lineArr = Utilities::splitStr(line, " ");
+        for (auto i : lineArr) {
+            tmp.enemies.push_back(this->_enemys[std::stoi(i)]); 
+        }
+        line = lvlArr[i++];
+        tmp.boss = this->_bosses[std::atoi(line.c_str())];
         newLevel.levelWaves.push_back(tmp);
     }
     newLevel.waveNb = 0;
@@ -107,19 +113,21 @@ void Game::refreshLevel()
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - this->_enemyTimer;
 
-    // LOG("Still Running");
     if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval && this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
         this->_enemyTimer = getNow();
         this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
-        Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemy);
+        srand(time(NULL));
+        int rd = rand() %  this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
+        Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies[rd]);
     }
-    elapsed_seconds = now - this->_bossTimer;
+    elapsed_seconds = now - this->_bossTimer;  //just spawning boss at the end of the waves now
     if (elapsed_seconds.count() >= this->_currentLevel.bossCountdown && this->_bossSpawned == false) {
         this->_bossTimer = getNow();
         this->_bossSpawned = true;
-        Factory::Enemy::makeEndboss(this->_entManager, this->_bosses[0]);
+        Factory::Enemy::makeEndboss(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].boss);
         this->_protocol.sendChangeMusic(BOSS);
     }
+
 
     bool enemyFound = false;
 

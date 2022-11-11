@@ -49,7 +49,8 @@ struct Wave {
     int maxSpawned;
     double spawnInterval;
     int spawned;
-    EnemyStats enemy;
+    std::vector<EnemyStats> enemies;
+    BossStats boss;
 };
 
 struct Level {
