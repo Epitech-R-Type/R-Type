@@ -68,9 +68,8 @@ enum AnimationID {
 **SpawnInterval** is the amount of seconds (float) between two enemies spawned.
 
 **EnemyTypes** is a list of integers seperated by a space.
-BossType is the enum integer describing the boss, this includes the music.
 
-**BossSpawnTimer** is the amount seconds until the boss spawns.
+**BossType** is the enum integer describing the boss, this includes the music.
 
 <!-- ## Implemented Enemys and Bosses -->
 
