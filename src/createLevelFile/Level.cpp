@@ -28,7 +28,7 @@ std::string Level::getBackground()
 
     while (!finished) {
         std::cout << "What background should we use?" << std::endl;
-        bg = "";
+        bg.clear();
         std::cin >> bg;
         for (int i = 0; i != bg.size() - 1; i++)
             if (!isdigit(bg[i]))
@@ -46,7 +46,7 @@ std::string Level::getBossSpawnTimer()
 
     while (!finished) {
         std::cout << "After how many seconds should the boss show up?" << std::endl;
-        timer = "";
+        timer.clear();
         std::cin >> timer;
         finished = 1;
         for (int i = 0; i != timer.size() - 1; i++)
@@ -67,7 +67,7 @@ std::string Level::getMusic()
 
     while (!finished) {
         std::cout << "What Music should be played when the boss hasn't spawned yet?" << std::endl;
-        music = "";
+        music.clear();
         std::cin >> music;
         for (int i = 0; i != music.size() - 1; i++)
             if (!isdigit(music[i]))
@@ -85,7 +85,7 @@ std::string Level::getMin()
 
     while (!finished) {
         std::cout << "How many enemies should there be at least?" << std::endl;
-        min = "";
+        min.clear();
         std::cin >> min;
         finished = 1;
         for (int i = 0; i != min.size() - 1; i++)
@@ -106,7 +106,7 @@ std::string Level::getMax(int min)
 
     while (!finished) {
         std::cout << "How many enemies should there be at max?" << std::endl;
-        max = "";
+        max.clear();
         std::cin >> max;
         finished = 1;
         for (int i = 0; i != max.size() - 1; i++)
@@ -127,7 +127,7 @@ std::string Level::getInterval()
 
     while (!finished) {
         std::cout << "What should the spawn interval be?" << std::endl;
-        interval = "";
+        interval.clear();
         std::cin >> interval;
         if (!isFloat(interval))
             continue;
@@ -146,7 +146,7 @@ std::string Level::getEnemy()
 
     while (!finished) {
         while (!finished2) {
-            enemy = "";
+            enemy.clear();
             std::cout << "What Enemy should spawn?" << std::endl;
             std::cin >> enemy;
             for (int i = 0; i != enemy.size() - 1; i++)
@@ -159,14 +159,14 @@ std::string Level::getEnemy()
         }
         finished2 = 0;
         std::cout << "More Enemys? (yes | no is everything else)" << std::endl;
-        enemy = "";
+        enemy.clear();
         std::cin >> enemy;
         if (enemy != "yes" || enemys.size() > this->_enemys)
             finished = 1;
     }
-    enemy = "";
+    enemy.clear();
     for (int i = 0; i <= enemys.size(); i++)
-        enemy += enemys[i] + " ";
+        enemy += std::to_string(enemys[i]) + " ";
     enemy.pop_back();
     return(enemy);
 }
@@ -178,14 +178,14 @@ std::string Level::getBoss()
 
     while (!finished) {
         std::cout << "What Boss should be here?" << std::endl;
-        boss = "";
+        boss.clear();
         std::cin >> boss;
         if (boss == "-1")
             break;
         for (int i = 0; i != boss.size() - 1; i++)
             if (!isdigit(boss[i]))
                 continue;
-        if (std::stoi(boss) < 0 || std::stoi(boss) > this->_boss)
+        if (std::stoi(boss) >= 0 && std::stoi(boss) <= this->_boss)
             finished = 1;
     }
     return (boss);
@@ -198,7 +198,7 @@ int Level::getWaves()
 
     while (!finished) {
         std::cout << "How many enemy waves should there be?" << std::endl;
-        waves = "";
+        waves.clear();
         std::cin >> waves;
         for (int i = 0; i != waves.size() - 1; i++)
             if (!isdigit(waves[i]))
