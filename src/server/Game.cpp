@@ -109,7 +109,6 @@ bool Game::loadLevel(int nb)
     newLevel.waveNb = 0;
     this->_currentLevel = newLevel;
     this->_level = nb;
-    this->_bossTimer = getNow();
     this->_enemyTimer = getNow();
     this->_bossSpawned = noBoss;
     return true;
@@ -170,7 +169,6 @@ int Game::mainLoop() {
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    this->_bossTimer = getNow();
     this->_enemyTimer = getNow();
 
     while (this->_isRunning) {

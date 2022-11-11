@@ -88,7 +88,6 @@ private:
     // Game Logic
     bool _bossSpawned = false;
     timePoint _enemyTimer;
-    timePoint _bossTimer;
     int _level;
     Level _currentLevel;
     std::vector<EnemyStats> _enemys = {
