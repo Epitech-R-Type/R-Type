@@ -9,10 +9,13 @@
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Utilities/ray.hpp"
-#include "GUI/Menus/Connection.hpp"
+#include "GUI/Menus/ConnectionMenu.hpp"
+#include "GUI/Menus/LobbyMenu.hpp"
+#include "GUI/Menus/LobbySelectionMenu.hpp"
 
 Client::Client() {
-    this->_protocol = new ClientLobbyProtocol();
+    this->_tcpStopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_protocol = new ClientLobbyProtocol(this->_tcpStopFlag);
 
     this->_lobbyRunning = true;
     this->_connected = false;
@@ -32,18 +35,17 @@ int Client::launchGame() {
         return 84;
 
     // Note: For performance reasons we could free the lobby ecs before launching the game
-    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort());
+    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort(), this->_tcpStopFlag);
     this->_game->init();
     this->_game->mainLoop();
+
     delete this->_game;
 
     return 0;
 }
 
-bool Client::connect(std::string serverIP, int port) {
-    this->_protocol->connect(serverIP, port);
-
-    return this->_protocol->isConnected();
+int Client::connect(std::string serverIP, int port) {
+    return this->_protocol->connect(serverIP, port);
 }
 
 void Client::handleUserCommands() {
@@ -56,39 +58,60 @@ void Client::handleUserCommands() {
     }
 }
 
-enum Stages {
-    CONNECTION,
-    ROOMSELECTION,
-    ROOM,
-    GAME,
-};
+Stages Client::advanceStage(Stages stage, std::shared_ptr<Menu> currentMenu) {
+    if (currentMenu->getDone()) {
+        switch (stage) {
+            case Stages::CONNECTION:
+                *currentMenu = LobbySelectionMenu(this);
+                return Stages::ROOMSELECTION;
+            case Stages::ROOMSELECTION:
+                *currentMenu = LobbyMenu(this);
+                return Stages::ROOM;
+        }
+    };
+}
 
 int Client::mainLoop() {
-    Connection connection(this);
 
-    int stage = 0;
-    bool sendStart = false;
+    Stages stage = this->_connected ? Stages::ROOMSELECTION : Stages::CONNECTION;
 
-    while (!connection.getDone()) {
-        this->_protocol->handleIncMessages();
-        this->handleUserCommands();
+    std::shared_ptr<Menu> currentMenu;
 
-        connection.apply();
-        connection.draw();
-    }
-
-    while (!(this->_connected = this->_protocol->isConnected())) {
-    }
-
-    this->_protocol->startGame();
+    if (this->_connected)
+        currentMenu = std::make_shared<LobbySelectionMenu>(this);
+    else
+        currentMenu = std::make_shared<ConnectionMenu>(this);
 
     while (true) {
+        stage = this->advanceStage(stage, currentMenu);
+
+        if (this->_protocol->handleIncMessages())
+            return 0;
+
+        this->handleUserCommands();
+
+        currentMenu->apply();
+
         const bool startGame = this->_protocol->shouldGameStart();
 
         if (startGame) {
             std::this_thread::sleep_for(std::chrono::seconds(2));
             this->launchGame();
+
+            // Check if tcp connection still open
+            if (*this->_tcpStopFlag)
+                return 0;
+
+            // Prepare for next games
+            this->_protocol->resetStartGame();
+        }
+
+        switch (stage) {
+            case Stages::CONNECTION: {
+                currentMenu->draw();
+            }
         }
     }
+
     return 0;
 }

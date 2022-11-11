@@ -196,6 +196,7 @@ Table of Contents
                     DEL_ENT       ->    Delete entity
                     DEL_COMP      ->    Delete component
                     CHANGE_MUSIC  ->    Change Song
+                    GAME_END      ->    Signals end of game
 
         3.2.2. Server Command Arguments
 
@@ -239,6 +240,9 @@ Table of Contents
                                     shot.
                 ACT_MOVE    ->      Signal the server that the client
                                     has moved.
+                PING        ->      Signal server that client is
+                                    still connected. Required every
+                                    three seconds.
 
         3.3.3. Client Command Arguments
 

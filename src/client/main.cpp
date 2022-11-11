@@ -24,13 +24,14 @@ int main(int argc, char** argv) {
 
     if (isFlagSet(argv, argv + argc, "--ip")) {
         std::string ip = getFlagValue(argv, argv + argc, "--ip");
+        int connectionResult = 0;
         if (isFlagSet(argv, argv + argc, "--port"))
-            client.connect(ip, atoi(getFlagValue(argv, argv + argc, "--port")));
+            connectionResult = client.connect(ip, atoi(getFlagValue(argv, argv + argc, "--port")));
         else
-            client.connect(ip);
+            connectionResult = client.connect(ip);
+        if (connectionResult)
+            return 84;
     }
 
-    client.mainLoop();
-
-    return 0;
+    return client.mainLoop();
 }

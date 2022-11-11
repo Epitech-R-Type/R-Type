@@ -10,6 +10,7 @@
 #include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
+#include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 #include "../Protocols/ClientGameProtocol.hpp"
 #include "../Systems/Systems.hpp"
@@ -22,7 +23,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int serverUdpPort);
+    ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int serverUdpPort, std::shared_ptr<std::atomic<bool>> tcpStopFlag);
     ~ClientGame();
 
     void init();
@@ -52,5 +53,9 @@ private:
     bool _isRunning = true;
 
     std::thread* _udpComThread;
-    std::shared_ptr<std::atomic<bool>> _stopFlag;
+
+    // Set to true when tcp connection has closed, this signals to game to quit immediately
+    std::shared_ptr<std::atomic<bool>> _tcpStopFlag;
+    // Set to true when udp connection closed, used in destructor
+    std::shared_ptr<std::atomic<bool>> _udpStopFlag;
 };

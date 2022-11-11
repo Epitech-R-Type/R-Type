@@ -11,7 +11,7 @@ if (MSVC)
     add_compile_definitions(_WIN32_WINNT=0x0601)
 else()
     set (CMAKE_GENERATOR "Unix Makefiles" CACHE INTERNAL "" FORCE)
-    add_compile_options(-g3 -pthread -Wall)
+    add_compile_options(-g3 -pthread )
 endif()
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -64,7 +64,9 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/TextBox.cpp"
-            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/Connection.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/ConnectionMenu.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbyMenu.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbySelectionMenu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/TcpClient.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/ClientLobbyProtocol.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/TcpClient.cpp"
@@ -80,6 +82,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Utilities.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Timer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/ClientGameProtocol.cpp"
     )
     target_compile_definitions(Client PUBLIC CLIENT=1)

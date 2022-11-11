@@ -1,19 +1,21 @@
 #pragma once
 
-#include "../../Client.hpp"
 #include "../Components/TextBox.hpp"
+#include "Menu.hpp"
+
+class Client;
 
 #define CENTER(width, height) ((GetScreenWidth() - width) / 2), ((GetScreenHeight() - height) / 2)
 
-class Connection {
+class ConnectionMenu : public Menu {
 public:
-    Connection(Client* client);
+    ConnectionMenu(Client* client);
 
-    void apply();
+    void apply() override;
 
-    void draw();
+    void draw() override;
 
-    bool getDone();
+    bool getDone() override;
 
 private:
     void _init();

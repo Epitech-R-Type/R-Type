@@ -1,11 +1,12 @@
-#include "Connection.hpp"
+#include "ConnectionMenu.hpp"
+#include "../../Client.hpp"
 
-Connection::Connection(Client* client) {
+ConnectionMenu::ConnectionMenu(Client* client) {
     this->_client = client;
     this->_init();
 }
 
-void Connection::apply() {
+void ConnectionMenu::apply() {
     if (!this->_ipPrompt->getDone() || this->_done)
         return;
 
@@ -17,14 +18,12 @@ void Connection::apply() {
     const std::string ip = connectionData[0];
     int udpPort = std::stol(connectionData[1]);
 
-    const bool connected = this->_client->connect(ip, udpPort);
+    this->_client->connect(ip, udpPort);
 
-    if (connected == false)
-        return this->_init();
     this->_done = true;
 }
 
-void Connection::draw() {
+void ConnectionMenu::draw() {
     BeginDrawing();
 
     ClearBackground(BLACK);
@@ -34,11 +33,11 @@ void Connection::draw() {
     EndDrawing();
 }
 
-void Connection::_init() {
+void ConnectionMenu::_init() {
     this->_done = false;
     this->_ipPrompt = std::make_unique<TextBox>(std::string("127.0.0.1:3501"), CENTER(20 * 30, 60), 20 * 30, 60, 20, 30);
 }
 
-bool Connection::getDone() {
+bool ConnectionMenu::getDone() {
     return this->_done;
 }
