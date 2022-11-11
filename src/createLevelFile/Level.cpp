@@ -165,7 +165,7 @@ std::string Level::getEnemy()
             finished = 1;
     }
     enemy.clear();
-    for (int i = 0; i <= enemys.size(); i++)
+    for (int i = 0; i < enemys.size(); i++)
         enemy += std::to_string(enemys[i]) + " ";
     enemy.pop_back();
     return(enemy);
