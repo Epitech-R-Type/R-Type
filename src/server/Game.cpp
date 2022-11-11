@@ -81,6 +81,8 @@ bool Game::loadLevel(int nb)
     Factory::Misc::makeBackground(this->_entManager, (Animation::AnimationID)std::atoi(line.c_str()));
     line = lvlArr[i++];
     this->_protocol.sendChangeMusic((SongID)std::atoi(line.c_str()));
+    bool noBoss = false;
+
     while (i < lvlArr.size()) {
         line = lvlArr[i++];
         tmp.minSpawned = std::atoi(line.c_str());
@@ -92,13 +94,16 @@ bool Game::loadLevel(int nb)
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
         line = lvlArr[i++];
         std::vector<std::string> lineArr = Utilities::splitStr(line, " ");
-        for (auto i : lineArr) {
-            tmp.enemies.push_back(this->_enemys[std::stoi(i)]); 
+        for (auto is : lineArr) {
+            tmp.enemies.push_back(this->_enemys[std::stoi(is)]); 
         }
         line = lvlArr[i++];
-        tmp.boss = this->_bosses[std::atoi(line.c_str())];
+        if (std::atoi(line.c_str()) == -1) {
+            tmp.boss = this->_bosses[0];
+            noBoss = true;
+        } else
+            tmp.boss = this->_bosses[std::atoi(line.c_str())];
         newLevel.levelWaves.push_back(tmp);
-        i++;
     }
 
     newLevel.waveNb = 0;
@@ -106,7 +111,7 @@ bool Game::loadLevel(int nb)
     this->_level = nb;
     this->_bossTimer = getNow();
     this->_enemyTimer = getNow();
-    this->_bossSpawned = false;
+    this->_bossSpawned = noBoss;
     return true;
 }
 
