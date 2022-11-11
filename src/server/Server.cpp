@@ -66,8 +66,8 @@ void Server::launchGame(GameInfo info) {
     // Create stop flag
     std::shared_ptr<std::atomic<bool>> gameStopFlag = std::make_shared<std::atomic<bool>>(false);
     // Create new thread for new game
-    std::unique_ptr<std::thread> newGameThread =
-        std::make_unique<std::thread>(game_main, this->_protocol->getConnections(), info.port, this->_serverUUID, gameStopFlag);
+    std::unique_ptr<std::thread> newGameThread = std::make_unique<std::thread>(
+        game_main, this->_protocol->getConnectionManager().getLobbyConnections(info.lobbyId), info.port, this->_serverUUID, gameStopFlag);
 
     // Push back to vectors
     this->_gameThreads.push_back(std::move(newGameThread));

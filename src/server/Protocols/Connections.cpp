@@ -21,7 +21,7 @@ Utilities::UUID ConnectionManager::addConnection(asio::ip::address addr, asio::i
         Utilities::UUID newUUID;
 
         // Push new connection
-        this->_connections.push_back({addr, port, newUUID, Timer(this->_clientTimeout), this->_playerCounter++});
+        this->_connections.push_back({addr, port, newUUID, Timer(this->_clientTimeout), this->_playerCounter++, -1});
         return newUUID;
     } else { // Connection already exists, return existing uuid
         return *existingUUID;
@@ -34,7 +34,7 @@ Utilities::UUID ConnectionManager::addConnection(asio::ip::address addr, asio::i
     // If connection doesn't already exist
     if (!existingUUID) {
         // Push new connection
-        this->_connections.push_back({addr, port, uuid, Timer(this->_clientTimeout), this->_playerCounter++});
+        this->_connections.push_back({addr, port, uuid, Timer(this->_clientTimeout), this->_playerCounter++, -1});
         return uuid;
     } else { // Connection already exists, return existing uuid
         return *existingUUID;
@@ -97,6 +97,21 @@ void ConnectionManager::removeDisconnected() {
     for (int i = 0; i < this->_connections.size(); i++)
         if (this->_connections[i].timeoutTimer.isExpired())
             this->_connections.erase(this->_connections.begin() + i);
+}
+
+void ConnectionManager::joinLobby(Utilities::UUID clientUUID, int lobbyID) {
+    for (auto& conn : this->_connections)
+        if (conn.uuid == clientUUID)
+            conn.lobby = lobbyID;
+}
+
+std::vector<Connection> ConnectionManager::getLobbyConnections(int lobby) {
+    std::vector<Connection> output;
+
+    for (auto& conn : this->_connections)
+        if (conn.lobby == lobby)
+            output.push_back(conn);
+    return output;
 }
 
 void ConnectionManager::setServerUUID(Utilities::UUID serverUUID) {

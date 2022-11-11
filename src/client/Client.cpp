@@ -46,6 +46,8 @@ void Client::handleUserCommands() {
 
         if (msg == "Start")
             this->_protocol->sendStart();
+        if (msg == "Join")
+            this->_protocol->sendJoinLobby(0);
     }
 }
 

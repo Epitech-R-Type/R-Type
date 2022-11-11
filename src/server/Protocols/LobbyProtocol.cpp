@@ -18,9 +18,9 @@ LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>>
 }
 
 // Server Commands
-void LobbyProtocol::startGame(int port) {
+void LobbyProtocol::startGame(int port, int lobby) {
     // Get Connections
-    auto connections = this->_connMan.getConnections();
+    auto connections = this->_connMan.getLobbyConnections(lobby);
 
     // Form message body
     std::stringstream msgBody;
@@ -46,11 +46,15 @@ void LobbyProtocol::handleCommands() {
         auto port = msg->getPort();
         auto msgBody = msg->getMsg();
 
+        // ─── Internal Messages Not Received From Client ──────────────────────────────────
+
         // Handle client disconnection
         if (msgBody == "CONN_CLOSED") {
             this->_connMan.removeConnection(addr, port);
             continue;
         }
+
+        // ─── Unconnected Commands ────────────────────────────────────────────────────────
 
         // Parse msg
         auto splitBody = Utilities::splitStr(msgBody, " ");
@@ -76,6 +80,8 @@ void LobbyProtocol::handleCommands() {
             continue;
         }
 
+        // ─── Authenticated Commands ──────────────────────────────────────────────────────
+
         Utilities::UUID uuid(splitBody[1]); // Potential failure here
 
         if (!this->_connMan.uuidValid(uuid)) {
@@ -84,9 +90,18 @@ void LobbyProtocol::handleCommands() {
         }
 
         // START command
-        if (cmd == "START") {
-            this->handleStart();
-            continue;
+        if (cmd == "START")
+            this->handleStart(uuid, addr, port);
+
+        // JOIN LOBBY
+        if (cmd == "JOIN_LOBBY") {
+            try {
+                int lobby = std::stoi(splitBody[2]);
+
+                this->handleJoinLobby(addr, port, uuid, lobby);
+            } catch (...) {
+                this->handleWrongRequest(msgBody, addr, port);
+            }
         }
     }
 }
@@ -116,20 +131,31 @@ void LobbyProtocol::handleConnect(asio::ip::address addr, asio::ip::port_type po
     this->_outgoingMQ->push(msg);
 }
 
-void LobbyProtocol::handleStart() {
-    int port = UDP_PORT;
+void LobbyProtocol::handleJoinLobby(asio::ip::address addr, asio::ip::port_type port, Utilities::UUID clientUUID, int lobby) {
+    this->_connMan.joinLobby(clientUUID, lobby);
+
+    this->sendResponse("200", "Lobby Joined", addr, port);
+}
+
+void LobbyProtocol::handleStart(Utilities::UUID uuid, asio::ip::address addr, asio::ip::port_type port) {
+    int gamePort = UDP_PORT;
+
+    // Check if user is in lobby
+    int lobby = this->_connMan.getConnection(uuid)->lobby;
+    if (lobby == -1)
+        this->sendResponse("400", "Client is not currently in a lobby", addr, port);
 
     // Find an available port
-    while (!Utilities::isPortAvailable(port))
-        port++;
+    while (!Utilities::isPortAvailable(gamePort))
+        gamePort++;
 
-    LOG("Using port: " << port);
+    LOG("Starting game for lobby [" << lobby << "] Using port: " << gamePort);
 
     // Send start game
-    this->startGame(port);
+    this->startGame(gamePort, lobby);
 
     // Add game info to gamesToStart
-    this->_gamesToLaunch->push_back({0, port});
+    this->_gamesToLaunch->push_back({0, gamePort});
 }
 
 // ─── Utility Functions ───────────────────────────────────────────────────────────────────────────
@@ -155,4 +181,10 @@ void LobbyProtocol::sendResponse(std::string code, std::string args, asio::ip::a
 
 std::vector<Connection> LobbyProtocol::getConnections() {
     return this->_connMan.getConnections();
+}
+
+// ─── Getters And Setters ─────────────────────────────────────────────────────────────────────────
+
+ConnectionManager& LobbyProtocol::getConnectionManager() {
+    return this->_connMan;
 }
