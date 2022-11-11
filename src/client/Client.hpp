@@ -21,6 +21,7 @@ enum Stages {
     ROOMSELECTION,
     ROOM,
     GAME,
+    CLOSE,
 };
 
 // This class implementls the main loop for lobby handling of the client
@@ -45,8 +46,10 @@ public:
 
     void handleUserCommands();
 
+    std::vector<int> lobbies = {0, 1, 2, 3, 4};
+
 private:
-    Stages advanceStage(Stages stage, std::shared_ptr<Menu> currentMenu);
+    Stages advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu);
 
     bool _lobbyRunning;
     bool _connected;

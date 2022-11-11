@@ -10,6 +10,9 @@ class Client;
 class ConnectionMenu : public Menu {
 public:
     ConnectionMenu(Client* client);
+    ~ConnectionMenu(){
+
+    };
 
     void apply() override;
 

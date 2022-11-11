@@ -2,6 +2,7 @@
 #include "../../Client.hpp"
 
 ConnectionMenu::ConnectionMenu(Client* client) {
+    SetWindowTitle("R-Type - Connection");
     this->_client = client;
     this->_init();
 }
@@ -35,7 +36,7 @@ void ConnectionMenu::draw() {
 
 void ConnectionMenu::_init() {
     this->_done = false;
-    this->_ipPrompt = std::make_unique<TextBox>(std::string("127.0.0.1:3501"), CENTER(20 * 30, 60), 20 * 30, 60, 20, 30);
+    this->_ipPrompt = std::make_unique<TextBox>(std::string("127.0.0.1:3501"), CENTER(20 * 30, 60), 20 * 30, 60, 20);
 }
 
 bool ConnectionMenu::getDone() {

@@ -64,6 +64,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/TextBox.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/Button.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/ConnectionMenu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbyMenu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbySelectionMenu.cpp"
@@ -74,7 +75,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/HealthSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/MusicSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/PlayerMovementSystem.cpp"
-
+            ""
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"

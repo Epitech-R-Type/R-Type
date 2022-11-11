@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../../../shared/Utilities/ray.hpp"
+#include <atomic>
 #include <iostream>
 #include <memory>
 #include <mutex>
@@ -12,7 +13,7 @@ class TextBox {
 public:
     TextBox(std::string defaultValue, float xPos, float yPos, float width, float height, int charCount);
 
-    TextBox(std::string defaultValue, float xPos, float yPos, float width, float height, int charCount, int fontSize);
+    ~TextBox();
 
     void draw();
 
@@ -26,6 +27,8 @@ public:
 
     int getCharCount();
 
+    std::atomic_bool isRunning();
+
 private:
     int _xPos = 0;
     int _yPos = 0;
@@ -33,7 +36,8 @@ private:
     int _height = 0;
     float _fontSize = 40;
     int _charCount = 40;
-    bool _done;
+
+    std::atomic_bool _done = false;
 
     Rectangle rectangle;
 

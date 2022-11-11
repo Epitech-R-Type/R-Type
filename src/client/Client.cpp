@@ -77,29 +77,33 @@ void Client::handleUserCommands() {
     }
 }
 
-Stages Client::advanceStage(Stages stage, std::shared_ptr<Menu> currentMenu) {
+Stages Client::advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu) {
     if (currentMenu->getDone()) {
         switch (stage) {
-            case Stages::CONNECTION:
-                *currentMenu = LobbySelectionMenu(this);
+            case Stages::CONNECTION: {
+                currentMenu = std::make_unique<LobbySelectionMenu>(this);
                 return Stages::ROOMSELECTION;
+            }
             case Stages::ROOMSELECTION:
-                *currentMenu = LobbyMenu(this);
+                currentMenu = std::make_unique<LobbyMenu>(this);
                 return Stages::ROOM;
+            default:
+                return stage;
         }
     };
+    return stage;
 }
 
 int Client::mainLoop() {
 
     Stages stage = this->_connected ? Stages::ROOMSELECTION : Stages::CONNECTION;
 
-    std::shared_ptr<Menu> currentMenu;
+    std::unique_ptr<Menu> currentMenu;
 
     if (this->_connected)
-        currentMenu = std::make_shared<LobbySelectionMenu>(this);
+        currentMenu = std::make_unique<LobbySelectionMenu>(this);
     else
-        currentMenu = std::make_shared<ConnectionMenu>(this);
+        currentMenu = std::make_unique<ConnectionMenu>(this);
 
     while (true) {
         stage = this->advanceStage(stage, currentMenu);
@@ -122,11 +126,7 @@ int Client::mainLoop() {
             this->_protocol->resetStartGame();
         }
 
-        switch (stage) {
-            case Stages::CONNECTION: {
-                currentMenu->draw();
-            }
-        }
+        currentMenu->draw();
     }
 
     return 0;
