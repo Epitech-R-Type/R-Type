@@ -31,7 +31,6 @@ class Level { // put into vector to use all levels
         std::fstream createFile();
         int countLvls();
         std::string getBackground();
-        std::string getBossSpawnTimer();
         std::string getMusic();
         std::string getMin();
         std::string getMax(int min);

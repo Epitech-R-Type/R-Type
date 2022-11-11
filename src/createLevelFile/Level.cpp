@@ -39,27 +39,6 @@ std::string Level::getBackground()
     return (bg);
 }
 
-std::string Level::getBossSpawnTimer()
-{
-    int finished = 0;
-    std::string timer;
-
-    while (!finished) {
-        std::cout << "After how many seconds should the boss show up?" << std::endl;
-        timer.clear();
-        std::cin >> timer;
-        finished = 1;
-        for (int i = 0; i != timer.size() - 1; i++)
-            if (!isdigit(timer[i])) {
-                finished = 0;
-                continue;
-            }
-        if (std::stoi(timer) < 0)
-            finished = 0;
-    }
-    return (timer);
-}
-
 std::string Level::getMusic()
 {
     int finished = 0;
@@ -217,7 +196,6 @@ void Level::createLvl()
 
     toWrite += this->getBackground() + '\n';
     toWrite += this->getMusic() + '\n';
-    toWrite += '\n';
     count = this->getWaves();
 
     for (int i = 0; i < count; i++) {
@@ -228,10 +206,7 @@ void Level::createLvl()
         toWrite += this->getInterval() + '\n';
         toWrite += this->getEnemy() + '\n';
         toWrite += this->getBoss() + '\n';
-        toWrite += this->getBossSpawnTimer() + '\n';
-        toWrite += '\n';
     }
-    toWrite.pop_back();
     toWrite.pop_back();
     std::fstream LevelFile = this->createFile();
     LevelFile << toWrite;
