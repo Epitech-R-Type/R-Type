@@ -26,6 +26,9 @@ private:
     Rectangle _highlightRec;
 
     Color _color;
+    Color _textColor;
+    Color _hoveredColors;
+    Color _clickedColors;
 
     Interaction _hovered = Interaction::normal;
     bool _hasBeenPressed = false;
