@@ -10,18 +10,19 @@
 #include <iostream>
 
 GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
-                           std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager)
+                           std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager, Utilities::UUID serverUUID)
     : _incomingMQ(incoming),
       _outgoingMQ(outgoing),
       _expectedClients(connections),
-      _entityManager(entManager) {}
+      _entityManager(entManager),
+      _connMan(serverUUID) {}
 
 bool GameProtocol::waitForClients() {
     int targetClientCount = this->_expectedClients.size();
     Timer timeout(CONNECTION_DELAY);
     std::optional<Message<std::string>> msg;
 
-    while (this->_connectedClients.size() < targetClientCount && !timeout.isExpired()) {
+    while (this->_connMan.getConnectionCount() < targetClientCount && !timeout.isExpired()) {
         while ((msg = this->_incomingMQ->pop())) {
             // Parse command
             auto parsedCmd = ProtocolUtils::parseCommand(*msg);
@@ -34,20 +35,16 @@ bool GameProtocol::waitForClients() {
 
             // Only check for Here cmd, any other command is ignored at this point in the server execution
             if (parsedCmd->cmd == Command::Here) {
-                if (this->handleHere(*parsedCmd, msg->getAddr(), msg->getPort()))
-                    this->_players.push_back(this->_connectedClients.size());
+                this->handleHere(*parsedCmd, msg->getAddr(), msg->getPort());
             }
         }
     }
     LOG("Done waiting for clients");
+
     return true;
 }
 
-//
-//
-// COMMAND HANDLING
-//
-//
+// ─── Command Handling ────────────────────────────────────────────────────────────────────────────
 
 bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     // Error handling
@@ -64,7 +61,7 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
     for (auto conn : this->_expectedClients)
         if (conn.uuid == candidate) {
-            this->_connectedClients.push_back({addr, port, candidate});
+            this->_connMan.addConnection(addr, port, candidate);
             break;
         }
 
@@ -193,6 +190,18 @@ void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip:
     this->sendEntity(id);
 }
 
+void GameProtocol::handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
+    int playerUID = this->getPlayer(addr, port);
+
+    // Error handling
+    if (0 > playerUID) {
+        ERRORLOG("Command is invalid.");
+        return;
+    }
+
+    this->_connMan.resetTimeout(addr, port);
+}
+
 void GameProtocol::handleCommands() {
     std::optional<Message<std::string>> msg;
 
@@ -214,28 +223,27 @@ void GameProtocol::handleCommands() {
             case Command::ActMove:
                 this->handleMove(*parsed, msg->getAddr(), msg->getPort());
                 break;
+            case Command::Ping:
+                this->handlePing(*parsed, msg->getAddr(), msg->getPort());
+                break;
             default:
                 WARNING("Unhandled GameProtocol Command: " << parsed->cmd);
         }
     }
 }
 
-//
-//
-// COMMAND SENDING
-//
-//
+// ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
 // Sends to all connected clients
 template <class... T>
-void GameProtocol::sendEntity(EntityID id) const {
+void GameProtocol::sendEntity(EntityID id) {
     if (!this->_entityManager->isValidEntity(id)) {
         ERRORLOG("Entity ID is invalid: " << id);
         return;
     }
 
     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-    for (auto conn : this->_connectedClients)
+    for (auto conn : this->_connMan.getConnections())
         this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
 }
 
@@ -251,20 +259,20 @@ void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::por
     this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
 }
 
-void GameProtocol::sendDelEntity(EntityID id) const {
+void GameProtocol::sendDelEntity(EntityID id) {
     std::stringstream ss;
     ss << id;
-    for (auto conn : this->_connectedClients) {
+    for (auto conn : this->_connMan.getConnections()) {
         this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_ENT", ss.str(), conn.addr, conn.port));
     }
 }
 
 template <class T>
-void GameProtocol::sendDelComponent(EntityID id) const {
+void GameProtocol::sendDelComponent(EntityID id) {
     std::stringstream ss;
     ss << id << ";" << getID<T>();
 
-    for (auto conn : this->_connectedClients) {
+    for (auto conn : this->_connMan.getConnections()) {
         this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), conn.addr, conn.port));
     }
 }
@@ -277,33 +285,61 @@ void GameProtocol::sendDelComponent(EntityID id, Connection client) const {
     this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), client.addr, client.port));
 }
 
-void GameProtocol::sendChangeMusic(SongID songId) const {
+void GameProtocol::sendChangeMusic(int songId) {
     std::stringstream ss;
     ss << songId;
     DEBUG("Sending to Clients: CHANGE_MUSIC " << ss.str());
 
-    for (auto conn : this->_connectedClients) {
+    for (auto conn : this->_connMan.getConnections()) {
         this->_outgoingMQ->push(ProtocolUtils::createMessage("CHANGE_MUSIC", ss.str(), conn.addr, conn.port));
     }
 }
 
-//
-//
-// UTILITIES
-//
-//
+void GameProtocol::sendGameEnd() {
+    for (auto conn : this->_connMan.getConnections())
+        this->_outgoingMQ->push(ProtocolUtils::createMessage("GAME_END", "", conn.addr, conn.port));
+}
+
+// ─── Utilities ───────────────────────────────────────────────────────────────────────────────────
 
 int GameProtocol::getPlayer(asio::ip::address addr, asio::ip::port_type port) {
     int i;
-    bool found = false;
+    std::optional<Connection> conn;
 
-    for (i = 0; i < this->_connectedClients.size(); i++)
-        if (this->_connectedClients[i].addr == addr && this->_connectedClients[i].port == port) {
-            found = true;
-            break;
-        }
-    if (found)
-        return i;
+    if ((conn = this->_connMan.getConnection(addr, port)))
+        return conn->player;
     else
         return -1;
+}
+
+std::vector<Connection> GameProtocol::getConnectedClients() {
+    return this->_connMan.getConnections();
+}
+
+void GameProtocol::handleDisconnectedClients() {
+    auto connections = this->_connMan.getConnections();
+
+    // Loop and check if connection is timed out
+    for (auto conn : connections) {
+        if (conn.timeoutTimer.isExpired()) {
+            // If connection is timed out, remove entity associated to player
+            for (auto beg = this->_entityManager->begin<Player::Component>(); beg != this->_entityManager->end<Player::Component>(); ++beg) {
+                auto comp = this->_entityManager->getComponent<Player::Component>(*beg);
+
+                if (comp->uniqueID == conn.player) {
+                    WARNING("Deleting player entity [" << comp->uniqueID << "]");
+                    this->_entityManager->pushModified(*beg);
+                    this->_entityManager->deleteEntity(*beg);
+                    break;
+                }
+            }
+        }
+    }
+
+    // Flush disconnected clients from connMan
+    this->_connMan.removeDisconnected();
+}
+
+void GameProtocol::resetAllTimeouts() {
+    this->_connMan.resetTimeoutAll();
 }

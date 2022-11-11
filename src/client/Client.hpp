@@ -33,7 +33,7 @@ public:
     // Return is 0 if success or 1 if failure
     int launchGame();
 
-    void connect(std::string serverIP, int port = TCP_PORT);
+    int connect(std::string serverIP, int port = TCP_PORT);
 
     void handleUserCommands();
 
@@ -43,6 +43,8 @@ private:
 
     std::shared_ptr<MessageQueue<std::string>> _userCommands = std::make_shared<MessageQueue<std::string>>();
     std::thread* _userInputThread;
+
+    std::shared_ptr<std::atomic<bool>> _tcpStopFlag;
 
     ClientGame* _game;
     ClientLobbyProtocol* _protocol;

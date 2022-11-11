@@ -91,6 +91,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/MessageQueue/MessageQueue.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/UUID.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Utilities.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/Utilities/Timer.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/ClientGameProtocol.cpp"
     )
     target_compile_definitions(Client PUBLIC CLIENT=1)

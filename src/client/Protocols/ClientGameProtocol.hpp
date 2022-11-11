@@ -42,6 +42,7 @@ public:
     void sendActFire();
     void sendHere();
     void sendGetEnt(EntityID id);
+    void sendPing();
 
 private:
     // Udp messaging queues
