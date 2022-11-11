@@ -17,7 +17,6 @@ LobbyProtocol::LobbyProtocol(std::shared_ptr<MessageQueue<Message<std::string>>>
     this->_gamesToLaunch = gamesToLaunch;
 }
 
-// Server Commands
 void LobbyProtocol::startGame(int port, int lobby) {
     // Get Connections
     auto connections = this->_connMan.getLobbyConnections(lobby);
@@ -142,8 +141,10 @@ void LobbyProtocol::handleStart(Utilities::UUID uuid, asio::ip::address addr, as
 
     // Check if user is in lobby
     int lobby = this->_connMan.getConnection(uuid)->lobby;
-    if (lobby == -1)
+    if (lobby == -1) {
         this->sendResponse("400", "Client is not currently in a lobby", addr, port);
+        return;
+    }
 
     // Find an available port
     while (!Utilities::isPortAvailable(gamePort))
@@ -158,7 +159,7 @@ void LobbyProtocol::handleStart(Utilities::UUID uuid, asio::ip::address addr, as
     this->startGame(gamePort, lobby);
 
     // Add game info to gamesToStart
-    this->_gamesToLaunch->push_back({0, gamePort});
+    this->_gamesToLaunch->push_back({lobby, gamePort});
 }
 
 // ─── Utility Functions ───────────────────────────────────────────────────────────────────────────

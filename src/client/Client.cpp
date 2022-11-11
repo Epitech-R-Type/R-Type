@@ -90,7 +90,7 @@ int Client::mainLoop() {
         this->_connected = this->_protocol->isConnected();
 
         if (this->_protocol->shouldGameStart()) {
-            std::this_thread::sleep_for(std::chrono::seconds(2));
+            // std::this_thread::sleep_for(std::chrono::seconds(2));
             this->launchGame();
 
             // Check if tcp connection still open

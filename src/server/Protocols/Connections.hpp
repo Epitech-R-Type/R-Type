@@ -14,6 +14,7 @@
 
 #include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/UUID.hpp"
+#include "../../shared/Utilities/Utilities.hpp"
 
 struct Connection {
     asio::ip::address addr;
