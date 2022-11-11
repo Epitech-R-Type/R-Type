@@ -103,6 +103,7 @@ private:
     };
     bool loadLevel(int nb);
     void refreshLevel();
+    bool noEnemies();
     cmrc::embedded_filesystem _fs = cmrc::server::get_filesystem();
 
     // Multithreading

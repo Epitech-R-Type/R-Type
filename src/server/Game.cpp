@@ -80,8 +80,7 @@ bool Game::loadLevel(int nb)
     line = lvlArr[i++];
     Factory::Misc::makeBackground(this->_entManager, (Animation::AnimationID)std::atoi(line.c_str()));
     line = lvlArr[i++];
-    newLevel.bossCountdown = std::atoi(line.c_str());
-
+    this->_protocol.sendChangeMusic((SongID)std::atoi(line.c_str()));
     while (i < lvlArr.size()) {
         line = lvlArr[i++];
         tmp.minSpawned = std::atoi(line.c_str());
@@ -99,12 +98,15 @@ bool Game::loadLevel(int nb)
         line = lvlArr[i++];
         tmp.boss = this->_bosses[std::atoi(line.c_str())];
         newLevel.levelWaves.push_back(tmp);
+        i++;
     }
+
     newLevel.waveNb = 0;
     this->_currentLevel = newLevel;
     this->_level = nb;
     this->_bossTimer = getNow();
     this->_enemyTimer = getNow();
+    this->_bossSpawned = false;
     return true;
 }
 
@@ -120,40 +122,42 @@ void Game::refreshLevel()
         int rd = rand() %  this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
         Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies[rd]);
     }
-    elapsed_seconds = now - this->_bossTimer;  //just spawning boss at the end of the waves now
-    if (elapsed_seconds.count() >= this->_currentLevel.bossCountdown && this->_bossSpawned == false) {
-        this->_bossTimer = getNow();
+    bool allSpawned = false;
+
+    if (this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned == 0) { //next wave of enemies
+        allSpawned = true;
+        if (noEnemies()) {
+            this->_currentLevel.waveNb += 1;
+        }
+    }
+
+    if (this->_currentLevel.waveNb >= this->_currentLevel.levelWaves.size() && !this->_bossSpawned && allSpawned) { // spawning boss
+        this->_currentLevel.waveNb -= 1;
         this->_bossSpawned = true;
-        Factory::Enemy::makeEndboss(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].boss);
+        Factory::Enemy::makeEndboss(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.levelWaves.size()-1].boss);
         this->_protocol.sendChangeMusic(BOSS);
     }
 
+    if (noEnemies() && this->_bossSpawned && allSpawned) { // loading next level
+        if (this->loadLevel(++this->_level) == false) {
+            this->_isRunning = false;
+        }
+    }
+}
 
-    bool enemyFound = false;
-
-    if (this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned == 0) {
+bool Game::noEnemies()
+{
+    bool noEnemy = true;
 
         for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
             Team::Component *ent = this->_entManager->getComponent<Team::Component>(*beg);
             if (*ent == Team::Enemy) {
-                enemyFound = true;
+                noEnemy = false;
                 break;
             }
         }
 
-        if (!enemyFound) {
-            this->_currentLevel.waveNb += 1;
-            LOG("next wave");
-        }
-    }
-    if (this->_currentLevel.waveNb >= this->_currentLevel.levelWaves.size()) {
-        LOG("actually next level");
-        if (this->loadLevel(++this->_level) == false) {
-            LOG("game won");
-            this->_isRunning = false;
-        }
-    }
-    // check all entite with team component and see if someone is an enemy; if all enemys are dead increase waveNB or call loadLevel
+    return noEnemy;
 }
 
 int Game::mainLoop() {
