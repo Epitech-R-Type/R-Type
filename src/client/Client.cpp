@@ -41,13 +41,30 @@ int Client::connect(std::string serverIP, int port) {
 
 void Client::handleUserCommands() {
     std::optional<std::string> potMsg;
+
     while ((potMsg = this->_userCommands->pop())) {
         std::string msg = potMsg.value();
+        auto splitMsg = Utilities::splitStr(msg, ";");
 
-        if (msg == "Start")
+        if (splitMsg[0] == "Start")
             this->_protocol->sendStart();
-        if (msg == "Join")
-            this->_protocol->sendJoinLobby(0);
+        if (splitMsg[0] == "Join") {
+            if (splitMsg.size() != 2) {
+                ERRORLOG("Please specify lobby to join...");
+                continue;
+            }
+
+            try {
+                int lobby = std::stoi(splitMsg[1]);
+
+                if (lobby < 0)
+                    throw;
+
+                this->_protocol->sendJoinLobby(lobby);
+            } catch (...) {
+                ERRORLOG("Invalid lobby number...");
+            }
+        }
     }
 }
 

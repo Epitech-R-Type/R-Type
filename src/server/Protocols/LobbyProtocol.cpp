@@ -151,6 +151,9 @@ void LobbyProtocol::handleStart(Utilities::UUID uuid, asio::ip::address addr, as
 
     LOG("Starting game for lobby [" << lobby << "] Using port: " << gamePort);
 
+    // Send OK response
+    this->sendResponse("200", "Ok. Starting game", addr, port);
+
     // Send start game
     this->startGame(gamePort, lobby);
 

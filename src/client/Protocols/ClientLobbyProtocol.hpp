@@ -45,6 +45,7 @@ public:
     Utilities::UUID getUUID();
     int getServerPort();
     asio::ip::address getServerIp();
+    int getLobby();
 
 private:
     Utilities::UUID _serverUUID;
@@ -66,4 +67,5 @@ private:
     bool _connected = false;
     bool _authenticated = false;
     bool _startGame = false;
+    int lobby = -1; // -1 if not in lobby otherwise, lobby id
 };

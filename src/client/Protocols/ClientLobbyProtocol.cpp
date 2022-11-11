@@ -117,13 +117,33 @@ void ClientLobbyProtocol::sendStart() {
     ss << "START " << this->_clientUUID;
 
     this->sendMessage(ss.str());
+
+    // Handle resp
+    TcpResponse resp = this->awaitResponse();
+
+    if (resp.code != 200)
+        ERRORLOG("Error starting game: " << resp.body);
 }
 
-bool ClientLobbyProtocol::sendJoinLobby(int lobby) {
+void ClientLobbyProtocol::sendJoinLobby(int lobby) {
     std::stringstream ss;
 
+    // NEED TO HANDLE LOBBY ALREADY IN GAME
+    // LOOK INTO CLIENT THAT JOINED LOBBY AFTER GAME START BEING ABLE TO START OTHER GAME
+
+    // Send message
     ss << "JOIN_LOBBY " << this->_clientUUID << " " << lobby;
     this->sendMessage(ss.str());
+
+    // Handle response
+    TcpResponse resp = this->awaitResponse();
+
+    if (resp.code != 200)
+        ERRORLOG("Error joining lobby: " << resp.body);
+    else {
+        LOG("Succesfully join lobby " << lobby << ".");
+        this->lobby = lobby;
+    }
 }
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
@@ -171,4 +191,8 @@ int ClientLobbyProtocol::getServerPort() {
 
 asio::ip::address ClientLobbyProtocol::getServerIp() {
     return this->_serverIP;
+}
+
+int ClientLobbyProtocol::getLobby() {
+    return this->lobby;
 }
