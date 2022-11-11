@@ -63,6 +63,8 @@ int Server::mainLoop() {
 }
 
 void Server::launchGame(GameInfo info) {
+    // Check if lobby is already runnin
+
     // Create stop flag
     std::shared_ptr<std::atomic<bool>> gameStopFlag = std::make_shared<std::atomic<bool>>(false);
     auto connections = this->_protocol->getConnectionManager().getLobbyConnections(info.lobbyId);
@@ -73,13 +75,17 @@ void Server::launchGame(GameInfo info) {
     // Push back to vectors
     this->_gameThreads.push_back(std::move(newGameThread));
     this->_gameStopFlags.push_back(std::move(gameStopFlag));
+
+    // Update running lobbies
+    this->_protocol->addRunningLobby(info.lobbyId);
+    this->_runningLobbies.push_back(info.lobbyId);
 }
 
 // ─── Game Lobbies Handling ───────────────────────────────────────────────────────────────────────
 
 void Server::handleNewGames() {
     for (auto game : *this->_gamesToLaunch)
-        launchGame(game);
+        this->launchGame(game);
 
     this->_gamesToLaunch->clear();
 }
@@ -92,6 +98,8 @@ void Server::handleFinishedGames() {
             this->_gameThreads[i]->join();
 
             // Cleanup
+            this->_protocol->removeRunningLobbies(this->_runningLobbies[i]);
+            this->_runningLobbies.erase(this->_runningLobbies.begin() + i);
             this->_gameThreads.erase(this->_gameThreads.begin() + i);
             this->_gameStopFlags.erase(this->_gameStopFlags.begin() + i);
         }

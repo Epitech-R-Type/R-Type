@@ -65,6 +65,11 @@ public:
 
     ConnectionManager& getConnectionManager();
 
+    // Updated by Server class for handling start game
+    void addRunningLobby(int lobby);
+    void removeRunningLobbies(int lobby);
+    bool isLobbyRunning(int lobby);
+
 private:
     // Connection manager
     ConnectionManager _connMan;
@@ -72,6 +77,9 @@ private:
     // Messaging Queues
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+
+    // Lobbies currently in game
+    std::vector<int> _runningLobbies;
 
     // Games to launch reference
     std::shared_ptr<std::vector<GameInfo>> _gamesToLaunch;

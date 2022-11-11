@@ -146,6 +146,11 @@ void LobbyProtocol::handleStart(Utilities::UUID uuid, asio::ip::address addr, as
         return;
     }
 
+    if (this->isLobbyRunning(lobby)) {
+        this->sendResponse("400", "Lobby is already running", addr, port);
+        return;
+    }
+
     // Find an available port
     while (!Utilities::isPortAvailable(gamePort))
         gamePort++;
@@ -191,4 +196,21 @@ std::vector<Connection> LobbyProtocol::getConnections() {
 
 ConnectionManager& LobbyProtocol::getConnectionManager() {
     return this->_connMan;
+}
+
+void LobbyProtocol::addRunningLobby(int lobby) {
+    this->_runningLobbies.push_back(lobby);
+}
+
+void LobbyProtocol::removeRunningLobbies(int lobby) {
+    for (int i = 0; i < this->_runningLobbies.size(); i++)
+        if (this->_runningLobbies[i] == lobby)
+            this->_runningLobbies.erase(this->_runningLobbies.begin() + i);
+}
+
+bool LobbyProtocol::isLobbyRunning(int lobby) {
+    for (auto candidate : this->_runningLobbies)
+        if (candidate == lobby)
+            return true;
+    return false;
 }
