@@ -7,8 +7,7 @@
 
 #include "Level.hpp"
 
-int main()
-{
+int main() {
     Level* newLevel = new Level;
     newLevel->createLvl();
     delete newLevel;

@@ -86,8 +86,7 @@ int Game::getPlayersAlive() {
     return count;
 };
 
-bool Game::loadLevel(int nb)
-{
+bool Game::loadLevel(int nb) {
     if (this->_fs.is_file(std::string("src/server/levels/level").append(std::to_string(nb))) == false)
         return false;
 
@@ -117,7 +116,7 @@ bool Game::loadLevel(int nb)
         line = lvlArr[i++];
         std::vector<std::string> lineArr = Utilities::splitStr(line, " ");
         for (auto is : lineArr) {
-            tmp.enemies.push_back(this->_enemys[std::stoi(is)]); 
+            tmp.enemies.push_back(this->_enemys[std::stoi(is)]);
         }
         line = lvlArr[i++];
         if (std::atoi(line.c_str()) == -1) {
@@ -136,21 +135,21 @@ bool Game::loadLevel(int nb)
     return true;
 }
 
-void Game::refreshLevel()
-{
+void Game::refreshLevel() {
     const auto now = getNow();
     std::chrono::duration<double> elapsed_seconds = now - this->_enemyTimer;
 
-    if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval && this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
+    if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval &&
+        this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
         this->_enemyTimer = getNow();
         this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
         srand(time(NULL));
-        int rd = rand() %  this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
+        int rd = rand() % this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
         Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies[rd]);
     }
     bool allSpawned = false;
 
-    if (this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned == 0) { //next wave of enemies
+    if (this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned == 0) { // next wave of enemies
         allSpawned = true;
         if (noEnemies()) {
             this->_currentLevel.waveNb += 1;
@@ -160,7 +159,7 @@ void Game::refreshLevel()
     if (this->_currentLevel.waveNb >= this->_currentLevel.levelWaves.size() && !this->_bossSpawned && allSpawned) { // spawning boss
         this->_currentLevel.waveNb -= 1;
         this->_bossSpawned = true;
-        Factory::Enemy::makeEndboss(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.levelWaves.size()-1].boss);
+        Factory::Enemy::makeEndboss(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.levelWaves.size() - 1].boss);
         this->_protocol.sendChangeMusic(BOSS);
     }
 
@@ -171,17 +170,16 @@ void Game::refreshLevel()
     }
 }
 
-bool Game::noEnemies()
-{
+bool Game::noEnemies() {
     bool noEnemy = true;
 
-        for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
-            Team::Component *ent = this->_entManager->getComponent<Team::Component>(*beg);
-            if (*ent == Team::Enemy) {
-                noEnemy = false;
-                break;
-            }
+    for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
+        Team::Component* ent = this->_entManager->getComponent<Team::Component>(*beg);
+        if (*ent == Team::Enemy) {
+            noEnemy = false;
+            break;
         }
+    }
 
     return noEnemy;
 }

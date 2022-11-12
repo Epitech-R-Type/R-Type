@@ -5,13 +5,6 @@
 ** Level
 */
 
-/*
-** EPITECH PROJECT, 2022
-** R-Type
-** File description:
-** Level
-*/
-
 #include "Level.hpp"
 
 bool isFloat(std::string myString) {

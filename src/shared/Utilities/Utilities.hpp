@@ -26,9 +26,9 @@
 #define HAS_KEY(map, key) (map.find(key) != map.end())
 
 #include <asio.hpp>
+#include <chrono>
 #include <string>
 #include <vector>
-#include <chrono>
 
 typedef std::chrono::time_point<std::chrono::system_clock> timePoint;
 
