@@ -44,9 +44,10 @@ void LobbySelectionMenu::queryLobbies() {
         this->_lobbies.push_back({lobby, std::move(button)});
     }
 
+    highestLobbyID++;
     // setting newly created lobby ID
     this->_lobbies.push_back({
-        LobbyInfo{false, 0, ++highestLobbyID},
+        LobbyInfo{highestLobbyID, false, 0},
         Button("Create Lobby", this->_buttonXPos, this->_buttonYPos, this->_buttonWidth, this->_buttonHeight, this->_buttonColor),
     });
 }
