@@ -24,14 +24,10 @@ struct SFX {
     const std::string path;
 };
 
-enum SongID {
-    NORMAL,
-    BOSS,
-};
-
 static std::map<SongID, Song> Songs{
-    {SongID::NORMAL, {"resources/song0.mp3"}},
-    {SongID::BOSS, {"resources/song1.mp3"}},
+    {SongID::BOSS, {"resources/song0.mp3"}},
+    {SongID::NORMAL, {"resources/song1.mp3"}},
+    {SongID::PIANO, {"resources/song2.mp3"}},
 };
 
 static std::map<SFXID, SFX> SoundEffects{
