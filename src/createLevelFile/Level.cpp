@@ -6,13 +6,13 @@
 */
 
 #include "Level.hpp"
+#include <regex>
 
 bool isFloat(std::string myString) {
-    std::stringstream iss;
-    iss << myString;
-    float f;
-    iss >> std::noskipws >> f;
-    return iss.eof() && !iss.fail();
+    std::regex pattern("^\\d+\\.\\d+$");
+    std::smatch match;
+
+    return std::regex_search(myString, match, pattern);
 }
 
 std::string Level::getBackground() {
