@@ -7,15 +7,15 @@
 
 #pragma once
 
-#include "../../shared/Utilities/secureAsio.hpp"
-#include <optional>
-#include <string>
-#include <vector>
-
 #include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
+#include "../../shared/Utilities/secureAsio.hpp"
+#include <map>
+#include <optional>
+#include <string>
+#include <vector>
 
 struct Connection {
     asio::ip::address addr;

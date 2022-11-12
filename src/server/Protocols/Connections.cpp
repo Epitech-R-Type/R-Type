@@ -72,7 +72,7 @@ std::optional<Connection> ConnectionManager::getConnection(asio::ip::address add
 
 std::optional<Connection> ConnectionManager::getConnection(int clientId) {
     for (auto conn : this->_connections)
-        if (conn.player = clientId)
+        if ((conn.player = clientId))
             return std::optional(conn);
     return {};
 }
