@@ -92,6 +92,16 @@ void LobbyProtocol::handleCommands() {
         if (cmd == "START")
             this->handleStart(uuid, addr, port);
 
+        if (cmd == "GET_LOBBIES") {
+            this->handleGetLobbies(addr, port);
+            continue;
+        }
+
+        if (cmd == "LEAVE") {
+            this->handleLeave(uuid, addr, port);
+            continue;
+        }
+
         // JOIN LOBBY
         if (cmd == "JOIN_LOBBY") {
             try {
@@ -146,6 +156,11 @@ void LobbyProtocol::handleStart(Utilities::UUID uuid, asio::ip::address addr, as
         return;
     }
 
+    if (this->isLobbyRunning(lobby)) {
+        this->sendResponse("400", "Lobby is already running", addr, port);
+        return;
+    }
+
     // Find an available port
     while (!Utilities::isPortAvailable(gamePort))
         gamePort++;
@@ -162,6 +177,30 @@ void LobbyProtocol::handleStart(Utilities::UUID uuid, asio::ip::address addr, as
     this->_gamesToLaunch->push_back({lobby, gamePort});
 }
 
+void LobbyProtocol::handleGetLobbies(asio::ip::address addr, asio::ip::port_type port) {
+    auto lobbies = this->_connMan.getLobbyInfos();
+    std::stringstream finalMsg;
+    std::stringstream ss;
+
+    for (auto& lobby : lobbies) {
+        std::stringstream lobbyStr;
+        lobby.isRunning = isLobbyRunning(lobby.id);
+
+        lobbyStr << lobby.id << ",";
+        lobbyStr << lobby.isRunning << ",";
+        lobbyStr << lobby.playerCount;
+
+        finalMsg << lobbyStr.str() << ";";
+    }
+    this->sendResponse("200", finalMsg.str(), addr, port);
+}
+
+void LobbyProtocol::handleLeave(Utilities::UUID uuid, asio::ip::address addr, asio::ip::port_type port) {
+    this->_connMan.joinLobby(uuid, -1);
+
+    this->sendResponse("200", " ", addr, port);
+}
+
 // ─── Utility Functions ───────────────────────────────────────────────────────────────────────────
 
 bool LobbyProtocol::isAuthenticated(std::string uuid) {
@@ -175,7 +214,7 @@ void LobbyProtocol::sendResponse(std::string code, std::string args, asio::ip::a
 
     body += " ";
     body << this->_connMan.getServerUUID();
-    body += " ";
+    body += ";";
     body += args;
     body += "\r\n";
 
@@ -191,4 +230,21 @@ std::vector<Connection> LobbyProtocol::getConnections() {
 
 ConnectionManager& LobbyProtocol::getConnectionManager() {
     return this->_connMan;
+}
+
+void LobbyProtocol::addRunningLobby(int lobby) {
+    this->_runningLobbies.push_back(lobby);
+}
+
+void LobbyProtocol::removeRunningLobbies(int lobby) {
+    for (int i = 0; i < this->_runningLobbies.size(); i++)
+        if (this->_runningLobbies[i] == lobby)
+            this->_runningLobbies.erase(this->_runningLobbies.begin() + i);
+}
+
+bool LobbyProtocol::isLobbyRunning(int lobby) {
+    for (auto candidate : this->_runningLobbies)
+        if (candidate == lobby)
+            return true;
+    return false;
 }

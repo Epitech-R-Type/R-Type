@@ -7,14 +7,15 @@
 
 #pragma once
 
-#include "../../shared/Utilities/secureAsio.hpp"
-#include <optional>
-#include <string>
-#include <vector>
-
+#include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
+#include "../../shared/Utilities/secureAsio.hpp"
+#include <map>
+#include <optional>
+#include <string>
+#include <vector>
 
 struct Connection {
     asio::ip::address addr;
@@ -39,8 +40,10 @@ public:
     // Returns empty string if connection doesn't exist
     std::optional<Utilities::UUID> getUUID(asio::ip::address addr, asio::ip::port_type port);
     bool uuidValid(Utilities::UUID uuid) const;
+
     std::optional<Connection> getConnection(Utilities::UUID uuid) const;
     std::optional<Connection> getConnection(asio::ip::address addr, asio::ip::port_type port);
+    std::optional<Connection> getConnection(int clientId);
 
     // Remove connection
     void removeConnection(asio::ip::address addr, asio::ip::port_type port);
@@ -53,8 +56,10 @@ public:
     // Remove all connections that timed out
     void removeDisconnected();
 
-    // Lobby setting
+    // ─── Lobby Stuff ─────────────────────────────────────────────────────────────────────────
+
     void joinLobby(Utilities::UUID clientUUID, int lobbyID);
+    std::vector<LobbyInfo> getLobbyInfos() const;
 
     // Get vector of clients in lobby
     std::vector<Connection> getLobbyConnections(int lobby);

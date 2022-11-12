@@ -35,6 +35,7 @@ Table of Contents
         2.1. Command Syntax ...........................................X
         2.2. Command Response .........................................X
             2.2.1. Response Codes and Meaning .........................X
+            2.2.2. Specific Responses .................................X
         2.3. Server Commands ..........................................X
         2.4. Client Commands ..........................................X
     3. UDP Protocol ...................................................X
@@ -121,6 +122,15 @@ Table of Contents
                 - 401 -> Forbidden
                 - 200 -> OK
 
+        2.2.2. Specific Responses
+
+        Sub args are comma separated and args are semi colom separated.
+
+        GET_LOBBIES Response:
+
+            code: 200
+            body: (lobby id, playerCount, isRunning);
+
     2.3. Server Commands
 
         The only server command that currently needs any handling by the
@@ -133,16 +143,19 @@ Table of Contents
 
         The following is a list of Client Commands :
 
-            - CONNECT -> Only command with no header. This command
-                         allows the client to retrieve his user assigned
-                         uuid.
+            - CONNECT     -> Only command with no header. This command
+                          allows the client to retrieve his user
+                          assigned uuid.
 
-            - START   -> This command allows the user to signal to the
-                         server that the game should start.
+            - START       -> This command allows the user to signal
+                          to the server that the game should start.
 
-            - JOIN_LOBBY -> This command allows the user to enter into
+            - JOIN_LOBBY  -> This command allows the user to enter into
                             a given lobby.
+            
+            - GET_LOBBIES -> This command requests all lobbies available
 
+            - LEAVE       -> Leave current lobby if in one.
 
 
 3. UDP Protocol
@@ -200,6 +213,7 @@ Table of Contents
                     DEL_COMP      ->    Delete component
                     CHANGE_MUSIC  ->    Change Song
                     GAME_END      ->    Signals end of game
+                    DEATH         ->    Signals player is dead
 
         3.2.2. Server Command Arguments
 

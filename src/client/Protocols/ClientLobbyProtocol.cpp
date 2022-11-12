@@ -132,11 +132,8 @@ void ClientLobbyProtocol::sendStart() {
 bool ClientLobbyProtocol::sendJoinLobby(int lobby) {
     std::stringstream ss;
 
-    // NEED TO HANDLE LOBBY ALREADY IN GAME
-    // LOOK INTO CLIENT THAT JOINED LOBBY AFTER GAME START BEING ABLE TO START OTHER GAME
-
     // Send message
-    ss << "JOIN_LOBBY " << this->_clientUUID << " " << lobby;
+    ss << "JOIN_LOBBY " << this->_clientUUID << " " << lobby; // THIS NEEDS TO BE SEMI COLOM SEPARATED
     this->sendMessage(ss.str());
 
     // Handle response
@@ -154,6 +151,54 @@ bool ClientLobbyProtocol::sendJoinLobby(int lobby) {
 
 void ClientLobbyProtocol::sendAuthenticate() {
     this->sendMessage("AUTHENTICATE\r\n");
+}
+
+std::vector<LobbyInfo> ClientLobbyProtocol::sendGetLobbies() {
+    std::stringstream ss;
+    std::vector<LobbyInfo> output;
+
+    // Send request
+    ss << "GET_LOBBIES " << this->_clientUUID;
+    this->sendMessage(ss.str());
+
+    // Handle resp
+    TcpResponse resp = this->awaitResponse();
+
+    if (resp.code != 200) // Shouldn't happen
+        return output;
+
+    auto splitMsg = Utilities::splitStr(resp.body, ";");
+
+    // Parse Lobbies
+    for (auto& lobby : splitMsg) {
+        auto subArgs = Utilities::splitStr(lobby, ",");
+
+        if (subArgs.size() != 3)
+            continue;
+        try {
+            int id = std::stoi(subArgs[0]);
+            bool isRunning = std::stoi(subArgs[1]);
+            int playerCount = std::stoi(subArgs[2]);
+
+            output.push_back({id, isRunning, playerCount});
+        } catch (...) {
+            continue;
+        }
+    }
+
+    return output;
+}
+
+void ClientLobbyProtocol::sendLeave() {
+    std::stringstream ss;
+
+    ss << "LEAVE " << this->_clientUUID;
+    this->sendMessage(ss.str());
+
+    TcpResponse resp = this->awaitResponse();
+
+    if (resp.code != 200)
+        return;
 }
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {

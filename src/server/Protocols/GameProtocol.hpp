@@ -65,6 +65,9 @@ public:
     void sendChangeMusic(int songId);
     void sendGameEnd();
 
+    void sendDeath(asio::ip::address addr, asio::ip::port_type port);
+    void sendDeath(int clientId);
+
     // ─── Uilities ────────────────────────────────────────────────────────────────────────────
 
     int getPlayer(asio::ip::address addr, asio::ip::port_type port);

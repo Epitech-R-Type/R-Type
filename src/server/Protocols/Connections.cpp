@@ -70,6 +70,13 @@ std::optional<Connection> ConnectionManager::getConnection(asio::ip::address add
     return {};
 }
 
+std::optional<Connection> ConnectionManager::getConnection(int clientId) {
+    for (auto conn : this->_connections)
+        if ((conn.player = clientId))
+            return std::optional(conn);
+    return {};
+}
+
 void ConnectionManager::removeConnection(asio::ip::address addr, asio::ip::port_type port) {
     for (int i = 0; i < this->_connections.size(); i++)
         if (this->_connections[i].addr == addr && this->_connections[i].port == port)
@@ -105,6 +112,21 @@ void ConnectionManager::joinLobby(Utilities::UUID clientUUID, int lobbyID) {
             conn.lobby = lobbyID;
 
     LOG("Client 0 lobby is : " << this->_connections[0].lobby);
+}
+
+std::vector<LobbyInfo> ConnectionManager::getLobbyInfos() const {
+    std::vector<LobbyInfo> output;
+    std::map<int, int> lobbies;
+
+    for (auto conn : this->_connections)
+        lobbies[conn.lobby]++;
+
+    LOG("INFO REQUIRED : " << lobbies[1]);
+
+    for (const auto& [lobbyId, playerCount] : lobbies)
+        if (lobbyId > 0 && playerCount > 0)
+            output.push_back({lobbyId, false, playerCount});
+    return output;
 }
 
 std::vector<Connection> ConnectionManager::getLobbyConnections(int lobby) {

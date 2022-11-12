@@ -2,6 +2,7 @@
 
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/AsioConstants.hpp"
+#include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 
 struct TcpResponse {
@@ -35,6 +36,8 @@ public:
     void sendAuthenticate();
     void sendMessage(std::string msgContent);
     bool sendJoinLobby(int lobby);
+    std::vector<LobbyInfo> sendGetLobbies();
+    void sendLeave();
 
     // ─── Utility Functions ───────────────────────────────────────────────────────────────────
 

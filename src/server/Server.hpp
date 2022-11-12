@@ -63,6 +63,10 @@ private:
     std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
     std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
 
+    // ─── All Same Size ───────────────────────────────────────────────────────────────
+
+    // Lobby handling
+    std::vector<int> _runningLobbies;
     // Lobby thread handling
     std::shared_ptr<std::vector<GameInfo>> _gamesToLaunch;
     std::vector<std::unique_ptr<std::thread>> _gameThreads;

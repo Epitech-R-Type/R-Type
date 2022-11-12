@@ -76,6 +76,23 @@ void Client::handleUserCommands() {
                 ERRORLOG("Invalid lobby number...");
             }
         }
+
+        // Get_lobbies
+        if (splitMsg[0] == "Get_lobbies") {
+            auto lobbies = this->_protocol->sendGetLobbies();
+
+            // testing purposes
+            for (auto lobby : lobbies) {
+                std::cout << "Lobby [" << lobby.id << "] has " << lobby.playerCount << " players connected." << std::endl;
+                std::cout << "Is game started ? == " << lobby.isRunning << std::endl;
+            }
+        }
+
+        // Leave
+        if (splitMsg[0] == "Leave") {
+            this->_protocol->sendLeave();
+            continue;
+        }
     }
 }
 
