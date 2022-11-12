@@ -17,24 +17,24 @@ Button::Button(std::string text, float x, float y, float width, float height, Co
     this->_hovered = Interaction::normal;
 
     this->_textColor = Color{
-        r : static_cast<unsigned char>(255 - this->_color.r),
-        g : static_cast<unsigned char>(255 - this->_color.g),
-        b : static_cast<unsigned char>(255 - this->_color.b),
-        a : this->_color.a,
+        static_cast<unsigned char>(255 - this->_color.r),
+        static_cast<unsigned char>(255 - this->_color.g),
+        static_cast<unsigned char>(255 - this->_color.b),
+        this->_color.a,
     };
 
     this->_hoveredColors = Color{
-        r : static_cast<unsigned char>(this->_color.r - 40),
-        g : static_cast<unsigned char>(this->_color.g - 40),
-        b : static_cast<unsigned char>(this->_color.b - 40),
-        a : this->_color.a,
+        static_cast<unsigned char>(this->_color.r - 40),
+        static_cast<unsigned char>(this->_color.g - 40),
+        static_cast<unsigned char>(this->_color.b - 40),
+        this->_color.a,
     };
 
     this->_clickedColors = Color{
-        r : static_cast<unsigned char>(this->_color.r - 80),
-        g : static_cast<unsigned char>(this->_color.g - 80),
-        b : static_cast<unsigned char>(this->_color.b - 80),
-        a : this->_color.a,
+        static_cast<unsigned char>(this->_color.r - 80),
+        static_cast<unsigned char>(this->_color.g - 80),
+        static_cast<unsigned char>(this->_color.b - 80),
+        this->_color.a,
     };
 }
 
