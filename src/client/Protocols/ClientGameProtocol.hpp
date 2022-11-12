@@ -7,20 +7,19 @@
 
 #pragma once
 
-#include <asio.hpp>
-#include <exception>
-#include <memory>
-#include <optional>
-#include <sstream>
-#include <vector>
-
 #include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
+#include "../../shared/Utilities/secureAsio.hpp"
 #include "../Systems/MusicSystem.hpp"
+#include <exception>
+#include <memory>
+#include <optional>
+#include <sstream>
+#include <vector>
 
 class ClientGameProtocol {
 public:

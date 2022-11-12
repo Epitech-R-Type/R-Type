@@ -47,8 +47,8 @@ public:
     void playSFX(SFXID ID);
 
 private:
-    Ray::Music _music;
+    Music _music;
     float _volume = 0.5;
     cmrc::embedded_filesystem _fs = cmrc::client::get_filesystem();
-    std::map<SFXID, Ray::Sound> SFXobjects;
+    std::map<SFXID, Sound> SFXobjects;
 };

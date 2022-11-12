@@ -22,8 +22,8 @@ void HealthSystem::drawPlayerHP() {
     const float barHeight = 20;
     const float remainingHP = width * ((float)health->health / (float)health->maxHealth);
 
-    Ray::DrawRectangle(Ray::GetScreenWidth() * (1.0 / 20.0), Ray::GetScreenHeight() - barHeight, width, barHeight, Ray::WHITE);
-    Ray::DrawRectangle(Ray::GetScreenWidth() * (1.0 / 20.0) + 1, Ray::GetScreenHeight() - barHeight + 1, remainingHP, barHeight - 2, Ray::RED);
+    DrawRectangle(GetScreenWidth() * (1.0 / 20.0), GetScreenHeight() - barHeight, width, barHeight, WHITE);
+    DrawRectangle(GetScreenWidth() * (1.0 / 20.0) + 1, GetScreenHeight() - barHeight + 1, remainingHP, barHeight - 2, RED);
 };
 
 void HealthSystem::apply() {
@@ -52,8 +52,8 @@ void HealthSystem::apply() {
             float height = Animation::Sheets[anim->animationID].frameWidth * anim->scale;
 
             const float remainingHP = width * ((float)health->health / (float)health->maxHealth);
-            Ray::DrawRectangle(center.x - width / 2, center.y - height * 1.5, width, barHeight, Ray::WHITE);
-            Ray::DrawRectangle(center.x + 1 - width / 2, center.y + 1 - height * 1.5, remainingHP, barHeight - 2, Ray::RED);
+            DrawRectangle(center.x - width / 2, center.y - height * 1.5, width, barHeight, WHITE);
+            DrawRectangle(center.x + 1 - width / 2, center.y + 1 - height * 1.5, remainingHP, barHeight - 2, RED);
         }
     }
 

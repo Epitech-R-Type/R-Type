@@ -32,8 +32,9 @@ public:
     // ─── Message Sending ─────────────────────────────────────────────────────────────────────
 
     void sendStart();
+    void sendAuthenticate();
     void sendMessage(std::string msgContent);
-    void sendJoinLobby(int lobby);
+    bool sendJoinLobby(int lobby);
 
     // ─── Utility Functions ───────────────────────────────────────────────────────────────────
 
