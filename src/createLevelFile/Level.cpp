@@ -15,14 +15,13 @@
 #include "Level.hpp"
 
 bool isFloat(std::string myString) {
-    std::istringstream iss(myString);
+    std::stringstream iss(myString);
     float f;
     iss >> std::noskipws >> f;
-    return iss.eof() && !iss.fail(); 
+    return iss.eof() && !iss.fail();
 }
 
-std::string Level::getBackground()
-{
+std::string Level::getBackground() {
     int finished = 0;
     std::string bg;
 
@@ -39,8 +38,7 @@ std::string Level::getBackground()
     return (bg);
 }
 
-std::string Level::getMusic()
-{
+std::string Level::getMusic() {
     int finished = 0;
     std::string music;
 
@@ -57,8 +55,7 @@ std::string Level::getMusic()
     return (music);
 }
 
-std::string Level::getMin()
-{
+std::string Level::getMin() {
     int finished = 0;
     std::string min;
 
@@ -78,8 +75,7 @@ std::string Level::getMin()
     return (min);
 }
 
-std::string Level::getMax(int min)
-{
+std::string Level::getMax(int min) {
     int finished = 0;
     std::string max;
 
@@ -99,8 +95,7 @@ std::string Level::getMax(int min)
     return (max);
 }
 
-std::string Level::getInterval()
-{
+std::string Level::getInterval() {
     int finished = 0;
     std::string interval;
 
@@ -116,8 +111,7 @@ std::string Level::getInterval()
     return (interval);
 }
 
-std::string Level::getEnemy()
-{
+std::string Level::getEnemy() {
     int finished = 0;
     int finished2 = 0;
     std::string enemy;
@@ -131,7 +125,8 @@ std::string Level::getEnemy()
             for (int i = 0; i != enemy.size() - 1; i++)
                 if (!isdigit(enemy[i]))
                     continue;
-            if (std::stoi(enemy) >= 0 && std::stoi(enemy) <= this->_enemys && std::find(std::begin(enemys), std::end(enemys), std::stoi(enemy)) == std::end(enemys)) {
+            if (std::stoi(enemy) >= 0 && std::stoi(enemy) <= this->_enemys &&
+                std::find(std::begin(enemys), std::end(enemys), std::stoi(enemy)) == std::end(enemys)) {
                 finished2 = 1;
                 enemys.push_back(std::stoi(enemy));
             }
@@ -147,11 +142,10 @@ std::string Level::getEnemy()
     for (int i = 0; i < enemys.size(); i++)
         enemy += std::to_string(enemys[i]) + " ";
     enemy.pop_back();
-    return(enemy);
+    return (enemy);
 }
 
-std::string Level::getBoss()
-{
+std::string Level::getBoss() {
     int finished = 0;
     std::string boss;
 
@@ -170,8 +164,7 @@ std::string Level::getBoss()
     return (boss);
 }
 
-int Level::getWaves()
-{
+int Level::getWaves() {
     int finished = 0;
     std::string waves;
 
@@ -188,8 +181,7 @@ int Level::getWaves()
     return (std::stoi(waves));
 }
 
-void Level::createLvl()
-{
+void Level::createLvl() {
     int count;
     std::string toWrite;
     std::string str;
@@ -199,7 +191,7 @@ void Level::createLvl()
     count = this->getWaves();
 
     for (int i = 0; i < count; i++) {
-        std::cout << "\n   Describe wave nb " << i+1 << std::endl;
+        std::cout << "\n   Describe wave nb " << i + 1 << std::endl;
         str = this->getMin();
         toWrite += str + '\n';
         toWrite += this->getMax(std::stoi(str)) + '\n';
@@ -213,21 +205,19 @@ void Level::createLvl()
     LevelFile.close();
 }
 
-std::fstream Level::createFile()
-{
+std::fstream Level::createFile() {
     std::string name("./src/server/levels/level");
     name.append(std::to_string(this->countLvls()));
     std::fstream LevelFile(name, std::fstream::out);
     return (LevelFile);
 }
 
-int Level::countLvls()
-{
+int Level::countLvls() {
     auto dirIter = std::filesystem::directory_iterator("./src/server/levels");
     int fileCount = 0;
 
     for (auto& entry : dirIter)
         if (entry.is_regular_file())
             ++fileCount;
-    return fileCount+1;
+    return fileCount + 1;
 }
