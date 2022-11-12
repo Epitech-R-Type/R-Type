@@ -92,6 +92,11 @@ void LobbyProtocol::handleCommands() {
         if (cmd == "START")
             this->handleStart(uuid, addr, port);
 
+        if (cmd == "GET_LOBBIES") {
+            this->handleGetLobbies(addr, port);
+            continue;
+        }
+
         // JOIN LOBBY
         if (cmd == "JOIN_LOBBY") {
             try {
@@ -167,6 +172,24 @@ void LobbyProtocol::handleStart(Utilities::UUID uuid, asio::ip::address addr, as
     this->_gamesToLaunch->push_back({lobby, gamePort});
 }
 
+void LobbyProtocol::handleGetLobbies(asio::ip::address addr, asio::ip::port_type port) {
+    auto lobbies = this->_connMan.getLobbyInfos();
+    std::stringstream finalMsg;
+    std::stringstream ss;
+
+    for (auto& lobby : lobbies) {
+        std::stringstream lobbyStr;
+        lobby.isRunning = isLobbyRunning(lobby.id);
+
+        lobbyStr << lobby.id << ",";
+        lobbyStr << lobby.isRunning << ",";
+        lobbyStr << lobby.playerCount;
+
+        finalMsg << lobbyStr.str() << ";";
+    }
+    this->sendResponse("200", finalMsg.str(), addr, port);
+}
+
 // ─── Utility Functions ───────────────────────────────────────────────────────────────────────────
 
 bool LobbyProtocol::isAuthenticated(std::string uuid) {
@@ -180,7 +203,7 @@ void LobbyProtocol::sendResponse(std::string code, std::string args, asio::ip::a
 
     body += " ";
     body << this->_connMan.getServerUUID();
-    body += " ";
+    body += ";";
     body += args;
     body += "\r\n";
 

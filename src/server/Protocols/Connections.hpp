@@ -8,10 +8,12 @@
 #pragma once
 
 #include <asio.hpp>
+#include <map>
 #include <optional>
 #include <string>
 #include <vector>
 
+#include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
@@ -55,8 +57,10 @@ public:
     // Remove all connections that timed out
     void removeDisconnected();
 
-    // Lobby setting
+    // ─── Lobby Stuff ─────────────────────────────────────────────────────────────────────────
+
     void joinLobby(Utilities::UUID clientUUID, int lobbyID);
+    std::vector<LobbyInfo> getLobbyInfos() const;
 
     // Get vector of clients in lobby
     std::vector<Connection> getLobbyConnections(int lobby);

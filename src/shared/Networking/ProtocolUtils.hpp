@@ -48,6 +48,13 @@ struct ParsedCmd {
     std::vector<std::vector<std::string>> args;
 };
 
+// Lobby info sent in get lobbies command
+struct LobbyInfo {
+    int id;
+    bool isRunning;
+    int playerCount;
+};
+
 class ProtocolUtils {
 public:
     static std::optional<ParsedCmd> parseCommand(Message<std::string> msg) {
