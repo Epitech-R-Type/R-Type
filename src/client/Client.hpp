@@ -44,8 +44,6 @@ public:
 
     int connect(std::string serverIP, int port = TCP_PORT);
 
-    void handleUserCommands();
-
     std::vector<int> lobbies = {0, 1, 2, 3, 4};
 
     ClientLobbyProtocol* getProtocol();
@@ -55,9 +53,6 @@ private:
 
     bool _lobbyRunning;
     bool _connected;
-
-    std::shared_ptr<MessageQueue<std::string>> _userCommands = std::make_shared<MessageQueue<std::string>>();
-    std::thread* _userInputThread;
 
     std::shared_ptr<std::atomic<bool>> _tcpStopFlag;
 

@@ -50,52 +50,6 @@ int Client::connect(std::string serverIP, int port) {
     return res;
 }
 
-void Client::handleUserCommands() {
-    std::optional<std::string> potMsg;
-
-    while ((potMsg = this->_userCommands->pop())) {
-        std::string msg = potMsg.value();
-        auto splitMsg = Utilities::splitStr(msg, ";");
-
-        if (splitMsg[0] == "Start")
-            this->_protocol->sendStart();
-        if (splitMsg[0] == "Join") {
-            if (splitMsg.size() != 2) {
-                ERRORLOG("Please specify lobby to join...");
-                continue;
-            }
-
-            try {
-                int lobby = std::stoi(splitMsg[1]);
-
-                if (lobby < 0)
-                    throw;
-
-                this->_protocol->sendJoinLobby(lobby);
-            } catch (...) {
-                ERRORLOG("Invalid lobby number...");
-            }
-        }
-
-        // Get_lobbies
-        if (splitMsg[0] == "Get_lobbies") {
-            auto lobbies = this->_protocol->sendGetLobbies();
-
-            // testing purposes
-            for (auto lobby : lobbies) {
-                std::cout << "Lobby [" << lobby.id << "] has " << lobby.playerCount << " players connected." << std::endl;
-                std::cout << "Is game started ? == " << lobby.isRunning << std::endl;
-            }
-        }
-
-        // Leave
-        if (splitMsg[0] == "Leave") {
-            this->_protocol->sendLeave();
-            continue;
-        }
-    }
-}
-
 Stages Client::advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu) {
     if (currentMenu->getDone()) {
         switch (stage) {
@@ -129,8 +83,6 @@ int Client::mainLoop() {
 
         if (this->_protocol->handleIncMessages())
             return 0;
-
-        this->handleUserCommands();
 
         currentMenu->apply();
 

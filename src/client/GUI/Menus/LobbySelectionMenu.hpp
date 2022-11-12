@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../../../shared/Networking/ProtocolUtils.hpp"
 #include "../Components/Button.hpp"
 #include "Menu.hpp"
 #include <vector>
@@ -17,11 +18,21 @@ public:
     bool getDone() override;
 
 private:
-    std::string makeLobbyText(int lobby);
+    void queryLobbies();
+
+    void refreshLobbies();
+
+    std::string makeLobbyText(LobbyInfo lobby);
 
     bool _done = false;
 
     Client* _client;
 
-    std::vector<Button> _lobbies;
+    std::vector<std::pair<LobbyInfo, Button>> _lobbies;
+
+    float _buttonWidth;
+    float _buttonHeight;
+    float _buttonXPos;
+    float _buttonYPos;
+    Color _buttonColor;
 };
