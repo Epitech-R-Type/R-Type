@@ -52,11 +52,8 @@ Game::~Game() {
 }
 
 void Game::init() {
-    LOG("Initializing game");
     srand(time(0));
     this->_protocol.waitForClients();
-
-    Factory::Misc::makeBackground(this->_entManager);
 
     std::vector<Connection> connections = this->_protocol.getConnectedClients();
 
@@ -64,7 +61,9 @@ void Game::init() {
         Factory::Ally::makePlayer(this->_entManager, conn.player);
 
     // starts the music ingame
-    this->_protocol.sendChangeMusic(1);
+    this->_protocol.sendChangeMusic(NORMAL);
+    LOG("Initializing game");
+    this->loadLevel(1);
 }
 
 void Game::sendModified() {
@@ -87,20 +86,116 @@ int Game::getPlayersAlive() {
     return count;
 };
 
+bool Game::loadLevel(int nb) {
+    if (this->_fs.is_file(std::string("src/server/levels/level").append(std::to_string(nb))) == false)
+        return false;
+
+    Level newLevel;
+    const cmrc::file lvlFile = this->_fs.open(std::string("src/server/levels/level").append(std::to_string(nb)));
+    std::string lvlStr = std::string(lvlFile.begin(), lvlFile.end());
+    std::string line;
+    Wave tmp;
+    tmp.endless = false;
+    std::vector<std::string> lvlArr = Utilities::splitStr(std::string(lvlStr), std::string("\n"));
+    int i = 0;
+    line = lvlArr[i++];
+    Factory::Misc::makeBackground(this->_entManager, (Animation::AnimationID)std::atoi(line.c_str()));
+    line = lvlArr[i++];
+    this->_protocol.sendChangeMusic((SongID)std::atoi(line.c_str()));
+    bool noBoss = false;
+
+    while (i < lvlArr.size()) {
+        line = lvlArr[i++];
+        tmp.minSpawned = std::atoi(line.c_str());
+        line = lvlArr[i++];
+        tmp.maxSpawned = std::atoi(line.c_str());
+        line = lvlArr[i++];
+        tmp.spawnInterval = std::atof(line.c_str());
+        srand(time(NULL));
+        tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
+        line = lvlArr[i++];
+        std::vector<std::string> lineArr = Utilities::splitStr(line, " ");
+        for (auto is : lineArr) {
+            tmp.enemies.push_back(this->_enemys[std::stoi(is)]);
+        }
+        line = lvlArr[i++];
+        if (std::atoi(line.c_str()) == -1) {
+            tmp.boss = this->_bosses[0];
+            noBoss = true;
+        } else
+            tmp.boss = this->_bosses[std::atoi(line.c_str())];
+        newLevel.levelWaves.push_back(tmp);
+    }
+
+    newLevel.waveNb = 0;
+    this->_currentLevel = newLevel;
+    this->_level = nb;
+    this->_enemyTimer = getNow();
+    this->_bossSpawned = noBoss;
+    return true;
+}
+
+void Game::refreshLevel() {
+    const auto now = getNow();
+    std::chrono::duration<double> elapsed_seconds = now - this->_enemyTimer;
+
+    if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval &&
+        this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
+        this->_enemyTimer = getNow();
+        this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
+        srand(time(NULL));
+        int rd = rand() % this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
+        Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies[rd]);
+    }
+    bool allSpawned = false;
+
+    if (this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned == 0) { // next wave of enemies
+        allSpawned = true;
+        if (noEnemies()) {
+            this->_currentLevel.waveNb += 1;
+        }
+    }
+
+    if (this->_currentLevel.waveNb >= this->_currentLevel.levelWaves.size() && !this->_bossSpawned && allSpawned) { // spawning boss
+        this->_currentLevel.waveNb -= 1;
+        this->_bossSpawned = true;
+        Factory::Enemy::makeEndboss(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.levelWaves.size() - 1].boss);
+        this->_protocol.sendChangeMusic(BOSS);
+    }
+
+    if (noEnemies() && this->_bossSpawned && allSpawned) { // loading next level
+        if (this->loadLevel(++this->_level) == false) {
+            this->_isRunning = false;
+        }
+    }
+}
+
+bool Game::noEnemies() {
+    bool noEnemy = true;
+
+    for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
+        Team::Component* ent = this->_entManager->getComponent<Team::Component>(*beg);
+        if (*ent == Team::Enemy) {
+            noEnemy = false;
+            break;
+        }
+    }
+
+    return noEnemy;
+}
+
 int Game::mainLoop() {
     LOG("Starting Game");
 
     std::this_thread::sleep_for(std::chrono::seconds(2));
+
+    this->_enemyTimer = getNow();
 
     // Reset ALL client timeout timers
     this->_protocol.resetAllTimeouts();
 
     // ─── Timers ──────────────────────────────────────────────────────────────────────────────
 
-    std::chrono::time_point<std::chrono::system_clock> timer = getNow();
-
-    // Note : Boss will have to be scheduled later
-    std::chrono::time_point<std::chrono::system_clock> bosstimer = getNow();
     bool bossSpawned = false;
 
     while (this->_isRunning && this->getPlayersAlive() && !*this->_gameStopFlag) {
@@ -119,22 +214,7 @@ int Game::mainLoop() {
 
         // ─── Ennemy And Boss Spawning ────────────────────────────────────────────────────
 
-        const auto now = getNow();
-        std::chrono::duration<double> elapsed_seconds = now - timer;
-
-        if (elapsed_seconds.count() > 2) {
-            Factory::Enemy::makeEnemy(this->_entManager);
-            timer = getNow();
-        }
-
-        std::chrono::duration<double> elapsed_boss_seconds = now - bosstimer;
-
-        if (elapsed_boss_seconds.count() > 20 && !bossSpawned) {
-            Factory::Enemy::makeEndboss(this->_entManager);
-            bossSpawned = true;
-            // Changes the music to gamer-music because the boss spawned
-            this->_protocol.sendChangeMusic(0);
-        }
+        this->refreshLevel();
 
         this->sendModified();
     }

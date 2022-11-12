@@ -225,7 +225,7 @@ namespace SoundDestruction {
     };
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
-} // namespace SoundCreation
+} // namespace SoundDestruction
 
 namespace SoundDamage {
     struct Component {
@@ -233,7 +233,7 @@ namespace SoundDamage {
     };
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
-} // namespace SoundCreation
+} // namespace SoundDamage
 std::string toString(Armor::Component component);
 std::string toString(Health::Component component);
 std::string toString(Position::Component component);

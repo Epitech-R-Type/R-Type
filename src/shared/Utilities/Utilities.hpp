@@ -25,11 +25,16 @@
 #define DEBUG(msg) // std::cout << "[DEBUG]   " << __FUNCTION_NAME__ << ": " << msg << std::endl
 #define HAS_KEY(map, key) (map.find(key) != map.end())
 
+#include <chrono>
+
 #define ALIGN_MIDDLE(width) ((GetScreenWidth() - width) / 2)
 
 #include "../../shared/Utilities/secureAsio.hpp"
+
 #include <string>
 #include <vector>
+
+typedef std::chrono::time_point<std::chrono::system_clock> timePoint;
 
 enum Move {
     UP = 1,
@@ -45,10 +50,17 @@ enum SFXID {
     HEAVY_GUNSHOT = 2,
 };
 
+enum SongID {
+    BOSS,
+    NORMAL,
+    PIANO,
+};
+
 struct Point {
     double x;
     double y;
 };
+
 namespace Utilities {
     /**
      * splits a string

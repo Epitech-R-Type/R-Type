@@ -40,7 +40,7 @@ void SpriteSystem::loadAnimation(Animation::AnimationID id) {
     this->_animations[id] = {};
 
     if (!HAS_KEY(Animation::Sheets, id))
-        throw "Now Animation Sheet defined for enum " + id;
+        throw "Now Animation Sheet defined for enum " + std::to_string(id);
 
     const Animation::Sheet animationSheet = Animation::Sheets[id];
 
