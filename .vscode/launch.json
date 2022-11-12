@@ -20,9 +20,9 @@
         },
         {
             "name": "(gdb) Launch Client",
-            "type": "cppvsdbg",
+            "type": "cppdbg",
             "request": "launch",
-            "program": "${cwd}/build/bin/Client",
+            "program": "${cwd}/bin/Client",
             "args": [
                 "-ip",
                 "127.0.0.1",

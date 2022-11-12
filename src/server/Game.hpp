@@ -7,11 +7,11 @@
 
 #pragma once
 
+#include <cmrc/cmrc.hpp>
+#include <filesystem>
+#include <fstream>
 #include <memory>
 #include <thread>
-#include <fstream>
-#include <filesystem>
-#include <cmrc/cmrc.hpp>
 
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
@@ -21,6 +21,8 @@
 #include "Systems/Systems.hpp"
 
 CMRC_DECLARE(server);
+
+void game_main(std::vector<Connection> connections, int port, Utilities::UUID serverUUID, std::shared_ptr<std::atomic<bool>> gameStopFlag);
 
 // This class embodies everything having to do with a single game
 // It will include:
@@ -62,7 +64,7 @@ struct Level {
 class Game {
 public:
     // All the game setup is done in here
-    Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID);
+    Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID, std::shared_ptr<std::atomic<bool>> gameStopFlag);
 
     ~Game();
 
@@ -109,5 +111,6 @@ private:
     // Multithreading
     bool _isRunning;
     std::thread* _udpComThread;
-    std::shared_ptr<std::atomic<bool>> _stopFlag;
+    std::shared_ptr<std::atomic<bool>> _udpStopFlag;
+    std::shared_ptr<std::atomic<bool>> _gameStopFlag;
 };

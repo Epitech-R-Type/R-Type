@@ -26,33 +26,6 @@ int ClientLobbyProtocol::connect(std::string serverIP, int port) {
     return 0;
 }
 
-void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
-    std::vector<std::string> splitstr = Utilities::splitStr(uuids, ";");
-
-    Utilities::UUID serverUUID = Utilities::UUID(splitstr[0]);
-    Utilities::UUID clientUUID = Utilities::UUID(splitstr[1]);
-
-    if (!this->_serverUUID.isValid() || !this->_clientUUID.isValid()) {
-        ERRORLOG("Unable to get auhtentication from message.");
-        return;
-    }
-
-    this->_serverUUID = serverUUID;
-    this->_clientUUID = clientUUID;
-}
-
-Utilities::UUID ClientLobbyProtocol::getUUID() {
-    return this->_clientUUID;
-}
-
-int ClientLobbyProtocol::getServerPort() {
-    return this->serverUdpPort;
-}
-
-asio::ip::address ClientLobbyProtocol::getServerIp() {
-    return this->_serverIP;
-}
-
 // ─── Message Handling ────────────────────────────────────────────────────────────────────────────
 
 int ClientLobbyProtocol::handleIncMessages() {
@@ -75,6 +48,7 @@ int ClientLobbyProtocol::handleIncMessages() {
         if (msgBits[0] == "200" && !this->_authenticated) {
             this->saveAuthentication(msg);
             this->_authenticated = true;
+            return 0;
         }
 
         if (Utilities::UUID(msg) != this->_serverUUID) {
@@ -90,6 +64,51 @@ int ClientLobbyProtocol::handleIncMessages() {
     return 0;
 }
 
+// ─── Response Handling Stuff ─────────────────────────────────────────────────────────────────────
+
+TcpResponse ClientLobbyProtocol::awaitResponse() {
+    std::optional<Message<std::string>> msg;
+    bool isResponse = false;
+
+    while (!isResponse) {
+        msg = this->_incomingMQ->pop();
+
+        // Sleep if no message yet
+        if (!msg) {
+            std::this_thread::sleep_for(std::chrono::milliseconds(10));
+            continue;
+        }
+
+        // Put back message if not a response
+        if (!(isResponse = this->isResponse(msg->getMsg())))
+            this->_incomingMQ->push(*msg);
+    }
+
+    return this->parseResponse(*msg);
+}
+
+TcpResponse ClientLobbyProtocol::parseResponse(Message<std::string> msg) {
+    auto splitMsg = Utilities::splitStr(msg.getMsg(), " ");
+    TcpResponse output;
+
+    // Note: No error handling here, responses should be correct
+    output.code = std::stoi(splitMsg[0]);
+    output.body = splitMsg[1];
+
+    return output;
+}
+
+bool ClientLobbyProtocol::isResponse(std::string msgBody) {
+    auto splitMsg = Utilities::splitStr(msgBody, " ");
+
+    try {
+        std::stoi(splitMsg[0]);
+        return true;
+    } catch (...) {
+        return false;
+    }
+}
+
 // ─── Message Sending ─────────────────────────────────────────────────────────────────────────────
 
 void ClientLobbyProtocol::sendStart() {
@@ -98,11 +117,55 @@ void ClientLobbyProtocol::sendStart() {
     ss << "START " << this->_clientUUID;
 
     this->sendMessage(ss.str());
+
+    // Handle resp
+    TcpResponse resp = this->awaitResponse();
+
+    if (resp.code != 200)
+        ERRORLOG("Error starting game: " << resp.body);
+}
+
+void ClientLobbyProtocol::sendJoinLobby(int lobby) {
+    std::stringstream ss;
+
+    // NEED TO HANDLE LOBBY ALREADY IN GAME
+    // LOOK INTO CLIENT THAT JOINED LOBBY AFTER GAME START BEING ABLE TO START OTHER GAME
+
+    // Send message
+    ss << "JOIN_LOBBY " << this->_clientUUID << " " << lobby;
+    this->sendMessage(ss.str());
+
+    // Handle response
+    TcpResponse resp = this->awaitResponse();
+
+    if (resp.code != 200)
+        ERRORLOG("Error joining lobby: " << resp.body);
+    else {
+        LOG("Succesfully join lobby " << lobby << ".");
+        this->lobby = lobby;
+    }
 }
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
     Message<std::string> message(msgContent, this->_serverIP, this->_serverPort);
     this->_outgoingMQ->push(message);
+}
+
+// ─── Utility Functions ───────────────────────────────────────────────────────────────────────────
+
+void ClientLobbyProtocol::saveAuthentication(std::string uuids) {
+    std::vector<std::string> splitstr = Utilities::splitStr(uuids, ";");
+
+    Utilities::UUID serverUUID = Utilities::UUID(splitstr[0]);
+    Utilities::UUID clientUUID = Utilities::UUID(splitstr[1]);
+
+    if (!this->_serverUUID.isValid() || !this->_clientUUID.isValid()) {
+        ERRORLOG("Unable to get auhtentication from message.");
+        return;
+    }
+
+    this->_serverUUID = serverUUID;
+    this->_clientUUID = clientUUID;
 }
 
 bool ClientLobbyProtocol::isConnected() {
@@ -117,3 +180,19 @@ void ClientLobbyProtocol::resetStartGame() {
     this->_startGame = false;
     this->_serverPort = -1;
 };
+
+Utilities::UUID ClientLobbyProtocol::getUUID() {
+    return this->_clientUUID;
+}
+
+int ClientLobbyProtocol::getServerPort() {
+    return this->serverUdpPort;
+}
+
+asio::ip::address ClientLobbyProtocol::getServerIp() {
+    return this->_serverIP;
+}
+
+int ClientLobbyProtocol::getLobby() {
+    return this->lobby;
+}

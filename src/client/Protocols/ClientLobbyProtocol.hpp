@@ -4,6 +4,11 @@
 #include "../../shared/Networking/AsioConstants.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 
+struct TcpResponse {
+    int code;
+    std::string body;
+};
+
 class ClientLobbyProtocol {
 public:
     ClientLobbyProtocol(std::shared_ptr<std::atomic<bool>> stopFlag);
@@ -19,10 +24,16 @@ public:
 
     int handleIncMessages();
 
+    // Response handling stuff
+    TcpResponse awaitResponse();
+    static TcpResponse parseResponse(Message<std::string> msg);
+    static bool isResponse(std::string msgBody);
+
     // ─── Message Sending ─────────────────────────────────────────────────────────────────────
 
     void sendStart();
     void sendMessage(std::string msgContent);
+    void sendJoinLobby(int lobby);
 
     // ─── Utility Functions ───────────────────────────────────────────────────────────────────
 
@@ -34,10 +45,12 @@ public:
     Utilities::UUID getUUID();
     int getServerPort();
     asio::ip::address getServerIp();
+    int getLobby();
 
 private:
     Utilities::UUID _serverUUID;
     Utilities::UUID _clientUUID;
+
     // Tcp com thread stuff
     std::thread* _comThread;
     std::shared_ptr<std::atomic<bool>> _stopFlag;
@@ -54,4 +67,5 @@ private:
     bool _connected = false;
     bool _authenticated = false;
     bool _startGame = false;
+    int lobby = -1; // -1 if not in lobby otherwise, lobby id
 };

@@ -8,30 +8,35 @@
 #include "Server.hpp"
 
 Server::Server()
-    : _lobbyRunning(true),
-      _serverUUID() {
+    : _serverUUID() {
     // Construct messaging queues
     this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
 
+    // Games to launch vector init
+    this->_gamesToLaunch = std::make_shared<std::vector<GameInfo>>();
+
     // For some reason initializer list initialization wasn't working
-    this->_protocol = new LobbyProtocol(this->_incomingMQ, this->_outgoingMQ, this->_serverUUID);
+    this->_protocol = new LobbyProtocol(this->_incomingMQ, this->_outgoingMQ, this->_serverUUID, this->_gamesToLaunch);
 
     // Init tcp com thread
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_comThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag);
+    this->_tcpStopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_tcpComThread = new std::thread(tcp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_tcpStopFlag);
 
     // Gangster Workaround to insure same comptype order client and server side
     Utilities::createCompPoolIndexes();
 }
 
 Server::~Server() {
-    // Signal thread to stop and join thread
-    this->_stopFlag->store(true);
-    this->_comThread->join();
+    // Signal tcp com thread to stop and join thread
+    this->_tcpStopFlag->store(true);
+    this->_tcpComThread->join();
 
-    // Delete com thread
-    delete this->_comThread;
+    // Stop all games
+    this->stopGames();
+
+    // Delete tcp com thread
+    delete this->_tcpComThread;
     // Delete protocol implementation
     delete this->_protocol;
 }
@@ -43,25 +48,61 @@ int Server::setup() {
 int Server::mainLoop() {
     int port;
 
-    while (this->_lobbyRunning) {
-        // DO STUFF
-        // Handle messages and launch game if game should start
-        if ((port = this->_protocol->handleCommands())) {
-            this->launchGame(port);
-        }
+    while (true) {
+        // Handle messages
+        this->_protocol->handleCommands();
+
+        // Launch new games
+        this->handleNewGames();
+
+        // Handle finished games
+        this->handleFinishedGames();
     }
 
     return 0;
 }
 
-int Server::launchGame(int port) {
-    this->_game = new Game(this->_protocol->getConnections(), port, this->_serverUUID);
+void Server::launchGame(GameInfo info) {
+    // Create stop flag
+    std::shared_ptr<std::atomic<bool>> gameStopFlag = std::make_shared<std::atomic<bool>>(false);
+    auto connections = this->_protocol->getConnectionManager().getLobbyConnections(info.lobbyId);
 
-    this->_game->init();
-    this->_game->mainLoop();
+    // Create new thread for new game
+    std::unique_ptr<std::thread> newGameThread = std::make_unique<std::thread>(game_main, connections, info.port, this->_serverUUID, gameStopFlag);
 
-    this->_lobbyRunning = false; // just temporary, still need to send quit message to client
-    delete this->_game;
+    // Push back to vectors
+    this->_gameThreads.push_back(std::move(newGameThread));
+    this->_gameStopFlags.push_back(std::move(gameStopFlag));
+}
 
-    return 0;
+// ─── Game Lobbies Handling ───────────────────────────────────────────────────────────────────────
+
+void Server::handleNewGames() {
+    for (auto game : *this->_gamesToLaunch)
+        launchGame(game);
+
+    this->_gamesToLaunch->clear();
+}
+
+void Server::handleFinishedGames() {
+    // Delete games whose game stop flag has been set
+    for (int i = 0; i < this->_gameThreads.size(); i++)
+        if (*this->_gameStopFlags[i]) {
+            // Join thread just in case
+            this->_gameThreads[i]->join();
+
+            // Cleanup
+            this->_gameThreads.erase(this->_gameThreads.begin() + i);
+            this->_gameStopFlags.erase(this->_gameStopFlags.begin() + i);
+        }
+}
+
+void Server::stopGames() {
+    // Exit main loops
+    for (auto& stopFlag : this->_gameStopFlags)
+        stopFlag->store(true);
+
+    // Join threads
+    for (auto& thread : this->_gameThreads)
+        thread->join();
 }

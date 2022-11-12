@@ -140,6 +140,9 @@ Table of Contents
             - START   -> This command allows the user to signal to the
                          server that the game should start.
 
+            - JOIN_LOBBY -> This command allows the user to enter into
+                            a given lobby.
+
 
 
 3. UDP Protocol

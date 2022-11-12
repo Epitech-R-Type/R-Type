@@ -15,7 +15,8 @@
 #include "Level.hpp"
 
 bool isFloat(std::string myString) {
-    std::stringstream iss(myString);
+    std::stringstream iss;
+    iss << myString;
     float f;
     iss >> std::noskipws >> f;
     return iss.eof() && !iss.fail();

@@ -11,15 +11,26 @@
 #include "../shared/ECS/Serialization.hpp"
 #include "Systems/Factory.hpp"
 
-Game::Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID)
+// Main function to be given to thread
+void game_main(std::vector<Connection> connections, int port, Utilities::UUID serverUUID, std::shared_ptr<std::atomic<bool>> gameStopFlag) {
+    Game game(connections, port, serverUUID, gameStopFlag);
+
+    // Run game
+    game.init();
+    game.mainLoop();
+}
+
+Game::Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID, std::shared_ptr<std::atomic<bool>> gameStopFlag)
     : _isRunning(true),
       _entManager(std::make_shared<ECSManager>()),
       _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
       _protocol(_incomingMQ, _outgoingMQ, connections, _entManager, serverUUID) {
+    this->_gameStopFlag = gameStopFlag;
+
     // Init com thread
-    this->_stopFlag = std::make_shared<std::atomic<bool>>(false);
-    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_stopFlag, port);
+    this->_udpStopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_udpStopFlag, port);
 
     // System initialization
     this->_velocitySystem = std::make_unique<VelocitySystem>(this->_entManager);
@@ -30,11 +41,14 @@ Game::Game(std::vector<Connection> connections, int port, Utilities::UUID server
 
 Game::~Game() {
     // Signal thread to stop and join thread
-    this->_stopFlag->store(true);
+    this->_udpStopFlag->store(true);
     this->_udpComThread->join();
 
     // Delete com thread
     delete this->_udpComThread;
+
+    // Signal thread has stopped
+    this->_gameStopFlag->store(true);
 }
 
 void Game::init() {
@@ -186,7 +200,7 @@ int Game::mainLoop() {
 
     bool bossSpawned = false;
 
-    while (this->_isRunning && this->getPlayersAlive()) {
+    while (this->_isRunning && this->getPlayersAlive() && !*this->_gameStopFlag) {
         // ─── Protocol Stuff ──────────────────────────────────────────────────────────────
 
         // Handle timed out clients
