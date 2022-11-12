@@ -97,6 +97,11 @@ void LobbyProtocol::handleCommands() {
             continue;
         }
 
+        if (cmd == "LEAVE") {
+            this->handleLeave(uuid, addr, port);
+            continue;
+        }
+
         // JOIN LOBBY
         if (cmd == "JOIN_LOBBY") {
             try {
@@ -188,6 +193,12 @@ void LobbyProtocol::handleGetLobbies(asio::ip::address addr, asio::ip::port_type
         finalMsg << lobbyStr.str() << ";";
     }
     this->sendResponse("200", finalMsg.str(), addr, port);
+}
+
+void LobbyProtocol::handleLeave(Utilities::UUID uuid, asio::ip::address addr, asio::ip::port_type port) {
+    this->_connMan.joinLobby(uuid, -1);
+
+    this->sendResponse("200", " ", addr, port);
 }
 
 // ─── Utility Functions ───────────────────────────────────────────────────────────────────────────

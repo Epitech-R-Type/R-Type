@@ -36,6 +36,7 @@ public:
     void sendMessage(std::string msgContent);
     void sendJoinLobby(int lobby);
     std::vector<LobbyInfo> sendGetLobbies();
+    void sendLeave();
 
     // ─── Utility Functions ───────────────────────────────────────────────────────────────────
 

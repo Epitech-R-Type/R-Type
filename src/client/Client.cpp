@@ -66,7 +66,8 @@ void Client::handleUserCommands() {
             }
         }
 
-        if (splitMsg[0] == "GET_LOBBIES") {
+        // Get_lobbies
+        if (splitMsg[0] == "Get_lobbies") {
             auto lobbies = this->_protocol->sendGetLobbies();
 
             // testing purposes
@@ -74,6 +75,12 @@ void Client::handleUserCommands() {
                 std::cout << "Lobby [" << lobby.id << "] has " << lobby.playerCount << " players connected." << std::endl;
                 std::cout << "Is game started ? == " << lobby.isRunning << std::endl;
             }
+        }
+
+        // Leave
+        if (splitMsg[0] == "Leave") {
+            this->_protocol->sendLeave();
+            continue;
         }
     }
 }

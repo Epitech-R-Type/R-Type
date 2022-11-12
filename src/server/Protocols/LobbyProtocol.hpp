@@ -49,6 +49,7 @@ public:
     void handleJoinLobby(asio::ip::address addr, asio::ip::port_type port, Utilities::UUID clientUUID, int lobby);
     void handleStart(Utilities::UUID uuid, asio::ip::address addr, asio::ip::port_type port);
     void handleGetLobbies(asio::ip::address addr, asio::ip::port_type port);
+    void handleLeave(Utilities::UUID uuid, asio::ip::address addr, asio::ip::port_type port);
 
     // ─── Utility Functions ───────────────────────────────────────────────────────────────────
 

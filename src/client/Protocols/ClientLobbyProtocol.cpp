@@ -179,6 +179,18 @@ std::vector<LobbyInfo> ClientLobbyProtocol::sendGetLobbies() {
     return output;
 }
 
+void ClientLobbyProtocol::sendLeave() {
+    std::stringstream ss;
+
+    ss << "LEAVE " << this->_clientUUID;
+    this->sendMessage(ss.str());
+
+    TcpResponse resp = this->awaitResponse();
+
+    if (resp.code != 200)
+        return;
+}
+
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
     Message<std::string> message(msgContent, this->_serverIP, this->_serverPort);
     this->_outgoingMQ->push(message);

@@ -124,7 +124,7 @@ std::vector<LobbyInfo> ConnectionManager::getLobbyInfos() const {
     LOG("INFO REQUIRED : " << lobbies[1]);
 
     for (const auto& [lobbyId, playerCount] : lobbies)
-        if (playerCount != 0)
+        if (lobbyId > 0 && playerCount > 0)
             output.push_back({lobbyId, false, playerCount});
     return output;
 }

@@ -155,6 +155,8 @@ Table of Contents
             
             - GET_LOBBIES -> This command requests all lobbies available
 
+            - LEAVE       -> Leave current lobby if in one.
+
 
 3. UDP Protocol
 
