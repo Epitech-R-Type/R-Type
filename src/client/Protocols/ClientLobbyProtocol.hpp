@@ -33,8 +33,9 @@ public:
     // ─── Message Sending ─────────────────────────────────────────────────────────────────────
 
     void sendStart();
+    void sendAuthenticate();
     void sendMessage(std::string msgContent);
-    void sendJoinLobby(int lobby);
+    bool sendJoinLobby(int lobby);
     std::vector<LobbyInfo> sendGetLobbies();
     void sendLeave();
 

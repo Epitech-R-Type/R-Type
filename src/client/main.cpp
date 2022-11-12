@@ -15,30 +15,23 @@ bool isFlagSet(char** begin, char** end, const std::string& option) {
 }
 
 int main(int argc, char** argv) {
-    Client client;
 
     if (!isFlagSet(argv, argv + argc, "-v")) {
-        Ray::SetTraceLogLevel(7);
+        SetTraceLogLevel(7);
     }
 
-    if (isFlagSet(argv, argv + argc, "-ip")) {
-        int connectionResult;
+    Client client;
 
-        std::string ip = getFlagValue(argv, argv + argc, "-ip");
-        if (isFlagSet(argv, argv + argc, "-port"))
-            connectionResult = client.connect(ip, atoi(getFlagValue(argv, argv + argc, "-port")));
+    if (isFlagSet(argv, argv + argc, "--ip")) {
+        std::string ip = getFlagValue(argv, argv + argc, "--ip");
+        int connectionResult = 0;
+        if (isFlagSet(argv, argv + argc, "--port"))
+            connectionResult = client.connect(ip, atoi(getFlagValue(argv, argv + argc, "--port")));
         else
             connectionResult = client.connect(ip);
-
         if (connectionResult)
             return 84;
-    } else {
-        LOG("You need to provide an IP, you can specify a port, defaults to " << TCP_PORT << ".");
-        LOG("Use --help for more.");
-        return 84;
     }
 
-    client.mainLoop();
-
-    return 0;
+    return client.mainLoop();
 }

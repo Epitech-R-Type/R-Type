@@ -7,6 +7,10 @@
 
 #pragma once
 
+#include "../../shared/Utilities/secureAsio.hpp"
+#include "../MessageQueue/MessageQueue.hpp"
+#include "../Utilities/Utilities.hpp"
+#include "AsioConstants.hpp"
 #include <atomic>
 #include <cstring>
 #include <functional>
@@ -16,12 +20,6 @@
 #include <string>
 #include <thread>
 #include <vector>
-
-#include <asio.hpp>
-
-#include "../MessageQueue/MessageQueue.hpp"
-#include "../Utilities/Utilities.hpp"
-#include "AsioConstants.hpp"
 
 // Function passed to communication thread on creation
 void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,

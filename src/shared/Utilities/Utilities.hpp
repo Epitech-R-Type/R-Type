@@ -25,7 +25,9 @@
 #define DEBUG(msg) // std::cout << "[DEBUG]   " << __FUNCTION_NAME__ << ": " << msg << std::endl
 #define HAS_KEY(map, key) (map.find(key) != map.end())
 
-#include <asio.hpp>
+#define ALIGN_MIDDLE(width) ((GetScreenWidth() - width) / 2)
+
+#include "../../shared/Utilities/secureAsio.hpp"
 #include <string>
 #include <vector>
 

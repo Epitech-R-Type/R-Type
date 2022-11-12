@@ -7,8 +7,7 @@
 
 #pragma once
 
-#include <asio.hpp>
-#include <map>
+#include "../../shared/Utilities/secureAsio.hpp"
 #include <optional>
 #include <string>
 #include <vector>

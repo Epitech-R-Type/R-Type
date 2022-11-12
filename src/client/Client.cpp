@@ -9,6 +9,9 @@
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Utilities/ray.hpp"
+#include "GUI/Menus/ConnectionMenu.hpp"
+#include "GUI/Menus/LobbyMenu.hpp"
+#include "GUI/Menus/LobbySelectionMenu.hpp"
 
 Client::Client() {
     this->_tcpStopFlag = std::make_shared<std::atomic<bool>>(false);
@@ -19,6 +22,12 @@ Client::Client() {
 
     // Gangster Workaround to insure same comptype order client
     Utilities::createCompPoolIndexes();
+
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
+    while (!IsWindowReady()) {
+        //
+    }
+    SetTargetFPS(40);
 }
 
 int Client::launchGame() {
@@ -36,7 +45,9 @@ int Client::launchGame() {
 }
 
 int Client::connect(std::string serverIP, int port) {
-    return this->_protocol->connect(serverIP, port);
+    const int res = this->_protocol->connect(serverIP, port);
+    this->_connected = this->_protocol->isConnected();
+    return res;
 }
 
 void Client::handleUserCommands() {
@@ -85,29 +96,45 @@ void Client::handleUserCommands() {
     }
 }
 
-void userInput(std::shared_ptr<MessageQueue<std::string>> userCommands) {
-    while (1) {
-        std::string command;
-
-        std::cin >> command;
-
-        userCommands->push(command);
-    }
+Stages Client::advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu) {
+    if (currentMenu->getDone()) {
+        switch (stage) {
+            case Stages::CONNECTION: {
+                currentMenu = std::make_unique<LobbySelectionMenu>(this);
+                return Stages::ROOMSELECTION;
+            }
+            case Stages::ROOMSELECTION:
+                currentMenu = std::make_unique<LobbyMenu>(this);
+                return Stages::ROOM;
+            default:
+                return stage;
+        }
+    };
+    return stage;
 }
 
 int Client::mainLoop() {
-    this->_userInputThread = new std::thread(userInput, this->_userCommands);
 
-    while (this->_lobbyRunning) {
+    Stages stage = this->_connected ? Stages::ROOMSELECTION : Stages::CONNECTION;
+
+    std::unique_ptr<Menu> currentMenu;
+
+    if (this->_connected)
+        currentMenu = std::make_unique<LobbySelectionMenu>(this);
+    else
+        currentMenu = std::make_unique<ConnectionMenu>(this);
+
+    while (true) {
+        stage = this->advanceStage(stage, currentMenu);
+
         if (this->_protocol->handleIncMessages())
             return 0;
 
         this->handleUserCommands();
 
-        this->_connected = this->_protocol->isConnected();
+        currentMenu->apply();
 
         if (this->_protocol->shouldGameStart()) {
-            // std::this_thread::sleep_for(std::chrono::seconds(2));
             this->launchGame();
 
             // Check if tcp connection still open
@@ -117,7 +144,13 @@ int Client::mainLoop() {
             // Prepare for next games
             this->_protocol->resetStartGame();
         }
+
+        currentMenu->draw();
     }
 
     return 0;
 }
+
+ClientLobbyProtocol* Client::getProtocol() {
+    return this->_protocol;
+};

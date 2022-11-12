@@ -7,16 +7,15 @@
 
 #pragma once
 
-#include <asio.hpp>
+#include "../../shared/MessageQueue/MessageQueue.hpp"
+#include "../../shared/Networking/AsioConstants.hpp"
+#include "../../shared/Utilities/secureAsio.hpp"
 #include <atomic>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
 #include <vector>
-
-#include "../../shared/MessageQueue/MessageQueue.hpp"
-#include "../../shared/Networking/AsioConstants.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag);

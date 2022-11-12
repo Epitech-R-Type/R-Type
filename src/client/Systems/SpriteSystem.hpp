@@ -16,7 +16,7 @@
 
 CMRC_DECLARE(client);
 
-typedef std::vector<Ray::Texture2D> AnimationArr;
+typedef std::vector<Texture2D> AnimationArr;
 
 class SpriteSystem : public System {
 public:
@@ -33,7 +33,7 @@ private:
     /**
      * Load the part of an image file into a Texture2D object
      * */
-    Ray::Texture2D loadSprite(Animation::Sheet sheet, const float xpos, const float ypos);
+    Texture2D loadSprite(Animation::Sheet sheet, const float xpos, const float ypos);
 
     /**
      * Parses image file to extract all frames of an animation

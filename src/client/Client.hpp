@@ -9,11 +9,20 @@
 
 #include "../shared/ECS/ECS.hpp"
 #include "ClientGame/ClientGame.hpp"
+#include "GUI/Menus/Menu.hpp"
 #include "Protocols/ClientLobbyProtocol.hpp"
 #include "Protocols/TcpClient.hpp"
-#include "Systems/SpriteSystem.hpp"
 #include "Systems/MusicSystem.hpp"
+#include "Systems/SpriteSystem.hpp"
 #include <thread>
+
+enum Stages {
+    CONNECTION,
+    ROOMSELECTION,
+    ROOM,
+    GAME,
+    CLOSE,
+};
 
 // This class implementls the main loop for lobby handling of the client
 // The lobby main logic will most likely depend on a local ecs
@@ -37,7 +46,13 @@ public:
 
     void handleUserCommands();
 
+    std::vector<int> lobbies = {0, 1, 2, 3, 4};
+
+    ClientLobbyProtocol* getProtocol();
+
 private:
+    Stages advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu);
+
     bool _lobbyRunning;
     bool _connected;
 
