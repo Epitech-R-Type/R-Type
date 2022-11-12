@@ -14,18 +14,20 @@
 #include "../MessageQueue/MessageQueue.hpp"
 #include "../Utilities/Utilities.hpp"
 
+typedef std::vector<char> ByteBuf;
+
 // This header is used to store any small part of protocol implementation that
 // may be used by both the server and the client
 
-#define UPDATE_ENTITY "ENTITY"
-#define DELETE_ENTITY "DEL_ENT"
-#define ACTION_MOVE "ACT_MOVE"
-#define ACTION_SHOOT "ACT_SHOOT"
-#define CHANGE_MUSIC "CHANGE_MUSIC"
-#define HERE "HERE"
-#define PING "PING"
-#define GAME_END "GAME_END"
-#define DEATH "DEATH"
+#define UPDATE_ENTITY 1
+#define DELETE_ENTITY 2
+#define ACTION_MOVE 9
+#define ACTION_SHOOT 10
+#define CHANGE_MUSIC 4
+#define HERE 7
+#define PING 11
+#define GAME_END 5
+#define DEATH 6
 
 // Command enum
 enum Command {
@@ -45,7 +47,7 @@ enum Command {
 // Parsed command structure$
 struct ParsedCmd {
     Command cmd;
-    std::vector<std::vector<std::string>> args;
+    ByteBuf data;
 };
 
 // Lobby info sent in get lobbies command
@@ -57,51 +59,33 @@ struct LobbyInfo {
 
 class ProtocolUtils {
 public:
-    static std::optional<ParsedCmd> parseCommand(Message<std::string> msg) {
-        std::optional<ParsedCmd> output = {{Command::Here, std::vector<std::vector<std::string>>()}};
-        std::vector<std::string> splitMsg = Utilities::splitStr(msg.getMsg(), " ");
-
-        // Error handling
-        if (splitMsg.size() != 2) {
-            ERRORLOG("Message length not 2.");
-            return {};
-        }
-        // Check for CRLF
-        if (splitMsg[1][splitMsg[1].size() - 1] != '\n' || splitMsg[1][splitMsg[1].size() - 2] != '\r') {
-            ERRORLOG("Carriage Return Line Feed missing.");
-            return {};
-        }
-
-        splitMsg[1].erase(splitMsg[1].length() - 2, 2);
+    static std::optional<ParsedCmd> parseCommand(Message<ByteBuf> msg) {
+        std::optional<ParsedCmd> output = {{Command::Here, ByteBuf()}};
+        unsigned short command = ProtocolUtils::getCommand(msg.getMsg());
 
         // Get command type
-        if (splitMsg[0] == HERE)
+        if (command == HERE)
             output->cmd = Command::Here;
-        else if (splitMsg[0] == UPDATE_ENTITY)
+        else if (command == UPDATE_ENTITY)
             output->cmd = Command::Entityd;
-        else if (splitMsg[0] == ACTION_SHOOT)
+        else if (command == ACTION_SHOOT)
             output->cmd = Command::ActShoot;
-        else if (splitMsg[0] == ACTION_MOVE)
+        else if (command == ACTION_MOVE)
             output->cmd = Command::ActMove;
-        else if (splitMsg[0] == DELETE_ENTITY)
+        else if (command == DELETE_ENTITY)
             output->cmd = Command::DeleteEntity;
-        else if (splitMsg[0] == CHANGE_MUSIC)
+        else if (command == CHANGE_MUSIC)
             output->cmd = Command::ChangeMusic;
-        else if (splitMsg[0] == PING)
+        else if (command == PING)
             output->cmd = Command::Ping;
-        else if (splitMsg[0] == GAME_END)
+        else if (command == GAME_END)
             output->cmd = Command::GameEnd;
-        else if (splitMsg[0] == DEATH)
+        else if (command == DEATH)
             output->cmd = Command::Death;
         else {
-            ERRORLOG("Unhandled Command: " << splitMsg[0]);
+            ERRORLOG("Unhandled Command: " << command);
             return {};
         }
-
-        // Split args up in args and subargs
-        auto splitArgs = Utilities::splitStr(splitMsg[1], ";");
-        for (auto arg : splitArgs)
-            output->args.push_back(Utilities::splitStr(arg, ","));
 
         return output;
     }
@@ -111,5 +95,32 @@ public:
         body += " " + args + "\r\n";
 
         return Message<std::string>(body, addr, port);
+    }
+
+    // Read packet size on first two bytes of packet
+    static unsigned short packetSize(ByteBuf buf) {
+        if (buf.size() < 2)
+            return buf.size();
+
+        // Return unsigned short encoded in first two bytes
+        return *((unsigned short*)&buf);
+    }
+
+    static unsigned short getCommand(ByteBuf buf) {
+        if (buf.size() < 4)
+            return 0;
+
+        // Return unsigned short encoded in first two bytes
+        return *((unsigned short*)&buf[2]);
+    }
+
+    // Convert char[] to ByteBuf
+    static ByteBuf convertBuffer(char buffer[], size_t size) {
+        ByteBuf output;
+
+        for (int i = 0; i < size; i++)
+            output.push_back(buffer[i]);
+
+        return output;
     }
 };

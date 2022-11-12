@@ -28,7 +28,6 @@ jobs:
         run: >
           conan profile update conf.tools.system.package_manager:mode=install default;
           conan profile update conf.tools.system.package_manager:sudo=True default;
-          mkdir build;
           make test;
 
       - name: verify-files

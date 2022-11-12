@@ -15,6 +15,7 @@
 
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
+#include "../shared/Networking/ProtocolUtils.hpp"
 #include "../shared/Networking/UdpCommunication.hpp"
 #include "Protocols/GameProtocol.hpp"
 #include "Protocols/TcpServer.hpp"
@@ -84,8 +85,8 @@ private:
     std::unique_ptr<JanitorSystem> _janitorSystem;
 
     // UDP Networking
-    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
-    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _outgoingMQ;
     GameProtocol _protocol;
 
     // Game Logic

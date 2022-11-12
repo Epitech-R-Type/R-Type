@@ -9,7 +9,7 @@
 #include "../Systems/ArmamentSystem.hpp"
 #include <iostream>
 
-GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
                            std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager, Utilities::UUID serverUUID)
     : _incomingMQ(incoming),
       _outgoingMQ(outgoing),
@@ -20,7 +20,7 @@ GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> i
 bool GameProtocol::waitForClients() {
     int targetClientCount = this->_expectedClients.size();
     Timer timeout(CONNECTION_DELAY);
-    std::optional<Message<std::string>> msg;
+    std::optional<Message<ByteBuf>> msg;
 
     while (this->_connMan.getConnectionCount() < targetClientCount && !timeout.isExpired()) {
         while ((msg = this->_incomingMQ->pop())) {
@@ -29,7 +29,7 @@ bool GameProtocol::waitForClients() {
 
             // if command invalid continue
             if (!parsedCmd) {
-                ERRORLOG("Invalid command: " << msg.value());
+                ERRORLOG("Invalid command: " << parsedCmd->cmd);
                 continue;
             }
 
@@ -199,7 +199,7 @@ void GameProtocol::handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 }
 
 void GameProtocol::handleCommands() {
-    std::optional<Message<std::string>> msg;
+    std::optional<Message<ByteBuf>> msg;
 
     while ((msg = this->_incomingMQ->pop())) {
         auto parsed = ProtocolUtils::parseCommand(*msg);

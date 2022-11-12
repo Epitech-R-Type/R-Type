@@ -23,8 +23,8 @@ void game_main(std::vector<Connection> connections, int port, Utilities::UUID se
 Game::Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID, std::shared_ptr<std::atomic<bool>> gameStopFlag)
     : _isRunning(true),
       _entManager(std::make_shared<ECSManager>()),
-      _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
-      _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _incomingMQ(std::make_shared<MessageQueue<Message<ByteBuf>>>()),
+      _outgoingMQ(std::make_shared<MessageQueue<Message<ByteBuf>>>()),
       _protocol(_incomingMQ, _outgoingMQ, connections, _entManager, serverUUID) {
     this->_gameStopFlag = gameStopFlag;
 

@@ -28,7 +28,7 @@
 class GameProtocol {
 public:
     // Constructor
-    GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+    GameProtocol(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
                  std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager, Utilities::UUID serverUUID);
 
     // Blocks in this method until all clients have joined or timeout has been reached
@@ -78,8 +78,8 @@ public:
 
 private:
     // Udp messaging queues
-    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
-    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _outgoingMQ;
 
     // Entity manager
     std::shared_ptr<ECSManager> _entityManager;
