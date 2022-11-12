@@ -1,5 +1,5 @@
 #pragma once
 
-namespace Ray {
+#include "WindowsGuard.hpp"
+
 #include "raylib.h"
-}

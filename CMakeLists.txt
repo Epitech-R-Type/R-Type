@@ -11,7 +11,7 @@ if (MSVC)
     add_compile_definitions(_WIN32_WINNT=0x0601)
 else()
     set (CMAKE_GENERATOR "Unix Makefiles" CACHE INTERNAL "" FORCE)
-    add_compile_options(-g3)
+    add_compile_options(-g3 -pthread )
 endif()
 
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -63,6 +63,11 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/main.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Client.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/TextBox.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/Button.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/ConnectionMenu.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbyMenu.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbySelectionMenu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/TcpClient.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/ClientLobbyProtocol.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Protocols/TcpClient.cpp"
@@ -70,7 +75,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/HealthSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/MusicSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/PlayerMovementSystem.cpp"
-
+            ""
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"

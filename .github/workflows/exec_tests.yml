@@ -1,8 +1,8 @@
-name: Unit Test
+name: Unit Tests
 
 on: push
 jobs:
-  cmake-build:
+  unit-tests:
     runs-on: ubuntu-latest
     steps:
       # Checkout repo
@@ -35,7 +35,7 @@ jobs:
         shell: bash
         run: >
           find ./bin/Tests;
-      
+
       - name: run-tests
         shell: bash
         run: >

@@ -39,7 +39,7 @@ ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int s
 
 ClientGame::~ClientGame() {
     // Close raylib window
-    Ray::CloseWindow();
+    CloseWindow();
 
     // Signal thread to stop and join thread
     this->_udpStopFlag->store(true);
@@ -50,11 +50,6 @@ ClientGame::~ClientGame() {
 }
 
 void ClientGame::init() {
-    Ray::InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
-    while (!Ray::IsWindowReady()) {
-        //
-    }
-
     // Send here command
     this->_protocol->sendHere();
 
@@ -72,9 +67,9 @@ void ClientGame::mainLoop() {
             this->_protocol->sendPing();
         }
 
-        Ray::BeginDrawing();
+        BeginDrawing();
 
-        Ray::ClearBackground(Ray::BLACK);
+        ClearBackground(BLACK);
 
         if (this->_protocol->handleCommands())
             break;
@@ -88,7 +83,7 @@ void ClientGame::mainLoop() {
 
         this->_inputSystem->apply();
 
-        Ray::EndDrawing();
+        EndDrawing();
     }
 
     LOG("Game has ended...");

@@ -4,6 +4,8 @@
 #include "TcpClient.hpp"
 
 ClientLobbyProtocol::ClientLobbyProtocol(std::shared_ptr<std::atomic<bool>> stopFlag) {
+    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
+    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
     this->_stopFlag = stopFlag;
 }
 
@@ -21,7 +23,8 @@ int ClientLobbyProtocol::connect(std::string serverIP, int port) {
     if (msg->getMsg() == "CONN_FAILED")
         return 1;
 
-    this->sendMessage("CONNECT\r\n");
+    this->sendAuthenticate();
+
     this->_connected = true;
     return 0;
 }
@@ -32,6 +35,7 @@ int ClientLobbyProtocol::handleIncMessages() {
     std::optional<Message<std::string>> potMsg;
     while ((potMsg = this->_incomingMQ->pop())) {
         auto message = potMsg.value();
+        std::cout << message << std::endl;
 
         if (this->_serverIP.is_unspecified()) {
             this->_serverIP = message.getAddr();
@@ -125,7 +129,7 @@ void ClientLobbyProtocol::sendStart() {
         ERRORLOG("Error starting game: " << resp.body);
 }
 
-void ClientLobbyProtocol::sendJoinLobby(int lobby) {
+bool ClientLobbyProtocol::sendJoinLobby(int lobby) {
     std::stringstream ss;
 
     // NEED TO HANDLE LOBBY ALREADY IN GAME
@@ -138,12 +142,18 @@ void ClientLobbyProtocol::sendJoinLobby(int lobby) {
     // Handle response
     TcpResponse resp = this->awaitResponse();
 
-    if (resp.code != 200)
+    if (resp.code != 200) {
         ERRORLOG("Error joining lobby: " << resp.body);
-    else {
+        return false;
+    } else {
         LOG("Succesfully join lobby " << lobby << ".");
         this->lobby = lobby;
+        return true;
     }
+}
+
+void ClientLobbyProtocol::sendAuthenticate() {
+    this->sendMessage("AUTHENTICATE\r\n");
 }
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
@@ -179,6 +189,10 @@ bool ClientLobbyProtocol::shouldGameStart() {
 void ClientLobbyProtocol::resetStartGame() {
     this->_startGame = false;
     this->_serverPort = -1;
+};
+
+void ClientLobbyProtocol::startGame() {
+    this->sendMessage("START\r\n");
 };
 
 Utilities::UUID ClientLobbyProtocol::getUUID() {

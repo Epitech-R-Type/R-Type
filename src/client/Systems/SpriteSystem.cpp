@@ -15,20 +15,20 @@ SpriteSystem::SpriteSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;
 }
 
-Ray::Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, const float ypos) {
+Texture2D SpriteSystem::loadSprite(Animation::Sheet sheet, const float xpos, const float ypos) {
     const cmrc::file image = this->_fs.open(sheet.path);
 
     const unsigned char* imageBuffer = (unsigned char*)(image.begin());
 
-    Ray::Image sprite = Ray::LoadImageFromMemory(".png", imageBuffer, image.size());
+    Image sprite = LoadImageFromMemory(".png", imageBuffer, image.size());
 
-    const Ray::Rectangle crop{xpos, ypos, sheet.frameWidth, sheet.frameHeight};
+    const Rectangle crop{xpos, ypos, sheet.frameWidth, sheet.frameHeight};
 
-    Ray::ImageCrop(&sprite, crop);
+    ImageCrop(&sprite, crop);
 
-    Ray::Texture2D texture = Ray::LoadTextureFromImage(sprite);
+    Texture2D texture = LoadTextureFromImage(sprite);
 
-    Ray::UnloadImage(sprite);
+    UnloadImage(sprite);
 
     return texture;
 }
@@ -48,7 +48,7 @@ void SpriteSystem::loadAnimation(Animation::AnimationID id) {
         for (int x = 0; x < animationSheet.animWidth; x++) {
             const float xPos = animationSheet.startX + (animationSheet.frameWidth * x) + (animationSheet.separationX * x);
             const float yPos = animationSheet.startY + (animationSheet.frameHeight * y) + (animationSheet.separationY * y);
-            Ray::Texture2D sprite = this->loadSprite(animationSheet, xPos, yPos);
+            Texture2D sprite = this->loadSprite(animationSheet, xPos, yPos);
             this->_animations[id].push_back(sprite);
         }
     }
@@ -98,17 +98,17 @@ void SpriteSystem::apply() {
             if (!HAS_KEY(this->_animations, animation->animationID))
                 this->loadAnimation(animation->animationID);
 
-            Ray::Texture2D frame = this->_animations[animation->animationID][animation->index];
-            Ray::Vector2 posVec{position->x, position->y};
+            Texture2D frame = this->_animations[animation->animationID][animation->index];
+            Vector2 posVec{position->x, position->y};
 
             if (Animation::Sheets[animation->animationID].tile)
-                Ray::DrawTextureTiled(frame,
-                                      Ray::Rectangle{position->x, position->y, Animation::Sheets[animation->animationID].frameWidth,
-                                                     Animation::Sheets[animation->animationID].frameHeight},
-                                      Ray::Rectangle{position->x, position->y, WINDOW_WIDTH, WINDOW_HEIGHT}, posVec, animation->rotation,
-                                      animation->scale, Ray::WHITE);
+                DrawTextureTiled(frame,
+                                 Rectangle{position->x, position->y, Animation::Sheets[animation->animationID].frameWidth,
+                                           Animation::Sheets[animation->animationID].frameHeight},
+                                 Rectangle{position->x, position->y, WINDOW_WIDTH, WINDOW_HEIGHT}, posVec, animation->rotation, animation->scale,
+                                 WHITE);
             else
-                Ray::DrawTextureEx(frame, posVec, animation->rotation, animation->scale, Ray::WHITE);
+                DrawTextureEx(frame, posVec, animation->rotation, animation->scale, WHITE);
 
             this->nextFrame(animation);
         }
@@ -121,6 +121,6 @@ void SpriteSystem::drawImage(Animation::AnimationID id) {
         this->loadAnimation(id);
     }
 
-    Ray::Texture2D frame = this->_animations[id][0];
-    Ray::DrawTextureEx(frame, {0, 0}, 0, 1.0 + 639.0 / Ray::GetScreenHeight(), Ray::WHITE);
+    Texture2D frame = this->_animations[id][0];
+    DrawTextureEx(frame, {0, 0}, 0, 1.0 + 639.0 / GetScreenHeight(), WHITE);
 };

@@ -50,7 +50,8 @@ private:
 
     Utilities::UUID _uuid;
 
-    bool _isRunning;
+    bool _isRunning = true;
+
     std::thread* _udpComThread;
 
     // Set to true when tcp connection has closed, this signals to game to quit immediately
