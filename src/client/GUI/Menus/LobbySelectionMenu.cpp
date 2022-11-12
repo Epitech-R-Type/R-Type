@@ -31,24 +31,27 @@ void LobbySelectionMenu::queryLobbies() {
 
     this->_lobbies.clear();
 
+    float yPos = this->_buttonYPos;
+
     // pushing all existing lobbies into lobby array
     for (LobbyInfo lobby : lobbies) {
         std::string text = this->makeLobbyText(lobby);
 
-        Button button(text, this->_buttonXPos, this->_buttonYPos, this->_buttonWidth, this->_buttonHeight, this->_buttonColor);
+        Button button(text, this->_buttonXPos, yPos, this->_buttonWidth, this->_buttonHeight, this->_buttonColor);
 
         if (lobby.isRunning)
             button.disable();
         if (lobby.id > highestLobbyID)
             highestLobbyID = lobby.id;
         this->_lobbies.push_back({lobby, std::move(button)});
+        yPos += (this->_buttonHeight + 20);
     }
 
     highestLobbyID++;
     // setting newly created lobby ID
     this->_lobbies.push_back({
         LobbyInfo{highestLobbyID, false, 0},
-        Button("Create Lobby", this->_buttonXPos, this->_buttonYPos, this->_buttonWidth, this->_buttonHeight, this->_buttonColor),
+        Button("Create Lobby", this->_buttonXPos, yPos, this->_buttonWidth, this->_buttonHeight, this->_buttonColor),
     });
 }
 
