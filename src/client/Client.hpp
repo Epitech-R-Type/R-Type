@@ -48,6 +48,8 @@ public:
 
     std::vector<int> lobbies = {0, 1, 2, 3, 4};
 
+    ClientLobbyProtocol* getProtocol();
+
 private:
     Stages advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu);
 

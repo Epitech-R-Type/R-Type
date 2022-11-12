@@ -4,8 +4,6 @@
 #include "Menu.hpp"
 #include <vector>
 
-#define ALIGN_MIDDLE(width) ((GetScreenWidth() - width) / 2)
-
 class Client;
 
 class LobbySelectionMenu : public Menu {

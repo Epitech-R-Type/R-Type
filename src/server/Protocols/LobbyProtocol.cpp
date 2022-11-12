@@ -68,8 +68,8 @@ void LobbyProtocol::handleCommands() {
         std::string cmd = splitBody[0];
 
         // CONNECT Command
-        if (cmd == "CONNECT\r\n") {
-            this->handleConnect(addr, port);
+        if (cmd == "AUTHENTICATE\r\n") {
+            this->handleAuthenticate(addr, port);
             continue;
         }
 
@@ -114,7 +114,7 @@ void LobbyProtocol::handleForbidden(asio::ip::address addr, asio::ip::port_type 
     this->sendResponse("401", "Forbidden", addr, port);
 }
 
-void LobbyProtocol::handleConnect(asio::ip::address addr, asio::ip::port_type port) {
+void LobbyProtocol::handleAuthenticate(asio::ip::address addr, asio::ip::port_type port) {
     // Add to connection manager and get new uuid
     auto uuid = this->_connMan.addConnection(addr, port);
 

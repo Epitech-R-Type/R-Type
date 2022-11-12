@@ -44,7 +44,7 @@ public:
 
     void handleWrongRequest(std::string msgBody, asio::ip::address addr, asio::ip::port_type port);
     void handleForbidden(asio::ip::address addr, asio::ip::port_type port);
-    void handleConnect(asio::ip::address addr, asio::ip::port_type port);
+    void handleAuthenticate(asio::ip::address addr, asio::ip::port_type port);
     void handleJoinLobby(asio::ip::address addr, asio::ip::port_type port, Utilities::UUID clientUUID, int lobby);
     void handleStart(Utilities::UUID uuid, asio::ip::address addr, asio::ip::port_type port);
 

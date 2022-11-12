@@ -26,8 +26,12 @@ std::string LobbySelectionMenu::makeLobbyText(int lobby) {
 };
 
 void LobbySelectionMenu::apply() {
-    for (auto& button : this->_lobbies) {
-        button.apply();
+    for (int i = 0; i < this->_lobbies.size(); i++) {
+        this->_lobbies[i].apply();
+        if (this->_lobbies[i].hasBeenPressed() && this->_client->getProtocol()->sendJoinLobby(i)) {
+            this->_done = true;
+            return;
+        }
     }
 };
 

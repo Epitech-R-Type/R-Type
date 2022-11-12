@@ -45,7 +45,9 @@ int Client::launchGame() {
 }
 
 int Client::connect(std::string serverIP, int port) {
-    return this->_protocol->connect(serverIP, port);
+    const int res = this->_protocol->connect(serverIP, port);
+    this->_connected = this->_protocol->isConnected();
+    return res;
 }
 
 void Client::handleUserCommands() {
@@ -131,3 +133,7 @@ int Client::mainLoop() {
 
     return 0;
 }
+
+ClientLobbyProtocol* Client::getProtocol() {
+    return this->_protocol;
+};

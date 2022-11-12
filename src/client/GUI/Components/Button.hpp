@@ -11,6 +11,8 @@ enum Interaction {
 
 class Button {
 public:
+    Button();
+
     Button(std::string text, float x, float y, float width, float height, Color color);
 
     void apply();
@@ -20,6 +22,8 @@ public:
     bool hasBeenPressed();
 
     void updateText(std::string text);
+
+    void disable();
 
 private:
     Rectangle _rec;
@@ -32,6 +36,7 @@ private:
 
     Interaction _hovered = Interaction::normal;
     bool _hasBeenPressed = false;
+    bool _disabled = false;
     float _x;
     float _y;
     float _width;

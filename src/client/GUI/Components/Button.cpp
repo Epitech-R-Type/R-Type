@@ -1,9 +1,12 @@
 #include "Button.hpp"
 #include "../../../shared/Utilities/Utilities.hpp"
 
-inline constexpr unsigned char operator"" uc(unsigned long long arg) noexcept {
+inline constexpr unsigned char operator"" _uc(unsigned long long arg) noexcept {
     return static_cast<unsigned char>(arg);
 }
+
+Button::Button()
+    : Button("Button", 0, 0, 200, 50, WHITE) {}
 
 Button::Button(std::string text, float x, float y, float width, float height, Color color) {
     this->_x = x;
@@ -18,23 +21,23 @@ Button::Button(std::string text, float x, float y, float width, float height, Co
     this->_hovered = Interaction::normal;
 
     this->_textColor = Color{
-        r : static_cast<unsigned char>(255uc - this->_color.r),
-        g : static_cast<unsigned char>(255uc - this->_color.g),
-        b : static_cast<unsigned char>(255uc - this->_color.b),
+        r : static_cast<unsigned char>(255_uc - this->_color.r),
+        g : static_cast<unsigned char>(255_uc - this->_color.g),
+        b : static_cast<unsigned char>(255_uc - this->_color.b),
         a : this->_color.a,
     };
 
     this->_hoveredColors = Color{
-        r : static_cast<unsigned char>(this->_color.r - 40uc),
-        g : static_cast<unsigned char>(this->_color.g - 40uc),
-        b : static_cast<unsigned char>(this->_color.b - 40uc),
+        r : static_cast<unsigned char>(this->_color.r - 40_uc),
+        g : static_cast<unsigned char>(this->_color.g - 40_uc),
+        b : static_cast<unsigned char>(this->_color.b - 40_uc),
         a : this->_color.a,
     };
 
     this->_clickedColors = Color{
-        r : static_cast<unsigned char>(this->_color.r - 80uc),
-        g : static_cast<unsigned char>(this->_color.g - 80uc),
-        b : static_cast<unsigned char>(this->_color.b - 80uc),
+        r : static_cast<unsigned char>(this->_color.r - 80_uc),
+        g : static_cast<unsigned char>(this->_color.g - 80_uc),
+        b : static_cast<unsigned char>(this->_color.b - 80_uc),
         a : this->_color.a,
     };
 }
@@ -45,7 +48,8 @@ void Button::apply() {
 
         if (IsMouseButtonDown(MOUSE_BUTTON_LEFT)) {
             this->_hovered = Interaction::pressed;
-            this->_hasBeenPressed = true;
+            if (!this->_disabled)
+                this->_hasBeenPressed = true;
         }
     } else {
         this->_hovered = Interaction::normal;
@@ -70,5 +74,12 @@ void Button::draw() {
 }
 
 bool Button::hasBeenPressed() {
-    return this->_hasBeenPressed;
+    if (this->_hasBeenPressed) {
+        this->_hasBeenPressed = false;
+        return true;
+    };
+}
+
+void Button::disable() {
+    this->_disabled = true;
 }

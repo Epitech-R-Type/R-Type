@@ -1,5 +1,6 @@
 #pragma once
 
+#include "../Components/Button.hpp"
 #include "Menu.hpp"
 
 class Client;
@@ -15,6 +16,8 @@ public:
     bool getDone() override;
 
 private:
+    Button _startButton;
+
     bool _done = false;
 
     Client* _client;

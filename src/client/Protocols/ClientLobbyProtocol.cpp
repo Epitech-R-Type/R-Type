@@ -22,6 +22,9 @@ int ClientLobbyProtocol::connect(std::string serverIP, int port) {
         std::this_thread::sleep_for(std::chrono::milliseconds(10));
     if (msg->getMsg() == "CONN_FAILED")
         return 1;
+
+    this->sendAuthenticate();
+
     this->_connected = true;
     return 0;
 }
@@ -126,7 +129,7 @@ void ClientLobbyProtocol::sendStart() {
         ERRORLOG("Error starting game: " << resp.body);
 }
 
-void ClientLobbyProtocol::sendJoinLobby(int lobby) {
+bool ClientLobbyProtocol::sendJoinLobby(int lobby) {
     std::stringstream ss;
 
     // NEED TO HANDLE LOBBY ALREADY IN GAME
@@ -139,12 +142,18 @@ void ClientLobbyProtocol::sendJoinLobby(int lobby) {
     // Handle response
     TcpResponse resp = this->awaitResponse();
 
-    if (resp.code != 200)
+    if (resp.code != 200) {
         ERRORLOG("Error joining lobby: " << resp.body);
-    else {
+        return false;
+    } else {
         LOG("Succesfully join lobby " << lobby << ".");
         this->lobby = lobby;
+        return true;
     }
+}
+
+void ClientLobbyProtocol::sendAuthenticate() {
+    this->sendMessage("AUTHENTICATE\r\n");
 }
 
 void ClientLobbyProtocol::sendMessage(std::string msgContent) {
