@@ -49,7 +49,9 @@ public:
     ClientLobbyProtocol* getProtocol();
 
 private:
-    Stages advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu);
+    void advanceStage(std::unique_ptr<Menu>& currentMenu);
+
+    Stages _currentStage;
 
     bool _lobbyRunning;
     bool _connected;

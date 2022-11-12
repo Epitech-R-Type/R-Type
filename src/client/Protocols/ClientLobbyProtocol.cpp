@@ -162,7 +162,6 @@ std::vector<LobbyInfo> ClientLobbyProtocol::sendGetLobbies() {
     // Handle resp
     TcpResponse resp = this->awaitResponse();
 
-    LOG(resp.body);
     if (resp.code != 200) {
         ERRORLOG(resp.code << resp.body);
         return output;

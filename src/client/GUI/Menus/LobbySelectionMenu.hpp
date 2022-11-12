@@ -15,16 +15,12 @@ public:
 
     void draw() override;
 
-    bool getDone() override;
-
 private:
     void queryLobbies();
 
     void refreshLobbies();
 
     std::string makeLobbyText(LobbyInfo lobby);
-
-    bool _done = false;
 
     Client* _client;
 

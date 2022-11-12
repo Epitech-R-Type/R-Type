@@ -50,36 +50,48 @@ int Client::connect(std::string serverIP, int port) {
     return res;
 }
 
-Stages Client::advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu) {
-    if (currentMenu->getDone()) {
-        switch (stage) {
+void Client::advanceStage(std::unique_ptr<Menu>& currentMenu) {
+    State state = currentMenu->getState();
+
+    if (state == State::DONE) {
+        switch (this->_currentStage) {
             case Stages::CONNECTION: {
                 currentMenu = std::make_unique<LobbySelectionMenu>(this);
-                return Stages::ROOMSELECTION;
+                this->_currentStage = Stages::ROOMSELECTION;
+                return;
             }
             case Stages::ROOMSELECTION:
                 currentMenu = std::make_unique<LobbyMenu>(this);
-                return Stages::ROOM;
+                this->_currentStage = Stages::ROOM;
+                return;
             default:
-                return stage;
+                return;
+        }
+    } else if (state == State::BACK) {
+        switch (this->_currentStage) {
+            case Stages::ROOM: {
+                currentMenu = std::make_unique<LobbySelectionMenu>(this);
+                this->_currentStage = Stages::ROOMSELECTION;
+            }
+            default:
+                ERRORLOG("Invalid stage: " << this->_currentStage);
         }
     };
-    return stage;
 }
 
 int Client::mainLoop() {
-
-    Stages stage = this->_connected ? Stages::ROOMSELECTION : Stages::CONNECTION;
-
     std::unique_ptr<Menu> currentMenu;
 
-    if (this->_connected)
+    if (this->_connected) {
         currentMenu = std::make_unique<LobbySelectionMenu>(this);
-    else
+        this->_currentStage = Stages::ROOMSELECTION;
+    } else {
         currentMenu = std::make_unique<ConnectionMenu>(this);
+        this->_currentStage = Stages::CONNECTION;
+    }
 
     while (true) {
-        stage = this->advanceStage(stage, currentMenu);
+        this->advanceStage(currentMenu);
 
         if (this->_protocol->handleIncMessages())
             return 0;

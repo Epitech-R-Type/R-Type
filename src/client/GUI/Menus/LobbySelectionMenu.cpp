@@ -70,7 +70,7 @@ void LobbySelectionMenu::apply() {
     for (auto& [lobby, button] : this->_lobbies) {
         button.apply();
         if (button.hasBeenPressed() && this->_client->getProtocol()->sendJoinLobby(lobby.id)) {
-            this->_done = true;
+            this->_state = State::DONE;
             return;
         }
     }
@@ -86,8 +86,4 @@ void LobbySelectionMenu::draw() {
     }
 
     EndDrawing();
-};
-
-bool LobbySelectionMenu::getDone() {
-    return this->_done;
 };
