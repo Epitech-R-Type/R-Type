@@ -35,11 +35,11 @@ bool Utilities::UUID::isValid() {
     return !this->_uuid.is_nil();
 }
 
-bool Utilities::UUID::operator==(const Utilities::UUID& uuid) {
+bool Utilities::UUID::operator==(const Utilities::UUID& uuid) const {
     return uuid._uuid == this->_uuid;
 }
 
-bool Utilities::UUID::operator!=(const Utilities::UUID& uuid) {
+bool Utilities::UUID::operator!=(const Utilities::UUID& uuid) const {
     return uuid._uuid != this->_uuid;
 }
 

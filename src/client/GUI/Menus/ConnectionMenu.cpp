@@ -8,7 +8,7 @@ ConnectionMenu::ConnectionMenu(Client* client) {
 }
 
 void ConnectionMenu::apply() {
-    if (!this->_ipPrompt->getDone() || this->_done)
+    if (!this->_ipPrompt->getDone() || this->_state != State::RUNNING)
         return;
 
     std::vector<std::string> connectionData = Utilities::splitStr(this->_ipPrompt->getInput(), ":");
@@ -21,7 +21,7 @@ void ConnectionMenu::apply() {
 
     this->_client->connect(ip, udpPort);
 
-    this->_done = true;
+    this->_state = State::DONE;
 }
 
 void ConnectionMenu::draw() {
@@ -35,10 +35,6 @@ void ConnectionMenu::draw() {
 }
 
 void ConnectionMenu::_init() {
-    this->_done = false;
+    this->_state = State::RUNNING;
     this->_ipPrompt = std::make_unique<TextBox>(std::string("127.0.0.1:3501"), CENTER(20 * 30, 60), 20 * 30, 60, 20);
-}
-
-bool ConnectionMenu::getDone() {
-    return this->_done;
 }
