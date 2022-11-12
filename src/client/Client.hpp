@@ -44,20 +44,17 @@ public:
 
     int connect(std::string serverIP, int port = TCP_PORT);
 
-    void handleUserCommands();
-
     std::vector<int> lobbies = {0, 1, 2, 3, 4};
 
     ClientLobbyProtocol* getProtocol();
 
 private:
-    Stages advanceStage(Stages stage, std::unique_ptr<Menu>& currentMenu);
+    void advanceStage(std::unique_ptr<Menu>& currentMenu);
+
+    Stages _currentStage;
 
     bool _lobbyRunning;
     bool _connected;
-
-    std::shared_ptr<MessageQueue<std::string>> _userCommands = std::make_shared<MessageQueue<std::string>>();
-    std::thread* _userInputThread;
 
     std::shared_ptr<std::atomic<bool>> _tcpStopFlag;
 

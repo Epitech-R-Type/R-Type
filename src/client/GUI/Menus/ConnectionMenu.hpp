@@ -18,12 +18,8 @@ public:
 
     void draw() override;
 
-    bool getDone() override;
-
 private:
     void _init();
-
-    bool _done = false;
 
     Client* _client;
 
