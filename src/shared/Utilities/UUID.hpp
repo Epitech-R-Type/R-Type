@@ -21,9 +21,16 @@ namespace Utilities {
         UUID(std::string uuidStr);
 
         /**
+         * transform a buffer to a UUID
+         * */
+        UUID(uuids::span<const std::byte, 16L> uuidBuffer);
+
+        /**
          * Cast UUID to string, to send it over network or similar
          * */
         std::string toString();
+
+        uuids::span<const std::byte, 16L> getUUID();
 
         bool isValid();
 
