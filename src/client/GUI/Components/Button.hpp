@@ -15,14 +15,31 @@ public:
 
     Button(std::string text, float x, float y, float width, float height, Color color);
 
+    /**
+     * Verifies interactions and detects clicks
+     */
     void apply();
 
+    /**
+     * Draws butten according to params
+     * and interaction state
+     */
     void draw();
 
+    /**
+     * returns true if button has been pressed,
+     * but only once, it resets that state after each call
+     */
     bool hasBeenPressed();
 
+    /**
+     * update the displayed text
+     */
     void updateText(std::string text);
 
+    /**
+     * deactivates click detections and pressed state
+     */
     void disable();
 
 private:
