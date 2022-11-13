@@ -1,9 +1,5 @@
 # comunication protocol
 
-
-
-Epitech Nicolas Lattemann Request for Comments: 9999 Léon Sautour Category: Networking Sebastian Klemm Pablo Herrmann Epitech Berlin
-
 ```
                   R-TYPE COMMUNICATION PROTOCOL
 ```
