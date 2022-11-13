@@ -50,10 +50,8 @@ public:
     // ─── Command Sending ─────────────────────────────────────────────────────────────────────
 
     // By default, commands do nothing if invalid
-    // template <class... T>
-    // void sendEntity(EntityID id);
-    // template <class... T>
-    // void sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const;
+    void sendEntity(EntityID id);
+    void sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const;
 
     void sendDelEntity(EntityID id);
 
@@ -85,6 +83,6 @@ private:
     std::shared_ptr<ECSManager> _entityManager;
 
     // Client tracking
-    std::vector<Connection> _expectedClients;  // Note: the addr info in this vector are for tcp, NOT udp
+    std::vector<Connection> _expectedClients; // Note: the addr info in this vector are for tcp, NOT udp
     ConnectionManager _connMan;
 };

@@ -67,14 +67,14 @@ void Game::init() {
 }
 
 void Game::sendModified() {
-    // std::optional<EntityID> entityID;
+    std::optional<EntityID> entityID;
 
-    // while ((entityID = this->_entManager->getModified())) {
-    //     if (this->_entManager->isValidEntity(*entityID))
-    //         this->_protocol.sendEntity(entityID.value());
-    //     else
-    //         this->_protocol.sendDelEntity(entityID.value());
-    // }
+    while ((entityID = this->_entManager->getModified())) {
+        if (this->_entManager->isValidEntity(*entityID))
+            this->_protocol.sendEntity(entityID.value());
+        else
+            this->_protocol.sendDelEntity(entityID.value());
+    }
 }
 
 int Game::getPlayersAlive() {

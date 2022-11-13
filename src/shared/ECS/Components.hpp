@@ -41,7 +41,7 @@ template <class T>
 ByteBuf initBuffer(ComponentType id) {
     ByteBuf buffer;
     buffer.resize(sizeof(std::int8_t) + sizeof(std::uint64_t) + sizeof(T));
-    buffer[0] = id;
+    buffer[0] = (char)id;
     const std::uint64_t size = sizeof(T);
     memcpy(&buffer[1], (std::int8_t*)&size, sizeof(size));
     return buffer;

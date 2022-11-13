@@ -28,7 +28,7 @@ public:
     static EntityID bufferToEntity(const ByteBuf buffer, std::shared_ptr<ECSManager> manager);
 
 private:
-    static ByteBuf entityToBufferSwitch(EntityID entityID, std::shared_ptr<ECSManager> manager, ComponentType ID);
+    static std::optional<ByteBuf> entityToBufferSwitch(EntityID entityID, std::shared_ptr<ECSManager> manager, ComponentType ID);
 
     template <typename T, typename M>
     static ByteBuf componentToBuffer(EntityID entityId, std::shared_ptr<ECSManager> manager) {

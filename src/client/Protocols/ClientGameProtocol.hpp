@@ -8,7 +8,6 @@
 #pragma once
 
 #include "../../shared/ECS/ECSManager.hpp"
-#include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/UUID.hpp"
@@ -28,7 +27,7 @@ public:
                        asio::ip::port_type port, Utilities::UUID uuid);
 
     // COMMAND HANDLING
-    // void handleEntity(ParsedCmd cmd, std::string raw);
+    void handleEntity(ParsedCmd cmd);
     void handleDeleteEntity(ParsedCmd cmd);
     void handleDeleteComponent(ParsedCmd cmd);
     void handleMusic(ParsedCmd cmd);

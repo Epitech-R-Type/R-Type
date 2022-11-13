@@ -6,6 +6,7 @@
 */
 
 #include "ClientGameProtocol.hpp"
+#include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
 ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming,
@@ -22,19 +23,18 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<Byte
 
 // ─── Command Handling ────────────────────────────────────────────────────────────────────────────
 
-// void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
-//     static int count = 0;
-//     if (cmd.args.size() < 1) {
-//         ERRORLOG("Command " << cmd.cmd << " has no args.");
-//         return;
-//     }
+void ClientGameProtocol::handleEntity(ParsedCmd cmd) {
+    static int count = 0;
+    if (cmd.data.size() < 1) {
+        ERRORLOG("Command " << cmd.cmd << " has no args.");
+        return;
+    }
 
-//     std::vector<std::string> res = Utilities::splitStr(raw, " ");
-//     EntityID newEntity = Serialization::stringToEntity(res[1], this->_entityManager);
-//     if (this->_entityManager->hasComponent<SoundCreation::Component>(newEntity) &&
-//         this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID != SFXID::INVALID)
-//         MusicSystem::SFXQueue.push(this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID);
-// }
+    EntityID newEntity = Serialization::bufferToEntity(cmd.data, this->_entityManager);
+    if (this->_entityManager->hasComponent<SoundCreation::Component>(newEntity) &&
+        this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID != SFXID::INVALID)
+        MusicSystem::SFXQueue.push(this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID);
+}
 
 void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
     EntityID id;
@@ -92,9 +92,9 @@ bool ClientGameProtocol::handleCommands() {
             continue;
 
         switch (parsed->cmd) {
-            // case Command::Entityd:
-            //     this->handleEntity(*parsed, msg->getMsg());
-            //     break;
+            case Command::Entityd:
+                this->handleEntity(*parsed);
+                break;
             case Command::DeleteEntity:
                 this->handleDeleteEntity(*parsed);
                 break;

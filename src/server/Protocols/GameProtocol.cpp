@@ -231,32 +231,32 @@ void GameProtocol::handleCommands() {
     }
 }
 
-// ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
+//─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
 // Sends to all connected clients
-// template <class... T>
-// void GameProtocol::sendEntity(EntityID id) {
-//     if (!this->_entityManager->isValidEntity(id)) {
-//         ERRORLOG("Entity ID is invalid: " << id);
-//         return;
-//     }
 
-//     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-//     for (auto conn : this->_connMan.getConnections())
-//         this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
-// }
+void GameProtocol::sendEntity(EntityID id) {
+    if (!this->_entityManager->isValidEntity(id)) {
+        ERRORLOG("Entity ID is invalid: " << id);
+        return;
+    }
 
-// // Sends to only one client
-// template <class... T>
-// void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const {
-//     if (!this->_entityManager->isValidEntity(id)) {
-//         ERRORLOG("Entity ID is invalid: " << id);
-//         return;
-//     }
+    ByteBuf entitySerialization = Serialization::entityToBuffer(id, this->_entityManager);
+    for (auto conn : this->_connMan.getConnections())
+        this->_outgoingMQ->push(ProtocolUtils::createMessage(UPDATE_ENTITY, entitySerialization, conn.addr, conn.port));
+}
 
-//     std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-//     this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
-// }
+// Sends to only one client
+
+void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const {
+    if (!this->_entityManager->isValidEntity(id)) {
+        ERRORLOG("Entity ID is invalid: " << id);
+        return;
+    }
+
+    ByteBuf entitySerialization = Serialization::entityToBuffer(id, this->_entityManager);
+    this->_outgoingMQ->push(ProtocolUtils::createMessage(UPDATE_ENTITY, entitySerialization, addr, port));
+}
 
 void GameProtocol::sendDelEntity(EntityID id) {
     ByteBuf msgBody(ENTID_PIECE);

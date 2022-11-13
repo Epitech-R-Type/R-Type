@@ -14,6 +14,16 @@ ByteBuf Serialization::entityToBuffer(EntityID entityID, std::shared_ptr<ECSMana
 
     ByteBuf buffer;
 
+    buffer.resize(8 + 1);
+
+    auto id = entityID;
+
+    memcpy(&buffer[0], (char*)&id, 8);
+
+    unsigned char compCount = 0;
+
+    memcpy(&buffer[8], (char*)&compCount, sizeof(compCount));
+
     for (int componentTypeID = 0; componentTypeID < MAX_COMPONENTS; componentTypeID++) {
         if (setComponents[componentTypeID] != 1)
             continue;
@@ -23,10 +33,17 @@ ByteBuf Serialization::entityToBuffer(EntityID entityID, std::shared_ptr<ECSMana
             continue;
         }
 
-        ByteBuf componentBuffer = entityToBufferSwitch(entityID, manager, ComponentType(componentTypeID));
+        std::optional<ByteBuf> componentBuffer = entityToBufferSwitch(entityID, manager, ComponentType(componentTypeID));
 
-        buffer.insert(buffer.end(), componentBuffer.begin(), componentBuffer.end());
+        if (componentBuffer) {
+            ByteBuf buf = componentBuffer.value();
+            std::copy(buf.begin(), buf.end(), std::back_inserter(buffer));
+            compCount++;
+        } else
+            break;
     }
+
+    memcpy(&buffer[8], (char*)&compCount, sizeof(compCount));
 
     return buffer;
 }
@@ -42,8 +59,6 @@ EntityID Serialization::bufferToEntity(const ByteBuf buffer, std::shared_ptr<ECS
 
     for (int i = 0; i < compCount; i++) {
         ByteBuf bufferComponent(buffer.begin() + nextCompPointer, buffer.end());
-
-        ByteBuf args = toBuffer<Armor::Component, Armor::Mask>({2}, ComponentType::ARMOR);
 
         switch (bufferComponent[0]) {
             case ComponentType::ARMOR:
@@ -91,7 +106,7 @@ EntityID Serialization::bufferToEntity(const ByteBuf buffer, std::shared_ptr<ECS
             default:
                 ERRORLOG("Unhandled Component: " << bufferComponent[0] << ".");
         }
-        nextCompPointer += 1 + getComponentSize(bufferComponent);
+        nextCompPointer += 1 + 8 + getComponentSize(bufferComponent);
     }
 
     return entityID;
@@ -99,7 +114,7 @@ EntityID Serialization::bufferToEntity(const ByteBuf buffer, std::shared_ptr<ECS
 
 // ------------ THE SHADOW REALM ------------
 
-ByteBuf Serialization::entityToBufferSwitch(EntityID entityID, std::shared_ptr<ECSManager> manager, ComponentType ID) {
+std::optional<ByteBuf> Serialization::entityToBufferSwitch(EntityID entityID, std::shared_ptr<ECSManager> manager, ComponentType ID) {
     switch (ID) {
         case ComponentType::ARMOR:
             return Serialization::componentToBuffer<Armor::Component, Armor::Mask>(entityID, manager);
