@@ -153,6 +153,7 @@ function(build_client)
         resources/r-typesheet44.png
         resources/lost.png
         resources/background.png
+        resources/citySunnset.png
         resources/menu-background.png
         resources/song0.mp3
         resources/song1.mp3
