@@ -76,6 +76,7 @@ bool Button::hasBeenPressed() {
         this->_hasBeenPressed = false;
         return true;
     };
+    return false;
 }
 
 void Button::disable() {
