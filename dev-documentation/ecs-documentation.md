@@ -1,10 +1,10 @@
 # ECS documentation
 
-## **ECS Documentation**
-
 ### **Introduction**
 
 This Documentation is meant to explain how the ECS works, the existing components and the Systems that work on them.
+
+<figure><img src="../.gitbook/assets/ECS Systems overview.png" alt=""><figcaption></figcaption></figure>
 
 ### **Systems**
 

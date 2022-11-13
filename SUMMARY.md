@@ -1,15 +1,16 @@
 # Table of contents
 
-* [Content page](README.md)
-* [install and build guide](install-and-build-guide.md)
-* [Tutorials](tutorials/README.md)
-  * [New levels](tutorials/new-levels.md)
-  * [New entities](tutorials/new-entities/README.md)
-    * [New enemies](tutorials/new-entities/new-enemies.md)
-    * [New background](tutorials/new-entities/new-background.md)
-    * [New boss](tutorials/new-entities/new-boss.md)
-  * [New Graphics](tutorials/new-graphics.md)
-* [Systems flowchart](systems-flowchart.md)
+## User documentation
+
+* [install and build guide](README.md)
+* [Tutorials](user-documentation/tutorials/README.md)
+  * [New levels](user-documentation/tutorials/new-levels.md)
+  * [New entities](user-documentation/tutorials/new-entities/README.md)
+    * [New enemies](user-documentation/tutorials/new-entities/new-enemies.md)
+    * [New background](user-documentation/tutorials/new-entities/new-background.md)
+    * [New boss](user-documentation/tutorials/new-entities/new-boss.md)
+  * [New Graphics](user-documentation/tutorials/new-graphics.md)
+* [Systems overview](user-documentation/systems-overview.md)
 
 ## DEV documentation
 

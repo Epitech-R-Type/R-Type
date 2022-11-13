@@ -17,9 +17,10 @@ description: >-
 
 *   [New entities](new-entities/)
 
-    * [reworking enemy stats](new-entities/#reworking-enemy-stats)
-    * [Create new weapon](new-entities/#create-new-weapon)
-    * [Create new Animation](new-entities/#create-new-animation)
+    * [New enemies](new-entities/new-enemies.md)
+      *
+    * [New background](new-entities/new-background.md)
+    * [New boss](new-entities/new-boss.md)
 
 
 * [New components](new-graphics.md)

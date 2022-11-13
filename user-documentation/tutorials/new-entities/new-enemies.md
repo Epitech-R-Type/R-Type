@@ -135,7 +135,7 @@ Have a look at the **`bullet`** fucntion src/server/Systems/Factory.cpp\
 | SoundDestruction::Component |
 
 &#x20;use these components to creat customize projectiles.\
-check [ECS documentation](../../dev-documentation/ecs-documentation.md) for more info on the components.
+check [ECS documentation](../../../dev-documentation/ecs-documentation.md) for more info on the components.
 
 ## Custom animation
 
