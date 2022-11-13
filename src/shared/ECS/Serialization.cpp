@@ -62,46 +62,46 @@ EntityID Serialization::bufferToEntity(const ByteBuf buffer, std::shared_ptr<ECS
 
         switch (bufferComponent[0]) {
             case ComponentType::ARMOR:
-                applyUpdate<Armor::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Armor::Component, Armor::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::HEALTH:
-                applyUpdate<Health::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Health::Component, Health::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::POSITION:
-                applyUpdate<Position::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Position::Component, Position::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::ANIMATION:
-                applyUpdate<Animation::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Animation::Component, Animation::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::VELOCITY:
-                applyUpdate<Velocity::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Velocity::Component, Velocity::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::PLAYER:
-                applyUpdate<Player::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Player::Component, Player::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::DAMAGE:
-                applyUpdate<Damage::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Damage::Component, Damage::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::ARMAMENT:
-                applyUpdate<Armament::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Armament::Component, Armament::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::HITBOX:
-                applyUpdate<Hitbox::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Hitbox::Component, Hitbox::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::TEAM:
-                applyUpdate<Team::Component>(bufferComponent, entityID, manager);
+                applyUpdate<Team::Component, Team::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::IMMUNITY_FRAME:
-                applyUpdate<ImmunityFrame::Component>(bufferComponent, entityID, manager);
+                applyUpdate<ImmunityFrame::Component, ImmunityFrame::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::SOUND_CREATION:
-                applyUpdate<SoundCreation::Component>(bufferComponent, entityID, manager);
+                applyUpdate<SoundCreation::Component, SoundCreation::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::SOUND_DESTRUCTION:
-                applyUpdate<SoundDestruction::Component>(bufferComponent, entityID, manager);
+                applyUpdate<SoundDestruction::Component, SoundDestruction::Mask>(bufferComponent, entityID, manager);
                 break;
             case ComponentType::SOUND_DAMAGE:
-                applyUpdate<SoundDamage::Component>(bufferComponent, entityID, manager);
+                applyUpdate<SoundDamage::Component, SoundDamage::Mask>(bufferComponent, entityID, manager);
                 break;
             default:
                 ERRORLOG("Unhandled Component: " << bufferComponent[0] << ".");

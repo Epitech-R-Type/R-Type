@@ -74,7 +74,7 @@ ByteBuf toBuffer(T component, ComponentType ID) {
     return buffer;
 }
 
-template <typename T>
+template <typename T, typename M>
 void applyUpdate(ByteBuf buffer, EntityID entityID, std::shared_ptr<ECSManager> manager) {
     T* component;
 
@@ -83,7 +83,9 @@ void applyUpdate(ByteBuf buffer, EntityID entityID, std::shared_ptr<ECSManager> 
     else
         component = manager->getComponent<T>(entityID);
 
-    *component = getComponentData<T>(buffer);
+    M mask = getComponentData<M>(buffer);
+
+    memcpy(component, &mask, sizeof(M));
 }
 
 namespace Armor {
