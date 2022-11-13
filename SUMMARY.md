@@ -1,8 +1,10 @@
 # Table of contents
 
+* [README](README.md)
+
 ## User documentation
 
-* [install and build guide](README.md)
+* [install and build guide](<README (1).md>)
 * [Tutorials](user-documentation/tutorials/README.md)
   * [New levels](user-documentation/tutorials/new-levels.md)
   * [New entities](user-documentation/tutorials/new-entities/README.md)
@@ -10,7 +12,8 @@
     * [New background](user-documentation/tutorials/new-entities/new-background.md)
     * [New boss](user-documentation/tutorials/new-entities/new-boss.md)
   * [New Graphics](user-documentation/tutorials/new-graphics.md)
-* [Systems overview](user-documentation/systems-overview.md)
+* [System overview](user-documentation/system-overview.md)
+* [license](user-documentation/license.md)
 
 ## DEV documentation
 
