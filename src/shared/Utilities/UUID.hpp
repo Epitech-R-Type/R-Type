@@ -36,9 +36,9 @@ namespace Utilities {
 
         bool isValid();
 
-        bool operator==(const Utilities::UUID& uuid);
+        bool operator==(const Utilities::UUID& uuid) const;
 
-        bool operator!=(const Utilities::UUID& uuid);
+        bool operator!=(const Utilities::UUID& uuid) const;
 
         friend std::ostream& operator<<(std::ostream& os, const Utilities::UUID& uuid) {
             return os << uuid._uuid;

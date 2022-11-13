@@ -143,7 +143,7 @@ Table of Contents
 
         The following is a list of Client Commands :
 
-            - CONNECT     -> Only command with no header. This command
+            - AUTHENTICATE     -> Only command with no header. This command
                           allows the client to retrieve his user
                           assigned uuid.
 

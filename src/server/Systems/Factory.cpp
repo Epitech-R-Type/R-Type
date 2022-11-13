@@ -87,7 +87,7 @@ EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS, EnemyStats s
     return enemy;
 }
 
-EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX, int velocityY, double rotation) {
+EntityID singleShot(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX, int velocityY, double rotation, Animation::AnimationID anim) {
     const EntityID bullet = ECS->newEntity();
 
     const Position::Component* sourcePos = ECS->getComponent<Position::Component>(source);
@@ -123,7 +123,7 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
     ECS->addComp<Velocity::Component>(bullet, velocity);
     ECS->addComp<Health::Component>(bullet, {1});
     ECS->addComp<Damage::Component>(bullet, {10});
-    Animation::Component* animation = ECS->addComp<Animation::Component>(bullet, {Animation::AnimationID::Laser, 1, rotation, 1.5});
+    Animation::Component* animation = ECS->addComp<Animation::Component>(bullet, {anim, 1, rotation, 1.5});
     Position::Component* position = ECS->addComp<Position::Component>(bullet, positionPre);
     ECS->addComp<Team::Component>(bullet, *ECS->getComponent<Team::Component>(source));
     ECS->addComp<Hitbox::Component>(bullet, HitboxSystem::buildHitbox(animation, position));
@@ -133,16 +133,16 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
     return bullet;
 }
 
-void Factory::Weapon::makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source) {
-    bullet(ECS, source, 40, 0, 0);
+void Factory::Weapon::makeSingleShot(std::shared_ptr<ECSManager> ECS, EntityID source, Animation::AnimationID anim) {
+    singleShot(ECS, source, 40, 0, 0, anim);
 }
 
-void Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source) {
-    bullet(ECS, source, 40, 0, 0);
-    bullet(ECS, source, 40, 5, 6);
-    bullet(ECS, source, 40, 10, 12);
-    bullet(ECS, source, 40, -5, -6);
-    bullet(ECS, source, 40, -10, -12);
+void Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source, Animation::AnimationID anim) {
+    singleShot(ECS, source, 40, 0, 0, anim);
+    singleShot(ECS, source, 40, 5, 6, anim);
+    singleShot(ECS, source, 40, 10, 12, anim);
+    singleShot(ECS, source, 40, -5, -6, anim);
+    singleShot(ECS, source, 40, -10, -12, anim);
 }
 
 void Factory::Misc::makeBackground(std::shared_ptr<ECSManager> ECS, Animation::AnimationID bgID) {

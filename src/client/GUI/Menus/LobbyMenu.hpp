@@ -13,12 +13,10 @@ public:
 
     void draw() override;
 
-    bool getDone() override;
-
 private:
     Button _startButton;
 
-    bool _done = false;
+    Button _leaveButton;
 
     Client* _client;
 };
