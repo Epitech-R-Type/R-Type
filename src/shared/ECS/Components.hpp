@@ -75,6 +75,8 @@ namespace Animation {
         SpaceshipRGB,
         Background,
         Death,
+        LegRobot,
+        Transformer,
     };
     struct Component {
         AnimationID animationID;
@@ -117,6 +119,8 @@ namespace Animation {
 
         {Animation::AnimationID::Background, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
         {Animation::AnimationID::Death, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
+        {Animation::AnimationID::LegRobot, {"resources/r-typesheet10.png", 1, 3, 30, 23, 6, 1, 3, 0, 0}},
+        {Animation::AnimationID::LegRobot, {"resources/r-typesheet14.png", 1, 3, 30, 23, 5, 1, 3, 0, 0}},
     };
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
