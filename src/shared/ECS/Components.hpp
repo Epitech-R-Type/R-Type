@@ -9,6 +9,7 @@
 
 #include "../Utilities/Utilities.hpp"
 #include "ECS.hpp"
+#include "ECSManager.hpp"
 #include <ctime>
 #include <map>
 #include <memory>
@@ -33,12 +34,68 @@ enum ComponentType {
     SOUND_DAMAGE
 };
 
+// BUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUFER Related
+
+typedef std::vector<std::uint8_t> ProtocolBuffer;
+
+template <class T>
+ProtocolBuffer initBuffer(ComponentType id) {
+    ProtocolBuffer buffer;
+    buffer.resize(sizeof(std::uint8_t) + sizeof(std::uint64_t) + sizeof(T));
+    buffer[0] = id;
+    const std::uint64_t size = sizeof(T);
+    memcpy(&buffer[1], (std::uint8_t*)&size, sizeof(size));
+    return buffer;
+}
+
+ComponentType getComponentType(ProtocolBuffer buffer);
+
+std::uint64_t getComponentSize(ProtocolBuffer buffer);
+
+template <class T>
+T getComponentData(ProtocolBuffer buffer) {
+    return *(T*)&(buffer[1 + sizeof(getComponentSize(buffer))]);
+}
+
+template <class T>
+void insertComponentData(ProtocolBuffer& buffer, T data) {
+    memcpy(&buffer[9], (std::uint8_t*)&data, sizeof(T));
+}
+
+// ENDOF
+
+template <typename T, typename M>
+ProtocolBuffer toBuffer(T component, ComponentType ID) {
+    ProtocolBuffer buffer = initBuffer<T>(ID);
+
+    M mask = *(M*)(&component);
+
+    insertComponentData<M>(buffer, mask);
+
+    return buffer;
+}
+
+template <typename T>
+void applyUpdate(ProtocolBuffer buffer, EntityID entityID, std::shared_ptr<ECSManager> manager) {
+    T* component;
+
+    if (!manager->hasComponent<T>(entityID))
+        component = manager->addComp<T>(entityID, {});
+    else
+        component = manager->getComponent<T>(entityID);
+
+    *component = getComponentData<T>(buffer);
+}
+
 namespace Armor {
     struct Component {
         int armor = 0;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        int armor = 0;
+    };
+
 } // namespace Armor
 
 namespace Health {
@@ -48,7 +105,12 @@ namespace Health {
         bool visible = false;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        int health = 0;
+        int maxHealth = 0;
+        bool visible = false;
+    };
+
 } // namespace Health
 
 namespace Position {
@@ -57,7 +119,11 @@ namespace Position {
         float y = 0;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        float x = 0;
+        float y = 0;
+    };
+
 } // namespace Position
 
 namespace Animation {
@@ -83,6 +149,13 @@ namespace Animation {
         double scale = 3;
         int index = 0;
         std::chrono::time_point<std::chrono::system_clock> timer;
+    };
+
+    struct Mask {
+        AnimationID animationID;
+        unsigned long layer = 1;
+        double rotation = 0;
+        double scale = 3;
     };
 
     struct Sheet {
@@ -119,7 +192,6 @@ namespace Animation {
         {Animation::AnimationID::Death, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Animation
 
 namespace Velocity {
@@ -131,18 +203,23 @@ namespace Velocity {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        float x = 0;
+        float y = 0;
+        EntityID follow = -1;
+    };
 } // namespace Velocity
 
-// a struct for client side use only, to get the Player Entity  via the ECS
-// check if this doesnt f up the ECS synchro
 namespace Player {
     struct Component {
         int score;
         int uniqueID;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        int score;
+    };
+
 } // namespace Player
 
 namespace Damage {
@@ -150,7 +227,10 @@ namespace Damage {
         int damage = 0;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        int damage = 0;
+    };
+
 } // namespace Damage
 
 namespace Armament {
@@ -161,13 +241,17 @@ namespace Armament {
 
     struct Component {
         Armament::Type type;
-        // in milliseconds
-        double interval = 0.1;
+        double interval = 0.1; // in milliseconds
         long long ammo = -1;
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        Armament::Type type;
+        double interval = 0.1; // in milliseconds
+        long long ammo = -1;
+    };
+
 } // namespace Armament
 
 namespace Hitbox {
@@ -178,16 +262,28 @@ namespace Hitbox {
         Point botRight;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        Point topLeft;
+        Point topRight;
+        Point botLeft;
+        Point botRight;
+    };
+
 } // namespace Hitbox
 
 namespace Team {
-    enum Component {
+    enum Group {
         Ally,
         Enemy,
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Component {
+        Group team;
+    };
+
+    struct Mask {
+        Group team;
+    };
 
 } // namespace Team
 
@@ -197,7 +293,9 @@ namespace ImmunityFrame {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        double duration = 0;
+    };
 
 } // namespace ImmunityFrame
 
@@ -216,7 +314,10 @@ namespace SoundCreation {
         SFXID ID;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        SFXID ID;
+    };
+
 } // namespace SoundCreation
 
 namespace SoundDestruction {
@@ -224,7 +325,10 @@ namespace SoundDestruction {
         SFXID ID;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        SFXID ID;
+    };
+
 } // namespace SoundDestruction
 
 namespace SoundDamage {
@@ -232,20 +336,24 @@ namespace SoundDamage {
         SFXID ID;
     };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        SFXID ID;
+    };
+
 } // namespace SoundDamage
-std::string toString(Armor::Component component);
-std::string toString(Health::Component component);
-std::string toString(Position::Component component);
-std::string toString(Animation::Component component);
-std::string toString(Velocity::Component component);
-std::string toString(Player::Component component);
-std::string toString(Damage::Component component);
-std::string toString(Armament::Component component);
-std::string toString(Hitbox::Component component);
-std::string toString(Team::Component component);
-std::string toString(ImmunityFrame::Component component);
-std::string toString(CollisionEffect::Component component);
-std::string toString(SoundCreation::Component component);
-std::string toString(SoundDestruction::Component component);
-std::string toString(SoundDamage::Component component);
+
+// std::string toString(Armor::Component component);
+// std::string toString(Health::Component component);
+// std::string toString(Position::Component component);
+// std::string toString(Animation::Component component);
+// std::string toString(Velocity::Component component);
+// std::string toString(Player::Component component);
+// std::string toString(Damage::Component component);
+// std::string toString(Armament::Component component);
+// std::string toString(Hitbox::Component component);
+// std::string toString(Team::Component component);
+// std::string toString(ImmunityFrame::Component component);
+// std::string toString(CollisionEffect::Component component);
+// std::string toString(SoundCreation::Component component);
+// std::string toString(SoundDestruction::Component component);
+// std::string toString(SoundDamage::Component component);

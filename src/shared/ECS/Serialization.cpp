@@ -8,3 +8,126 @@
 #include "Serialization.hpp"
 
 std::bitset<MAX_COMPONENTS> Serialization::hiddenComponents;
+
+ProtocolBuffer Serialization::entityToBuffer(EntityID entityID, std::shared_ptr<ECSManager> manager) {
+    const std::bitset<MAX_COMPONENTS> setComponents = manager->getSetComponents(entityID);
+
+    ProtocolBuffer buffer;
+
+    for (int componentTypeID = 0; componentTypeID < MAX_COMPONENTS; componentTypeID++) {
+        if (setComponents[componentTypeID] != 1)
+            continue;
+
+        if (Serialization::hiddenComponents[componentTypeID]) {
+            WARNING("Ooy ya cheeky wanker, ya'r not tryin to have a peak at hidden components are ya?");
+            continue;
+        }
+
+        ProtocolBuffer componentBuffer = entityToBufferSwitch(entityID, manager, ComponentType(componentTypeID));
+
+        buffer.insert(buffer.end(), componentBuffer.begin(), componentBuffer.end());
+    }
+
+    return buffer;
+}
+
+ProtocolBuffer Serialization::entityToBufferSwitch(EntityID entityID, std::shared_ptr<ECSManager> manager, ComponentType ID) {
+    switch (ID) {
+        case ComponentType::ARMOR:
+            return Serialization::componentToBuffer<Armor::Component, Armor::Mask>(entityID, manager);
+        case ComponentType::HEALTH:
+            return Serialization::componentToBuffer<Health::Component, Health::Mask>(entityID, manager);
+        case ComponentType::POSITION:
+            return Serialization::componentToBuffer<Position::Component, Position::Mask>(entityID, manager);
+        case ComponentType::ANIMATION:
+            return Serialization::componentToBuffer<Animation::Component, Animation::Mask>(entityID, manager);
+        case ComponentType::VELOCITY:
+            return Serialization::componentToBuffer<Velocity::Component, Velocity::Mask>(entityID, manager);
+        case ComponentType::PLAYER:
+            return Serialization::componentToBuffer<Player::Component, Player::Mask>(entityID, manager);
+        case ComponentType::DAMAGE:
+            return Serialization::componentToBuffer<Damage::Component, Damage::Mask>(entityID, manager);
+        case ComponentType::ARMAMENT:
+            return Serialization::componentToBuffer<Armament::Component, Armament::Mask>(entityID, manager);
+        case ComponentType::HITBOX:
+            return Serialization::componentToBuffer<Hitbox::Component, Hitbox::Mask>(entityID, manager);
+        case ComponentType::TEAM:
+            return Serialization::componentToBuffer<Team::Component, Team::Mask>(entityID, manager);
+        case ComponentType::IMMUNITY_FRAME:
+            return Serialization::componentToBuffer<ImmunityFrame::Component, ImmunityFrame::Mask>(entityID, manager);
+        case ComponentType::SOUND_CREATION:
+            return Serialization::componentToBuffer<SoundCreation::Component, SoundCreation::Mask>(entityID, manager);
+        case ComponentType::SOUND_DESTRUCTION:
+            return Serialization::componentToBuffer<SoundDestruction::Component, SoundDestruction::Mask>(entityID, manager);
+        case ComponentType::SOUND_DAMAGE:
+            return Serialization::componentToBuffer<SoundDamage::Component, SoundDamage::Mask>(entityID, manager);
+        default:
+            ERRORLOG("Unhandled Component: " << ID << ".");
+    }
+}
+
+EntityID Serialization::bufferToEntity(const ProtocolBuffer buffer, std::shared_ptr<ECSManager> manager) {
+    const EntityID entityID = *(EntityID*)&buffer[0];
+
+    if (!manager->isValidEntity(entityID))
+        manager->newEntity(entityID);
+    const std::uint8_t compCount = *(std::uint8_t*)&buffer[8];
+
+    size_t nextCompPointer = 9;
+
+    for (int i = 0; i < compCount; i++) {
+        ProtocolBuffer bufferComponent(buffer.begin() + nextCompPointer, buffer.end());
+
+        std::vector<std::uint8_t> args = toBuffer<Armor::Component, Armor::Mask>({2}, ComponentType::ARMOR);
+
+        switch (bufferComponent[0]) {
+            case ComponentType::ARMOR:
+                applyUpdate<Armor::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::HEALTH:
+                applyUpdate<Health::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::POSITION:
+                applyUpdate<Position::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::ANIMATION:
+                applyUpdate<Animation::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::VELOCITY:
+                applyUpdate<Velocity::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::PLAYER:
+                applyUpdate<Player::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::DAMAGE:
+                applyUpdate<Damage::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::ARMAMENT:
+                applyUpdate<Armament::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::HITBOX:
+                applyUpdate<Hitbox::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::TEAM:
+                applyUpdate<Team::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::IMMUNITY_FRAME:
+                applyUpdate<ImmunityFrame::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::SOUND_CREATION:
+                applyUpdate<SoundCreation::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::SOUND_DESTRUCTION:
+                applyUpdate<SoundDestruction::Component>(bufferComponent, entityID, manager);
+                break;
+            case ComponentType::SOUND_DAMAGE:
+                applyUpdate<SoundDamage::Component>(bufferComponent, entityID, manager);
+                break;
+            default:
+                ERRORLOG("Unhandled Component: " << bufferComponent[0] << ".");
+        }
+        nextCompPointer += 1 + getComponentSize(bufferComponent);
+    }
+
+    return entityID;
+}

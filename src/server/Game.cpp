@@ -175,7 +175,7 @@ bool Game::noEnemies() {
 
     for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
         Team::Component* ent = this->_entManager->getComponent<Team::Component>(*beg);
-        if (*ent == Team::Enemy) {
+        if (ent->team == Team::Group::Enemy) {
             noEnemy = false;
             break;
         }

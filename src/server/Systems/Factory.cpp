@@ -28,7 +28,7 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
     ECS->addComp<Armament::Component>(player, {Armament::Type::Laser, 150, -1});
     ECS->addComp<Velocity::Component>(player, {10, 10});
     ECS->addComp<Hitbox::Component>(player, HitboxSystem::buildHitbox(animation, position));
-    ECS->addComp<Team::Component>(player, Team::Ally);
+    ECS->addComp<Team::Component>(player, {Team::Group::Ally});
     ECS->addComp<ImmunityFrame::Component>(player, {1});
     ECS->addComp<Damage::Component>(player, {20});
     ECS->addComp<CollisionEffect::Component>(player, &CollisionEffect::dealDamage);
@@ -58,7 +58,7 @@ EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS, BossStats 
     ECS->addComp<Damage::Component>(endboss, {stats.damage});
     ECS->addComp<Health::Component>(endboss, {stats.health * players, stats.health * players, false});
     ECS->addComp<Hitbox::Component>(endboss, HitboxSystem::buildHitbox(animation, position));
-    ECS->addComp<Team::Component>(endboss, Team::Enemy);
+    ECS->addComp<Team::Component>(endboss, {Team::Group::Enemy});
     ECS->addComp<Armament::Component>(endboss, {stats.armament, 1000, 50});
     ECS->addComp<CollisionEffect::Component>(endboss, &CollisionEffect::dealDamage);
     ECS->pushModified(endboss);
@@ -79,7 +79,7 @@ EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS, EnemyStats s
     ECS->addComp<Damage::Component>(enemy, {stats.damage});
 
     ECS->addComp<Hitbox::Component>(enemy, HitboxSystem::buildHitbox(animation, position));
-    ECS->addComp<Team::Component>(enemy, Team::Enemy);
+    ECS->addComp<Team::Component>(enemy, {Team::Group::Enemy});
     ECS->addComp<Armament::Component>(enemy, {stats.armament, 1000, 50});
     ECS->addComp<CollisionEffect::Component>(enemy, &CollisionEffect::dealDamage);
 
@@ -104,7 +104,7 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
     Velocity::Component velocity{};
     Team::Component team = *ECS->getComponent<Team::Component>(source);
 
-    if (team == Team::Component::Ally) {
+    if (team.team == Team::Group::Ally) {
         positionPre.x = center.x - (float)Animation::Sheets[sourceAnimation->animationID].animWidth;
         positionPre.y = center.y;
         velocity.x = velocityX;
@@ -112,7 +112,7 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
         ECS->addComp<SoundCreation::Component>(bullet, {SFXID::HEAVY_GUNSHOT});
     }
 
-    if (team == Team::Component::Enemy) {
+    if (team.team == Team::Group::Enemy) {
         positionPre.x = center.x + (float)Animation::Sheets[sourceAnimation->animationID].animWidth;
         positionPre.y = center.y;
         velocity.x = -velocityX;

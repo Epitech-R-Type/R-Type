@@ -211,10 +211,12 @@ Table of Contents
             The component piece is constituted of the following parts:
 
             - componentId
+                Size: 2 Bytes
+                Type: Unsigned char
 
             - componentSize (in bytes)
-                Size: 2 Bytes
-                Type: Unsigned short
+                Size: 8 Bytes
+                Type: Unsigned long
                 Note: Describes the size of the componentData
 
             - componentData
@@ -254,7 +256,7 @@ Table of Contents
             command has a variable number of that given piece.
 
             ENTITY:
-                (entId) (component...)
+                (entId) (compCount) (component...)
 
             DEL_ENT:
                 (entId)

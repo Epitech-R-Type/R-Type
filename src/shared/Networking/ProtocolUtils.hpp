@@ -20,7 +20,7 @@ typedef std::vector<char> ByteBuf;
 // may be used by both the server and the client
 
 // Protocol piece sizes
-#define SIZE_HEADER 2
+#define SIZE_HEADER 8
 #define CMD 2
 #define UUID_PIECE 16
 
@@ -104,7 +104,7 @@ public:
 
     static Message<ByteBuf> createMessage(unsigned short cmd, ByteBuf data, asio::ip::address addr, asio::ip::port_type port) {
         ByteBuf final;
-        unsigned short finalSize = CMD + SIZE_HEADER + data.size();
+        unsigned long finalSize = CMD + SIZE_HEADER + data.size();
         LOG("Final size is : " << data.size());
         final.resize(finalSize);
 
