@@ -4,7 +4,7 @@
 
 ## User documentation
 
-* [install and build guide](<README (1).md>)
+* [install and build guide](user-documentation/install-and-build-guide.md)
 * [Tutorials](user-documentation/tutorials/README.md)
   * [New levels](user-documentation/tutorials/new-levels.md)
   * [New entities](user-documentation/tutorials/new-entities/README.md)
@@ -14,7 +14,6 @@
   * [New Graphics](user-documentation/tutorials/new-graphics.md)
 * [System overview](user-documentation/systems-overview.md)
 * [license](user-documentation/license.md)
-* [test](user-documentation/test.md)
 
 ## DEV documentation
 

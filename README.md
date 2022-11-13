@@ -13,7 +13,7 @@ It will include network based multiplayer.
 
 *   [User Documentation](broken-reference)
 
-    * [install and build guide](<README (1).md>)
+    * [install and build guide](broken-reference)
     * [tutorials](user-documentation/tutorials/)
     * [System overview](user-documentation/systems-overview.md)
 
