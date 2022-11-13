@@ -16,10 +16,11 @@ It will include network based multiplayer.
     * [install and build guide](user-documentation/install-and-build-guide.md)
     * [tutorials](user-documentation/tutorials/)
     * [System overview](user-documentation/systems-overview.md)
+    * [license](user-documentation/license.md)
 
 
 * [Dev Documentation](dev-documentation/)
+  * [Client Documentation](dev-documentation/client-documentation.md)
   * [communication protocol](dev-documentation/comunication-protocol.md)
   * [ECS documentation](dev-documentation/ecs-documentation.md)
   * [team/coding conventions](dev-documentation/team-coding-conventions.md)
-  * [Client Documentation](dev-documentation/client-documentation.md)
