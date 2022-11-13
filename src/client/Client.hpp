@@ -48,7 +48,12 @@ public:
 
     ClientLobbyProtocol* getProtocol();
 
+    void reset();
+
 private:
+    std::shared_ptr<ECSManager> _ECS;
+    std::unique_ptr<SpriteSystem> _spriteSystem;
+
     void advanceStage(std::unique_ptr<Menu>& currentMenu);
 
     Stages _currentStage;

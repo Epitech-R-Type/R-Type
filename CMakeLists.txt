@@ -78,6 +78,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/TextBox.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/Button.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/Menu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/ConnectionMenu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbyMenu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbySelectionMenu.cpp"
@@ -152,6 +153,7 @@ function(build_client)
         resources/r-typesheet44.png
         resources/lost.png
         resources/background.png
+        resources/menu-background.png
         resources/song0.mp3
         resources/song1.mp3
         resources/song2.mp3

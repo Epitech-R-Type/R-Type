@@ -19,9 +19,10 @@ void ConnectionMenu::apply() {
     const std::string ip = connectionData[0];
     int udpPort = std::stol(connectionData[1]);
 
-    this->_client->connect(ip, udpPort);
-
-    this->_state = State::DONE;
+    if (!this->_client->connect(ip, udpPort))
+        this->_state = State::DONE;
+    else
+        this->_ipPrompt = std::make_unique<TextBox>(std::string("127.0.0.1:3501"), CENTER(20 * 30, 60), 20 * 30, 60, 20);
 }
 
 void ConnectionMenu::draw() {

@@ -13,9 +13,9 @@ public:
 
     virtual void draw() = 0;
 
-    State getState() {
-        return this->_state;
-    };
+    State getState();
+
+    void setState(State);
 
 protected:
     State _state = State::RUNNING;
