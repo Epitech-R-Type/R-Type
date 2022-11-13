@@ -74,14 +74,14 @@ void ClientGame::mainLoop() {
         // if (this->_protocol->handleCommands())
         //     break;
 
-        this->_spriteSystem->apply();
-        this->_healthSystem->apply();
+        //         this->_spriteSystem->apply();
+        //         this->_healthSystem->apply();
 
-#ifndef WIN32_LEAN_AND_MEAN
-        this->_musicSystem->apply();
-#endif
+        // #ifndef WIN32_LEAN_AND_MEAN
+        //         this->_musicSystem->apply();
+        // #endif
 
-        this->_inputSystem->apply();
+        //         this->_inputSystem->apply();
 
         EndDrawing();
     }

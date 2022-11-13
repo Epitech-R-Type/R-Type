@@ -25,6 +25,7 @@ Utilities::UUID::UUID(std::string uuidStr) {
 
 Utilities::UUID::UUID(UuidBuf uuidBuffer) {
     std::string buffer;
+    buffer.assign(uuidBuffer.begin(), uuidBuffer.end());
 
     std::optional<uuids::uuid> potUUID = uuids::uuid::from_string(buffer);
 
