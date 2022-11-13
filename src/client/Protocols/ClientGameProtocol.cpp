@@ -8,8 +8,8 @@
 #include "ClientGameProtocol.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
-ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                                       std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<ECSManager> entManager,
+ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming,
+                                       std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing, std::shared_ptr<ECSManager> entManager,
                                        std::shared_ptr<MusicSystem> musicSystem, asio::ip::address addr, asio::ip::port_type port,
                                        Utilities::UUID uuid)
     : _incomingMQ(incoming),
@@ -97,7 +97,7 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
 // }
 
 // bool ClientGameProtocol::handleCommands() {
-//     std::optional<Message<std::string>> msg;
+//     std::optional<Message<ByteBuf>> msg;
 
 //     while ((msg = this->_incomingMQ->pop())) {
 //         auto parsed = ProtocolUtils::parseCommand(*msg);
@@ -153,7 +153,13 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
 // }
 
 void ClientGameProtocol::sendHere() {
-    auto msg = ProtocolUtils::createMessage(HERE, this->_uuid.toString(), this->_addr, this->_port);
+    UuidBuf uuidBuf = this->_uuid.toBuffer();
+
+    ByteBuf data;
+    data.resize(uuidBuf.size());
+    memcpy(&data[0], &uuidBuf, uuidBuf.size());
+
+    auto msg = ProtocolUtils::createMessage(HERE, data, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
 
