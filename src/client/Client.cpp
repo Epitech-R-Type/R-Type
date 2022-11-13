@@ -117,6 +117,7 @@ int Client::mainLoop() {
             if (this->_tcpStopFlag.get()->load() == true)
                 return 1;
 
+            this->_protocol->sendLeave();
             currentMenu = std::make_unique<LobbySelectionMenu>(this);
             this->_currentStage = Stages::ROOMSELECTION;
 
