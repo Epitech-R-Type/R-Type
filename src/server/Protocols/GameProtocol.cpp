@@ -49,7 +49,8 @@ bool GameProtocol::waitForClients() {
 bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     // Error handling
     if (cmd.data.size() != SIZE_HEADER + CMD + UUID_PIECE) {
-        ERRORLOG("Argument length is not incorrect");
+        LOG("UUID PIECE SIZE IS : " << UUID_PIECE);
+        ERRORLOG("Argument length is not incorrect, expected " << SIZE_HEADER + CMD + UUID_PIECE << " got " << cmd.data.size());
         return false;
     }
 

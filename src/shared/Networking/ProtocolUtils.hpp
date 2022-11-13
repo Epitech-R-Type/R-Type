@@ -22,7 +22,7 @@ typedef std::vector<char> ByteBuf;
 // Protocol piece sizes
 #define SIZE_HEADER 2
 #define CMD 2
-#define UUID_PIECE sizeof(UuidBuf)
+#define UUID_PIECE 16
 
 // Command binary protocol value
 #define UPDATE_ENTITY 1
@@ -66,9 +66,14 @@ struct LobbyInfo {
 class ProtocolUtils {
 public:
     static std::optional<ParsedCmd> parseCommand(Message<ByteBuf> msg) {
-        ByteBuf buf;
-        std::optional<ParsedCmd> output = {{Command::Here, buf}};
+        ByteBuf buf = msg.getMsg();
         unsigned short command = ProtocolUtils::getCommand(msg.getMsg());
+
+        unsigned short size = *(unsigned short*)&buf[0];
+        buf.erase(buf.begin(), buf.begin() + SIZE_HEADER + CMD);
+        buf.erase(buf.begin() + size, buf.end());
+
+        std::optional<ParsedCmd> output = {{Command::Here, buf}};
 
         // Get command type
         if (command == HERE)
@@ -100,6 +105,7 @@ public:
     static Message<ByteBuf> createMessage(unsigned short cmd, ByteBuf data, asio::ip::address addr, asio::ip::port_type port) {
         ByteBuf final;
         unsigned short finalSize = CMD + SIZE_HEADER + data.size();
+        LOG("Final size is : " << data.size());
         final.resize(finalSize);
 
         // Move final size and command into buffer
