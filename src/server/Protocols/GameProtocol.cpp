@@ -25,6 +25,7 @@ bool GameProtocol::waitForClients() {
     while (this->_connMan.getConnectionCount() < targetClientCount && !timeout.isExpired()) {
         while ((msg = this->_incomingMQ->pop())) {
             // Parse command
+            LOG((char*)&msg->getMsg()[0]);
             auto parsedCmd = ProtocolUtils::parseCommand(*msg);
 
             // if command invalid continue
@@ -61,10 +62,10 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
     for (auto conn : this->_expectedClients)
         if (conn.uuid == candidate) {
             this->_connMan.addConnection(addr, port, candidate);
+            LOG("New Client is here!");
             break;
         }
 
-    LOG("New Client is here!");
     return true;
 }
 

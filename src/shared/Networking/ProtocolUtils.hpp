@@ -75,7 +75,8 @@ public:
         ByteBuf buf = msg.getMsg();
         unsigned short command = ProtocolUtils::getCommand(msg.getMsg());
 
-        unsigned short size = *(unsigned short*)&buf[0];
+        unsigned long size = ProtocolUtils::packetSize(msg.getMsg());
+
         buf.erase(buf.begin(), buf.begin() + SIZE_HEADER + CMD);
         buf.erase(buf.begin() + size - SIZE_HEADER - CMD, buf.end());
 
@@ -110,16 +111,19 @@ public:
 
     static Message<ByteBuf> createMessage(unsigned short cmd, ByteBuf data, asio::ip::address addr, asio::ip::port_type port) {
         ByteBuf final;
-        unsigned long finalSize = CMD + SIZE_HEADER + data.size();
+
+        std::cout << &data[0] << std::endl;
+
+        const unsigned long finalSize = CMD + SIZE_HEADER + data.size();
         LOG("Final size is : " << data.size());
         final.resize(finalSize);
 
         // Move final size and command into buffer
-        memcpy(&final[0], &finalSize, SIZE_HEADER);
-        memcpy(&final[SIZE_HEADER], &cmd, CMD);
+        memcpy(&final[0], (char*)&finalSize, SIZE_HEADER);
+        memcpy(&final[SIZE_HEADER], (char*)&cmd, CMD);
 
         // Move data
-        memcpy(&final[SIZE_HEADER + CMD], &data, data.size());
+        memcpy(&final[SIZE_HEADER + CMD], (char*)&data[0], data.size());
 
         auto output = Message<ByteBuf>(final, addr, port);
 
@@ -127,16 +131,16 @@ public:
     }
 
     // Read packet size on first two bytes of packet
-    static unsigned short packetSize(ByteBuf buf) {
+    static unsigned long packetSize(ByteBuf buf) {
         if (buf.size() < SIZE_HEADER)
             return buf.size();
 
         // Return unsigned short encoded in first two bytes
-        return *((unsigned short*)&buf);
+        return *((unsigned long*)&buf);
     }
 
     static unsigned short getCommand(ByteBuf buf) {
-        if (buf.size() < 4)
+        if (buf.size() < SIZE_HEADER + CMD)
             return 0;
 
         // Return unsigned short encoded in first two bytes

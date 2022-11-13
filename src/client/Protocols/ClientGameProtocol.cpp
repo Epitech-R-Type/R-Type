@@ -85,6 +85,7 @@ bool ClientGameProtocol::handleCommands() {
     std::optional<Message<ByteBuf>> msg;
 
     while ((msg = this->_incomingMQ->pop())) {
+        LOG((char*)&msg->getMsg()[0]);
         auto parsed = ProtocolUtils::parseCommand(*msg);
 
         if (!parsed)
@@ -143,11 +144,11 @@ void ClientGameProtocol::sendActFire() {
 void ClientGameProtocol::sendHere() {
     std::string uuidStr = this->_uuid.toString();
 
-    LOG("Uuid str length = " << uuidStr.length());
+    LOG("Uuid str length = " << uuidStr.length() << " " << uuidStr);
 
     ByteBuf data;
     data.resize(UUID_PIECE);
-    strcpy(&data[0], uuidStr.c_str());
+    memcpy(&data[0], uuidStr.c_str(), UUID_PIECE);
 
     auto msg = ProtocolUtils::createMessage(HERE, data, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
