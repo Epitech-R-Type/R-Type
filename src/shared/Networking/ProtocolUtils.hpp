@@ -115,7 +115,6 @@ public:
         std::cout << &data[0] << std::endl;
 
         const unsigned long finalSize = CMD + SIZE_HEADER + data.size();
-        LOG("Final size is : " << data.size());
         final.resize(finalSize);
 
         // Move final size and command into buffer
