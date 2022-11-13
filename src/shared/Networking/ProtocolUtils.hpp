@@ -22,7 +22,7 @@ typedef std::vector<char> ByteBuf;
 // Protocol piece sizes
 #define SIZE_HEADER 2
 #define CMD 2
-#define UUID_PIECE 16
+#define UUID_PIECE 36
 #define ENTID_PIECE 8
 #define COMPID_PIECE 4
 #define DIRECTION_PIECE 1
@@ -77,7 +77,7 @@ public:
 
         unsigned short size = *(unsigned short*)&buf[0];
         buf.erase(buf.begin(), buf.begin() + SIZE_HEADER + CMD);
-        buf.erase(buf.begin() + size, buf.end());
+        buf.erase(buf.begin() + size - SIZE_HEADER - CMD, buf.end());
 
         std::optional<ParsedCmd> output = {{Command::Here, buf}};
 
@@ -111,7 +111,7 @@ public:
     static Message<ByteBuf> createMessage(unsigned short cmd, ByteBuf data, asio::ip::address addr, asio::ip::port_type port) {
         ByteBuf final;
         unsigned short finalSize = CMD + SIZE_HEADER + data.size();
-        LOG("Final size is : " << data.size());
+        LOG("Final size is : " << finalSize);
         final.resize(finalSize);
 
         // Move final size and command into buffer

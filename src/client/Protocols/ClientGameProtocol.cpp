@@ -141,11 +141,13 @@ void ClientGameProtocol::sendActFire() {
 }
 
 void ClientGameProtocol::sendHere() {
-    UuidBuf uuidBuf = this->_uuid.toBuffer();
+    std::string uuidStr = this->_uuid.toString();
+
+    LOG("Uuid str length = " << uuidStr.length());
 
     ByteBuf data;
-    data.resize(uuidBuf.size());
-    memcpy(&data[0], &uuidBuf, uuidBuf.size());
+    data.resize(UUID_PIECE);
+    strcpy(&data[0], uuidStr.c_str());
 
     auto msg = ProtocolUtils::createMessage(HERE, data, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
