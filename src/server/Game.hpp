@@ -99,6 +99,7 @@ private:
         {30, 15, Animation::AnimationID::Orb, 3.0, Armament::Type::Laser},
         {50, 50, Animation::AnimationID::Orb, 1.0, Armament::Type::Laser},
         {100, 50, Animation::AnimationID::LegRobot, 1.0, Armament::Type::Laser},
+        {100, 50, Animation::AnimationID::Transformer, 1.0, Armament::Type::Ball},
     };
     std::vector<BossStats> _bosses = {
         {300, 20, Animation::AnimationID::Cluster, Armament::Type::Buckshot},

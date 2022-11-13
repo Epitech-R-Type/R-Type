@@ -16,9 +16,9 @@ namespace Factory {
         EntityID makeEnemy(std::shared_ptr<ECSManager> ECS, EnemyStats stats);
     } // namespace Enemy
     namespace Weapon {
-        void makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source);
+        void makeSingleShot(std::shared_ptr<ECSManager> ECS, EntityID source, Animation::AnimationID anim);
 
-        void makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source);
+        void makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source, Animation::AnimationID anim);
     } // namespace Weapon
 
     namespace Misc {

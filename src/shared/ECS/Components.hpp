@@ -77,6 +77,7 @@ namespace Animation {
         Death,
         LegRobot,
         Transformer,
+        Ball,
     };
     struct Component {
         AnimationID animationID;
@@ -107,6 +108,7 @@ namespace Animation {
         {Animation::AnimationID::Orb, {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0}},
         {Animation::AnimationID::Vortex, {"resources/r-typesheet30a.png", 1, 3, 32, 32, 3, 1, 2, 0, 0}},
         {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
+        {Animation::AnimationID::Ball, {"resources/r-typesheet14.png", 182, 139, 13, 12, 8, 1, 3, 0, 0}},
         {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
         {Animation::AnimationID::Lost, {"resources/lost.png", 0, 0, 639, 513, 8, 1, 1, 0, 0}},
 
@@ -119,8 +121,8 @@ namespace Animation {
 
         {Animation::AnimationID::Background, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
         {Animation::AnimationID::Death, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
-        {Animation::AnimationID::LegRobot, {"resources/r-typesheet10.png", 1, 3, 30, 23, 6, 1, 3, 0, 0}},
-        {Animation::AnimationID::LegRobot, {"resources/r-typesheet14.png", 1, 3, 30, 23, 5, 1, 3, 0, 0}},
+        {Animation::AnimationID::LegRobot, {"resources/r-typesheet10.png", 1, 1, 30, 23, 6, 1, 3, 0, 0}},
+        {Animation::AnimationID::Transformer, {"resources/r-typesheet14.png", 1, 1, 47, 48, 5, 1, 3, 0, 0}},
     };
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
@@ -161,6 +163,7 @@ namespace Armament {
     enum Type {
         Laser,
         Buckshot,
+        Ball,
     };
 
     struct Component {
