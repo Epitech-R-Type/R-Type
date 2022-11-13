@@ -24,10 +24,12 @@ Utilities::UUID::UUID(std::string uuidStr) {
 };
 
 Utilities::UUID::UUID(UuidBuf uuidBuffer) {
-    std::string buffer;
-    buffer.assign(uuidBuffer.begin(), uuidBuffer.end());
+    std::array<uuids::uuid::value_type, 16L> buffer;
 
-    std::optional<uuids::uuid> potUUID = uuids::uuid::from_string(buffer);
+    for (int i = 0; (uuidBuffer.begin() + i) != uuidBuffer.end(); i++)
+        buffer[i] = static_cast<uuids::uuid::value_type>(uuidBuffer[i]);
+
+    std::optional<uuids::uuid> potUUID = uuids::uuid(buffer);
 
     if (potUUID.has_value())
         this->_uuid = potUUID.value();
