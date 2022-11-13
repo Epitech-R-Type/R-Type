@@ -1,10 +1,6 @@
----
-description: >-
-  an easy and quick how-to guide showing you how to create new content for 
-  R-type
----
-
 # Tutorials
+
+A**n easy and quick how-to guide showing you how to create new content for R-type**
 
 ### Table of contents
 
