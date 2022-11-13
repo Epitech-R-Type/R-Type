@@ -22,18 +22,24 @@ typedef std::vector<char> ByteBuf;
 // Protocol piece sizes
 #define SIZE_HEADER 8
 #define CMD 2
-#define UUID_PIECE 16
+#define UUID_PIECE 36
+#define ENTID_PIECE 8
+#define COMPID_PIECE 4
+#define DIRECTION_PIECE 1
+#define SONG_PIECE 1
 
 // Command binary protocol value
 #define UPDATE_ENTITY 1
 #define DELETE_ENTITY 2
-#define ACTION_MOVE 9
-#define ACTION_SHOOT 10
+#define DELETE_COMPONENT 3
 #define CHANGE_MUSIC 4
-#define HERE 7
-#define PING 11
 #define GAME_END 5
 #define DEATH 6
+#define HERE 7
+#define GET_ENTITY 8
+#define ACTION_MOVE 9
+#define ACTION_SHOOT 10
+#define PING 11
 
 // Command enum
 enum Command {
@@ -71,7 +77,7 @@ public:
 
         unsigned short size = *(unsigned short*)&buf[0];
         buf.erase(buf.begin(), buf.begin() + SIZE_HEADER + CMD);
-        buf.erase(buf.begin() + size, buf.end());
+        buf.erase(buf.begin() + size - SIZE_HEADER - CMD, buf.end());
 
         std::optional<ParsedCmd> output = {{Command::Here, buf}};
 

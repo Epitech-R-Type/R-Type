@@ -34,7 +34,7 @@ ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int s
     this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_udpStopFlag, -1);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
-    // this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
+    this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
 }
 
 ClientGame::~ClientGame() {
@@ -62,26 +62,26 @@ void ClientGame::mainLoop() {
     while (this->_isRunning && !*(this->_tcpStopFlag)) // Detect window close button or ESC key
     {
         // Send PING command every second
-        // if (pingTimer.isExpired()) {
-        //     pingTimer.resetTimer();
-        //     this->_protocol->sendPing();
-        // }
+        if (pingTimer.isExpired()) {
+            pingTimer.resetTimer();
+            this->_protocol->sendPing();
+        }
 
         BeginDrawing();
 
         ClearBackground(BLACK);
 
-        // if (this->_protocol->handleCommands())
-        //     break;
+        if (this->_protocol->handleCommands())
+            break;
 
-        //         this->_spriteSystem->apply();
-        //         this->_healthSystem->apply();
+        this->_spriteSystem->apply();
+        this->_healthSystem->apply();
 
-        // #ifndef WIN32_LEAN_AND_MEAN
-        //         this->_musicSystem->apply();
-        // #endif
+#ifndef WIN32_LEAN_AND_MEAN
+        this->_musicSystem->apply();
+#endif
 
-        //         this->_inputSystem->apply();
+        this->_inputSystem->apply();
 
         EndDrawing();
     }

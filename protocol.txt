@@ -191,8 +191,8 @@ Table of Contents
 
         - componentId:
 
-            Size: 1 Byte
-            Type: Unsigned char
+            Size: 4 Bytes
+            Type: Int
 
         - songId:
 
