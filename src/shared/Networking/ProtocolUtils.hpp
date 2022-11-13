@@ -136,7 +136,7 @@ public:
             return buf.size();
 
         // Return unsigned short encoded in first two bytes
-        return *((unsigned long*)&buf);
+        return *((unsigned long*)&buf[0]);
     }
 
     static unsigned short getCommand(ByteBuf buf) {
