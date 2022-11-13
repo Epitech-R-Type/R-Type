@@ -122,7 +122,7 @@ bool ClientGameProtocol::handleCommands() {
 
 // ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
-void ClientGameProtocol::sendActMove(unsigned char direction) {
+void ClientGameProtocol::sendActMove(char direction) {
     if (!this->_isAlive)
         return;
 
