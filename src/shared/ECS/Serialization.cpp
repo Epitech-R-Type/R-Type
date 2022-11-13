@@ -39,8 +39,7 @@ ByteBuf Serialization::entityToBuffer(EntityID entityID, std::shared_ptr<ECSMana
             ByteBuf buf = componentBuffer.value();
             std::copy(buf.begin(), buf.end(), std::back_inserter(buffer));
             compCount++;
-        } else
-            break;
+        }
     }
 
     memcpy(&buffer[8], (char*)&compCount, sizeof(compCount));
