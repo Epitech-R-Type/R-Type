@@ -39,7 +39,6 @@ ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int s
 
 ClientGame::~ClientGame() {
     // Close raylib window
-    CloseWindow();
 
     // Signal thread to stop and join thread
     this->_udpStopFlag->store(true);

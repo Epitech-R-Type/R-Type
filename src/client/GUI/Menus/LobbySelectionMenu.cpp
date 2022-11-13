@@ -10,43 +10,80 @@ LobbySelectionMenu::LobbySelectionMenu(Client* client) {
     float height = 50;
     float yAxis = 100;
 
-    for (auto& lobby : this->_client->lobbies) {
-        std::string text = makeLobbyText(lobby);
+    this->_buttonWidth = 300;
+    this->_buttonHeight = 50;
+    this->_buttonXPos = ALIGN_MIDDLE(width);
+    this->_buttonYPos = 100;
+    this->_buttonColor = WHITE;
 
-        this->_lobbies.push_back(Button(text, ALIGN_MIDDLE(width), yAxis, width, height, {255, 255, 255, 255}));
-        yAxis += 100 + height;
-    }
+    this->queryLobbies();
 };
 
-std::string LobbySelectionMenu::makeLobbyText(int lobby) {
+std::string LobbySelectionMenu::makeLobbyText(LobbyInfo lobby) {
     int maxPlayers = 4;
-    int currentPlayers = 0;
 
-    return "Lobby " + std::to_string(lobby) + ": " + std::to_string(currentPlayers) + "/" + std::to_string(maxPlayers);
+    return "Lobby " + std::to_string(lobby.id) + ": " + std::to_string(lobby.playerCount) + "/" + std::to_string(maxPlayers);
 };
+
+void LobbySelectionMenu::queryLobbies() {
+    std::vector<LobbyInfo> lobbies = this->_client->getProtocol()->sendGetLobbies();
+    int highestLobbyID = -1;
+
+    this->_lobbies.clear();
+
+    float yPos = this->_buttonYPos;
+
+    // pushing all existing lobbies into lobby array
+    for (LobbyInfo lobby : lobbies) {
+        std::string text = this->makeLobbyText(lobby);
+
+        Button button(text, this->_buttonXPos, yPos, this->_buttonWidth, this->_buttonHeight, this->_buttonColor);
+
+        if (lobby.isRunning)
+            button.disable();
+        if (lobby.id > highestLobbyID)
+            highestLobbyID = lobby.id;
+        this->_lobbies.push_back({lobby, std::move(button)});
+        yPos += (this->_buttonHeight + 20);
+    }
+
+    highestLobbyID++;
+    // setting newly created lobby ID
+    this->_lobbies.push_back({
+        LobbyInfo{highestLobbyID, false, 0},
+        Button("Create Lobby", this->_buttonXPos, yPos, this->_buttonWidth, this->_buttonHeight, this->_buttonColor),
+    });
+}
+
+void LobbySelectionMenu::refreshLobbies() {
+    static Timer timer(0.5);
+
+    if (timer.isExpired()) {
+        this->queryLobbies();
+        timer.resetTimer();
+    }
+}
 
 void LobbySelectionMenu::apply() {
-    for (int i = 0; i < this->_lobbies.size(); i++) {
-        this->_lobbies[i].apply();
-        if (this->_lobbies[i].hasBeenPressed() && this->_client->getProtocol()->sendJoinLobby(i)) {
-            this->_done = true;
+    this->refreshLobbies();
+
+    for (auto& [lobby, button] : this->_lobbies) {
+        button.apply();
+        if (button.hasBeenPressed() && this->_client->getProtocol()->sendJoinLobby(lobby.id)) {
+            this->_state = State::DONE;
             return;
         }
     }
-};
+}
 
 void LobbySelectionMenu::draw() {
     BeginDrawing();
 
     ClearBackground(BLACK);
 
-    for (auto& button : this->_lobbies) {
+    for (auto& [lobby, button] : this->_lobbies) {
         button.draw();
     }
 
     EndDrawing();
-};
-
-bool LobbySelectionMenu::getDone() {
-    return this->_done;
 };

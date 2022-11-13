@@ -111,7 +111,7 @@ void ConnectionManager::joinLobby(Utilities::UUID clientUUID, int lobbyID) {
         if (conn.uuid == clientUUID)
             conn.lobby = lobbyID;
 
-    LOG("Client 0 lobby is : " << this->_connections[0].lobby);
+    LOG("Client " << clientUUID << " lobby is : " << this->_connections[0].lobby);
 }
 
 std::vector<LobbyInfo> ConnectionManager::getLobbyInfos() const {
@@ -121,10 +121,8 @@ std::vector<LobbyInfo> ConnectionManager::getLobbyInfos() const {
     for (auto conn : this->_connections)
         lobbies[conn.lobby]++;
 
-    LOG("INFO REQUIRED : " << lobbies[1]);
-
     for (const auto& [lobbyId, playerCount] : lobbies)
-        if (lobbyId > 0 && playerCount > 0)
+        if (lobbyId >= 0 && playerCount > 0)
             output.push_back({lobbyId, false, playerCount});
     return output;
 }

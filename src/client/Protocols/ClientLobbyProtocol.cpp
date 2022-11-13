@@ -49,12 +49,6 @@ int ClientLobbyProtocol::handleIncMessages() {
 
         const std::vector<std::string> msgBits = Utilities::splitStr(msg, " ");
 
-        if (msgBits[0] == "200" && !this->_authenticated) {
-            this->saveAuthentication(msg);
-            this->_authenticated = true;
-            return 0;
-        }
-
         if (Utilities::UUID(msg) != this->_serverUUID) {
             ERRORLOG("Couldn't authenticate Server.");
             continue;
@@ -151,6 +145,10 @@ bool ClientLobbyProtocol::sendJoinLobby(int lobby) {
 
 void ClientLobbyProtocol::sendAuthenticate() {
     this->sendMessage("AUTHENTICATE\r\n");
+    const TcpResponse res = this->awaitResponse();
+
+    this->saveAuthentication(res.body);
+    this->_authenticated = true;
 }
 
 std::vector<LobbyInfo> ClientLobbyProtocol::sendGetLobbies() {
@@ -164,8 +162,10 @@ std::vector<LobbyInfo> ClientLobbyProtocol::sendGetLobbies() {
     // Handle resp
     TcpResponse resp = this->awaitResponse();
 
-    if (resp.code != 200) // Shouldn't happen
+    if (resp.code != 200) {
+        ERRORLOG(resp.code << resp.body);
         return output;
+    }
 
     auto splitMsg = Utilities::splitStr(resp.body, ";");
 

@@ -33,5 +33,9 @@ int main(int argc, char** argv) {
             return 84;
     }
 
-    return client.mainLoop();
+    while (client.mainLoop() == 1) {
+        client.reset();
+    };
+
+    return 0;
 }
