@@ -4,7 +4,7 @@
 
 Install commitizen globally and pre-commit into your current repositories `.git` folder:
 
-```bash
+```
 $ pip install -U commitizen
 
 $ pip install pre-commit
@@ -12,7 +12,7 @@ $ pip install pre-commit
 
 Now install the hook for commit message checking:
 
-```bash
+```
 $ pre-commit install --hook-type commit-msg
 
 $ pre-commit autoupdate

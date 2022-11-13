@@ -66,7 +66,7 @@ This system does the music and SFX. The apply function updates the buffer for th
 
 The changeSong function changes the music. It takes an SongID enum and will use the static map of songs to change it.
 
-```cpp
+```
 static std::map<SongID, Song> Songs{
     {SongID::BOSS, {"resources/song0.mp3"}},
     {SongID::NORMAL, {"resources/song1.mp3"}},
@@ -76,7 +76,7 @@ static std::map<SongID, Song> Songs{
 
 The playSFX function will play a SFX definied in a map given the key.
 
-```cpp
+```
 static std::map<SFXID, SFX> SoundEffects{
     {SFXID::KNOCK, {"resources/gunShot1.wav"}},
     {SFXID::LIGHT_GUNSHOT, {"resources/gunShot2.wav"}},

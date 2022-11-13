@@ -2,13 +2,13 @@
 
 #### install dependencies:
 
-```bash
+```
 yay -S pkg-config cmake make
 ```
 
 #### Install Conan:
 
-```bash
+```
 $ pip install conan
 $ conan profile new default --detect
 $ conan profile update conf.tools.system.package_manager:mode=install default;
@@ -23,19 +23,19 @@ For this to work on Windows you need to have access to a Unix shell, such as Git
 
 In order to build both the client and the server, you can make the "all" rule:
 
-```bash
+```
 $ make
 ```
 
 In order to build the tests, make the "test" rule:
 
-```bash
+```
 $ make test
 ```
 
 Binaries can be found at:
 
-```bash
+```
 ./bin/Server
 ./bin/Client
 ./bin/Tests
@@ -47,13 +47,13 @@ Binaries can be found at:
 
 Delete the build folder if present:
 
-```bash
+```
 $ rm -rf build
 ```
 
 Then build the binaries:
 
-```bash
+```
 $ mkdir build
 $ cd build
 $ conan install . --build=missing
@@ -65,13 +65,13 @@ $ cmake --build . --config Release
 
 Delete the build folder if present:
 
-```bash
+```
 $ Remove-Item 'build' -Recurse
 ```
 
 Then build the binaries:
 
-```bash
+```
 $ New-item -itemtype directory build
 $ Set-Location build
 $ conan install . --build=missing
