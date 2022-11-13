@@ -43,8 +43,8 @@ private:
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class
-    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
-    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _outgoingMQ;
 
     std::shared_ptr<ClientGameProtocol> _protocol;
 

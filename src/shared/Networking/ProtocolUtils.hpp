@@ -14,18 +14,32 @@
 #include "../MessageQueue/MessageQueue.hpp"
 #include "../Utilities/Utilities.hpp"
 
+typedef std::vector<char> ByteBuf;
+
 // This header is used to store any small part of protocol implementation that
 // may be used by both the server and the client
 
-#define UPDATE_ENTITY "ENTITY"
-#define DELETE_ENTITY "DEL_ENT"
-#define ACTION_MOVE "ACT_MOVE"
-#define ACTION_SHOOT "ACT_SHOOT"
-#define CHANGE_MUSIC "CHANGE_MUSIC"
-#define HERE "HERE"
-#define PING "PING"
-#define GAME_END "GAME_END"
-#define DEATH "DEATH"
+// Protocol piece sizes
+#define SIZE_HEADER 8
+#define CMD 2
+#define UUID_PIECE 36
+#define ENTID_PIECE 8
+#define COMPID_PIECE 4
+#define DIRECTION_PIECE 1
+#define SONG_PIECE 1
+
+// Command binary protocol value
+#define UPDATE_ENTITY 1
+#define DELETE_ENTITY 2
+#define DELETE_COMPONENT 3
+#define CHANGE_MUSIC 4
+#define GAME_END 5
+#define DEATH 6
+#define HERE 7
+#define GET_ENTITY 8
+#define ACTION_MOVE 9
+#define ACTION_SHOOT 10
+#define PING 11
 
 // Command enum
 enum Command {
@@ -45,7 +59,7 @@ enum Command {
 // Parsed command structure$
 struct ParsedCmd {
     Command cmd;
-    std::vector<std::vector<std::string>> args;
+    ByteBuf data;
 };
 
 // Lobby info sent in get lobbies command
@@ -57,59 +71,88 @@ struct LobbyInfo {
 
 class ProtocolUtils {
 public:
-    static std::optional<ParsedCmd> parseCommand(Message<std::string> msg) {
-        std::optional<ParsedCmd> output = {{Command::Here, std::vector<std::vector<std::string>>()}};
-        std::vector<std::string> splitMsg = Utilities::splitStr(msg.getMsg(), " ");
+    static std::optional<ParsedCmd> parseCommand(Message<ByteBuf> msg) {
+        ByteBuf buf = msg.getMsg();
+        unsigned short command = ProtocolUtils::getCommand(msg.getMsg());
 
-        // Error handling
-        if (splitMsg.size() != 2) {
-            ERRORLOG("Message length not 2.");
-            return {};
-        }
-        // Check for CRLF
-        if (splitMsg[1][splitMsg[1].size() - 1] != '\n' || splitMsg[1][splitMsg[1].size() - 2] != '\r') {
-            ERRORLOG("Carriage Return Line Feed missing.");
-            return {};
-        }
+        unsigned long size = ProtocolUtils::packetSize(msg.getMsg());
 
-        splitMsg[1].erase(splitMsg[1].length() - 2, 2);
+        buf.erase(buf.begin(), buf.begin() + SIZE_HEADER + CMD);
+        buf.erase(buf.begin() + size - SIZE_HEADER - CMD, buf.end());
+
+        std::optional<ParsedCmd> output = {{Command::Here, buf}};
 
         // Get command type
-        if (splitMsg[0] == HERE)
+        if (command == HERE)
             output->cmd = Command::Here;
-        else if (splitMsg[0] == UPDATE_ENTITY)
+        else if (command == UPDATE_ENTITY)
             output->cmd = Command::Entityd;
-        else if (splitMsg[0] == ACTION_SHOOT)
+        else if (command == ACTION_SHOOT)
             output->cmd = Command::ActShoot;
-        else if (splitMsg[0] == ACTION_MOVE)
+        else if (command == ACTION_MOVE)
             output->cmd = Command::ActMove;
-        else if (splitMsg[0] == DELETE_ENTITY)
+        else if (command == DELETE_ENTITY)
             output->cmd = Command::DeleteEntity;
-        else if (splitMsg[0] == CHANGE_MUSIC)
+        else if (command == CHANGE_MUSIC)
             output->cmd = Command::ChangeMusic;
-        else if (splitMsg[0] == PING)
+        else if (command == PING)
             output->cmd = Command::Ping;
-        else if (splitMsg[0] == GAME_END)
+        else if (command == GAME_END)
             output->cmd = Command::GameEnd;
-        else if (splitMsg[0] == DEATH)
+        else if (command == DEATH)
             output->cmd = Command::Death;
         else {
-            ERRORLOG("Unhandled Command: " << splitMsg[0]);
+            ERRORLOG("Unhandled Command: " << command);
             return {};
         }
-
-        // Split args up in args and subargs
-        auto splitArgs = Utilities::splitStr(splitMsg[1], ";");
-        for (auto arg : splitArgs)
-            output->args.push_back(Utilities::splitStr(arg, ","));
 
         return output;
     }
 
-    static Message<std::string> createMessage(std::string cmd, std::string args, asio::ip::address addr, asio::ip::port_type port) {
-        std::string body = cmd;
-        body += " " + args + "\r\n";
+    static Message<ByteBuf> createMessage(unsigned short cmd, ByteBuf data, asio::ip::address addr, asio::ip::port_type port) {
+        ByteBuf final;
 
-        return Message<std::string>(body, addr, port);
+        std::cout << &data[0] << std::endl;
+
+        const unsigned long finalSize = CMD + SIZE_HEADER + data.size();
+        final.resize(finalSize);
+
+        // Move final size and command into buffer
+        memcpy(&final[0], (char*)&finalSize, SIZE_HEADER);
+        memcpy(&final[SIZE_HEADER], (char*)&cmd, CMD);
+
+        // Move data
+        memcpy(&final[SIZE_HEADER + CMD], (char*)&data[0], data.size());
+
+        auto output = Message<ByteBuf>(final, addr, port);
+
+        return output;
+    }
+
+    // Read packet size on first two bytes of packet
+    static unsigned long packetSize(ByteBuf buf) {
+        if (buf.size() < SIZE_HEADER)
+            return buf.size();
+
+        // Return unsigned short encoded in first two bytes
+        return *((unsigned long*)&buf[0]);
+    }
+
+    static unsigned short getCommand(ByteBuf buf) {
+        if (buf.size() < SIZE_HEADER + CMD)
+            return 0;
+
+        // Return unsigned short encoded in first two bytes
+        return *((unsigned short*)&buf[SIZE_HEADER]);
+    }
+
+    // Convert char[] to ByteBuf
+    static ByteBuf convertBuffer(char buffer[], size_t size) {
+        ByteBuf output;
+
+        for (int i = 0; i < size; i++)
+            output.push_back(buffer[i]);
+
+        return output;
     }
 };

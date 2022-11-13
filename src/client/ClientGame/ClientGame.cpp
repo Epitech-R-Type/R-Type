@@ -14,8 +14,8 @@ ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int s
     this->_isRunning = true;
 
     // Init com thread
-    this->_incomingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
-    this->_outgoingMQ = std::make_shared<MessageQueue<Message<std::string>>>();
+    this->_incomingMQ = std::make_shared<MessageQueue<Message<ByteBuf>>>();
+    this->_outgoingMQ = std::make_shared<MessageQueue<Message<ByteBuf>>>();
     this->_entManager = std::make_shared<ECSManager>();
 
     this->_uuid = uuid;
