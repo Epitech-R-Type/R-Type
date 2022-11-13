@@ -9,7 +9,7 @@
 #include "../Systems/ArmamentSystem.hpp"
 #include <iostream>
 
-GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
                            std::vector<Connection> connections, std::shared_ptr<ECSManager> entManager, Utilities::UUID serverUUID)
     : _incomingMQ(incoming),
       _outgoingMQ(outgoing),
@@ -20,16 +20,17 @@ GameProtocol::GameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> i
 bool GameProtocol::waitForClients() {
     int targetClientCount = this->_expectedClients.size();
     Timer timeout(CONNECTION_DELAY);
-    std::optional<Message<std::string>> msg;
+    std::optional<Message<ByteBuf>> msg;
 
     while (this->_connMan.getConnectionCount() < targetClientCount && !timeout.isExpired()) {
         while ((msg = this->_incomingMQ->pop())) {
             // Parse command
+            LOG((char*)&msg->getMsg()[0]);
             auto parsedCmd = ProtocolUtils::parseCommand(*msg);
 
             // if command invalid continue
             if (!parsedCmd) {
-                ERRORLOG("Invalid command: " << msg.value());
+                ERRORLOG("Invalid command: " << parsedCmd->cmd);
                 continue;
             }
 
@@ -48,39 +49,41 @@ bool GameProtocol::waitForClients() {
 
 bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     // Error handling
-    if (cmd.args.size() != 1) {
-        ERRORLOG("Argument length is not 1.");
-        return false;
-    }
-    if (cmd.args[0].size() != 1) {
-        ERRORLOG("Argument[0] length is not 1.");
+    if (cmd.data.size() != UUID_PIECE) {
+        LOG("UUID PIECE SIZE IS : " << UUID_PIECE);
+        ERRORLOG("Argument length is not incorrect, expected " << UUID_PIECE << " got " << cmd.data.size());
         return false;
     }
 
-    Utilities::UUID candidate(cmd.args[0][0]);
+    std::string uuidStr(cmd.data.begin(), cmd.data.end());
+
+    Utilities::UUID candidate(uuidStr);
 
     for (auto conn : this->_expectedClients)
         if (conn.uuid == candidate) {
             this->_connMan.addConnection(addr, port, candidate);
+            LOG("New Client is here!");
             break;
         }
 
-    LOG("New Client is here!");
     return true;
 }
 
 void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     int playerUID = this->getPlayer(addr, port);
 
+    LOG("Handling move");
+
     // Error handling
-    if (0 > playerUID || cmd.args.size() != 1 || cmd.args[0].size() != 1) {
+    if (0 > playerUID || cmd.data.size() != 1) {
         ERRORLOG("Command is invalid.");
         return;
     }
 
     // In system if player is dead, send del Ent again ? or say something at least
     // This in case client has missed message that his character is dead
-    int direction = std::stoi(cmd.args[0][0]);
+    char direction;
+    memcpy(&direction, &cmd.data[0], DIRECTION_PIECE);
 
     EntityID entityID = INVALID_INDEX;
     for (auto beg = this->_entityManager->begin<Player::Component>(); beg != this->_entityManager->end<Player::Component>(); ++beg) {
@@ -142,6 +145,7 @@ void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 
 void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     int playerUID = this->getPlayer(addr, port);
+    LOG("Handling shoot");
 
     // Error handling
     if (0 > playerUID) {
@@ -165,26 +169,26 @@ void GameProtocol::handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::
     ArmamentSystem::makeWeapon(entityID, this->_entityManager);
 }
 
-void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
-    EntityID id;
+// void GameProtocol::handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
+//     EntityID id;
 
-    // Error handling
-    if (cmd.args.size() != 1 || cmd.args[0].size() != 1) {
-        ERRORLOG("Command is invalid.");
-        return;
-    }
+//     // Error handling
+//     if (cmd.args.size() != 1 || cmd.args[0].size() != 1) {
+//         ERRORLOG("Command is invalid.");
+//         return;
+//     }
 
-    // Attempt conversion to long long
-    try {
-        id = std::stoll(cmd.args[0][0]);
-    } catch (...) {
-        ERRORLOG("Failed to convert argument to EntityID.");
-        return;
-    }
+//     // Attempt conversion to long long
+//     try {
+//         id = std::stoll(cmd.args[0][0]);
+//     } catch (...) {
+//         ERRORLOG("Failed to convert argument to EntityID.");
+//         return;
+//     }
 
-    // Send entity
-    this->sendEntity(id);
-}
+//     // Send entity
+//     this->sendEntity(id);
+// }
 
 void GameProtocol::handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     int playerUID = this->getPlayer(addr, port);
@@ -199,7 +203,7 @@ void GameProtocol::handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 }
 
 void GameProtocol::handleCommands() {
-    std::optional<Message<std::string>> msg;
+    std::optional<Message<ByteBuf>> msg;
 
     while ((msg = this->_incomingMQ->pop())) {
         auto parsed = ProtocolUtils::parseCommand(*msg);
@@ -210,9 +214,9 @@ void GameProtocol::handleCommands() {
         }
 
         switch (parsed->cmd) {
-            case Command::GetEntity:
-                this->handleGetEnt(*parsed, msg->getAddr(), msg->getPort());
-                break;
+            // case Command::GetEntity:
+            //     this->handleGetEnt(*parsed, msg->getAddr(), msg->getPort());
+            //     break;
             case Command::ActShoot:
                 this->handleShoot(*parsed, msg->getAddr(), msg->getPort());
                 break;
@@ -221,6 +225,7 @@ void GameProtocol::handleCommands() {
                 break;
             case Command::Ping:
                 this->handlePing(*parsed, msg->getAddr(), msg->getPort());
+                LOG("Handling ping");
                 break;
             default:
                 WARNING("Unhandled GameProtocol Command: " << parsed->cmd);
@@ -228,76 +233,82 @@ void GameProtocol::handleCommands() {
     }
 }
 
-// ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
+//─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
 // Sends to all connected clients
-template <class... T>
+
 void GameProtocol::sendEntity(EntityID id) {
     if (!this->_entityManager->isValidEntity(id)) {
         ERRORLOG("Entity ID is invalid: " << id);
         return;
     }
 
-    std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
+    ByteBuf entitySerialization = Serialization::entityToBuffer(id, this->_entityManager);
     for (auto conn : this->_connMan.getConnections())
-        this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, conn.addr, conn.port));
+        this->_outgoingMQ->push(ProtocolUtils::createMessage(UPDATE_ENTITY, entitySerialization, conn.addr, conn.port));
 }
 
 // Sends to only one client
-template <class... T>
+
 void GameProtocol::sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const {
     if (!this->_entityManager->isValidEntity(id)) {
         ERRORLOG("Entity ID is invalid: " << id);
         return;
     }
 
-    std::string entitySerialization = Serialization::entityToString<T...>(id, this->_entityManager);
-    this->_outgoingMQ->push(ProtocolUtils::createMessage("ENTITY", entitySerialization, addr, port));
+    ByteBuf entitySerialization = Serialization::entityToBuffer(id, this->_entityManager);
+    this->_outgoingMQ->push(ProtocolUtils::createMessage(UPDATE_ENTITY, entitySerialization, addr, port));
 }
 
 void GameProtocol::sendDelEntity(EntityID id) {
-    std::stringstream ss;
-    ss << id;
-    for (auto conn : this->_connMan.getConnections()) {
-        this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_ENT", ss.str(), conn.addr, conn.port));
-    }
+    ByteBuf msgBody(ENTID_PIECE);
+    memcpy(&msgBody[0], &id, ENTID_PIECE);
+
+    for (auto conn : this->_connMan.getConnections())
+        this->_outgoingMQ->push(ProtocolUtils::createMessage(DELETE_ENTITY, msgBody, conn.addr, conn.port));
 }
 
 template <class T>
 void GameProtocol::sendDelComponent(EntityID id) {
-    std::stringstream ss;
-    ss << id << ";" << getID<T>();
+    ByteBuf msgBody(ENTID_PIECE + COMPID_PIECE);
+    unsigned short compId = getID<T>();
+
+    memcpy(&msgBody[0], &id, ENTID_PIECE);
+    memcpy(&msgBody[ENTID_PIECE], &compId, COMPID_PIECE);
 
     for (auto conn : this->_connMan.getConnections()) {
-        this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), conn.addr, conn.port));
+        this->_outgoingMQ->push(ProtocolUtils::createMessage(DELETE_COMPONENT, msgBody, conn.addr, conn.port));
     }
 }
 
 template <class T>
 void GameProtocol::sendDelComponent(EntityID id, Connection client) const {
-    std::stringstream ss;
-    ss << id << ";" << getID<T>();
+    ByteBuf msgBody(ENTID_PIECE + COMPID_PIECE);
+    unsigned short compId = getID<T>();
 
-    this->_outgoingMQ->push(ProtocolUtils::createMessage("DEL_COMP", ss.str(), client.addr, client.port));
+    memcpy(&msgBody[0], &id, 4);
+    memcpy(&msgBody[ENTID_PIECE], &compId, 2);
+
+    this->_outgoingMQ->push(ProtocolUtils::createMessage(DELETE_COMPONENT, msgBody, client.addr, client.port));
 }
 
 void GameProtocol::sendChangeMusic(int songId) {
-    std::stringstream ss;
-    ss << songId;
-    DEBUG("Sending to Clients: CHANGE_MUSIC " << ss.str());
+    unsigned char id = songId;
+    ByteBuf msgBody;
+    msgBody.resize(1);
+    memcpy(&id, &msgBody[0], 1);
 
-    for (auto conn : this->_connMan.getConnections()) {
-        this->_outgoingMQ->push(ProtocolUtils::createMessage("CHANGE_MUSIC", ss.str(), conn.addr, conn.port));
-    }
+    for (auto conn : this->_connMan.getConnections())
+        this->_outgoingMQ->push(ProtocolUtils::createMessage(CHANGE_MUSIC, msgBody, conn.addr, conn.port));
 }
 
 void GameProtocol::sendGameEnd() {
     for (auto conn : this->_connMan.getConnections())
-        this->_outgoingMQ->push(ProtocolUtils::createMessage("GAME_END", "", conn.addr, conn.port));
+        this->_outgoingMQ->push(ProtocolUtils::createMessage(GAME_END, {}, conn.addr, conn.port));
 }
 
 void GameProtocol::sendDeath(asio::ip::address addr, asio::ip::port_type port) {
-    this->_outgoingMQ->push(ProtocolUtils::createMessage("DEATH", "", addr, port));
+    this->_outgoingMQ->push(ProtocolUtils::createMessage(DEATH, {}, addr, port));
 }
 
 void GameProtocol::sendDeath(int clientId) {
@@ -306,7 +317,7 @@ void GameProtocol::sendDeath(int clientId) {
     if (!conn)
         return;
 
-    this->_outgoingMQ->push(ProtocolUtils::createMessage("DEATH", "", conn->addr, conn->port));
+    this->_outgoingMQ->push(ProtocolUtils::createMessage(DEATH, {}, conn->addr, conn->port));
 }
 
 // ─── Utilities ───────────────────────────────────────────────────────────────────────────────────

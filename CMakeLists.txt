@@ -65,6 +65,11 @@ function(build_server)
         src/server/levels/level1
         src/server/levels/level2
         src/server/levels/level3
+        src/server/levels/level4
+        src/server/levels/level5
+        src/server/levels/level6
+        src/server/levels/level7
+        src/server/levels/level8
         )
 
         target_link_libraries(Server server::rc)
@@ -78,6 +83,7 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/ClientGame/ClientGame.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/TextBox.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Components/Button.cpp"
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/Menu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/ConnectionMenu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbyMenu.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/GUI/Menus/LobbySelectionMenu.cpp"
@@ -88,7 +94,8 @@ function(build_client)
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/HealthSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/MusicSystem.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/client/Systems/PlayerMovementSystem.cpp"
-            ""
+            "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Serialization.cpp"
+
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
             "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
@@ -152,6 +159,8 @@ function(build_client)
         resources/r-typesheet44.png
         resources/lost.png
         resources/background.png
+        resources/citySunnset.png
+        resources/menu-background.png
         resources/song0.mp3
         resources/song1.mp3
         resources/song2.mp3
@@ -188,14 +197,12 @@ function(build_tests)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Serialization.cpp"
     )
 
     set(TEST_CODE
         "${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsTests.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsFixture.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/Serialization.cpp"
     )
 
     add_executable(

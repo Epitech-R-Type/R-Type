@@ -13,7 +13,7 @@ Button::Button(std::string text, float x, float y, float width, float height, Co
     this->_highlightRec = Rectangle{x + 3, y + 3, this->_width - 6, this->_height - 6};
     this->_color = color;
     this->_text = text;
-    this->_fontSize = this->_height * 0.8;
+    this->_fontSize = this->_width / text.size();
     this->_hovered = Interaction::normal;
 
     this->_textColor = Color{
@@ -65,7 +65,10 @@ void Button::draw() {
         DrawRectangleRec(this->_highlightRec, this->_clickedColors);
 
     const float textWidth = this->_text.length() * (this->_fontSize / 2);
-    DrawText(this->_text.c_str(), ALIGN_MIDDLE(textWidth), this->_y + this->_height / 10, this->_fontSize, this->_textColor);
+
+    const float textX = this->_x + (this->_width / 2) - (textWidth / 2);
+    const float textY = this->_y + this->_height / 2 - this->_fontSize / 2;
+    DrawText(this->_text.c_str(), textX, textY, this->_fontSize, this->_textColor);
 }
 
 bool Button::hasBeenPressed() {
@@ -73,6 +76,7 @@ bool Button::hasBeenPressed() {
         this->_hasBeenPressed = false;
         return true;
     };
+    return false;
 }
 
 void Button::disable() {

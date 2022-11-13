@@ -8,8 +8,8 @@
 #include "UdpCommunication.hpp"
 
 // Function passed to communication thread on creation
-void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag, int port) {
+void udp_communication_main(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
+                            std::shared_ptr<std::atomic<bool>> stopFlag, int port) {
     if (port < 0) { // bind to available port
         LOG("Binding to available port");
         UdpCommunication com(incoming, outgoing, stopFlag);
@@ -36,9 +36,8 @@ void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> 
 }
 
 // For use in the server only
-UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                                   std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
-                                   int port)
+UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
+                                   std::shared_ptr<std::atomic<bool>> stopFlag, int port)
     : _sock(_ctxt, asio::ip::udp::endpoint(asio::ip::udp::v4(), port)),
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
@@ -48,8 +47,8 @@ UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::str
 }
 
 // For use in the client only
-UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                                   std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag)
+UdpCommunication::UdpCommunication(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
+                                   std::shared_ptr<std::atomic<bool>> stopFlag)
     : _sock(_ctxt, asio::ip::udp::v4()),
       _outgoingTimer(_ctxt, asio::chrono::milliseconds(OUTGOING_CHECK_INTERVAL)),
       _stopFlag(stopFlag),
@@ -64,18 +63,25 @@ void UdpCommunication::setup_incoming_handler() {
         if (!err) {
             auto addr = this->_endpoint.address();
             auto port = this->_endpoint.port();
-            // DEBUG("Received packet from : " << addr << ":" << port);
-            // DEBUG("Packet contents : " << this->_buffer);
 
-            this->push_message(Message(std::string(this->_buffer), addr, port));
+            // Check packet size
+            ByteBuf buffer = ProtocolUtils::convertBuffer(this->_buffer, 1024);
+            unsigned short size = ProtocolUtils::packetSize(buffer);
 
-            // Reset buffer
+            if (size >= 2) {
+                // Remove useless bytes
+                buffer.erase(buffer.begin() + size, buffer.end());
+
+                this->push_message(Message(buffer, addr, port));
+            }
+
+            // Reset asio buffer
             memset(this->_buffer, 0, 1024);
 
             // Call incoming handler again
             this->setup_incoming_handler();
         } else {
-            // Reset buffer
+            // Reset asio buffer
             memset(this->_buffer, 0, 1024);
 
             std::cerr << "Error performing async_receive_from()" << err << std::endl;
@@ -94,17 +100,16 @@ void UdpCommunication::setup_outgoing_handler() {
             this->setup_outgoing_handler();
             return;
         }
-        std::optional<Message<std::string>> msg;
+        std::optional<Message<ByteBuf>> msg;
         char buffer[1024];
 
         while ((msg = this->pop_message())) {
-            // DEBUG("Sending UDP packer to : " << msg->getAddr() << ":" << msg->getPort());
-            std::string msgStr = msg->getMsg();
+            auto msgBody = msg->getMsg();
 
             // Prepare buffer
-            int len = msgStr.length();
-            strcpy(buffer, msgStr.c_str());
-            memset(&buffer[len], 0, 1024 - len);
+            int len = msgBody.size();
+            memcpy(buffer, &msgBody[0], len);
+            // memset(&buffer[len], 0, 1024 - len);
 
             asio::ip::udp::endpoint target(msg->getAddr(), msg->getPort());
             this->_sock.send_to(asio::buffer(buffer), target);
@@ -140,11 +145,11 @@ void UdpCommunication::stop() {
 }
 
 // Access Methods
-void UdpCommunication::push_message(Message<std::string> msg) {
+void UdpCommunication::push_message(Message<ByteBuf> msg) {
     this->_incomingMessages->push(msg);
 }
 
-std::optional<Message<std::string>> UdpCommunication::pop_message(void) {
+std::optional<Message<ByteBuf>> UdpCommunication::pop_message(void) {
     return this->_outgoingMessages->pop();
 }
 

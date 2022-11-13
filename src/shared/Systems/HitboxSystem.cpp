@@ -106,7 +106,7 @@ bool HitboxSystem::isColliding(EntityID entity1, EntityID entity2) {
  * */
 void HitboxSystem::checkCollision(EntityID entity) {
     for (auto beg = this->_ECS->begin<Hitbox::Component>(); beg != this->_ECS->end<Hitbox::Component>(); ++beg) {
-        if (*this->_ECS->getComponent<Team::Component>(entity) == *this->_ECS->getComponent<Team::Component>(*beg))
+        if (this->_ECS->getComponent<Team::Component>(entity)->team == this->_ECS->getComponent<Team::Component>(*beg)->team)
             continue;
 
         if (!isColliding(entity, *beg))

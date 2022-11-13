@@ -23,8 +23,8 @@ void game_main(std::vector<Connection> connections, int port, Utilities::UUID se
 Game::Game(std::vector<Connection> connections, int port, Utilities::UUID serverUUID, std::shared_ptr<std::atomic<bool>> gameStopFlag)
     : _isRunning(true),
       _entManager(std::make_shared<ECSManager>()),
-      _incomingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
-      _outgoingMQ(std::make_shared<MessageQueue<Message<std::string>>>()),
+      _incomingMQ(std::make_shared<MessageQueue<Message<ByteBuf>>>()),
+      _outgoingMQ(std::make_shared<MessageQueue<Message<ByteBuf>>>()),
       _protocol(_incomingMQ, _outgoingMQ, connections, _entManager, serverUUID) {
     this->_gameStopFlag = gameStopFlag;
 
@@ -61,7 +61,7 @@ void Game::init() {
         Factory::Ally::makePlayer(this->_entManager, conn.player);
 
     // starts the music ingame
-    this->_protocol.sendChangeMusic(NORMAL);
+    // this->_protocol.sendChangeMusic(NORMAL);
     LOG("Initializing game");
     this->loadLevel(1);
 }
@@ -111,7 +111,6 @@ bool Game::loadLevel(int nb) {
         tmp.maxSpawned = std::atoi(line.c_str());
         line = lvlArr[i++];
         tmp.spawnInterval = std::atof(line.c_str());
-        srand(time(NULL));
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
         line = lvlArr[i++];
         std::vector<std::string> lineArr = Utilities::splitStr(line, " ");
@@ -143,7 +142,6 @@ void Game::refreshLevel() {
         this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
         this->_enemyTimer = getNow();
         this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
-        srand(time(NULL));
         int rd = rand() % this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
         Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies[rd]);
     }
@@ -175,7 +173,7 @@ bool Game::noEnemies() {
 
     for (auto beg = this->_entManager->begin<Team::Component>(); beg != this->_entManager->end<Team::Component>(); ++beg) {
         Team::Component* ent = this->_entManager->getComponent<Team::Component>(*beg);
-        if (*ent == Team::Enemy) {
+        if (ent->team == Team::Group::Enemy) {
             noEnemy = false;
             break;
         }

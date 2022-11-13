@@ -6,10 +6,11 @@
 */
 
 #include "ClientGameProtocol.hpp"
+#include "../../shared/ECS/Serialization.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
-ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                                       std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<ECSManager> entManager,
+ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming,
+                                       std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing, std::shared_ptr<ECSManager> entManager,
                                        std::shared_ptr<MusicSystem> musicSystem, asio::ip::address addr, asio::ip::port_type port,
                                        Utilities::UUID uuid)
     : _incomingMQ(incoming),
@@ -22,15 +23,14 @@ ClientGameProtocol::ClientGameProtocol(std::shared_ptr<MessageQueue<Message<std:
 
 // ─── Command Handling ────────────────────────────────────────────────────────────────────────────
 
-void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
+void ClientGameProtocol::handleEntity(ParsedCmd cmd) {
     static int count = 0;
-    if (cmd.args.size() < 1) {
+    if (cmd.data.size() < 1) {
         ERRORLOG("Command " << cmd.cmd << " has no args.");
         return;
     }
 
-    std::vector<std::string> res = Utilities::splitStr(raw, " ");
-    EntityID newEntity = Serialization::stringToEntity(res[1], this->_entityManager);
+    EntityID newEntity = Serialization::bufferToEntity(cmd.data, this->_entityManager);
     if (this->_entityManager->hasComponent<SoundCreation::Component>(newEntity) &&
         this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID != SFXID::INVALID)
         MusicSystem::SFXQueue.push(this->_entityManager->getComponent<SoundCreation::Component>(newEntity)->ID);
@@ -39,17 +39,12 @@ void ClientGameProtocol::handleEntity(ParsedCmd cmd, std::string raw) {
 void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
     EntityID id;
 
-    if (cmd.args.size() != 1) {
-        ERRORLOG("Command " << cmd.cmd << " has not exactly one arg.");
+    if (cmd.data.size() != ENTID_PIECE) {
+        ERRORLOG("Command " << cmd.cmd << " doesn't have right data size");
         return;
     }
+    memcpy(&id, &cmd.data[0], ENTID_PIECE);
 
-    try {
-        id = std::stoll(cmd.args[0][0]);
-    } catch (...) {
-        ERRORLOG("Unable to convert argument to long long.");
-        return;
-    }
     if (this->_entityManager->hasComponent<SoundDestruction::Component>(id) && this->_entityManager->hasComponent<Position::Component>(id) &&
         this->_entityManager->getComponent<Position::Component>(id)->x > 0 && this->_entityManager->getComponent<Position::Component>(id)->y > 0 &&
         this->_entityManager->getComponent<Position::Component>(id)->x < GetScreenWidth() &&
@@ -59,19 +54,14 @@ void ClientGameProtocol::handleDeleteEntity(ParsedCmd cmd) {
 }
 
 void ClientGameProtocol::handleMusic(ParsedCmd cmd) {
-    int songId;
+    unsigned char songId;
 
-    if (cmd.args.size() != 1) {
+    if (cmd.data.size() != SONG_PIECE) {
         ERRORLOG("Command " << cmd.cmd << " has not exactly one arg.");
         return;
     }
 
-    try {
-        songId = std::stoi(cmd.args[0][0]);
-    } catch (...) {
-        ERRORLOG("Unable to convert argument to int.");
-        return;
-    }
+    memcpy(&songId, &cmd.data[0], SONG_PIECE);
 
     this->_musicSystem->changeSong(SongID(songId));
 }
@@ -80,26 +70,22 @@ void ClientGameProtocol::handleDeleteComponent(ParsedCmd cmd) {
     EntityID id;
     Index compId;
 
-    if (cmd.args.size() != 2) {
-        ERRORLOG("Command " << cmd.cmd << " doesn't have two args.");
+    if (cmd.data.size() != ENTID_PIECE + COMPID_PIECE) {
+        ERRORLOG("Command " << cmd.cmd << " invalid size.");
         return;
     }
 
-    try {
-        id = std::stoll(cmd.args[0][0]);
-        compId = std::stol(cmd.args[1][0]);
-    } catch (...) {
-        ERRORLOG("Unable to convert arguments.");
-        return;
-    }
+    memcpy(&id, &cmd.data[0], ENTID_PIECE);
+    memcpy(&compId, &cmd.data[ENTID_PIECE], COMPID_PIECE);
 
     this->_entityManager->removeComp(id, compId);
 }
 
 bool ClientGameProtocol::handleCommands() {
-    std::optional<Message<std::string>> msg;
+    std::optional<Message<ByteBuf>> msg;
 
     while ((msg = this->_incomingMQ->pop())) {
+        LOG((char*)&msg->getMsg()[0]);
         auto parsed = ProtocolUtils::parseCommand(*msg);
 
         if (!parsed)
@@ -107,7 +93,7 @@ bool ClientGameProtocol::handleCommands() {
 
         switch (parsed->cmd) {
             case Command::Entityd:
-                this->handleEntity(*parsed, msg->getMsg());
+                this->handleEntity(*parsed);
                 break;
             case Command::DeleteEntity:
                 this->handleDeleteEntity(*parsed);
@@ -136,11 +122,14 @@ bool ClientGameProtocol::handleCommands() {
 
 // ─── Command Sending ─────────────────────────────────────────────────────────────────────────────
 
-void ClientGameProtocol::sendActMove(std::string directions) {
+void ClientGameProtocol::sendActMove(char direction) {
     if (!this->_isAlive)
         return;
 
-    auto msg = ProtocolUtils::createMessage("ACT_MOVE", directions, this->_addr, this->_port);
+    ByteBuf msgBody(DIRECTION_PIECE);
+    memcpy(&msgBody[0], &direction, DIRECTION_PIECE);
+
+    auto msg = ProtocolUtils::createMessage(ACTION_MOVE, msgBody, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
 
@@ -148,24 +137,32 @@ void ClientGameProtocol::sendActFire() {
     if (!this->_isAlive)
         return;
 
-    auto msg = ProtocolUtils::createMessage("ACT_SHOOT", "", this->_addr, this->_port);
+    auto msg = ProtocolUtils::createMessage(ACTION_SHOOT, {}, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendHere() {
-    auto msg = ProtocolUtils::createMessage("HERE", this->_uuid.toString(), this->_addr, this->_port);
+    std::string uuidStr = this->_uuid.toString();
+
+    LOG("Uuid str length = " << uuidStr.length() << " " << uuidStr);
+
+    ByteBuf data;
+    data.resize(UUID_PIECE);
+    memcpy(&data[0], uuidStr.c_str(), UUID_PIECE);
+
+    auto msg = ProtocolUtils::createMessage(HERE, data, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendGetEnt(EntityID id) {
-    std::stringstream ss;
-    ss << id;
+    ByteBuf msgBody(ENTID_PIECE);
+    memcpy(&msgBody[0], &id, ENTID_PIECE);
 
-    auto msg = ProtocolUtils::createMessage("GET_ENT", ss.str(), this->_addr, this->_port);
+    auto msg = ProtocolUtils::createMessage(GET_ENTITY, msgBody, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }
 
 void ClientGameProtocol::sendPing() {
-    auto msg = ProtocolUtils::createMessage("PING", "", this->_addr, this->_port);
+    auto msg = ProtocolUtils::createMessage(PING, {}, this->_addr, this->_port);
     this->_outgoingMQ->push(msg);
 }

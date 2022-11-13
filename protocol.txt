@@ -39,14 +39,14 @@ Table of Contents
         2.3. Server Commands ..........................................X
         2.4. Client Commands ..........................................X
     3. UDP Protocol ...................................................X
-        3.1. Command Syntax ...........................................X
+        3.1. Command Pieces ...........................................X
         3.2. Server Commands ..........................................X
             3.2.1. Server Command Listing .............................X
             3.2.2. Server Command Arguments ...........................X
         3.3. Client Commands ..........................................X
-            3.3.1. Server Response ....................................X
-            3.3.2. Client Command Listing .............................X
-            3.3.3. Client Command Arguments ...........................X
+            3.3.1. Client Command Listing .............................X
+            3.3.2. Client Command Arguments ...........................X
+        3.4. Command Identifiers ......................................X
 
 1. Introduction
 
@@ -143,7 +143,7 @@ Table of Contents
 
         The following is a list of Client Commands :
 
-            - CONNECT     -> Only command with no header. This command
+            - AUTHENTICATE     -> Only command with no header. This command
                           allows the client to retrieve his user
                           assigned uuid.
 
@@ -169,34 +169,67 @@ Table of Contents
 
     NO UDP SERVER COMMAND will await any type of response.
 
-    3.1. Command Synthax
+    This protocol is a binary protocol for optimization purposes. This
+    means that each command is refered to by it's unique identifier
+    contained in the first byte of every packet. You may find the
+    identifiers specified in section 3.4.
 
-        Commands follow the following syntax :
+    ATTENTION: All udp packets must be prefaced by the size of the
+               packet. This information is to be encoded in 2 Bytes
+               and is of type unsigned short.
 
-                <CMD> <SP> <ARGS> <CRLF>
-        
-        Here is a definition of each part :
+    3.1. Command Pieces
 
-        <CMD>  -> This is the command name and will always be fully
-                  capitalized.
+        The following is a listing of every different piece that can be
+        used in a protocol command along with the steps / sizes needed
+        in order to understand how to serialize and deserialize them.
 
-        <SP>   -> Ascii space character
+        - entId:
 
-        <ARGS> -> These are the arguments for the command. The size of
-                  these args may vary even within the same command. For
-                  this purpose each argument will be separated by the
-                  ';' character.
-                  
-                  Any sub-argument within each argument will be
-                  separated by the ',' character.
+            Size: 8 Bytes
+            Type: Long long
 
-        <CRLF> -> Carriage Return Line Feed character. Every message
-                  will end in this character combination denoted '\r\n'
-                  in ascii.
-        
-        Here is an example of a valid server command :
+        - componentId:
 
-                             DEL_ENT 1 \r\n
+            Size: 4 Bytes
+            Type: Int
+
+        - songId:
+
+            Size: 1 Byte
+            Type: Unsigned char
+
+        - compCount:
+
+            Size: 1 Byte
+            Type: Unsigned char
+
+        - component:
+
+            Size: variable
+            
+            The component piece is constituted of the following parts:
+
+            - componentId
+                Size: 2 Bytes
+                Type: Unsigned char
+
+            - componentSize (in bytes)
+                Size: 8 Bytes
+                Type: Unsigned long
+                Note: Describes the size of the componentData
+
+            - componentData
+                Size: componentSize
+                Note: Actual component data
+
+        - direction:
+
+            Size: 1 Byte
+            Type: Unsigned char
+
+        - uuid
+            <TO BE SPECIFIED>
         
     3.2. Server Commands
 
@@ -207,26 +240,32 @@ Table of Contents
 
             The following is a listing of all valid server commands :
 
-                    ENTITY        ->    Provide entity description, with
-                                        component args.
-                    DEL_ENT       ->    Delete entity
-                    DEL_COMP      ->    Delete component
-                    CHANGE_MUSIC  ->    Change Song
-                    GAME_END      ->    Signals end of game
-                    DEATH         ->    Signals player is dead
+                    ENTITY           ->    Provide entity description,
+                                           with component args.
+                    DELETE ENTITY    ->    Delete entity
+                    DELETE COMPONENT ->    Delete component
+                    MUSIC            ->    Change Song
+                    GAME END         ->    Signals end of game
+                    DEATH            ->    Signals player is dead
 
         3.2.2. Server Command Arguments
 
-            The following is an explanation of the arguments needed for
-            each server command :
+            The following is an description of the pieces constituting
+            the different server commands. Each piece is contained
+            between parenthesis. If a piece is followed by '...', the
+            command has a variable number of that given piece.
 
-                      <THIS LIST NEEDS ELABORATING>
+            ENTITY:
+                (entId) (compCount) (component...)
 
-            ENTITY ->
-                (entity id, (component id, component args...)...)
-            DEL_ENT -> (entity id)
-            DEL_COMP -> (entity id, component id)
-            MUSIC -> (song id)
+            DEL_ENT:
+                (entId)
+
+            DEL_COMP:
+                (entId) (componentId)
+
+            MUSIC:
+                (songId)
 
     3.3. Client Commands
 
@@ -234,39 +273,57 @@ Table of Contents
         server along with their arguments and usage.
 
         In contrast with Server Commands, some of these commands will
-        elicit a response.
+        elicit a response. However this response should not be awaited
+        as it will come under the form of a normal server command.
 
-        3.3.1. Server Response
+        3.3.1. Client Command Listing
 
-            The server response to client commands will always be in the
-            form of server commands. This means and allows the client to
-            not have to wait on the server response as the "server
-            response" only needs to be handled like any other command.
+                HERE         ->      Signal connection to server
+                GET ENTITY   ->      Get specification for entity
+                ACTION SHOOT ->      Signal the server that the client
+                                     shot.
+                ACTION MOVE  ->      Signal the server that the client
+                                     has moved.
+                PING         ->      Signal server that client is
+                                     still connected. Required every
+                                     three seconds.
 
-        3.3.2. Client Command Listing
+        3.3.2. Client Command Arguments
 
-            These commands WILL illicit a response, this response will
-            take the form of commands, so should not be waited for:
+            The following is an description of the pieces constituting
+            the different server commands. Each piece is contained
+            between parenthesis. If a piece is followed by '...', the
+            command has a variable number of that given piece.
 
-                HERE        ->      Signal connection to server
-                GET_ENT     ->      Get specification for entity
+            GET_ENT:
+                (entId)
 
-            These commands WILL NOT illicit any response:
+            ACT_SHOOT:
+                No arguments
 
-                ACT_SHOOT   ->      Signal the server that the client
-                                    shot.
-                ACT_MOVE    ->      Signal the server that the client
-                                    has moved.
-                PING        ->      Signal server that client is
-                                    still connected. Required every
-                                    three seconds.
+            ACT_MOVE:
+                (direction)
+            
+            HERE:
+                (uuid)
 
-        3.3.3. Client Command Arguments
+    3.4. Command Identifiers
 
-            The following is a listing of the arguments for each client
-            command.
+        This section details the unique identifiers for each command.
 
-                GET_ENT     ->      (entity id)
-                ACT_SHOOT   ->      No arguments
-                ACT_MOVE    ->      (direction)
-                HERE        ->      (client UUID)
+        Server Commands
+
+                ENTITY: 1
+                DEL ENTITY: 2
+                DEL COMPONENT: 3
+                MUSIC: 4
+                GAME END: 5
+                DEATH: 6
+
+        Client Commands
+
+                HERE: 7
+                GET ENTITY: 8
+                ACTION SHOOT: 9
+                ACTION MOVE: 10
+                PING: 11

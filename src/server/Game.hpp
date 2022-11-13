@@ -15,6 +15,7 @@
 
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
+#include "../shared/Networking/ProtocolUtils.hpp"
 #include "../shared/Networking/UdpCommunication.hpp"
 #include "Protocols/GameProtocol.hpp"
 #include "Protocols/TcpServer.hpp"
@@ -84,8 +85,8 @@ private:
     std::unique_ptr<JanitorSystem> _janitorSystem;
 
     // UDP Networking
-    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
-    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _outgoingMQ;
     GameProtocol _protocol;
 
     // Game Logic
@@ -98,6 +99,8 @@ private:
         {20, 25, Animation::AnimationID::Orb, 10.0, Armament::Type::Laser},
         {30, 15, Animation::AnimationID::Orb, 3.0, Armament::Type::Laser},
         {50, 50, Animation::AnimationID::Orb, 1.0, Armament::Type::Laser},
+        {100, 50, Animation::AnimationID::LegRobot, 1.0, Armament::Type::Laser},
+        {100, 50, Animation::AnimationID::Transformer, 1.0, Armament::Type::Ball},
     };
     std::vector<BossStats> _bosses = {
         {300, 20, Animation::AnimationID::Cluster, Armament::Type::Buckshot},
