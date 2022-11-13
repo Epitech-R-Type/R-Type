@@ -1,4 +1,6 @@
-# README
+# test
+
+
 
 [![drawing](https://camo.githubusercontent.com/9cc8cfc78a665ccad1cb61a8fb2203eb5e599f1ac6b8c292831941f35fa79728/68747470733a2f2f63646e2e6472696262626c652e636f6d2f75736572732f3636343639372f73637265656e73686f74732f363435383736332f722d6c6f676f2e706e67)](https://camo.githubusercontent.com/9cc8cfc78a665ccad1cb61a8fb2203eb5e599f1ac6b8c292831941f35fa79728/68747470733a2f2f63646e2e6472696262626c652e636f6d2f75736572732f3636343639372f73637265656e73686f74732f363435383736332f722d6c6f676f2e706e67)
 
@@ -6,19 +8,92 @@
 
 [![](https://github.com/Epitech-R-Type/R-Type/actions/workflows/build\_linux.yml/badge.svg?branch=main)](https://github.com/Epitech-R-Type/R-Type/actions/workflows/build\_linux.yml/badge.svg?branch=main) [![](https://github.com/Epitech-R-Type/R-Type/actions/workflows/build\_windows.yml/badge.svg?branch=main)](https://github.com/Epitech-R-Type/R-Type/actions/workflows/build\_windows.yml/badge.svg?branch=main) [![](https://github.com/Epitech-R-Type/R-Type/actions/workflows/linter.yml/badge.svg?branch=main)](https://github.com/Epitech-R-Type/R-Type/actions/workflows/linter.yml/badge.svg?branch=main)
 
+### Table of contents
+
+Installation
+
+Contributing Guide
+
 ### R-Type
 
 This project aims to implement the classic game [R-Type](https://wikiless.sethforprivacy.com/wiki/R-Type?lang=en).\
 It will include network based multiplayer.
 
-*   [User Documentation](broken-reference)
+#### install dependencies:
 
-    * [install and build guide](<README (1).md>)
-    * [tutorials](user-documentation/tutorials/)
-    * [System overview](user-documentation/systems-overview.md)
+```
+yay -S pkg-config cmake make
+```
 
+#### Install Conan:
 
-* [Dev Documentation](broken-reference)
-  * [communication protocol](dev-documentation/comunication-protocol.md)
-  * [ECS documentation](dev-documentation/ecs-documentation.md)
-  * [team/coding conventions](dev-documentation/team-coding-conventions.md)
+```
+$ pip install conan
+$ conan profile new default --detect
+$ conan profile update conf.tools.system.package_manager:mode=install default;
+$ conan profile update conf.tools.system.package_manager:sudo=True default;
+```
+
+### How to Build
+
+### Automatic build for Linux and Windows
+
+For this to work on Windows you need to have access to a Unix shell, such as Git Bash or WSL as well as access to the make command.
+
+In order to build both the client and the server, you can make the "all" rule:
+
+```
+$ make
+```
+
+In order to build the tests, make the "test" rule:
+
+```
+$ make test
+```
+
+Binaries can be found at:
+
+```
+./bin/Server
+./bin/Client
+./bin/Tests
+```
+
+### Manual Build
+
+#### For Linux
+
+Delete the build folder if present:
+
+```
+$ rm -rf build
+```
+
+Then build the binaries:
+
+```
+$ mkdir build
+$ cd build
+$ conan install . --build=missing
+$ cmake .. -G "Unix Makefiles"
+$ cmake --build . --config Release
+```
+
+#### For Windows
+
+Delete the build folder if present:
+
+```
+$ Remove-Item 'build' -Recurse
+```
+
+Then build the binaries:
+
+```
+$ New-item -itemtype directory build
+$ Set-Location build
+$ conan install . --build=missing
+$ cmake .. -G "Visual Studio 17"
+$ cmake --build . --config Release
+```
