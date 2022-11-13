@@ -72,6 +72,8 @@ bool GameProtocol::handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::p
 void GameProtocol::handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port) {
     int playerUID = this->getPlayer(addr, port);
 
+    LOG("Handling move");
+
     // Error handling
     if (0 > playerUID || cmd.data.size() != 1) {
         ERRORLOG("Command is invalid.");

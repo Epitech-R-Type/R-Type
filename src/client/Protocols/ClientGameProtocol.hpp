@@ -37,7 +37,7 @@ public:
     bool handleCommands();
 
     // COMMAND SENDING
-    void sendActMove(unsigned char direction);
+    void sendActMove(char direction);
     void sendActFire();
     void sendHere();
     void sendGetEnt(EntityID id);

@@ -15,7 +15,7 @@ PlayerMovementSystem::PlayerMovementSystem(std::shared_ptr<ClientGameProtocol> p
 }
 
 void PlayerMovementSystem::apply() {
-    int directions = 0;
+    char directions = 0;
     if (IsKeyDown(KEY_A))
         directions += Move::LEFT;
     if (IsKeyDown(KEY_D))
@@ -24,8 +24,8 @@ void PlayerMovementSystem::apply() {
         directions += Move::UP;
     if (IsKeyDown(KEY_S))
         directions += Move::DOWN;
-    // if (directions != 0)
-    //     this->_protocol->sendActMove(std::to_string(directions));
-    // if (IsKeyDown(KEY_SPACE))
-    //     this->_protocol->sendActFire();
+    if (directions != 0)
+        this->_protocol->sendActMove(directions);
+    if (IsKeyDown(KEY_SPACE))
+        this->_protocol->sendActFire();
 }
