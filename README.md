@@ -11,14 +11,14 @@
 This project aims to implement the classic game [R-Type](https://wikiless.sethforprivacy.com/wiki/R-Type?lang=en).\
 It will include network based multiplayer.
 
-*   [User Documentation](broken-reference)
+*   [User Documentation](user-documentation/)
 
     * [install and build guide](user-documentation/install-and-build-guide.md)
     * [tutorials](user-documentation/tutorials/)
     * [System overview](user-documentation/systems-overview.md)
 
 
-* [Dev Documentation](broken-reference)
+* [Dev Documentation](dev-documentation/)
   * [communication protocol](dev-documentation/comunication-protocol.md)
   * [ECS documentation](dev-documentation/ecs-documentation.md)
   * [team/coding conventions](dev-documentation/team-coding-conventions.md)
