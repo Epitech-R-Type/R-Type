@@ -108,8 +108,8 @@ void UdpCommunication::setup_outgoing_handler() {
 
             // Prepare buffer
             int len = msgBody.size();
-            memcpy(buffer, &msgBody, len);
-            memset(&buffer[len], 0, 1024 - len);
+            memcpy(buffer, &msgBody[0], len);
+            // memset(&buffer[len], 0, 1024 - len);
 
             asio::ip::udp::endpoint target(msg->getAddr(), msg->getPort());
             this->_sock.send_to(asio::buffer(buffer), target);

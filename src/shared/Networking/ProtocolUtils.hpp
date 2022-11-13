@@ -109,7 +109,9 @@ public:
         // Move data
         memcpy(&final[SIZE_HEADER + CMD], &data, data.size());
 
-        return Message<ByteBuf>(final, addr, port);
+        auto output = Message<ByteBuf>(final, addr, port);
+
+        return output;
     }
 
     // Read packet size on first two bytes of packet
