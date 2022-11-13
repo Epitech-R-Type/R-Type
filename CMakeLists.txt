@@ -192,14 +192,12 @@ function(build_tests)
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/CompPool.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/ECSManager.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Components.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/src/shared/ECS/Serialization.cpp"
     )
 
     set(TEST_CODE
         "${CMAKE_CURRENT_SOURCE_DIR}/test/main.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsTests.cpp"
         "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/EcsFixture.cpp"
-        "${CMAKE_CURRENT_SOURCE_DIR}/test/ECS/Serialization.cpp"
     )
 
     add_executable(
