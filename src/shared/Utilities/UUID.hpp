@@ -7,6 +7,8 @@
 #include <sstream>
 #include <string>
 
+typedef uuids::span<const std::byte, 16L> UuidBuf;
+
 namespace Utilities {
     class UUID {
     public:
@@ -21,9 +23,16 @@ namespace Utilities {
         UUID(std::string uuidStr);
 
         /**
+         * transform a buffer to a UUID
+         * */
+        UUID(UuidBuf uuidBuffer);
+
+        /**
          * Cast UUID to string, to send it over network or similar
          * */
         std::string toString();
+
+        UuidBuf toBuffer();
 
         bool isValid();
 

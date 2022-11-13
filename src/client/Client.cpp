@@ -114,8 +114,11 @@ int Client::mainLoop() {
             this->launchGame();
 
             // Check if tcp connection still open
-            if (!*this->_tcpStopFlag)
+            if (this->_tcpStopFlag.get()->load() == true)
                 return 1;
+
+            currentMenu = std::make_unique<LobbySelectionMenu>(this);
+            this->_currentStage = Stages::ROOMSELECTION;
 
             // Prepare for next games
             this->_protocol->resetStartGame();

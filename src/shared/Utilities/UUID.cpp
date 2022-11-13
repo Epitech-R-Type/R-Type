@@ -23,6 +23,18 @@ Utilities::UUID::UUID(std::string uuidStr) {
         this->_uuid = potUUID.value();
 };
 
+Utilities::UUID::UUID(UuidBuf uuidBuffer) {
+    std::array<uuids::uuid::value_type, 16L> buffer;
+
+    for (int i = 0; (uuidBuffer.begin() + i) != uuidBuffer.end(); i++)
+        buffer[i] = static_cast<uuids::uuid::value_type>(uuidBuffer[i]);
+
+    std::optional<uuids::uuid> potUUID = uuids::uuid(buffer);
+
+    if (potUUID.has_value())
+        this->_uuid = potUUID.value();
+}
+
 std::string Utilities::UUID::toString() {
     std::stringstream ss;
 
@@ -30,6 +42,10 @@ std::string Utilities::UUID::toString() {
 
     return ss.str();
 };
+
+UuidBuf Utilities::UUID::toBuffer() {
+    return this->_uuid.as_bytes();
+}
 
 bool Utilities::UUID::isValid() {
     return !this->_uuid.is_nil();
