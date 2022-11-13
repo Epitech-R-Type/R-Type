@@ -22,3 +22,4 @@ It will include network based multiplayer.
   * [communication protocol](dev-documentation/comunication-protocol.md)
   * [ECS documentation](dev-documentation/ecs-documentation.md)
   * [team/coding conventions](dev-documentation/team-coding-conventions.md)
+  * [Client Documentation](dev-documentation/client-documentation.md)
