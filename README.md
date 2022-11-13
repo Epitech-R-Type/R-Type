@@ -18,7 +18,10 @@
 This project aims to implement the classic game [R-Type](https://wikiless.sethforprivacy.com/wiki/R-Type?lang=en).\
 It will include network based multiplayer.
 
-* [User Documentation](user-documentation/)
+[gitbook documentation](https://r-type-1.gitbook.io/r-type-documentation/)
+
+*   [User Documentation](user-documentation/)
+
     * [install and build guide](user-documentation/install-and-build-guide.md)
     * [tutorials](user-documentation/tutorials/)
     * [System overview](user-documentation/systems-overview.md)
