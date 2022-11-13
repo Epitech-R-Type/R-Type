@@ -39,40 +39,40 @@ public:
     // ─── Command Handling ────────────────────────────────────────────────────────────────────
 
     bool handleHere(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
-    void handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
-    void handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
-    void handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
-    void handleGetComp(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
-    void handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    // void handleMove(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    // void handleShoot(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    // void handleGetEnt(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    // void handleGetComp(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
+    // void handlePing(ParsedCmd cmd, asio::ip::address addr, asio::ip::port_type port);
 
-    void handleCommands();
+    // void handleCommands();
 
     // ─── Command Sending ─────────────────────────────────────────────────────────────────────
 
     // By default, commands do nothing if invalid
-    template <class... T>
-    void sendEntity(EntityID id);
-    template <class... T>
-    void sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const;
+    // template <class... T>
+    // void sendEntity(EntityID id);
+    // template <class... T>
+    // void sendEntity(EntityID id, asio::ip::address addr, asio::ip::port_type port) const;
 
-    void sendDelEntity(EntityID id);
+    // void sendDelEntity(EntityID id);
 
-    template <class T>
-    void sendDelComponent(EntityID id);
-    template <class T>
-    void sendDelComponent(EntityID id, Connection client) const;
+    // template <class T>
+    // void sendDelComponent(EntityID id);
+    // template <class T>
+    // void sendDelComponent(EntityID id, Connection client) const;
 
-    void sendChangeMusic(int songId);
-    void sendGameEnd();
+    // void sendChangeMusic(int songId);
+    // void sendGameEnd();
 
-    void sendDeath(asio::ip::address addr, asio::ip::port_type port);
-    void sendDeath(int clientId);
+    // void sendDeath(asio::ip::address addr, asio::ip::port_type port);
+    // void sendDeath(int clientId);
 
     // ─── Uilities ────────────────────────────────────────────────────────────────────────────
 
     int getPlayer(asio::ip::address addr, asio::ip::port_type port);
     std::vector<Connection> getConnectedClients();
-    void handleDisconnectedClients();
+    // void handleDisconnectedClients();
 
     void resetAllTimeouts();
 

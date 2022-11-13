@@ -61,20 +61,20 @@ void Game::init() {
         Factory::Ally::makePlayer(this->_entManager, conn.player);
 
     // starts the music ingame
-    this->_protocol.sendChangeMusic(NORMAL);
+    // this->_protocol.sendChangeMusic(NORMAL);
     LOG("Initializing game");
     this->loadLevel(1);
 }
 
 void Game::sendModified() {
-    std::optional<EntityID> entityID;
+    // std::optional<EntityID> entityID;
 
-    while ((entityID = this->_entManager->getModified())) {
-        if (this->_entManager->isValidEntity(*entityID))
-            this->_protocol.sendEntity(entityID.value());
-        else
-            this->_protocol.sendDelEntity(entityID.value());
-    }
+    // while ((entityID = this->_entManager->getModified())) {
+    //     if (this->_entManager->isValidEntity(*entityID))
+    //         this->_protocol.sendEntity(entityID.value());
+    //     else
+    //         this->_protocol.sendDelEntity(entityID.value());
+    // }
 }
 
 int Game::getPlayersAlive() {
@@ -87,87 +87,87 @@ int Game::getPlayersAlive() {
 };
 
 bool Game::loadLevel(int nb) {
-    if (this->_fs.is_file(std::string("src/server/levels/level").append(std::to_string(nb))) == false)
-        return false;
+    // if (this->_fs.is_file(std::string("src/server/levels/level").append(std::to_string(nb))) == false)
+    //     return false;
 
-    Level newLevel;
-    const cmrc::file lvlFile = this->_fs.open(std::string("src/server/levels/level").append(std::to_string(nb)));
-    std::string lvlStr = std::string(lvlFile.begin(), lvlFile.end());
-    std::string line;
-    Wave tmp;
-    tmp.endless = false;
-    std::vector<std::string> lvlArr = Utilities::splitStr(std::string(lvlStr), std::string("\n"));
-    int i = 0;
-    line = lvlArr[i++];
-    Factory::Misc::makeBackground(this->_entManager, (Animation::AnimationID)std::atoi(line.c_str()));
-    line = lvlArr[i++];
-    this->_protocol.sendChangeMusic((SongID)std::atoi(line.c_str()));
-    bool noBoss = false;
+    // Level newLevel;
+    // const cmrc::file lvlFile = this->_fs.open(std::string("src/server/levels/level").append(std::to_string(nb)));
+    // std::string lvlStr = std::string(lvlFile.begin(), lvlFile.end());
+    // std::string line;
+    // Wave tmp;
+    // tmp.endless = false;
+    // std::vector<std::string> lvlArr = Utilities::splitStr(std::string(lvlStr), std::string("\n"));
+    // int i = 0;
+    // line = lvlArr[i++];
+    // Factory::Misc::makeBackground(this->_entManager, (Animation::AnimationID)std::atoi(line.c_str()));
+    // line = lvlArr[i++];
+    // this->_protocol.sendChangeMusic((SongID)std::atoi(line.c_str()));
+    // bool noBoss = false;
 
-    while (i < lvlArr.size()) {
-        line = lvlArr[i++];
-        tmp.minSpawned = std::atoi(line.c_str());
-        line = lvlArr[i++];
-        tmp.maxSpawned = std::atoi(line.c_str());
-        line = lvlArr[i++];
-        tmp.spawnInterval = std::atof(line.c_str());
-        srand(time(NULL));
-        tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
-        line = lvlArr[i++];
-        std::vector<std::string> lineArr = Utilities::splitStr(line, " ");
-        for (auto is : lineArr) {
-            tmp.enemies.push_back(this->_enemys[std::stoi(is)]);
-        }
-        line = lvlArr[i++];
-        if (std::atoi(line.c_str()) == -1) {
-            tmp.boss = this->_bosses[0];
-            noBoss = true;
-        } else
-            tmp.boss = this->_bosses[std::atoi(line.c_str())];
-        newLevel.levelWaves.push_back(tmp);
-    }
+    // while (i < lvlArr.size()) {
+    //     line = lvlArr[i++];
+    //     tmp.minSpawned = std::atoi(line.c_str());
+    //     line = lvlArr[i++];
+    //     tmp.maxSpawned = std::atoi(line.c_str());
+    //     line = lvlArr[i++];
+    //     tmp.spawnInterval = std::atof(line.c_str());
+    //     srand(time(NULL));
+    //     tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
+    //     line = lvlArr[i++];
+    //     std::vector<std::string> lineArr = Utilities::splitStr(line, " ");
+    //     for (auto is : lineArr) {
+    //         tmp.enemies.push_back(this->_enemys[std::stoi(is)]);
+    //     }
+    //     line = lvlArr[i++];
+    //     if (std::atoi(line.c_str()) == -1) {
+    //         tmp.boss = this->_bosses[0];
+    //         noBoss = true;
+    //     } else
+    //         tmp.boss = this->_bosses[std::atoi(line.c_str())];
+    //     newLevel.levelWaves.push_back(tmp);
+    // }
 
-    newLevel.waveNb = 0;
-    this->_currentLevel = newLevel;
-    this->_level = nb;
-    this->_enemyTimer = getNow();
-    this->_bossSpawned = noBoss;
+    // newLevel.waveNb = 0;
+    // this->_currentLevel = newLevel;
+    // this->_level = nb;
+    // this->_enemyTimer = getNow();
+    // this->_bossSpawned = noBoss;
     return true;
 }
 
 void Game::refreshLevel() {
-    const auto now = getNow();
-    std::chrono::duration<double> elapsed_seconds = now - this->_enemyTimer;
+    // const auto now = getNow();
+    // std::chrono::duration<double> elapsed_seconds = now - this->_enemyTimer;
 
-    if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval &&
-        this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
-        this->_enemyTimer = getNow();
-        this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
-        srand(time(NULL));
-        int rd = rand() % this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
-        Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies[rd]);
-    }
-    bool allSpawned = false;
+    // if (elapsed_seconds.count() >= this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawnInterval &&
+    //     this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
+    //     this->_enemyTimer = getNow();
+    //     this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
+    //     srand(time(NULL));
+    //     int rd = rand() % this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
+    //     Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies[rd]);
+    // }
+    // bool allSpawned = false;
 
-    if (this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned == 0) { // next wave of enemies
-        allSpawned = true;
-        if (noEnemies()) {
-            this->_currentLevel.waveNb += 1;
-        }
-    }
+    // if (this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned == 0) { // next wave of enemies
+    //     allSpawned = true;
+    //     if (noEnemies()) {
+    //         this->_currentLevel.waveNb += 1;
+    //     }
+    // }
 
-    if (this->_currentLevel.waveNb >= this->_currentLevel.levelWaves.size() && !this->_bossSpawned && allSpawned) { // spawning boss
-        this->_currentLevel.waveNb -= 1;
-        this->_bossSpawned = true;
-        Factory::Enemy::makeEndboss(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.levelWaves.size() - 1].boss);
-        this->_protocol.sendChangeMusic(BOSS);
-    }
+    // if (this->_currentLevel.waveNb >= this->_currentLevel.levelWaves.size() && !this->_bossSpawned && allSpawned) { // spawning boss
+    //     this->_currentLevel.waveNb -= 1;
+    //     this->_bossSpawned = true;
+    //     Factory::Enemy::makeEndboss(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.levelWaves.size() - 1].boss);
+    //     this->_protocol.sendChangeMusic(BOSS);
+    // }
 
-    if (noEnemies() && this->_bossSpawned && allSpawned) { // loading next level
-        if (this->loadLevel(++this->_level) == false) {
-            this->_isRunning = false;
-        }
-    }
+    // if (noEnemies() && this->_bossSpawned && allSpawned) { // loading next level
+    //     if (this->loadLevel(++this->_level) == false) {
+    //         this->_isRunning = false;
+    //     }
+    // }
 }
 
 bool Game::noEnemies() {
@@ -202,13 +202,13 @@ int Game::mainLoop() {
         // ─── Protocol Stuff ──────────────────────────────────────────────────────────────
 
         // Handle timed out clients
-        this->_protocol.handleCommands();
-        this->_protocol.handleDisconnectedClients();
+        // this->_protocol.handleCommands();
+        // this->_protocol.handleDisconnectedClients();
 
         // Handle death dispensing
-        for (auto victim : this->_janitorSystem->getKilledPlayers())
-            this->_protocol.sendDeath(victim);
-        this->_janitorSystem->resetKilledPlayers();
+        // for (auto victim : this->_janitorSystem->getKilledPlayers())
+        //     this->_protocol.sendDeath(victim);
+        // this->_janitorSystem->resetKilledPlayers();
 
         // ─── System Application ──────────────────────────────────────────────────────────
 
@@ -225,7 +225,7 @@ int Game::mainLoop() {
     }
 
     // Signal end of game to all clients
-    this->_protocol.sendGameEnd();
+    // this->_protocol.sendGameEnd();
 
     LOG("GAME HAS ENDED");
 

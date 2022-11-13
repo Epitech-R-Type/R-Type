@@ -19,6 +19,12 @@ typedef std::vector<char> ByteBuf;
 // This header is used to store any small part of protocol implementation that
 // may be used by both the server and the client
 
+// Protocol piece sizes
+#define SIZE_HEADER 2
+#define CMD 2
+#define UUID_PIECE sizeof(UuidBuf)
+
+// Command binary protocol value
 #define UPDATE_ENTITY 1
 #define DELETE_ENTITY 2
 #define ACTION_MOVE 9
@@ -90,11 +96,19 @@ public:
         return output;
     }
 
-    static Message<std::string> createMessage(std::string cmd, std::string args, asio::ip::address addr, asio::ip::port_type port) {
-        std::string body = cmd;
-        body += " " + args + "\r\n";
+    static Message<ByteBuf> createMessage(unsigned short cmd, ByteBuf data, asio::ip::address addr, asio::ip::port_type port) {
+        ByteBuf final;
+        unsigned short finalSize = CMD + SIZE_HEADER + data.size();
+        final.resize(finalSize);
 
-        return Message<std::string>(body, addr, port);
+        // Move final size and command into buffer
+        memcpy(&final[0], &finalSize, SIZE_HEADER);
+        memcpy(&final[SIZE_HEADER], &cmd, CMD);
+
+        // Move data
+        memcpy(&final[SIZE_HEADER + CMD], &data, data.size());
+
+        return Message<ByteBuf>(final, addr, port);
     }
 
     // Read packet size on first two bytes of packet
