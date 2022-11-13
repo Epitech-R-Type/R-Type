@@ -66,7 +66,8 @@ struct LobbyInfo {
 class ProtocolUtils {
 public:
     static std::optional<ParsedCmd> parseCommand(Message<ByteBuf> msg) {
-        std::optional<ParsedCmd> output = {{Command::Here, ByteBuf()}};
+        ByteBuf buf;
+        std::optional<ParsedCmd> output = {{Command::Here, buf}};
         unsigned short command = ProtocolUtils::getCommand(msg.getMsg());
 
         // Get command type

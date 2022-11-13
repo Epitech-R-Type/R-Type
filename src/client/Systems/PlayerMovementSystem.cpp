@@ -24,8 +24,8 @@ void PlayerMovementSystem::apply() {
         directions += Move::UP;
     if (IsKeyDown(KEY_S))
         directions += Move::DOWN;
-    if (directions != 0)
-        this->_protocol->sendActMove(std::to_string(directions));
-    if (IsKeyDown(KEY_SPACE))
-        this->_protocol->sendActFire();
+    // if (directions != 0)
+    //     this->_protocol->sendActMove(std::to_string(directions));
+    // if (IsKeyDown(KEY_SPACE))
+    //     this->_protocol->sendActFire();
 }

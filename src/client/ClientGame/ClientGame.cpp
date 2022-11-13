@@ -34,7 +34,7 @@ ClientGame::ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int s
     this->_udpComThread = new std::thread(udp_communication_main, this->_incomingMQ, this->_outgoingMQ, this->_udpStopFlag, -1);
     this->_spriteSystem = std::make_unique<SpriteSystem>(this->_entManager);
     this->_healthSystem = std::make_unique<HealthSystem>(this->_entManager);
-    this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
+    // this->_inputSystem = std::make_unique<PlayerMovementSystem>(this->_protocol);
 }
 
 ClientGame::~ClientGame() {

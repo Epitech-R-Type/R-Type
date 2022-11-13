@@ -28,20 +28,20 @@ public:
                        asio::ip::port_type port, Utilities::UUID uuid);
 
     // COMMAND HANDLING
-    void handleEntity(ParsedCmd cmd, std::string raw);
-    void handleDeleteEntity(ParsedCmd cmd);
-    void handleDeleteComponent(ParsedCmd cmd);
-    void handleMusic(ParsedCmd cmd);
+    // void handleEntity(ParsedCmd cmd, std::string raw);
+    // void handleDeleteEntity(ParsedCmd cmd);
+    // void handleDeleteComponent(ParsedCmd cmd);
+    // void handleMusic(ParsedCmd cmd);
 
     // Returns true if player died
-    bool handleCommands();
+    // bool handleCommands();
 
     // COMMAND SENDING
-    void sendActMove(std::string direction);
-    void sendActFire();
+    // void sendActMove(std::string direction);
+    // void sendActFire();
     void sendHere();
-    void sendGetEnt(EntityID id);
-    void sendPing();
+    // void sendGetEnt(EntityID id);
+    // void sendPing();
 
 private:
     // Udp messaging queues
