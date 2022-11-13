@@ -1,6 +1,10 @@
 # System overview
 
-Simplified Graphical workflow representation of Client and Server
+#### Simplified Graphical workflow representation of Client and Server
+
+<figure><img src="../.gitbook/assets/server processflow.png" alt=""><figcaption><p>Server workflow</p></figcaption></figure>
+
+
 
 
 
