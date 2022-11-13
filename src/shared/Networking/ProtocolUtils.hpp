@@ -128,7 +128,7 @@ public:
 
     // Read packet size on first two bytes of packet
     static unsigned short packetSize(ByteBuf buf) {
-        if (buf.size() < 2)
+        if (buf.size() < SIZE_HEADER)
             return buf.size();
 
         // Return unsigned short encoded in first two bytes
@@ -140,7 +140,7 @@ public:
             return 0;
 
         // Return unsigned short encoded in first two bytes
-        return *((unsigned short*)&buf[2]);
+        return *((unsigned short*)&buf[SIZE_HEADER]);
     }
 
     // Convert char[] to ByteBuf
