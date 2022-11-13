@@ -111,7 +111,6 @@ bool Game::loadLevel(int nb) {
         tmp.maxSpawned = std::atoi(line.c_str());
         line = lvlArr[i++];
         tmp.spawnInterval = std::atof(line.c_str());
-        srand(time(NULL));
         tmp.spawned = rand() % tmp.maxSpawned + tmp.minSpawned;
         line = lvlArr[i++];
         std::vector<std::string> lineArr = Utilities::splitStr(line, " ");
@@ -143,7 +142,6 @@ void Game::refreshLevel() {
         this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned > 0) {
         this->_enemyTimer = getNow();
         this->_currentLevel.levelWaves[this->_currentLevel.waveNb].spawned--;
-        srand(time(NULL));
         int rd = rand() % this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies.size();
         Factory::Enemy::makeEnemy(this->_entManager, this->_currentLevel.levelWaves[this->_currentLevel.waveNb].enemies[rd]);
     }
