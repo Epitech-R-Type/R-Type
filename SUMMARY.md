@@ -2,7 +2,7 @@
 
 * [README](README.md)
 * [Crashes](improvements.md)
-* [user-documentation](user-documentation/README.md)
+* [documentation-user](user-documentation/README.md)
   * [install and build guide](user-documentation/install-and-build-guide.md)
   * [Tutorials](user-documentation/tutorials/README.md)
     * [New Graphics](user-documentation/tutorials/new-graphics.md)
@@ -13,7 +13,7 @@
       * [New enemies](user-documentation/tutorials/new-entities/new-enemies.md)
   * [System overview](user-documentation/systems-overview.md)
   * [license](user-documentation/license.md)
-* [dev-documentation](dev-documentation/README.md)
+* [documentation-dev](dev-documentation/README.md)
   * [Client Documentation](dev-documentation/client-documentation.md)
   * [comunication protocol](dev-documentation/comunication-protocol.md)
   * [ECS documentation](dev-documentation/ecs-documentation.md)
