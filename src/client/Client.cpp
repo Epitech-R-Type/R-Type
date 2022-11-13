@@ -6,6 +6,7 @@
 */
 
 #include "Client.hpp"
+#include "../shared/ECS/Components.hpp"
 #include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
 #include "../shared/Utilities/ray.hpp"
@@ -27,7 +28,17 @@ Client::Client() {
     while (!IsWindowReady()) {
         //
     }
+
     SetTargetFPS(40);
+
+    this->_ECS = std::make_shared<ECSManager>();
+    this->_spriteSystem = std::make_unique<SpriteSystem>(this->_ECS);
+
+    EntityID id = this->_ECS->newEntity();
+
+    this->_ECS->addComp<Position::Component>(id, {0, 0});
+    this->_ECS->addComp<Animation::Component>(id, {Animation::AnimationID::MenuBackground, 0});
+    this->_ECS->addComp<Velocity::Component>(id, {2, 0});
 }
 
 int Client::launchGame() {
@@ -93,8 +104,9 @@ int Client::mainLoop() {
     while (true) {
         this->advanceStage(currentMenu);
 
-        if (this->_protocol->handleIncMessages())
-            return 0;
+        if (this->_protocol->handleIncMessages()) {
+            return 1;
+        }
 
         currentMenu->apply();
 
@@ -102,18 +114,26 @@ int Client::mainLoop() {
             this->launchGame();
 
             // Check if tcp connection still open
-            if (*this->_tcpStopFlag)
-                return 0;
+            if (!*this->_tcpStopFlag)
+                return 1;
 
             // Prepare for next games
             this->_protocol->resetStartGame();
         }
 
         currentMenu->draw();
+        this->_spriteSystem->apply();
     }
 
     return 0;
 }
+
+void Client::reset() {
+    this->_tcpStopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_protocol = new ClientLobbyProtocol(this->_tcpStopFlag);
+    this->_connected = false;
+    this->_lobbyRunning = true;
+};
 
 ClientLobbyProtocol* Client::getProtocol() {
     return this->_protocol;

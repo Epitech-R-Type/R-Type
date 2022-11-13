@@ -73,8 +73,13 @@ namespace Animation {
         SpaceshipRed,
         SpaceshipDarkblue,
         SpaceshipRGB,
-        Background,
+        StarBg,
         Death,
+        LegRobot,
+        Transformer,
+        Ball,
+        CityBg,
+        MenuBackground
     };
     struct Component {
         AnimationID animationID;
@@ -105,8 +110,12 @@ namespace Animation {
         {Animation::AnimationID::Orb, {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0}},
         {Animation::AnimationID::Vortex, {"resources/r-typesheet30a.png", 1, 3, 32, 32, 3, 1, 2, 0, 0}},
         {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
-        {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
         {Animation::AnimationID::Lost, {"resources/lost.png", 0, 0, 639, 513, 8, 1, 1, 0, 0}},
+        {Animation::AnimationID::LegRobot, {"resources/r-typesheet10.png", 1, 1, 30, 23, 6, 1, 3, 0, 0}},
+        {Animation::AnimationID::Transformer, {"resources/r-typesheet14.png", 1, 1, 47, 48, 5, 1, 3, 0, 0}},
+
+        {Animation::AnimationID::Ball, {"resources/r-typesheet14.png", 182, 139, 13, 12, 8, 1, 3, 0, 0}},
+        {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
 
         {Animation::AnimationID::SpaceshipLightblue, {"resources/r-typesheet42.png", 1, 3, 32, 16, 5, 1, 0, 0, 1, 0.2}},
         {Animation::AnimationID::SpaceshipPink, {"resources/r-typesheet42.png", 1, 20, 32, 16, 5, 1, 0, 0, 1, 0.2}},
@@ -115,8 +124,12 @@ namespace Animation {
         {Animation::AnimationID::SpaceshipDarkblue, {"resources/r-typesheet42.png", 1, 71, 32, 16, 5, 1, 0, 0, 1, 0.2}},
         {Animation::AnimationID::SpaceshipRGB, {"resources/r-typesheet42.png", 1, 3, 32, 16, 1, 5, 0, 1, 0, 0.2}},
 
-        {Animation::AnimationID::Background, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
+        {Animation::AnimationID::StarBg, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
+        {Animation::AnimationID::CityBg, {"resources/citySunnset.png", 0, 0, 800, 450, 1, 1, 0, 0, 0, 0, 1}},
+
         {Animation::AnimationID::Death, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
+        {Animation::AnimationID::MenuBackground, {"resources/menu-background.png", 0, 0, 3200, 1600, 1, 1, 0, 0, 0, 0, 1}},
+
     };
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
@@ -157,6 +170,7 @@ namespace Armament {
     enum Type {
         Laser,
         Buckshot,
+        Ball,
     };
 
     struct Component {
