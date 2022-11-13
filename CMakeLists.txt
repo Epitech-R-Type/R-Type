@@ -65,6 +65,11 @@ function(build_server)
         src/server/levels/level1
         src/server/levels/level2
         src/server/levels/level3
+        src/server/levels/level4
+        src/server/levels/level5
+        src/server/levels/level6
+        src/server/levels/level7
+        src/server/levels/level8
         )
 
         target_link_libraries(Server server::rc)
