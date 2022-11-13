@@ -16,3 +16,4 @@
 
 * [comunication protocol](dev-documentation/comunication-protocol.md)
 * [ECS documentation](dev-documentation/ecs-documentation.md)
+* [team/coding conventions](dev-documentation/team-coding-conventions.md)
