@@ -7,6 +7,7 @@
 
 #pragma once
 
+#include "../Networking/ProtocolUtils.hpp"
 #include "../Utilities/Utilities.hpp"
 #include "ECS.hpp"
 #include "ECSManager.hpp"
@@ -36,37 +37,35 @@ enum ComponentType {
 
 // BUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUFER Related
 
-typedef std::vector<std::uint8_t> ProtocolBuffer;
-
 template <class T>
-ProtocolBuffer initBuffer(ComponentType id) {
-    ProtocolBuffer buffer;
-    buffer.resize(sizeof(std::uint8_t) + sizeof(std::uint64_t) + sizeof(T));
+ByteBuf initBuffer(ComponentType id) {
+    ByteBuf buffer;
+    buffer.resize(sizeof(std::int8_t) + sizeof(std::uint64_t) + sizeof(T));
     buffer[0] = id;
     const std::uint64_t size = sizeof(T);
-    memcpy(&buffer[1], (std::uint8_t*)&size, sizeof(size));
+    memcpy(&buffer[1], (std::int8_t*)&size, sizeof(size));
     return buffer;
 }
 
-ComponentType getComponentType(ProtocolBuffer buffer);
+ComponentType getComponentType(ByteBuf buffer);
 
-std::uint64_t getComponentSize(ProtocolBuffer buffer);
+std::uint64_t getComponentSize(ByteBuf buffer);
 
 template <class T>
-T getComponentData(ProtocolBuffer buffer) {
+T getComponentData(ByteBuf buffer) {
     return *(T*)&(buffer[1 + sizeof(getComponentSize(buffer))]);
 }
 
 template <class T>
-void insertComponentData(ProtocolBuffer& buffer, T data) {
-    memcpy(&buffer[9], (std::uint8_t*)&data, sizeof(T));
+void insertComponentData(ByteBuf& buffer, T data) {
+    memcpy(&buffer[9], (std::int8_t*)&data, sizeof(T));
 }
 
 // ENDOF
 
 template <typename T, typename M>
-ProtocolBuffer toBuffer(T component, ComponentType ID) {
-    ProtocolBuffer buffer = initBuffer<T>(ID);
+ByteBuf toBuffer(T component, ComponentType ID) {
+    ByteBuf buffer = initBuffer<T>(ID);
 
     M mask = *(M*)(&component);
 
@@ -76,7 +75,7 @@ ProtocolBuffer toBuffer(T component, ComponentType ID) {
 }
 
 template <typename T>
-void applyUpdate(ProtocolBuffer buffer, EntityID entityID, std::shared_ptr<ECSManager> manager) {
+void applyUpdate(ByteBuf buffer, EntityID entityID, std::shared_ptr<ECSManager> manager) {
     T* component;
 
     if (!manager->hasComponent<T>(entityID))

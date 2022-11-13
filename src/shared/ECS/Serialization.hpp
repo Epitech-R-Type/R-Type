@@ -10,6 +10,7 @@
 #include "../ECS/Components.hpp"
 #include "../ECS/ECS.hpp"
 #include "../ECS/ECSManager.hpp"
+#include "../Networking/ProtocolUtils.hpp"
 #include "../Utilities/Utilities.hpp"
 #include <cstring>
 #include <iostream>
@@ -22,15 +23,15 @@ class Serialization {
 public:
     static std::bitset<MAX_COMPONENTS> hiddenComponents;
 
-    static ProtocolBuffer entityToBuffer(EntityID entityID, std::shared_ptr<ECSManager> manager);
+    static ByteBuf entityToBuffer(EntityID entityID, std::shared_ptr<ECSManager> manager);
 
-    static EntityID bufferToEntity(const ProtocolBuffer buffer, std::shared_ptr<ECSManager> manager);
+    static EntityID bufferToEntity(const ByteBuf buffer, std::shared_ptr<ECSManager> manager);
 
 private:
-    static ProtocolBuffer entityToBufferSwitch(EntityID entityID, std::shared_ptr<ECSManager> manager, ComponentType ID);
+    static ByteBuf entityToBufferSwitch(EntityID entityID, std::shared_ptr<ECSManager> manager, ComponentType ID);
 
     template <typename T, typename M>
-    static ProtocolBuffer componentToBuffer(EntityID entityId, std::shared_ptr<ECSManager> manager) {
+    static ByteBuf componentToBuffer(EntityID entityId, std::shared_ptr<ECSManager> manager) {
         if (!manager->hasComponent<T>(entityId)) {
             ERRORLOG("Missing component: " << getID<T>());
             return {};

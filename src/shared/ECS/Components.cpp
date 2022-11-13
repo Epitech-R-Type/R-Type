@@ -2,11 +2,11 @@
 
 // ------------------
 
-ComponentType getComponentType(ProtocolBuffer buffer) {
+ComponentType getComponentType(ByteBuf buffer) {
     return ComponentType(buffer[0]);
 }
 
-std::uint64_t getComponentSize(ProtocolBuffer buffer) {
+std::uint64_t getComponentSize(ByteBuf buffer) {
     return *(std::uint64_t*)&buffer[1];
 }
 
