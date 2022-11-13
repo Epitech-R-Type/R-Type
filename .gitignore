@@ -12,3 +12,5 @@ bin/*
 **/*.html
 **/*.css
 report.html
+testmain.cpp
+a.out
