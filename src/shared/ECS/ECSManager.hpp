@@ -18,66 +18,28 @@
 #include <vector>
 
 struct Entity {
-    EntityID id;
+    EntityID id = createId(-1, 0);
     std::bitset<MAX_COMPONENTS> components;
 };
 
 class ECSManager {
 public:
-    // Create entity
-    EntityID newEntity();
+    // ─── Entity Creation And Deletion ────────────────────────────────────────────────────────
 
+    EntityID newEntity();
     EntityID newEntity(EntityID id);
 
-    // Delete entity
     void deleteEntity(EntityID id);
 
-    bool entityIsActive(Index id);
+    // ─── Component Interaction Methods ───────────────────────────────────────────────────────
 
-    // Get component for given entity
-    template <class T>
-    T* getComponent(EntityID id) {
-        Index i = getIndex(id);
-        Index compId = getID<T>();
-
-        // If entity doesn't have component return null
-        if (!this->_entities[i].components[compId])
-            return nullptr;
-
-        return static_cast<T*>(this->_compPools[compId]->getComp(i));
-    }
-
-    template <class T>
-    bool hasComponent(EntityID id) const {
-        Index i = getIndex(id);
-        Index compId = getID<T>();
-
-        // Make sure entity is valid
-        if (0 > getIndex(this->_entities[i].id))
-            return false;
-
-        // If entity doesn't have component return null
-        if (!this->_entities[i].components[compId])
-            return false;
-
-        return true;
-    }
-
-    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity) const {
-        Index i = getIndex(entity);
-        // Make sure entity is valid
-        if (0 > getIndex(this->_entities[i].id))
-            return {};
-        return this->_entities[i].components;
-    };
-
-    // Add comp
+    // Add component
     template <class T>
     T* addComp(EntityID id, T comp) {
         Index i = getIndex(id);
 
         // Make sure entity is valid
-        if (0 > getIndex(this->_entities[i].id))
+        if (!this->isValidEntity(id))
             return nullptr;
 
         // Get unique id for component type
@@ -106,28 +68,74 @@ public:
         return (T*)component;
     }
 
-    // Remove comp
+    // Remove component with component TYPE
     template <class T>
     void removeComp(EntityID id) {
         Index compIndex = getID<T>();
         Index i = getIndex(id);
 
         // Check against invalid entity
-        if (0 > getIndex(this->_entities[i].id))
+        if (!this->isValidEntity(id))
             return;
 
         // Reset corresponding bit in component bitset
         this->_entities[i].components[compIndex] = 0;
     }
 
-    void removeComp(EntityID id, Index compId) {
-        if (!this->isValidComp(id, compId))
-            return;
+    // Remove component with component ID
+    void removeComp(EntityID id, Index compId);
 
+    // Get component for given entity
+    template <class T>
+    T* getComponent(EntityID id) {
         Index i = getIndex(id);
+        Index compId = getID<T>();
 
-        this->_entities[i].components[compId] = 0;
+        // If entity doesn't have component return null
+        if (!this->_entities[i].components[compId])
+            return nullptr;
+
+        return static_cast<T*>(this->_compPools[compId]->getComp(i));
     }
+
+    // Check if entity has component
+    template <class T>
+    bool hasComponent(EntityID id) const {
+        Index i = getIndex(id);
+        Index compId = getID<T>();
+
+        // Make sure entity is valid
+        if (!this->isValidEntity(id))
+            return false;
+
+        // If entity doesn't have component
+        if (!this->_entities[i].components[compId])
+            return false;
+
+        return true;
+    }
+
+    // Get bitset of set components
+    const std::bitset<MAX_COMPONENTS> getSetComponents(EntityID entity);
+
+    // ─── Utility Methods ─────────────────────────────────────────────────────────────────────
+
+    // Checks if entity has component
+    // (also checks validity of id, if index is < g_idCounter and is valid)
+    bool entityHasComp(EntityID id, Index i);
+
+    // Check if given id references valid entity
+    bool isValidEntity(EntityID id) const;
+
+    // Deletes all entities and resets ECSManager
+    void flush();
+
+    // ─── Modified Entities Handling ──────────────────────────────────────────────────────────
+
+    std::optional<EntityID> getModified();
+    void pushModified(EntityID);
+
+    // ─── Iterator Implementation ─────────────────────────────────────────────────────────────
 
     // Set components to exclude in view
     template <class... Excluded>
@@ -140,41 +148,8 @@ public:
     }
 
     // Reset components to exclude in view
-    void resetExcluded() {
-        this->_excludedInView.reset();
-    }
+    void resetExcluded();
 
-    bool isValidID(EntityID id) {
-        Index i = getIndex(id);
-
-        if (i == INVALID_INDEX || i >= this->_entities.size())
-            return false;
-        return true;
-    }
-
-    bool isValidComp(EntityID id, Index i) {
-        if (!this->isValidID(id))
-            return false;
-        if (i >= MAX_COMPONENTS || i >= g_idCounter)
-            return false;
-
-        Index entityIndex = getIndex(id);
-        if (!this->_entities[entityIndex].components[i])
-            return false;
-        return true;
-    }
-
-    bool entityExists(EntityID id) {
-        Index i = getIndex(id);
-
-        if (i >= this->_entities.size() || i >= MAX_ENTITIES)
-            return false;
-        if (getIndex(this->_entities[i].id) == INVALID_INDEX)
-            return false;
-        return true;
-    }
-
-    // ITERATOR IMPLEMENTATION
     template <class... Comps>
     class Iterator {
     public:
@@ -204,7 +179,7 @@ public:
             std::bitset<MAX_COMPONENTS> wantedComps = ~this->_man->_excludedInView & this->_wanted;
             std::bitset<MAX_COMPONENTS> concombre = (this->_wanted & this->_man->_entities[this->_currIndex].components);
 
-            return (!this->_wanted.any() || this->_wanted == concombre) && this->_man->isValidID(this->_man->_entities[this->_currIndex].id);
+            return (!this->_wanted.any() || this->_wanted == concombre) && this->_man->isValidEntity(this->_man->_entities[this->_currIndex].id);
         }
 
         Iterator<Comps...>& operator++() {
@@ -240,11 +215,14 @@ public:
         return Iterator<Comp...>(this->_entities.size(), this);
     }
 
-    void flush();
+    // ─── Getters For Testing ─────────────────────────────────────────────────────────────────────────
 
-    std::optional<EntityID> getModified();
-
-    void pushModified(EntityID);
+#ifdef GTEST
+    std::vector<Entity> getEntities() const;
+    std::vector<EntityID> getAllModified() const;
+    std::vector<Index> getUnusedEntities() const;
+    std::vector<std::unique_ptr<CompPool>>& getCompPools();
+#endif
 
 private:
     std::vector<Entity> _entities;

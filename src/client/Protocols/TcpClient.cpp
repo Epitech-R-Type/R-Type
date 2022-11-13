@@ -14,7 +14,11 @@ void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> 
     TcpClient com(incoming, outgoing, stopFlag);
 
     // Setup incoming udp packet handler and outgoing packets handler in asio
-    com.connect(serverIP, port);
+    if (com.connect(serverIP, port)) {
+        incoming->push(Message(std::string("CONN_FAILED"), asio::ip::address(), asio::ip::port_type()));
+        return;
+    } else
+        incoming->push(Message(std::string("CONN_SUCCESS"), asio::ip::address(), asio::ip::port_type()));
     com.setupOutgoingHandler();
     com.stopSignalHandler();
     // Run asio context
@@ -45,14 +49,17 @@ void TcpClient::setupIncomingHandler() {
             // Reset incoming handler
             this->setupIncomingHandler();
         } else {
-            ERROR(err.message());
+            ERRORLOG("Error TcpClient handler:" << err.message());
 
             // Reset buffer
             memset(this->_buffer, 0, 1024);
 
-            // // Handle server disconnection
-            // if (err.value() == asio::error::eof)
-            //     this->remove_peer(server);
+            // Handle server disconnection
+            if (err.value() == asio::error::eof) {
+                this->stop();
+                LOG("Connection closed by peer, exiting now...");
+                this->push_message(Message(std::string("CONN_CLOSED"), asio::ip::address(), asio::ip::port_type()));
+            }
 
             // Reset incoming handler
             this->setupIncomingHandler();
@@ -66,7 +73,7 @@ void TcpClient::setupOutgoingHandler() {
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            ERROR(err.message());
+            ERRORLOG("Error TcpClient handler:" << err.message());
             this->setupOutgoingHandler();
             return;
         }
@@ -94,7 +101,7 @@ void TcpClient::stopSignalHandler() {
 
     this->_stopTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            ERROR(err.message());
+            ERRORLOG("Error TcpClient handler:" << err.message());
             this->stopSignalHandler();
             return;
         }
@@ -107,15 +114,19 @@ void TcpClient::stopSignalHandler() {
     });
 }
 
-void TcpClient::connect(std::string serverIP, int port) {
+int TcpClient::connect(std::string serverIP, int port) {
     // socket creation
     this->_server = std::make_shared<asio::ip::tcp::socket>(asio::ip::tcp::socket(this->_ctxt));
-    // connection
-    this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
 
-    LOG("Tcp Client info is :" << this->_server->local_endpoint().port());
+    try {
+        this->_server->connect(asio::ip::tcp::endpoint(asio::ip::address::from_string(serverIP), port));
+    } catch (std::system_error const& e) {
+        ERRORLOG("Connection to server refused, exiting now...");
+        return 1;
+    }
 
     this->setupIncomingHandler();
+    return 0;
 }
 
 // Context runtime functions
@@ -126,6 +137,7 @@ void TcpClient::run() {
 
 void TcpClient::stop() {
     // Stop context
+    this->_stopFlag->store(true);
     this->_ctxt.stop();
 }
 

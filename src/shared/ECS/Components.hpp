@@ -7,8 +7,10 @@
 
 #pragma once
 
+#include "../Networking/ProtocolUtils.hpp"
 #include "../Utilities/Utilities.hpp"
 #include "ECS.hpp"
+#include "ECSManager.hpp"
 #include <ctime>
 #include <map>
 #include <memory>
@@ -28,16 +30,73 @@ enum ComponentType {
     TEAM,
     IMMUNITY_FRAME,
     COLLISIONEFFECT,
+    SOUND_CREATION,
+    SOUND_DESTRUCTION,
+    SOUND_DAMAGE
 };
+
+// BUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUUFER Related
+
+template <class T>
+ByteBuf initBuffer(ComponentType id) {
+    ByteBuf buffer;
+    buffer.resize(sizeof(std::int8_t) + sizeof(std::uint64_t) + sizeof(T));
+    buffer[0] = (char)id;
+    const std::uint64_t size = sizeof(T);
+    memcpy(&buffer[1], (std::int8_t*)&size, sizeof(size));
+    return buffer;
+}
+
+ComponentType getComponentType(ByteBuf buffer);
+
+std::uint64_t getComponentSize(ByteBuf buffer);
+
+template <class T>
+T getComponentData(ByteBuf buffer) {
+    return *(T*)&(buffer[1 + sizeof(getComponentSize(buffer))]);
+}
+
+template <class T>
+void insertComponentData(ByteBuf& buffer, T data) {
+    memcpy(&buffer[9], (std::int8_t*)&data, sizeof(T));
+}
+
+// ENDOF
+
+template <typename T, typename M>
+ByteBuf toBuffer(T component, ComponentType ID) {
+    ByteBuf buffer = initBuffer<T>(ID);
+
+    M mask = *(M*)(&component);
+
+    insertComponentData<M>(buffer, mask);
+
+    return buffer;
+}
+
+template <typename T, typename M>
+void applyUpdate(ByteBuf buffer, EntityID entityID, std::shared_ptr<ECSManager> manager) {
+    T* component;
+
+    if (!manager->hasComponent<T>(entityID))
+        component = manager->addComp<T>(entityID, {});
+    else
+        component = manager->getComponent<T>(entityID);
+
+    M mask = getComponentData<M>(buffer);
+
+    memcpy(component, &mask, sizeof(M));
+}
 
 namespace Armor {
     struct Component {
         int armor = 0;
     };
 
-    std::string toString(Armor::Component component);
+    struct Mask {
+        int armor = 0;
+    };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Armor
 
 namespace Health {
@@ -47,9 +106,12 @@ namespace Health {
         bool visible = false;
     };
 
-    std::string toString(Health::Component component);
+    struct Mask {
+        int health = 0;
+        int maxHealth = 0;
+        bool visible = false;
+    };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Health
 
 namespace Position {
@@ -58,9 +120,11 @@ namespace Position {
         float y = 0;
     };
 
-    std::string toString(Position::Component component);
+    struct Mask {
+        float x = 0;
+        float y = 0;
+    };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Position
 
 namespace Animation {
@@ -76,8 +140,13 @@ namespace Animation {
         SpaceshipRed,
         SpaceshipDarkblue,
         SpaceshipRGB,
-        Background,
+        StarBg,
         Death,
+        LegRobot,
+        Transformer,
+        Ball,
+        CityBg,
+        MenuBackground
     };
     struct Component {
         AnimationID animationID;
@@ -86,6 +155,13 @@ namespace Animation {
         double scale = 3;
         int index = 0;
         std::chrono::time_point<std::chrono::system_clock> timer;
+    };
+
+    struct Mask {
+        AnimationID animationID;
+        unsigned long layer = 1;
+        double rotation = 0;
+        double scale = 3;
     };
 
     struct Sheet {
@@ -108,8 +184,12 @@ namespace Animation {
         {Animation::AnimationID::Orb, {"resources/r-typesheet3.png", 1, 1, 16, 16, 12, 1, 1, 0, 0}},
         {Animation::AnimationID::Vortex, {"resources/r-typesheet30a.png", 1, 3, 32, 32, 3, 1, 2, 0, 0}},
         {Animation::AnimationID::Cluster, {"resources/r-typesheet32.png", 0, 0, 259, 142, 2, 3, 1, 1, 1}},
-        {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
         {Animation::AnimationID::Lost, {"resources/lost.png", 0, 0, 639, 513, 8, 1, 1, 0, 0}},
+        {Animation::AnimationID::LegRobot, {"resources/r-typesheet10.png", 1, 1, 30, 23, 6, 1, 3, 0, 0}},
+        {Animation::AnimationID::Transformer, {"resources/r-typesheet14.png", 1, 1, 47, 48, 5, 1, 3, 0, 0}},
+
+        {Animation::AnimationID::Ball, {"resources/r-typesheet14.png", 182, 139, 13, 12, 8, 1, 3, 0, 0}},
+        {Animation::AnimationID::Laser, {"resources/r-typesheet43.png", 1, 41, 48, 4, 8, 1, 2, 0, 0}},
 
         {Animation::AnimationID::SpaceshipLightblue, {"resources/r-typesheet42.png", 1, 3, 32, 16, 5, 1, 0, 0, 1, 0.2}},
         {Animation::AnimationID::SpaceshipPink, {"resources/r-typesheet42.png", 1, 20, 32, 16, 5, 1, 0, 0, 1, 0.2}},
@@ -118,13 +198,14 @@ namespace Animation {
         {Animation::AnimationID::SpaceshipDarkblue, {"resources/r-typesheet42.png", 1, 71, 32, 16, 5, 1, 0, 0, 1, 0.2}},
         {Animation::AnimationID::SpaceshipRGB, {"resources/r-typesheet42.png", 1, 3, 32, 16, 1, 5, 0, 1, 0, 0.2}},
 
-        {Animation::AnimationID::Background, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
+        {Animation::AnimationID::StarBg, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
+        {Animation::AnimationID::CityBg, {"resources/citySunnset.png", 0, 0, 800, 450, 1, 1, 0, 0, 0, 0, 1}},
+
         {Animation::AnimationID::Death, {"resources/background.png", 0, 0, 256, 64, 1, 1, 0, 0, 0, 0, 1}},
+        {Animation::AnimationID::MenuBackground, {"resources/menu-background.png", 0, 0, 3200, 1600, 1, 1, 0, 0, 0, 0, 1}},
+
     };
 
-    std::string toString(Animation::Component component);
-
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Animation
 
 namespace Velocity {
@@ -136,22 +217,23 @@ namespace Velocity {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    std::string toString(Velocity::Component component);
-
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        float x = 0;
+        float y = 0;
+        EntityID follow = -1;
+    };
 } // namespace Velocity
 
-// a struct for client side use only, to get the Player Entity  via the ECS
-// check if this doesnt f up the ECS synchro
 namespace Player {
     struct Component {
         int score;
         int uniqueID;
     };
 
-    std::string toString(Player::Component component);
+    struct Mask {
+        int score;
+    };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Player
 
 namespace Damage {
@@ -159,28 +241,32 @@ namespace Damage {
         int damage = 0;
     };
 
-    std::string toString(Damage::Component component);
+    struct Mask {
+        int damage = 0;
+    };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Damage
 
 namespace Armament {
     enum Type {
         Laser,
         Buckshot,
+        Ball,
     };
 
     struct Component {
         Armament::Type type;
-        // in milliseconds
-        double interval = 0.1;
+        double interval = 0.1; // in milliseconds
         long long ammo = -1;
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    std::string toString(Armament::Component component);
+    struct Mask {
+        Armament::Type type;
+        double interval = 0.1; // in milliseconds
+        long long ammo = -1;
+    };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Armament
 
 namespace Hitbox {
@@ -191,20 +277,28 @@ namespace Hitbox {
         Point botRight;
     };
 
-    std::string toString(Hitbox::Component component);
+    struct Mask {
+        Point topLeft;
+        Point topRight;
+        Point botLeft;
+        Point botRight;
+    };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 } // namespace Hitbox
 
 namespace Team {
-    enum Component {
+    enum Group {
         Ally,
         Enemy,
     };
 
-    std::string toString(Team::Component component);
+    struct Component {
+        Group team;
+    };
 
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        Group team;
+    };
 
 } // namespace Team
 
@@ -214,16 +308,14 @@ namespace ImmunityFrame {
         std::chrono::time_point<std::chrono::system_clock> timer;
     };
 
-    std::string toString(ImmunityFrame::Component component);
-
-    void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
+    struct Mask {
+        double duration = 0;
+    };
 
 } // namespace ImmunityFrame
 
 namespace CollisionEffect {
     typedef void (*Component)(EntityID defender, EntityID attacker, std::shared_ptr<ECSManager> ECS);
-
-    std::string toString(CollisionEffect::Component component);
 
     void applyUpdate(std::vector<std::string> args, EntityID entityID, std::shared_ptr<ECSManager> manager);
 
@@ -231,3 +323,52 @@ namespace CollisionEffect {
     // should not need serialization or update since logic happens serverside
     // if we do need to just use a map and enum
 } // namespace CollisionEffect
+
+namespace SoundCreation {
+    struct Component {
+        SFXID ID;
+    };
+
+    struct Mask {
+        SFXID ID;
+    };
+
+} // namespace SoundCreation
+
+namespace SoundDestruction {
+    struct Component {
+        SFXID ID;
+    };
+
+    struct Mask {
+        SFXID ID;
+    };
+
+} // namespace SoundDestruction
+
+namespace SoundDamage {
+    struct Component {
+        SFXID ID;
+    };
+
+    struct Mask {
+        SFXID ID;
+    };
+
+} // namespace SoundDamage
+
+// std::string toString(Armor::Component component);
+// std::string toString(Health::Component component);
+// std::string toString(Position::Component component);
+// std::string toString(Animation::Component component);
+// std::string toString(Velocity::Component component);
+// std::string toString(Player::Component component);
+// std::string toString(Damage::Component component);
+// std::string toString(Armament::Component component);
+// std::string toString(Hitbox::Component component);
+// std::string toString(Team::Component component);
+// std::string toString(ImmunityFrame::Component component);
+// std::string toString(CollisionEffect::Component component);
+// std::string toString(SoundCreation::Component component);
+// std::string toString(SoundDestruction::Component component);
+// std::string toString(SoundDamage::Component component);

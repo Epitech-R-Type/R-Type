@@ -1,16 +1,14 @@
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-#include <asio.hpp>
+#include "../../shared/MessageQueue/MessageQueue.hpp"
+#include "../../shared/Networking/AsioConstants.hpp"
+#include "../../shared/Utilities/secureAsio.hpp"
 #include <atomic>
 #include <iostream>
 #include <memory>
 #include <string>
 #include <thread>
 #include <vector>
-
-#include "../../shared/MessageQueue/MessageQueue.hpp"
-#include "../../shared/Networking/AsioConstants.hpp"
 
 void tcp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
                             std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag,
@@ -34,7 +32,7 @@ public:
     // Note: Needs to be called again in order to loop
     void stopSignalHandler();
 
-    void connect(std::string serverIP, int port);
+    int connect(std::string serverIP, int port);
 
     // Access methods required for use in the async operation lambdas
     void push_message(Message<std::string> msg);

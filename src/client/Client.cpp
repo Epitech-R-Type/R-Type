@@ -6,74 +6,138 @@
 */
 
 #include "Client.hpp"
-#include "../shared/ECS/Manager.hpp"
+#include "../shared/ECS/Components.hpp"
+#include "../shared/ECS/ECSManager.hpp"
 #include "../shared/MessageQueue/MessageQueue.hpp"
-#include "raylib.h"
+#include "../shared/Utilities/ray.hpp"
+#include "GUI/Menus/ConnectionMenu.hpp"
+#include "GUI/Menus/LobbyMenu.hpp"
+#include "GUI/Menus/LobbySelectionMenu.hpp"
 
 Client::Client() {
-    this->_protocol = new ClientLobbyProtocol();
+    this->_tcpStopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_protocol = new ClientLobbyProtocol(this->_tcpStopFlag);
 
     this->_lobbyRunning = true;
     this->_connected = false;
 
     // Gangster Workaround to insure same comptype order client
     Utilities::createCompPoolIndexes();
+
+    InitWindow(WINDOW_WIDTH, WINDOW_HEIGHT, "R-Type");
+    while (!IsWindowReady()) {
+        //
+    }
+
+    SetTargetFPS(40);
+
+    this->_ECS = std::make_shared<ECSManager>();
+    this->_spriteSystem = std::make_unique<SpriteSystem>(this->_ECS);
+
+    EntityID id = this->_ECS->newEntity();
+
+    this->_ECS->addComp<Position::Component>(id, {0, 0});
+    this->_ECS->addComp<Animation::Component>(id, {Animation::AnimationID::MenuBackground, 0});
+    this->_ECS->addComp<Velocity::Component>(id, {2, 0});
 }
 
 int Client::launchGame() {
-    if (!this->_connected) {
-        ERROR("You are not connected to a server");
+    if (!this->_connected)
         return 84;
-    }
 
     // Note: For performance reasons we could free the lobby ecs before launching the game
-    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort());
+    this->_game = new ClientGame(this->_protocol->getUUID(), this->_protocol->getServerIp(), this->_protocol->getServerPort(), this->_tcpStopFlag);
     this->_game->init();
     this->_game->mainLoop();
+
     delete this->_game;
 
     return 0;
 }
 
-void Client::connect(std::string serverIP, int port) {
-    this->_protocol->connect(serverIP, port);
+int Client::connect(std::string serverIP, int port) {
+    const int res = this->_protocol->connect(serverIP, port);
+    this->_connected = this->_protocol->isConnected();
+    return res;
 }
 
-void Client::handleUserCommands() {
-    std::optional<std::string> potMsg;
-    while ((potMsg = this->_userCommands->pop())) {
-        std::string msg = potMsg.value();
+void Client::advanceStage(std::unique_ptr<Menu>& currentMenu) {
+    State state = currentMenu->getState();
 
-        if (msg == "Start")
-            this->_protocol->sendStart();
-    }
-}
-
-void userInput(std::shared_ptr<MessageQueue<std::string>> userCommands) {
-    while (1) {
-        std::string command;
-
-        std::cin >> command;
-
-        userCommands->push(command);
-    }
+    if (state == State::DONE) {
+        switch (this->_currentStage) {
+            case Stages::CONNECTION: {
+                currentMenu = std::make_unique<LobbySelectionMenu>(this);
+                this->_currentStage = Stages::ROOMSELECTION;
+                return;
+            }
+            case Stages::ROOMSELECTION:
+                currentMenu = std::make_unique<LobbyMenu>(this);
+                this->_currentStage = Stages::ROOM;
+                return;
+            default:
+                return;
+        }
+    } else if (state == State::BACK) {
+        switch (this->_currentStage) {
+            case Stages::ROOM: {
+                currentMenu = std::make_unique<LobbySelectionMenu>(this);
+                this->_currentStage = Stages::ROOMSELECTION;
+            }
+            default:
+                ERRORLOG("Invalid stage: " << this->_currentStage);
+        }
+    };
 }
 
 int Client::mainLoop() {
-    this->_userInputThread = new std::thread(userInput, this->_userCommands);
+    std::unique_ptr<Menu> currentMenu;
 
-    while (this->_lobbyRunning) {
-        this->_protocol->handleIncMessages();
+    if (this->_connected) {
+        currentMenu = std::make_unique<LobbySelectionMenu>(this);
+        this->_currentStage = Stages::ROOMSELECTION;
+    } else {
+        currentMenu = std::make_unique<ConnectionMenu>(this);
+        this->_currentStage = Stages::CONNECTION;
+    }
 
-        this->handleUserCommands();
+    while (true) {
+        this->advanceStage(currentMenu);
 
-        this->_connected = this->_protocol->isConnected();
+        if (this->_protocol->handleIncMessages()) {
+            return 1;
+        }
+
+        currentMenu->apply();
 
         if (this->_protocol->shouldGameStart()) {
-            std::this_thread::sleep_for(std::chrono::seconds(2));
             this->launchGame();
+
+            // Check if tcp connection still open
+            if (this->_tcpStopFlag.get()->load() == true)
+                return 1;
+
+            currentMenu = std::make_unique<LobbySelectionMenu>(this);
+            this->_currentStage = Stages::ROOMSELECTION;
+
+            // Prepare for next games
+            this->_protocol->resetStartGame();
         }
+
+        currentMenu->draw();
+        this->_spriteSystem->apply();
     }
 
     return 0;
 }
+
+void Client::reset() {
+    this->_tcpStopFlag = std::make_shared<std::atomic<bool>>(false);
+    this->_protocol = new ClientLobbyProtocol(this->_tcpStopFlag);
+    this->_connected = false;
+    this->_lobbyRunning = true;
+};
+
+ClientLobbyProtocol* Client::getProtocol() {
+    return this->_protocol;
+};

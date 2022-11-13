@@ -34,10 +34,10 @@ TcpServer::TcpServer(std::shared_ptr<MessageQueue<Message<std::string>>> incomin
 // Incoming Handler
 void TcpServer::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> peer) {
     peer->async_receive(asio::buffer(this->_buffer), [this, peer](const asio::error_code& err, std::size_t bytesTransfered) {
-        if (!err) {
-            auto addr = peer->remote_endpoint().address();
-            auto port = peer->remote_endpoint().port();
+        auto addr = peer->remote_endpoint().address();
+        auto port = peer->remote_endpoint().port();
 
+        if (!err) {
             this->push_message(Message(std::string(this->_buffer), addr, port));
 
             // Reset buffer
@@ -50,8 +50,11 @@ void TcpServer::setup_incoming_handler(std::shared_ptr<asio::ip::tcp::socket> pe
             memset(this->_buffer, 0, 1024);
 
             // Handle client disconnection
-            if (err.value() == asio::error::eof)
+            if (err.value() == asio::error::eof) {
+                LOG("[TcpServer] EOF received, removing peer...");
                 this->remove_peer(peer);
+                this->push_message(Message(std::string("CONN_CLOSED"), addr, port));
+            }
 
             // Reset incoming handler
             this->setup_incoming_handler(peer);
@@ -65,7 +68,7 @@ void TcpServer::setup_outgoing_handler() {
 
     this->_outgoingTimer.async_wait([this](const asio::error_code& err) {
         if (err) {
-            ERROR(err.message());
+            ERRORLOG("Error TcpServer handler " << err.message());
             this->setup_outgoing_handler();
             return;
         }
@@ -86,8 +89,6 @@ void TcpServer::setup_outgoing_handler() {
                 break;
             }
 
-            LOG("Sending: " << buffer << " to: " << msg->getAddr() << ":" << msg->getPort());
-
             peer->send(asio::buffer(buffer));
         }
         this->setup_outgoing_handler();
@@ -106,7 +107,6 @@ void TcpServer::setup_acceptor_handler() {
             auto port = newPeer->remote_endpoint().port();
 
             this->push_out_message(Message<std::string>("CONNECTED\r\n", addr, port));
-            LOG("TCP Client is open on port: " << newPeer->local_endpoint().port());
             this->setup_incoming_handler(newPeer);
         }
         this->setup_acceptor_handler();
@@ -135,7 +135,7 @@ void TcpServer::stop_signal_handler() {
 std::shared_ptr<asio::ip::tcp::socket> TcpServer::findPeer(asio::ip::address addr, asio::ip::port_type port) {
     for (auto peer : this->_peers) {
         if (!peer->is_open()) {
-            ERROR("Invalid Peer");
+            ERRORLOG("Invalid Peer");
             continue;
         }
         auto peerAddr = peer->remote_endpoint().address();

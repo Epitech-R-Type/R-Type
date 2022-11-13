@@ -6,13 +6,15 @@
 */
 
 #pragma once
-#include "../../WindowsGuard.hpp"
 
-#include <asio.hpp>
+// #include "../../shared/Networking/ProtocolUtils.hpp"
+#include "../../shared/Utilities/secureAsio.hpp"
 #include <iostream>
 #include <mutex>
 #include <optional>
 #include <queue>
+
+typedef std::vector<char> ByteBuf;
 
 // Used with the messaging queue in order to be able to pass messages
 // along with sender info or recipient info

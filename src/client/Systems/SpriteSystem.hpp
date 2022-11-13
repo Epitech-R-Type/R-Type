@@ -7,20 +7,14 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
-#include <chrono>
-#include <cmrc/cmrc.hpp>
-#include <raylib.h>
-#include <vector>
-
 #include "../../shared/ECS/Components.hpp"
 #include "../../shared/ECS/ECS.hpp"
 #include "../../shared/Systems/ISystem.hpp"
+#include "../../shared/Utilities/ray.hpp"
+#include <cmrc/cmrc.hpp>
+#include <vector>
 
 CMRC_DECLARE(client);
-
-// std::chrono::time_point<std::chrono::system_clock> getNow();
 
 typedef std::vector<Texture2D> AnimationArr;
 

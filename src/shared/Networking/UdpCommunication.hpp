@@ -7,8 +7,11 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
+#include "../../shared/Networking/ProtocolUtils.hpp"
+#include "../../shared/Utilities/secureAsio.hpp"
+#include "../MessageQueue/MessageQueue.hpp"
+#include "../Utilities/Utilities.hpp"
+#include "AsioConstants.hpp"
 #include <atomic>
 #include <cstring>
 #include <functional>
@@ -19,24 +22,18 @@
 #include <thread>
 #include <vector>
 
-#include <asio.hpp>
-
-#include "../MessageQueue/MessageQueue.hpp"
-#include "../Utilities/Utilities.hpp"
-#include "AsioConstants.hpp"
-
 // Function passed to communication thread on creation
-void udp_communication_main(std::shared_ptr<MessageQueue<Message<std::string>>> incoming,
-                            std::shared_ptr<MessageQueue<Message<std::string>>> outgoing, std::shared_ptr<std::atomic<bool>> stopFlag, int port_incr);
+void udp_communication_main(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
+                            std::shared_ptr<std::atomic<bool>> stopFlag, int port_incr);
 
 class UdpCommunication {
 public:
     // Constructor with specified port
-    UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+    UdpCommunication(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
                      std::shared_ptr<std::atomic<bool>> stopFlag, int port);
 
     // Constructor no specified port
-    UdpCommunication(std::shared_ptr<MessageQueue<Message<std::string>>> incoming, std::shared_ptr<MessageQueue<Message<std::string>>> outgoing,
+    UdpCommunication(std::shared_ptr<MessageQueue<Message<ByteBuf>>> incoming, std::shared_ptr<MessageQueue<Message<ByteBuf>>> outgoing,
                      std::shared_ptr<std::atomic<bool>> stopFlag);
 
     // Setup action receiving UDP packets
@@ -52,8 +49,8 @@ public:
     void stop_signal_handler();
 
     // Access methods required for use in the async operation lambdas
-    void push_message(Message<std::string> msg);
-    std::optional<Message<std::string>> pop_message(void);
+    void push_message(Message<ByteBuf> msg);
+    std::optional<Message<ByteBuf>> pop_message(void);
     bool getStopFlag();
 
     // Execute context
@@ -73,8 +70,8 @@ private:
     char _buffer[MAX_BUFFER_SIZE];
 
     // Messaging queues
-    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMessages;
-    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMessages;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _incomingMessages;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _outgoingMessages;
 
     // Timers
     asio::steady_timer _outgoingTimer; // Check for outgoing msg interval timer

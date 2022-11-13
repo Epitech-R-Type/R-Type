@@ -2,44 +2,59 @@
 
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/AsioConstants.hpp"
+#include "../../shared/Networking/ProtocolUtils.hpp"
 #include "../../shared/Utilities/UUID.hpp"
+
+struct TcpResponse {
+    int code;
+    std::string body;
+};
 
 class ClientLobbyProtocol {
 public:
-    ClientLobbyProtocol();
+    ClientLobbyProtocol(std::shared_ptr<std::atomic<bool>> stopFlag);
 
     /**
      * Connects the client to the TCP socket of the server
      * */
-    void connect(std::string serverIP, int port = TCP_PORT);
+    int connect(std::string serverIP, int port = TCP_PORT);
 
     void startGame();
 
-    bool isAuthenticated();
+    // ─── Message Handling ────────────────────────────────────────────────────────────────────
 
-    void handleIncMessages();
+    int handleIncMessages();
 
-    void handleUserCommands(std::string command);
+    // Response handling stuff
+    TcpResponse awaitResponse();
+    static TcpResponse parseResponse(Message<std::string> msg);
+    static bool isResponse(std::string msgBody);
 
-    void sendMessage(std::string msgContent);
-
-    bool isConnected();
-
-    bool shouldGameStart();
-
-    void saveAuthentication(std::string uuids);
+    // ─── Message Sending ─────────────────────────────────────────────────────────────────────
 
     void sendStart();
+    void sendAuthenticate();
+    void sendMessage(std::string msgContent);
+    bool sendJoinLobby(int lobby);
+    std::vector<LobbyInfo> sendGetLobbies();
+    void sendLeave();
 
-    UUIDM getUUID();
+    // ─── Utility Functions ───────────────────────────────────────────────────────────────────
 
+    void saveAuthentication(std::string uuids);
+    bool isConnected();
+    bool shouldGameStart();
+    void resetStartGame();
+
+    Utilities::UUID getUUID();
     int getServerPort();
-
     asio::ip::address getServerIp();
+    int getLobby();
 
 private:
-    UUIDM _serverUUID;
-    UUIDM _clientUUID;
+    Utilities::UUID _serverUUID;
+    Utilities::UUID _clientUUID;
+
     // Tcp com thread stuff
     std::thread* _comThread;
     std::shared_ptr<std::atomic<bool>> _stopFlag;
@@ -51,9 +66,10 @@ private:
     asio::ip::port_type _serverPort = 0;
 
     // udp server port
-    int port;
+    int serverUdpPort;
 
     bool _connected = false;
     bool _authenticated = false;
     bool _startGame = false;
+    int lobby = -1; // -1 if not in lobby otherwise, lobby id
 };

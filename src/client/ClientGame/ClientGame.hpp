@@ -7,11 +7,10 @@
 
 #pragma once
 
-#include "../../WindowsGuard.hpp"
-
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/MessageQueue/MessageQueue.hpp"
 #include "../../shared/Networking/UdpCommunication.hpp"
+#include "../../shared/Utilities/Timer.hpp"
 #include "../../shared/Utilities/UUID.hpp"
 #include "../Protocols/ClientGameProtocol.hpp"
 #include "../Systems/Systems.hpp"
@@ -24,7 +23,7 @@
 class ClientGame {
 public:
     // Note: Construtor/Destructor shall be added as needed
-    ClientGame(UUIDM uuid, asio::ip::address addr, int port);
+    ClientGame(Utilities::UUID uuid, asio::ip::address serverAddr, int serverUdpPort, std::shared_ptr<std::atomic<bool>> tcpStopFlag);
     ~ClientGame();
 
     void init();
@@ -39,17 +38,24 @@ private:
     std::shared_ptr<ECSManager> _entManager;
     std::unique_ptr<SpriteSystem> _spriteSystem;
     std::unique_ptr<HealthSystem> _healthSystem;
+    std::unique_ptr<PlayerMovementSystem> _inputSystem;
+    std::shared_ptr<MusicSystem> _musicSystem;
 
     // Messaging queues for protocol
     // These should eventually be moved to the protocol class
-    std::shared_ptr<MessageQueue<Message<std::string>>> _incomingMQ;
-    std::shared_ptr<MessageQueue<Message<std::string>>> _outgoingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _incomingMQ;
+    std::shared_ptr<MessageQueue<Message<ByteBuf>>> _outgoingMQ;
 
-    ClientGameProtocol _protocol;
+    std::shared_ptr<ClientGameProtocol> _protocol;
 
-    UUIDM _uuid;
+    Utilities::UUID _uuid;
 
-    bool _isRunning;
+    bool _isRunning = true;
+
     std::thread* _udpComThread;
-    std::shared_ptr<std::atomic<bool>> _stopFlag;
+
+    // Set to true when tcp connection has closed, this signals to game to quit immediately
+    std::shared_ptr<std::atomic<bool>> _tcpStopFlag;
+    // Set to true when udp connection closed, used in destructor
+    std::shared_ptr<std::atomic<bool>> _udpStopFlag;
 };

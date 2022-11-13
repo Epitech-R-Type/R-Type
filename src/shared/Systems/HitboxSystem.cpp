@@ -1,7 +1,7 @@
 
 #include "HitboxSystem.hpp"
 #include "../ECS/Components.hpp"
-#include "../ECS/Manager.hpp"
+#include "../ECS/ECSManager.hpp"
 #include "../Utilities/Utilities.hpp"
 #include <cmath>
 #include <iostream>
@@ -18,15 +18,6 @@ void HitboxSystem::apply() {
         Position::Component* position = this->_ECS->getComponent<Position::Component>(*beg);
 
         Hitbox::Component* hitbox = this->updateHitbox(*beg);
-
-#ifdef DRAW_HITBOX
-        DrawLine(hitbox->topLeft.x, hitbox->topLeft.y, hitbox->topRight.x, hitbox->topRight.y, RED);
-        DrawLine(hitbox->topLeft.x, hitbox->topLeft.y, hitbox->botLeft.x, hitbox->botLeft.y, RED);
-        DrawLine(hitbox->botLeft.x, hitbox->botLeft.y, hitbox->botRight.x, hitbox->botRight.y, RED);
-        DrawLine(hitbox->botRight.x, hitbox->botRight.y, hitbox->topRight.x, hitbox->topRight.y, RED);
-
-        DrawCircle(position->x, position->y, 2, BLUE);
-#endif
 
         HitboxSystem::checkCollision(*beg);
     }
@@ -115,7 +106,7 @@ bool HitboxSystem::isColliding(EntityID entity1, EntityID entity2) {
  * */
 void HitboxSystem::checkCollision(EntityID entity) {
     for (auto beg = this->_ECS->begin<Hitbox::Component>(); beg != this->_ECS->end<Hitbox::Component>(); ++beg) {
-        if (*this->_ECS->getComponent<Team::Component>(entity) == *this->_ECS->getComponent<Team::Component>(*beg))
+        if (this->_ECS->getComponent<Team::Component>(entity)->team == this->_ECS->getComponent<Team::Component>(*beg)->team)
             continue;
 
         if (!isColliding(entity, *beg))

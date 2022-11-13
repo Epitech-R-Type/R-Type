@@ -1,9 +1,9 @@
 #include "HealthSystem.hpp"
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
+#include "../../shared/Utilities/ray.hpp"
 #include "SpriteSystem.hpp"
 #include "Systems.hpp"
-#include "raylib.h"
 
 HealthSystem::HealthSystem(std::shared_ptr<ECSManager> ECS) {
     this->_ECS = ECS;

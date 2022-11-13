@@ -1,9 +1,4 @@
-#include <gtest/gtest.h>
+// Init g_idCounter
+#include "../src/shared/ECS/ECS.hpp"
 
-// Demonstrate some basic assertions.
-TEST(HelloTest, BasicAssertions) {
-    // Expect two strings not to be equal.
-    EXPECT_STRNE("hello", "world");
-    // Expect equality.
-    EXPECT_EQ(7 * 6, 42);
-}
+Index g_idCounter = 0;

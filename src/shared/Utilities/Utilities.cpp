@@ -10,21 +10,35 @@ void Utilities::createCompPoolIndexes() {
     getID<Animation::Component>();
     getID<Velocity::Component>();
     getID<Player::Component>();
+    getID<Damage::Component>();
     getID<Armament::Component>();
     getID<Hitbox::Component>();
     getID<Team::Component>();
     getID<ImmunityFrame::Component>();
     getID<CollisionEffect::Component>();
+    getID<SoundCreation::Component>();
+    getID<SoundDestruction::Component>();
+    getID<SoundDamage::Component>();
 }
 
 bool Utilities::isPortAvailable(int port) {
     asio::io_service svc;
     asio::ip::tcp::acceptor a(svc);
+    asio::ip::udp::socket b(svc);
 
-    asio::error_code ec;
-    a.open(asio::ip::tcp::v4(), ec) || a.bind(asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port), ec);
+    asio::error_code ec1;
+    a.open(asio::ip::tcp::v4(), ec1) || a.bind(asio::ip::tcp::endpoint(asio::ip::tcp::v4(), port), ec1);
 
-    return ec == asio::error::address_in_use;
+    if (ec1 == asio::error::address_in_use)
+        return false;
+
+    asio::error_code ec2;
+    b.open(asio::ip::udp::v4(), ec2) || b.bind(asio::ip::udp::endpoint(asio::ip::udp::v4(), port), ec2);
+
+    if (ec2 == asio::error::address_in_use)
+        return false;
+
+    return true;
 }
 
 double Utilities::toRadians(double degree) {

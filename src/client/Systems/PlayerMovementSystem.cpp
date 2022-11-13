@@ -4,27 +4,28 @@
 ** File description:
 ** PlayerMovementSystem
 */
-#include "../../WindowsGuard.hpp"
 
-#include "../../shared/ECS/Components.hpp"
-#include "../../shared/ECS/Manager.hpp"
 #include "PlayerMovementSystem.hpp"
-#include "raylib.h"
+#include "../../shared/ECS/ECSManager.hpp"
+#include "../../shared/Utilities/ray.hpp"
+#include "../Protocols/ClientGameProtocol.hpp"
 
 PlayerMovementSystem::PlayerMovementSystem(std::shared_ptr<ClientGameProtocol> protocol) {
     this->_protocol = protocol;
 }
 
 void PlayerMovementSystem::apply() {
-
+    char directions = 0;
     if (IsKeyDown(KEY_A))
-        this->_protocol->sendActMove(Move::LEFT);
+        directions += Move::LEFT;
     if (IsKeyDown(KEY_D))
-        this->_protocol->sendActMove(Move::RIGHT);
+        directions += Move::RIGHT;
     if (IsKeyDown(KEY_W))
-        this->_protocol->sendActMove(Move::UP);
+        directions += Move::UP;
     if (IsKeyDown(KEY_S))
-        this->_protocol->sendActMove(Move::DOWN);
+        directions += Move::DOWN;
+    if (directions != 0)
+        this->_protocol->sendActMove(directions);
     if (IsKeyDown(KEY_SPACE))
         this->_protocol->sendActFire();
 }

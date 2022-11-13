@@ -1,6 +1,6 @@
 #include "Factory.hpp"
 #include "../../shared/ECS/Components.hpp"
-#include "../../shared/ECS/Manager.hpp"
+#include "../../shared/ECS/ECSManager.hpp"
 #include "../../shared/Systems/HitboxSystem.hpp"
 #include "../../shared/Utilities/Utilities.hpp"
 
@@ -28,7 +28,7 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
     ECS->addComp<Armament::Component>(player, {Armament::Type::Laser, 150, -1});
     ECS->addComp<Velocity::Component>(player, {10, 10});
     ECS->addComp<Hitbox::Component>(player, HitboxSystem::buildHitbox(animation, position));
-    ECS->addComp<Team::Component>(player, Team::Ally);
+    ECS->addComp<Team::Component>(player, {Team::Group::Ally});
     ECS->addComp<ImmunityFrame::Component>(player, {1});
     ECS->addComp<Damage::Component>(player, {20});
     ECS->addComp<CollisionEffect::Component>(player, &CollisionEffect::dealDamage);
@@ -38,14 +38,14 @@ EntityID Factory::Ally::makePlayer(std::shared_ptr<ECSManager> ECS, int uniqueID
     return player;
 }
 
-EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
+EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS, BossStats stats) {
     EntityID endboss = ECS->newEntity();
     int players = 0;
     for (auto beg = ECS->begin<Player::Component>(); beg != ECS->end<Player::Component>(); ++beg) {
         players++;
     }
 
-    Animation::Component* animation = ECS->addComp<Animation::Component>(endboss, {Animation::AnimationID::Cluster, 1, -90.0});
+    Animation::Component* animation = ECS->addComp<Animation::Component>(endboss, {stats.sprite, 1, -90.0});
 
     float xOffset = Animation::Sheets[Animation::AnimationID::Cluster].frameHeight * 3;
     float yOffset = Animation::Sheets[Animation::AnimationID::Cluster].frameWidth / 2;
@@ -55,39 +55,39 @@ EntityID Factory::Enemy::makeEndboss(std::shared_ptr<ECSManager> ECS) {
 
     Position::Component* position = ECS->addComp<Position::Component>(endboss, {startX, startY});
 
-    ECS->addComp<Damage::Component>(endboss, {20});
-    ECS->addComp<Health::Component>(endboss, {300 * players, 300 * players, false});
+    ECS->addComp<Damage::Component>(endboss, {stats.damage});
+    ECS->addComp<Health::Component>(endboss, {stats.health * players, stats.health * players, false});
     ECS->addComp<Hitbox::Component>(endboss, HitboxSystem::buildHitbox(animation, position));
-    ECS->addComp<Team::Component>(endboss, Team::Enemy);
-    ECS->addComp<Armament::Component>(endboss, {Armament::Type::Buckshot, 1000, 50});
+    ECS->addComp<Team::Component>(endboss, {Team::Group::Enemy});
+    ECS->addComp<Armament::Component>(endboss, {stats.armament, 1000, 50});
     ECS->addComp<CollisionEffect::Component>(endboss, &CollisionEffect::dealDamage);
     ECS->pushModified(endboss);
     return endboss;
 }
 
-EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS) {
+EntityID Factory::Enemy::makeEnemy(std::shared_ptr<ECSManager> ECS, EnemyStats stats) {
     EntityID enemy = ECS->newEntity();
 
     const float startX = WINDOW_WIDTH;
     const float startY = rand() % (int)WINDOW_HEIGHT;
 
-    Position::Component* position = ECS->addComp<Position::Component>(enemy, {x : startX, y : startY});
-    Animation::Component* animation = ECS->addComp<Animation::Component>(enemy, {Animation::AnimationID::Orb, 3});
+    Position::Component* position = ECS->addComp<Position::Component>(enemy, {startX, startY});
+    Animation::Component* animation = ECS->addComp<Animation::Component>(enemy, {stats.sprite, 3});
 
-    ECS->addComp<Velocity::Component>(enemy, {-10, 0});
-    ECS->addComp<Health::Component>(enemy, {20, 20, true});
-    ECS->addComp<Damage::Component>(enemy, {20});
+    ECS->addComp<Velocity::Component>(enemy, {-(stats.speed), 0});
+    ECS->addComp<Health::Component>(enemy, {stats.health, stats.health, true});
+    ECS->addComp<Damage::Component>(enemy, {stats.damage});
 
     ECS->addComp<Hitbox::Component>(enemy, HitboxSystem::buildHitbox(animation, position));
-    ECS->addComp<Team::Component>(enemy, Team::Enemy);
-    ECS->addComp<Armament::Component>(enemy, {Armament::Type::Laser, 1000, 50});
+    ECS->addComp<Team::Component>(enemy, {Team::Group::Enemy});
+    ECS->addComp<Armament::Component>(enemy, {stats.armament, 1000, 50});
     ECS->addComp<CollisionEffect::Component>(enemy, &CollisionEffect::dealDamage);
 
     ECS->pushModified(enemy);
     return enemy;
 }
 
-EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX, int velocityY, double rotation) {
+EntityID singleShot(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX, int velocityY, double rotation, Animation::AnimationID anim) {
     const EntityID bullet = ECS->newEntity();
 
     const Position::Component* sourcePos = ECS->getComponent<Position::Component>(source);
@@ -104,24 +104,26 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
     Velocity::Component velocity{};
     Team::Component team = *ECS->getComponent<Team::Component>(source);
 
-    if (team == Team::Component::Ally) {
+    if (team.team == Team::Group::Ally) {
         positionPre.x = center.x - (float)Animation::Sheets[sourceAnimation->animationID].animWidth;
         positionPre.y = center.y;
         velocity.x = velocityX;
         velocity.y = velocityY;
+        ECS->addComp<SoundCreation::Component>(bullet, {SFXID::HEAVY_GUNSHOT});
     }
 
-    if (team == Team::Component::Enemy) {
+    if (team.team == Team::Group::Enemy) {
         positionPre.x = center.x + (float)Animation::Sheets[sourceAnimation->animationID].animWidth;
         positionPre.y = center.y;
         velocity.x = -velocityX;
         velocity.y = -velocityY;
+        ECS->addComp<SoundDestruction::Component>(bullet, {SFXID::LIGHT_GUNSHOT});
     }
 
     ECS->addComp<Velocity::Component>(bullet, velocity);
     ECS->addComp<Health::Component>(bullet, {1});
     ECS->addComp<Damage::Component>(bullet, {10});
-    Animation::Component* animation = ECS->addComp<Animation::Component>(bullet, {Animation::AnimationID::Laser, 1, rotation, 1.5});
+    Animation::Component* animation = ECS->addComp<Animation::Component>(bullet, {anim, 1, rotation, 1.5});
     Position::Component* position = ECS->addComp<Position::Component>(bullet, positionPre);
     ECS->addComp<Team::Component>(bullet, *ECS->getComponent<Team::Component>(source));
     ECS->addComp<Hitbox::Component>(bullet, HitboxSystem::buildHitbox(animation, position));
@@ -131,23 +133,23 @@ EntityID bullet(std::shared_ptr<ECSManager> ECS, EntityID source, int velocityX,
     return bullet;
 }
 
-void Factory::Weapon::makeLaser(std::shared_ptr<ECSManager> ECS, EntityID source) {
-    bullet(ECS, source, 40, 0, 0);
+void Factory::Weapon::makeSingleShot(std::shared_ptr<ECSManager> ECS, EntityID source, Animation::AnimationID anim) {
+    singleShot(ECS, source, 40, 0, 0, anim);
 }
 
-void Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source) {
-    bullet(ECS, source, 40, 0, 0);
-    bullet(ECS, source, 40, 5, 6);
-    bullet(ECS, source, 40, 10, 12);
-    bullet(ECS, source, 40, -5, -6);
-    bullet(ECS, source, 40, -10, -12);
+void Factory::Weapon::makeBuckshot(std::shared_ptr<ECSManager> ECS, EntityID source, Animation::AnimationID anim) {
+    singleShot(ECS, source, 40, 0, 0, anim);
+    singleShot(ECS, source, 40, 5, 6, anim);
+    singleShot(ECS, source, 40, 10, 12, anim);
+    singleShot(ECS, source, 40, -5, -6, anim);
+    singleShot(ECS, source, 40, -10, -12, anim);
 }
 
-void Factory::Misc::makeBackground(std::shared_ptr<ECSManager> ECS) {
+void Factory::Misc::makeBackground(std::shared_ptr<ECSManager> ECS, Animation::AnimationID bgID) {
     EntityID background = ECS->newEntity();
 
     ECS->addComp<Position::Component>(background, {0, 0});
-    ECS->addComp<Animation::Component>(background, {Animation::AnimationID::Background, 0});
+    ECS->addComp<Animation::Component>(background, {bgID, 0});
     ECS->addComp<Velocity::Component>(background, {2, 0});
     ECS->pushModified(background);
 };
