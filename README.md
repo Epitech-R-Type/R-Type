@@ -17,7 +17,14 @@ Contributing Guide
 This project aims to implement the classic game [R-Type](https://wikiless.sethforprivacy.com/wiki/R-Type?lang=en).\
 It will include network based multiplayer.
 
-\# Install Conan
+#### Install Conan
+
+```
+$ pip install conan
+$ conan profile new default --detect
+$ conan profile update conf.tools.system.package_manager:mode=install default;
+$ conan profile update conf.tools.system.package_manager:sudo=True default;
+```
 
 ### How to Build
 
